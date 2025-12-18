@@ -8,6 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Profiles\HexMaster.Attendr.Profiles.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Profiles.Abstractions\HexMaster.Attendr.Profiles.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
