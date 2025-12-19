@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.DomainModels;
 using HexMaster.Attendr.Groups.GetMyGroups;
+using HexMaster.Attendr.Groups.ListGroups;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
@@ -25,6 +27,13 @@ public static class GroupsEndpoints
         group.MapGet("/my-groups", GetMyGroups)
             .WithName("GetMyGroups")
             .Produces<IReadOnlyCollection<MyGroupDto>>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
+        group.MapGet("/", ListGroups)
+            .WithName("ListGroups")
+            .Produces<ListGroupsResult>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization();
@@ -113,6 +122,54 @@ public static class GroupsEndpoints
             var groups = await handler.Handle(query, cancellationToken);
 
             return Results.Ok(groups);
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> ListGroups(
+        IProfilesIntegrationService profilesIntegration,
+        IQueryHandler<ListGroupsQuery, ListGroupsResult> handler,
+        ClaimsPrincipal user,
+        string? searchQuery,
+        int? pageSize,
+        int? pageNumber,
+        CancellationToken cancellationToken)
+    {
+        // Extract SubjectId from JWT token
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            // Resolve the current user's profile
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            // Normalize pagination parameters
+            var normalizedPageSize = PaginationConstants.NormalizePageSize(pageSize);
+            var normalizedPageNumber = Math.Max(1, pageNumber ?? 1);
+
+            // Create and execute query
+            var query = new ListGroupsQuery(
+                Guid.Parse(profile.ProfileId),
+                searchQuery,
+                normalizedPageSize,
+                normalizedPageNumber);
+
+            var result = await handler.Handle(query, cancellationToken);
+
+            return Results.Ok(result);
         }
         catch (Exception)
         {

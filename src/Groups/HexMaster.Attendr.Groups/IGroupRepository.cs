@@ -29,4 +29,18 @@ public interface IGroupRepository
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A collection of groups where the member participates.</returns>
     Task<IReadOnlyCollection<Group>> GetGroupsByMemberIdAsync(Guid memberId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a paginated list of all groups with optional search filtering.
+    /// </summary>
+    /// <param name="searchQuery">Optional search term to filter groups by name.</param>
+    /// <param name="pageSize">The number of groups to return per page.</param>
+    /// <param name="pageNumber">The page number (1-based).</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A tuple containing the collection of groups and the total count of matching groups.</returns>
+    Task<(IReadOnlyCollection<Group> Groups, int TotalCount)> ListGroupsAsync(
+        string? searchQuery,
+        int pageSize,
+        int pageNumber,
+        CancellationToken cancellationToken = default);
 }

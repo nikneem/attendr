@@ -37,4 +37,33 @@ public sealed class InMemoryGroupRepository : IGroupRepository
 
         return Task.FromResult<IReadOnlyCollection<Group>>(groups);
     }
+
+    /// <inheritdoc />
+    public Task<(IReadOnlyCollection<Group> Groups, int TotalCount)> ListGroupsAsync(
+        string? searchQuery,
+        int pageSize,
+        int pageNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _groups.Values.AsEnumerable();
+
+        // Apply search filter if provided
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            var searchTerm = searchQuery.Trim().ToLowerInvariant();
+            query = query.Where(g => g.Name.ToLowerInvariant().Contains(searchTerm));
+        }
+
+        var totalCount = query.Count();
+
+        // Apply pagination
+        var groups = query
+            .OrderBy(g => g.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList()
+            .AsReadOnly();
+
+        return Task.FromResult<(IReadOnlyCollection<Group> Groups, int TotalCount)>((groups, totalCount));
+    }
 }
