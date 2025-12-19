@@ -12,13 +12,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return next(req);
     }
 
+    // Explicitly get the access token (not ID token) from the authentication result
     return oidcSecurityService.getAccessToken().pipe(
         take(1),
-        switchMap((token) => {
-            if (token) {
+        switchMap((accessToken) => {
+            debugger;
+            if (accessToken) {
                 const clonedRequest = req.clone({
                     setHeaders: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
                 return next(clonedRequest);

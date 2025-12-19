@@ -6,8 +6,7 @@ import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
 import { authConfig } from './auth/auth.config';
-import { OidcSecurityService, provideAuth } from 'angular-auth-oidc-client';
-import { authInterceptor } from './shared/interceptors/auth.interceptor';
+import { OidcSecurityService, provideAuth, authInterceptor } from 'angular-auth-oidc-client';
 import { retryInterceptor } from './shared/interceptors/retry.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -15,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([authInterceptor, retryInterceptor])
+      withInterceptors([authInterceptor(), retryInterceptor])
     ),
     providePrimeNG({
       theme: {

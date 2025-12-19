@@ -9,7 +9,7 @@ import { MyGroupDto } from '../models/my-group-dto';
 })
 export class JoinedGroupsService {
     private readonly http = inject(HttpClient);
-    private readonly apiUrl = `${environment.apiUrl}/api/groups`;
+    private readonly apiUrl = `${environment.apiUrl}/groups`;
 
     getMyGroups(): Observable<MyGroupDto[]> {
         return this.http.get<MyGroupDto[]>(`${this.apiUrl}/my-groups`);
