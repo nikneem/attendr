@@ -46,3 +46,34 @@
 .text-center {
     text-align: center;
 }
+
+::ng-deep .join-group-dialog {
+    width: 90vw;
+    max-width: 1200px;
+    height: 80vh;
+    max-height: 800px;
+
+    .p-dialog-content {
+        padding: 0;
+        height: calc(100% - 60px);
+        overflow: hidden;
+    }
+
+    .dialog-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .dialog-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        attn-all-groups {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+    }
+}
