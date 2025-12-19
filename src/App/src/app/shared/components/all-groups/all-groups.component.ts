@@ -38,7 +38,7 @@ export class AllGroupsComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.store.loadGroups();
-        
+
         // Setup debounced search
         this.searchSubject
             .pipe(

@@ -6,15 +6,8 @@
                 <div class="search-bar">
                     <p-iconfield>
                         <p-inputicon styleClass="pi pi-search" />
-                        <input
-                            type="text"
-                            pInputText
-                            [(ngModel)]="searchQuery"
-                            (input)="onSearchInput()"
-                            (keyup)="onSearchKeyup($event)"
-                            placeholder="Search groups..."
-                            class="search-input"
-                        />
+                        <input type="text" pInputText [(ngModel)]="searchQuery" (input)="onSearchInput()"
+                            (keyup)="onSearchKeyup($event)" placeholder="Search groups..." class="search-input" />
                         @if (searchQuery) {
                         <p-inputicon styleClass="pi pi-times clear-icon" (click)="onSearchClear()" />
                         }
