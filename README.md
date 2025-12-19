@@ -7,8 +7,8 @@
 *Empowering conference attendees and organizers to connect, organize, and collaborate*
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
-[![Angular](https://img.shields.io/badge/Angular-19-DD0031?style=for-the-badge&logo=angular)](https://angular.io/)
-[![PrimeNG](https://img.shields.io/badge/PrimeNG-19-007ACC?style=for-the-badge)](https://primeng.org/)
+[![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular)](https://angular.io/)
+[![PrimeNG](https://img.shields.io/badge/PrimeNG-21-007ACC?style=for-the-badge)](https://primeng.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Contributing](#-contributing)
@@ -24,32 +24,42 @@ Attendr is a comprehensive conference management platform designed to enhance th
 ## ✨ Features
 
 ### 👥 Group Management
-- **Browse & Search** - Discover groups with powerful search and pagination
-- **Join Groups** - One-click joining with instant membership status
-- **Create Groups** - Start your own communities within conferences
-- **Member Tracking** - See member counts and your membership status at a glance
+**Browse & Search** - Discover groups with powerful search and pagination
+
+**Join Groups** - One-click joining with instant membership status
+
+**Create Groups** - Start your own communities within conferences
+
+**Member Tracking** - See member counts and your membership status at a glance
 
 ### 📅 Conference Organization
-- **Session Management** - Browse and organize conference sessions
-- **Agenda Planning** - Build your personalized conference schedule
-- **Real-time Updates** - Stay informed with live session updates
+**Session Management** - Browse and organize conference sessions
+
+**Agenda Planning** - Build your personalized conference schedule
+
+**Real-time Updates** - Stay informed with live session updates
 
 ### 👤 Profile Management
-- **User Profiles** - Comprehensive attendee profiles
-- **OIDC Authentication** - Secure authentication with OpenID Connect
-- **Profile Integration** - Seamless integration across all modules
+**User Profiles** - Comprehensive attendee profiles
+
+**OIDC Authentication** - Secure authentication with OpenID Connect
+
+**Profile Integration** - Seamless integration across all modules
 
 ### 🎨 Modern UI/UX
-- **Responsive Design** - Beautiful interface that works on any device
-- **Real-time Feedback** - Toast notifications for all user actions
-- **Modal Dialogs** - Intuitive interactions with PrimeNG dialogs
-- **Loading States** - Clear feedback during data operations
+**Responsive Design** - Beautiful interface that works on any device
+
+**Real-time Feedback** - Toast notifications for all user actions
+
+**Modal Dialogs** - Intuitive interactions with PrimeNG dialogs
+
+**Loading States** - Clear feedback during data operations
 
 ## 🚀 Tech Stack
 
 ### Frontend
-- **Framework**: Angular 19 (Standalone Components)
-- **UI Library**: PrimeNG 19 with Aura Theme
+- **Framework**: Angular 21 (Standalone Components)
+- **UI Library**: PrimeNG 21 with Aura Theme
 - **State Management**: Angular Signals
 - **HTTP Client**: Angular HttpClient with retry interceptors
 - **Authentication**: angular-auth-oidc-client
@@ -142,7 +152,7 @@ attendr/
 
 - [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
 - [Node.js 20+](https://nodejs.org/)
-- [Angular CLI 19+](https://angular.io/cli)
+- [Angular CLI 21+](https://angular.io/cli)
 
 ### Installation
 
@@ -292,11 +302,15 @@ npm run e2e
 
 Contributions are welcome! Please follow these steps:
 
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** (`git commit -m 'Add some amazing feature'`)
-4. **Push to the branch** (`git push origin feature/amazing-feature`)
-5. **Open a Pull Request**
+**Fork the repository**
+
+**Create a feature branch** (`git checkout -b feature/amazing-feature`)
+
+**Commit your changes** (`git commit -m 'Add some amazing feature'`)
+
+**Push to the branch** (`git push origin feature/amazing-feature`)
+
+**Open a Pull Request**
 
 ### Code Style
 
