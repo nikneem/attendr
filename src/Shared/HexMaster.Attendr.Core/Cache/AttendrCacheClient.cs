@@ -52,4 +52,13 @@ public sealed class AttendrCacheClient : IAttendrCacheClient
         await db.StringSetAsync(key, payload, expiry).ConfigureAwait(false);
         return fresh;
     }
+
+    public async Task SetAsync<T>(string key, T value, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
+        var db = _multiplexer.GetDatabase();
+        var payload = JsonSerializer.Serialize(value, _jsonOptions);
+        var expiry = ttl ?? _defaultTtl;
+        await db.StringSetAsync(key, payload, expiry).ConfigureAwait(false);
+    }
 }

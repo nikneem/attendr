@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Core.Cache;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.DomainModels;
@@ -12,14 +13,17 @@ namespace HexMaster.Attendr.Profiles.CreateProfile;
 public sealed class CreateProfileCommandHandler : ICommandHandler<CreateProfileCommand, CreateProfileResult>
 {
     private readonly IProfileRepository _profileRepository;
+    private readonly IAttendrCacheClient _cacheClient;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CreateProfileCommandHandler"/> class.
     /// </summary>
     /// <param name="profileRepository">The repository for managing profiles.</param>
-    public CreateProfileCommandHandler(IProfileRepository profileRepository)
+    /// <param name="cacheClient">Cache client for storing resolved profile info.</param>
+    public CreateProfileCommandHandler(IProfileRepository profileRepository, IAttendrCacheClient cacheClient)
     {
         _profileRepository = profileRepository ?? throw new ArgumentNullException(nameof(profileRepository));
+        _cacheClient = cacheClient ?? throw new ArgumentNullException(nameof(cacheClient));
     }
 
     /// <summary>
@@ -37,6 +41,9 @@ public sealed class CreateProfileCommandHandler : ICommandHandler<CreateProfileC
         var existingProfile = await _profileRepository.GetBySubjectIdAsync(command.SubjectId, cancellationToken);
         if (existingProfile is not null)
         {
+            // Prime cache with resolved profile data
+            var resolved = new ResolveProfileResult(existingProfile.Id, existingProfile.DisplayName);
+            await _cacheClient.SetAsync(CacheKeys.Profiles.Subject(command.SubjectId), resolved, cancellationToken: cancellationToken);
             return new CreateProfileResult(existingProfile.Id);
         }
 
@@ -57,6 +64,10 @@ public sealed class CreateProfileCommandHandler : ICommandHandler<CreateProfileC
 
         // Save the profile
         await _profileRepository.AddAsync(profile, cancellationToken);
+
+        // Prime cache with newly created profile data
+        var createdResolved = new ResolveProfileResult(profileId, profile.DisplayName);
+        await _cacheClient.SetAsync(CacheKeys.Profiles.Subject(command.SubjectId), createdResolved, cancellationToken: cancellationToken);
 
         return new CreateProfileResult(profileId);
     }

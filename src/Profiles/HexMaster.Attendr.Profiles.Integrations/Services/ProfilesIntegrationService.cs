@@ -27,7 +27,7 @@ public sealed class ProfilesIntegrationService : IProfilesIntegrationService
             throw new ArgumentException("SubjectId cannot be null or whitespace.", nameof(subjectId));
         }
 
-        var cacheKey = $"profiles:subject:{subjectId}";
+        var cacheKey = CacheKeys.Profiles.Subject(subjectId);
         return await _cache.GetOrSetAsync<ResolveProfileResult>(
             cacheKey,
             async ct =>

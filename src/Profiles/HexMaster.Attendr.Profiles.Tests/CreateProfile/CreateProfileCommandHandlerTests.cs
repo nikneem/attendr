@@ -1,4 +1,5 @@
 using Bogus;
+using HexMaster.Attendr.Core.Cache;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
 using HexMaster.Attendr.Profiles.DomainModels;
@@ -10,13 +11,15 @@ namespace HexMaster.Attendr.Profiles.Tests.CreateProfile;
 public class CreateProfileCommandHandlerTests
 {
     private readonly Mock<IProfileRepository> _mockRepository;
+    private readonly Mock<IAttendrCacheClient> _mockCache;
     private readonly CreateProfileCommandHandler _handler;
     private readonly Faker _faker;
 
     public CreateProfileCommandHandlerTests()
     {
         _mockRepository = new Mock<IProfileRepository>();
-        _handler = new CreateProfileCommandHandler(_mockRepository.Object);
+        _mockCache = new Mock<IAttendrCacheClient>();
+        _handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object);
         _faker = new Faker();
     }
 
@@ -61,6 +64,15 @@ public class CreateProfileCommandHandlerTests
                 p.Email == command.Email
             ), It.IsAny<CancellationToken>()),
             Times.Once);
+
+        // Verify cache priming on newly created profile
+        _mockCache.Verify(
+            c => c.SetAsync(
+                It.Is<string>(k => k == CacheKeys.Profiles.Subject(command.SubjectId)),
+                It.Is<ResolveProfileResult>(res => !string.IsNullOrEmpty(res.ProfileId) && res.DisplayName == command.DisplayName),
+                It.IsAny<TimeSpan?>(),
+                It.IsAny<CancellationToken>()
+            ), Times.Once);
     }
 
     [Fact]
@@ -109,6 +121,15 @@ public class CreateProfileCommandHandlerTests
         _mockRepository.Verify(
             r => r.AddAsync(It.IsAny<Profile>(), It.IsAny<CancellationToken>()),
             Times.Never);
+
+        // Verify cache priming on existing profile
+        _mockCache.Verify(
+            c => c.SetAsync(
+                It.Is<string>(k => k == CacheKeys.Profiles.Subject(command.SubjectId)),
+                It.Is<ResolveProfileResult>(res => res.ProfileId == existingProfileId && !string.IsNullOrEmpty(res.DisplayName)),
+                It.IsAny<TimeSpan?>(),
+                It.IsAny<CancellationToken>()
+            ), Times.Once);
     }
 
     [Fact]
@@ -157,6 +178,13 @@ public class CreateProfileCommandHandlerTests
     public void Constructor_ShouldThrowArgumentNullException_WhenRepositoryIsNull()
     {
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(null!));
+        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(null!, new Mock<IAttendrCacheClient>().Object));
+    }
+
+    [Fact]
+    public void Constructor_ShouldThrowArgumentNullException_WhenCacheIsNull()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(new Mock<IProfileRepository>().Object, null!));
     }
 }
