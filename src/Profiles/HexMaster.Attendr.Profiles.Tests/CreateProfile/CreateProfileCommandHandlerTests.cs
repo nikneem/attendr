@@ -64,7 +64,7 @@ public class CreateProfileCommandHandlerTests
                 p.DisplayName == command.DisplayName &&
                 p.FirstName == command.FirstName &&
                 p.LastName == command.LastName &&
-                p.Email == command.Email
+                p.Email == command.Email.ToLowerInvariant()
             ), It.IsAny<CancellationToken>()),
             Times.Once);
 
@@ -93,7 +93,7 @@ public class CreateProfileCommandHandlerTests
             _faker.Person.Email
         );
 
-        var existingProfile = new Profile(
+        var existingProfile = Profile.FromPersisted(
             existingProfileId,
             subjectId,
             _faker.Person.FullName,

@@ -72,36 +72,30 @@ public sealed class CreateProfileCommandHandler : ICommandHandler<CreateProfileC
                 return new CreateProfileResult(existingProfile.Id);
             }
 
-            // Create a new profile
-            var profileId = Guid.NewGuid().ToString();
-            var profile = new Profile(
-                profileId,
+            // Create a new profile using factory method (domain model enforces business rules)
+            var profile = Profile.Create(
                 command.SubjectId,
                 command.DisplayName,
                 command.FirstName,
                 command.LastName,
-                command.Email,
-                null,
-                null,
-                true,
-                false
+                command.Email
             );
 
-            activity?.SetTag("profile.id", profileId);
+            activity?.SetTag("profile.id", profile.Id);
             activity?.SetTag("profile.display_name", profile.DisplayName);
             activity?.SetTag("profile.action", "created");
 
             // Save the profile
             await _profileRepository.AddAsync(profile, cancellationToken);
             _logger.LogInformation("Profile created successfully with ID {ProfileId} for subject {SubjectId}",
-                profileId, command.SubjectId);
+                profile.Id, command.SubjectId);
 
             // Prime cache with newly created profile data
-            var createdResolved = new ResolveProfileResult(profileId, profile.DisplayName);
+            var createdResolved = new ResolveProfileResult(profile.Id, profile.DisplayName);
             await _cacheClient.SetAsync(CacheKeys.Profiles.Subject(command.SubjectId), createdResolved, cancellationToken: cancellationToken);
 
             activity?.SetStatus(ActivityStatusCode.Ok);
-            return new CreateProfileResult(profileId);
+            return new CreateProfileResult(profile.Id);
         }
         catch (Exception ex)
         {

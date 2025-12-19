@@ -91,7 +91,7 @@ public sealed class TableStorageProfileRepository : IProfileRepository
 
     private static Profile ToDomain(ProfileTableEntity entity)
     {
-        var profile = new Profile(
+        var profile = Profile.FromPersisted(
             entity.RowKey,
             entity.SubjectId,
             entity.DisplayName,

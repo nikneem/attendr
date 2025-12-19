@@ -26,7 +26,7 @@ public class ProfileTests
         var tagLine = _faker.Lorem.Sentence();
 
         // Act
-        var profile = new Profile(id, subjectId, displayName, firstName, lastName, email, employee, tagLine, true, false);
+        var profile = Profile.FromPersisted(id, subjectId, displayName, firstName, lastName, email, employee, tagLine, true, false);
 
         // Assert
         Assert.Equal(id, profile.Id);
@@ -53,7 +53,7 @@ public class ProfileTests
         var email = _faker.Person.Email;
 
         // Act
-        var profile = new Profile(id, subjectId, displayName, firstName, lastName, email, null, null, true, false);
+        var profile = Profile.FromPersisted(id, subjectId, displayName, firstName, lastName, email, null, null, true, false);
 
         // Assert
         Assert.Equal(id, profile.Id);
@@ -228,17 +228,12 @@ public class ProfileTests
 
     private Profile CreateValidProfile()
     {
-        return new Profile(
-            _faker.Random.Guid().ToString(),
+        return Profile.Create(
             _faker.Random.Guid().ToString(),
             _faker.Person.FullName,
             _faker.Person.FirstName,
             _faker.Person.LastName,
-            _faker.Person.Email,
-            null,
-            null,
-            true,
-            false
+            _faker.Person.Email
         );
     }
 }

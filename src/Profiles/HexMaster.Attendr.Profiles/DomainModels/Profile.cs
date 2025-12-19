@@ -54,6 +54,7 @@ public class Profile : DomainModel<string>
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Profile"/> class.
+    /// Private constructor for ORM/deserialization and internal use by factory methods.
     /// </summary>
     /// <param name="id">The immutable unique identifier for the profile.</param>
     /// <param name="subjectId">The subject ID from the authentication provider.</param>
@@ -63,7 +64,7 @@ public class Profile : DomainModel<string>
     /// <param name="email">The email address of the profile owner.</param>
     /// <exception cref="ArgumentNullException">Thrown when id or subjectId is null.</exception>
     /// <exception cref="ArgumentException">Thrown when required parameters are null or whitespace.</exception>
-    public Profile(string id,
+    private Profile(string id,
         string subjectId,
          string displayName,
           string firstName,
@@ -75,17 +76,96 @@ public class Profile : DomainModel<string>
               bool isSearchable)
         : base(id)
     {
-        SubjectId = subjectId;
-        DisplayName = displayName;
-        FirstName = firstName;
-        LastName = lastName;
-        Email = email.ToLowerInvariant();
-        Employee = employee;
-        TagLine = tagLine;
+        ArgumentException.ThrowIfNullOrWhiteSpace(id, nameof(id));
+        ArgumentException.ThrowIfNullOrWhiteSpace(subjectId, nameof(subjectId));
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayName, nameof(displayName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(email, nameof(email));
+
+        if (!email.Contains("@") || !email.Contains("."))
+        {
+            throw new ArgumentException("Email format is invalid.", nameof(email));
+        }
+
+        SubjectId = subjectId.Trim();
+        DisplayName = displayName.Trim();
+        FirstName = string.IsNullOrWhiteSpace(firstName) ? null : firstName.Trim();
+        LastName = string.IsNullOrWhiteSpace(lastName) ? null : lastName.Trim();
+        Email = email.Trim().ToLowerInvariant();
+        Employee = string.IsNullOrWhiteSpace(employee) ? null : employee.Trim();
+        TagLine = string.IsNullOrWhiteSpace(tagLine) ? null : tagLine.Trim();
         Enabled = isEnabled;
         IsSearchable = isSearchable;
     }
 
+    /// <summary>
+    /// Factory method to create a new profile.
+    /// </summary>
+    /// <param name="subjectId">The subject ID from the authentication provider.</param>
+    /// <param name="displayName">The display name of the profile owner.</param>
+    /// <param name="firstName">The first name of the profile owner.</param>
+    /// <param name="lastName">The last name of the profile owner.</param>
+    /// <param name="email">The email address of the profile owner.</param>
+    /// <returns>A new instance of <see cref="Profile"/>.</returns>
+    /// <exception cref="ArgumentException">Thrown when required parameters are invalid.</exception>
+    public static Profile Create(
+        string subjectId,
+        string displayName,
+        string firstName,
+        string lastName,
+        string email)
+    {
+        var profileId = Guid.NewGuid().ToString();
+        return new Profile(
+            profileId,
+            subjectId,
+            displayName,
+            firstName,
+            lastName,
+            email,
+            null,
+            null,
+            true,
+            false);
+    }
+
+    /// <summary>
+    /// Factory method to load a profile from persisted data.
+    /// </summary>
+    /// <param name="id">The profile ID.</param>
+    /// <param name="subjectId">The subject ID from the authentication provider.</param>
+    /// <param name="displayName">The display name of the profile owner.</param>
+    /// <param name="firstName">The first name of the profile owner.</param>
+    /// <param name="lastName">The last name of the profile owner.</param>
+    /// <param name="email">The email address of the profile owner.</param>
+    /// <param name="employee">The employee identifier.</param>
+    /// <param name="tagLine">The profile tag line.</param>
+    /// <param name="isEnabled">Whether the profile is enabled.</param>
+    /// <param name="isSearchable">Whether the profile is searchable.</param>
+    /// <returns>A profile instance loaded from persistence.</returns>
+    public static Profile FromPersisted(
+        string id,
+        string subjectId,
+        string displayName,
+        string firstName,
+        string lastName,
+        string email,
+        string? employee,
+        string? tagLine,
+        bool isEnabled,
+        bool isSearchable)
+    {
+        return new Profile(
+            id,
+            subjectId,
+            displayName,
+            firstName,
+            lastName,
+            email,
+            employee,
+            tagLine,
+            isEnabled,
+            isSearchable);
+    }
 
     /// <summary>
     /// Sets the subject ID from the authentication provider.
