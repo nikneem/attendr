@@ -1,0 +1,49 @@
+<p-card>
+    <ng-template pTemplate="header">
+        <div class="header-content">
+            <h3 class="title">My Groups</h3>
+            <div class="button-group">
+                <p-button label="Create Group" icon="pi pi-plus" severity="secondary" (click)="onCreateGroup()" />
+                <p-button label="Join Group" icon="pi pi-users" (click)="onJoinGroup()" />
+            </div>
+        </div>
+    </ng-template>
+
+    @if (store.loading()) {
+    <div class="loading-container">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <p>Loading groups...</p>
+    </div>
+    } @else if (store.error()) {
+    <div class="error-container">
+        <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
+        <p>{{ store.error() }}</p>
+    </div>
+    } @else {
+    <p-table [value]="store.groups()" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Group Name</th>
+                <th style="width: 150px">Members</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-group>
+            <tr>
+                <td>{{ group.name }}</td>
+                <td>{{ group.memberCount }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="2" class="text-center">
+                    <div class="empty-state">
+                        <i class="pi pi-users" style="font-size: 3rem; color: var(--text-color-secondary)"></i>
+                        <p>You haven't joined any groups yet</p>
+                        <p-button label="Join Your First Group" icon="pi pi-users" (click)="onJoinGroup()" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    }
+</p-card>
