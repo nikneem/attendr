@@ -1,0 +1,23 @@
+<div class="private-template">
+    <p-menubar [model]="items">
+        <ng-template pTemplate="start">
+            <a class="brand" routerLink="/">
+                <span class="logo-dot"></span>
+                <span class="brand-text">Attendr</span>
+            </a>
+        </ng-template>
+
+        <ng-template pTemplate="end">
+            <div class="account">
+                <p-menu #accountMenu [model]="accountItems" [popup]="true"></p-menu>
+                <button class="icon-button" type="button" (click)="toggleAccountMenu($event)" aria-label="Account menu">
+                    <i class="pi pi-user"></i>
+                </button>
+            </div>
+        </ng-template>
+    </p-menubar>
+
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

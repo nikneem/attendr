@@ -45,3 +45,12 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+## Authentication & Authorization
+
+- Identity Provider: Use Auth0 for authentication and authorization.
+- Client Library: Use `angular-auth-oidc-client` to integrate OIDC/OAuth flows.
+- Configuration: Register the library in `app.config.ts` via the provided APIs (e.g., provider-based setup) and configure issuer, clientId, and redirect URIs.
+- Routing: Protect routes using the library’s guards; avoid custom ad-hoc auth checks.
+- HTTP: Use the library’s HTTP interceptor/token utilities for attaching access tokens to API requests; avoid manual header handling.
+- Secrets: Do not hardcode client IDs or domains in code; read from environment-specific configuration.

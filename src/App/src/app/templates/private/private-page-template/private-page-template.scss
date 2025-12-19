@@ -1,0 +1,75 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.private-template {
+    min-height: 100vh;
+    background-color: $background-primary;
+    color: $text-primary;
+
+    .p-menubar {
+        background-color: $background-secondary;
+        border: 1px solid $border-color;
+        border-radius: 0;
+        padding: 0 $spacing-lg;
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: $spacing-sm;
+            color: $text-primary;
+
+            .logo-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+                box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+            }
+
+            .brand-text {
+                font-weight: 700;
+                letter-spacing: 0.5px;
+            }
+
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+
+        .p-menuitem-icon {
+            color: $primary-light;
+        }
+    }
+
+    .account {
+        display: inline-flex;
+        align-items: center;
+
+        .icon-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: $radius-full;
+            border: 1px solid $border-color;
+            background-color: $background-elevated;
+            color: $text-primary;
+            cursor: pointer;
+            transition: all $transition-fast;
+
+            i {
+                font-size: 1rem;
+            }
+
+            &:hover {
+                border-color: $primary-color;
+                box-shadow: $shadow-sm;
+            }
+        }
+    }
+
+    .content {
+        padding: $spacing-xl;
+    }
+}

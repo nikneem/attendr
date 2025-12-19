@@ -1,0 +1,14 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.dashboard {
+    padding: $spacing-2xl 0;
+
+    h1 {
+        margin-bottom: $spacing-md;
+    }
+
+    p {
+        color: $text-secondary;
+    }
+}
