@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
@@ -10,7 +10,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
     selector: 'attn-private-page-template',
-    imports: [MenubarModule, MenuModule, ButtonModule, AvatarModule, RouterLink],
+    imports: [MenubarModule, MenuModule, ButtonModule, AvatarModule, RouterLink, RouterOutlet],
     templateUrl: './private-page-template.html',
     styleUrl: './private-page-template.scss',
 })
