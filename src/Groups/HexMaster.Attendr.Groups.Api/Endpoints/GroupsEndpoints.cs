@@ -55,8 +55,10 @@ public static class GroupsEndpoints
             }
 
             // Create the group with the current user as owner
-            var groupId = Guid.NewGuid();
-            var group = new Group(groupId, request.Name.Trim(), Guid.Parse(profile.ProfileId), profile.DisplayName);
+            var group = Group.Create(
+                request.Name.Trim(),
+                Guid.Parse(profile.ProfileId),
+                profile.DisplayName);
 
             // Persist the group
             await repository.AddAsync(group, cancellationToken);

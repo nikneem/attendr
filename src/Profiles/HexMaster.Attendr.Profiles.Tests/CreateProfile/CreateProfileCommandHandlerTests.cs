@@ -4,6 +4,7 @@ using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
 using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Repositories;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace HexMaster.Attendr.Profiles.Tests.CreateProfile;
@@ -12,6 +13,7 @@ public class CreateProfileCommandHandlerTests
 {
     private readonly Mock<IProfileRepository> _mockRepository;
     private readonly Mock<IAttendrCacheClient> _mockCache;
+    private readonly Mock<ILogger<CreateProfileCommandHandler>> _mockLogger;
     private readonly CreateProfileCommandHandler _handler;
     private readonly Faker _faker;
 
@@ -19,7 +21,8 @@ public class CreateProfileCommandHandlerTests
     {
         _mockRepository = new Mock<IProfileRepository>();
         _mockCache = new Mock<IAttendrCacheClient>();
-        _handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object);
+        _mockLogger = new Mock<ILogger<CreateProfileCommandHandler>>();
+        _handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object, _mockLogger.Object);
         _faker = new Faker();
     }
 
@@ -178,13 +181,13 @@ public class CreateProfileCommandHandlerTests
     public void Constructor_ShouldThrowArgumentNullException_WhenRepositoryIsNull()
     {
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(null!, new Mock<IAttendrCacheClient>().Object));
+        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(null!, new Mock<IAttendrCacheClient>().Object, new Mock<ILogger<CreateProfileCommandHandler>>().Object));
     }
 
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenCacheIsNull()
     {
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(new Mock<IProfileRepository>().Object, null!));
+        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(new Mock<IProfileRepository>().Object, null!, new Mock<ILogger<CreateProfileCommandHandler>>().Object));
     }
 }

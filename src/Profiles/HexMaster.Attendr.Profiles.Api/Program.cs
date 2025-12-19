@@ -1,10 +1,39 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Profiles.Api.Endpoints;
 using HexMaster.Attendr.Profiles.Extensions;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Extensions;
 using HexMaster.Attendr.Core.Cache.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure OpenTelemetry
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddSource(ActivitySources.Profiles.Name)
+            .AddOtlpExporter();
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddOtlpExporter();
+    });
+
+builder.Logging.AddOpenTelemetry(logging =>
+{
+    logging
+        .AddOtlpExporter()
+        .IncludeFormattedMessage = true;
+});
 
 // Add services to the container.
 builder.Services.AddOpenApi();
