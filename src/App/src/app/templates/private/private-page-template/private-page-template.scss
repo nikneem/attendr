@@ -7,10 +7,13 @@
     color: $text-primary;
 
     .p-menubar {
-        background-color: $background-secondary;
-        border: 1px solid $border-color;
+        background-color: #1a1a1a;
+        border: 1px solid $border-dark;
         border-radius: 0;
         padding: 0 $spacing-lg;
+        min-height: 64px;
+        display: flex;
+        align-items: center;
 
         .brand {
             display: inline-flex;
@@ -36,8 +39,47 @@
             }
         }
 
-        .p-menuitem-icon {
-            color: $primary-light;
+        ::ng-deep {
+            .p-menubar-root-list {
+                display: flex;
+                align-items: center;
+                height: 64px;
+            }
+
+            .p-menuitem {
+                height: 100%;
+                display: flex;
+                align-items: center;
+            }
+
+            .p-menuitem-link {
+                color: $primary-color;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                padding: 0 $spacing-lg;
+                transition: color $transition-fast;
+
+                &:hover {
+                    color: $primary-light;
+                    background-color: transparent;
+                }
+
+                &:focus {
+                    box-shadow: none;
+                }
+            }
+
+            .p-menuitem-link.router-link-active {
+                color: #fff;
+                font-weight: 600;
+            }
+
+            .p-menubar-end {
+                display: flex;
+                align-items: center;
+                height: 64px;
+            }
         }
     }
 

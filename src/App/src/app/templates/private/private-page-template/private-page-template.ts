@@ -18,10 +18,10 @@ export class PrivatePageTemplateComponent {
     @ViewChild('accountMenu') accountMenu?: Menu;
 
     items: MenuItem[] = [
-        { label: 'Dashboard', routerLink: ['/app/dashboard'], icon: 'pi pi-home' },
-        { label: 'Groups', routerLink: ['/app/groups'], icon: 'pi pi-users' },
-        { label: 'Conferences', routerLink: ['/app/conferences'], icon: 'pi pi-calendar' },
-        { label: 'Reviews', routerLink: ['/app/reviews'], icon: 'pi pi-star' },
+        { label: 'Dashboard', routerLink: ['/app/dashboard'] },
+        { label: 'Groups', routerLink: ['/app/groups'] },
+        { label: 'Conferences', routerLink: ['/app/conferences'] },
+        { label: 'Reviews', routerLink: ['/app/reviews'] },
     ];
 
     accountItems: MenuItem[] = [
