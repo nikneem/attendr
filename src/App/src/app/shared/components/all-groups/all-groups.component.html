@@ -1,0 +1,79 @@
+<div class="all-groups-container">
+    <p-card>
+        <ng-template pTemplate="header">
+            <div class="header-content">
+                <h3 class="title">All Groups</h3>
+                <div class="search-bar">
+                    <span class="p-input-icon-left p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input type="text" pInputText [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
+                            placeholder="Search groups..." class="search-input" />
+                        @if (searchQuery) {
+                        <i class="pi pi-times clear-icon" (click)="onSearchClear()"></i>
+                        }
+                    </span>
+                    <p-button icon="pi pi-search" (click)="onSearch()" [disabled]="store.loading()" />
+                </div>
+            </div>
+        </ng-template>
+
+        @if (store.loading()) {
+        <div class="loading-container">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            <p>Loading groups...</p>
+        </div>
+        } @else if (store.error()) {
+        <div class="error-container">
+            <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
+            <p>{{ store.error() }}</p>
+        </div>
+        } @else {
+        <div class="table-container">
+            <p-table [value]="store.groups()" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Group Name</th>
+                        <th style="width: 150px">Members</th>
+                        <th style="width: 150px; text-align: center">Status</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-group>
+                    <tr>
+                        <td>{{ group.name }}</td>
+                        <td>{{ group.memberCount }}</td>
+                        <td style="text-align: center">
+                            @if (group.isMember) {
+                            <p-tag value="Joined" severity="success" />
+                            } @else {
+                            <p-button label="Join" size="small" (click)="onJoinGroup(group.id)" />
+                            }
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="3" class="text-center">
+                            <div class="empty-state">
+                                <i class="pi pi-users" style="font-size: 3rem; color: var(--text-color-secondary)"></i>
+                                <p>No groups found</p>
+                                @if (store.searchQuery()) {
+                                <p-button label="Clear Search" (click)="onSearchClear()" />
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        @if (store.totalCount() > 0) {
+        <div class="pagination-container">
+            <p-paginator [rows]="store.pageSize()" [totalRecords]="store.totalCount()"
+                [first]="(store.pageNumber() - 1) * store.pageSize()" (onPageChange)="onPageChange($event)"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} groups" />
+        </div>
+        }
+        }
+    </p-card>
+</div>

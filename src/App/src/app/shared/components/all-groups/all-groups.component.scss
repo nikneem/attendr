@@ -1,0 +1,135 @@
+.all-groups-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 320px;
+    height: 100%;
+
+    ::ng-deep .p-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 320px;
+
+        .p-card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .p-card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+    }
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex: 1;
+        justify-content: flex-end;
+        max-width: 500px;
+
+        .p-input-icon-left,
+        .p-input-icon-right {
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+        }
+
+        .clear-icon {
+            cursor: pointer;
+            color: var(--text-color-secondary);
+
+            &:hover {
+                color: var(--text-color);
+            }
+        }
+    }
+}
+
+.table-container {
+    flex: 1;
+    overflow: auto;
+    min-height: 200px;
+
+    ::ng-deep .p-datatable {
+        .p-datatable-wrapper {
+            height: 100%;
+        }
+    }
+}
+
+.pagination-container {
+    margin-top: auto;
+    border-top: 1px solid var(--surface-border);
+    padding: 0.5rem 0;
+
+    ::ng-deep .p-paginator {
+        justify-content: flex-end;
+    }
+}
+
+.loading-container,
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+    min-height: 200px;
+}
+
+.error-container {
+    color: var(--red-500);
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    gap: 1rem;
+
+    p {
+        margin: 0;
+        color: var(--text-color-secondary);
+    }
+}
+
+.text-center {
+    text-align: center;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        align-items: stretch;
+
+        .search-bar {
+            max-width: 100%;
+        }
+    }
+}
