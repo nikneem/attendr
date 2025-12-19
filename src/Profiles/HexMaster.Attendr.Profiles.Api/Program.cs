@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Profiles.Api.Endpoints;
 using HexMaster.Attendr.Profiles.Extensions;
+using HexMaster.Attendr.Profiles.Data.TableStorage.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,9 @@ builder.Services.AddAuthentication()
 builder.Services.AddAuthorization();
 
 // Register Profiles module services
-builder.Services.AddAttendrProfilesServices();
+builder.Services
+    .AddAttendrProfilesServices()
+    .AddProfilesTableStorage(builder.Configuration);
 
 var app = builder.Build();
 

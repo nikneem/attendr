@@ -20,9 +20,6 @@ public static class ServiceCollectionExtensions
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateProfileCommand, CreateProfileResult>, CreateProfileCommandHandler>();
 
-        // TODO: Register repositories when implemented
-        // services.AddScoped<IProfileRepository, ProfileRepository>();
-
         return services;
     }
 }

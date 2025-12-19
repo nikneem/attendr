@@ -1,6 +1,7 @@
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.DomainModels;
+using HexMaster.Attendr.Profiles.Repositories;
 
 namespace HexMaster.Attendr.Profiles.CreateProfile;
 
@@ -59,42 +60,4 @@ public sealed class CreateProfileCommandHandler : ICommandHandler<CreateProfileC
 
         return new CreateProfileResult(profileId);
     }
-}
-
-/// <summary>
-/// Repository interface for Profile aggregate root operations.
-/// </summary>
-public interface IProfileRepository
-{
-    /// <summary>
-    /// Gets a profile by its unique identifier.
-    /// </summary>
-    /// <param name="id">The profile ID.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The profile if found; otherwise, null.</returns>
-    Task<Profile?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Gets a profile by its subject ID (from the authentication provider).
-    /// </summary>
-    /// <param name="subjectId">The subject ID.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The profile if found; otherwise, null.</returns>
-    Task<Profile?> GetBySubjectIdAsync(string subjectId, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Adds a new profile to the repository.
-    /// </summary>
-    /// <param name="profile">The profile to add.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(Profile profile, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Updates an existing profile in the repository.
-    /// </summary>
-    /// <param name="profile">The profile to update.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateAsync(Profile profile, CancellationToken cancellationToken = default);
 }

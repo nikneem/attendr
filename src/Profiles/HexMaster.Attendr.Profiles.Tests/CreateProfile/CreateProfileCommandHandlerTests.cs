@@ -2,6 +2,7 @@ using Bogus;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
 using HexMaster.Attendr.Profiles.DomainModels;
+using HexMaster.Attendr.Profiles.Repositories;
 using Moq;
 
 namespace HexMaster.Attendr.Profiles.Tests.CreateProfile;

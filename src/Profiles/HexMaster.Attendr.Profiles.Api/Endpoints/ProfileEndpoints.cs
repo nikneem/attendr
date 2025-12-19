@@ -2,6 +2,7 @@ using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
+using HexMaster.Attendr.Profiles.Repositories;
 
 namespace HexMaster.Attendr.Profiles.Api.Endpoints;
 
@@ -25,6 +26,15 @@ public static class ProfileEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization();
+
+        var integrationGroup = app.MapGroup("/api/profiles-integration")
+            .WithName("ProfilesIntegration");
+
+        integrationGroup.MapPost("/resolve", ResolveProfile)
+            .WithName("ResolveProfile")
+            .Produces<ResolveProfileResult>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status400BadRequest);
 
         return app;
     }
@@ -73,6 +83,33 @@ public static class ProfileEndpoints
         catch (ArgumentException ex)
         {
             return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> ResolveProfile(
+        ResolveProfileRequest request,
+        IProfileRepository repository,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(request.SubjectId))
+        {
+            return Results.BadRequest(new { error = "SubjectId is required" });
+        }
+
+        try
+        {
+            var profile = await repository.GetBySubjectIdAsync(request.SubjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound();
+            }
+
+            var result = new ResolveProfileResult(profile.Id, profile.DisplayName);
+            return Results.Ok(result);
         }
         catch (Exception)
         {
