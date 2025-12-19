@@ -7,6 +7,8 @@ using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Groups.Api.Endpoints;
 using HexMaster.Attendr.Groups.Extensions;
+using HexMaster.Attendr.Groups;
+using HexMaster.Attendr.Groups.Data.TableStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +58,9 @@ builder.Services.AddProfilesIntegration(builder.Configuration);
 
 // Register Groups module services
 builder.Services.AddAttendrGroupsServices();
+
+// Register repository (in-memory for now)
+builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 
 var app = builder.Build();
 

@@ -1,6 +1,8 @@
 using System.Security.Claims;
+using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.DomainModels;
+using HexMaster.Attendr.Groups.GetMyGroups;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
@@ -16,6 +18,13 @@ public static class GroupsEndpoints
             .WithName("CreateGroup")
             .Produces<CreateGroupResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
+        group.MapGet("/my-groups", GetMyGroups)
+            .WithName("GetMyGroups")
+            .Produces<IReadOnlyCollection<MyGroupDto>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization();
@@ -74,10 +83,40 @@ public static class GroupsEndpoints
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-}
 
-public interface IGroupRepository
-{
-    Task AddAsync(Group group, CancellationToken cancellationToken = default);
-    Task<Group?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    private static async Task<IResult> GetMyGroups(
+        IProfilesIntegrationService profilesIntegration,
+        IQueryHandler<GetMyGroupsQuery, IReadOnlyCollection<MyGroupDto>> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        // Extract SubjectId from JWT token
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            // Resolve the current user's profile
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            // Get user's groups
+            var query = new GetMyGroupsQuery(Guid.Parse(profile.ProfileId));
+            var groups = await handler.Handle(query, cancellationToken);
+
+            return Results.Ok(groups);
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 }

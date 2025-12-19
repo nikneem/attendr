@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Groups\HexMaster.Attendr.Groups.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Groups.Abstractions\HexMaster.Attendr.Groups.Abstractions.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Groups.Data.TableStorage\HexMaster.Attendr.Groups.Data.TableStorage.csproj" />
   </ItemGroup>
 
 </Project>
