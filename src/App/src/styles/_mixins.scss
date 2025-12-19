@@ -1,0 +1,73 @@
+@use './variables' as *;
+
+// Mixins for common patterns
+
+@mixin panel {
+    background-color: $background-secondary;
+    border: 1px solid $border-color;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    box-shadow: $shadow-md;
+}
+
+@mixin panel-elevated {
+    background-color: $background-elevated;
+    border: 1px solid $border-light;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    box-shadow: $shadow-lg;
+}
+
+@mixin button-primary {
+    background-color: $primary-color;
+    color: $text-primary;
+    border: none;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-md;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $primary-light;
+        transform: translateY(-1px);
+        box-shadow: $shadow-md;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+@mixin button-secondary {
+    background-color: $secondary-color;
+    color: $text-primary;
+    border: none;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-md;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+        background-color: $secondary-light;
+        transform: translateY(-1px);
+        box-shadow: $shadow-md;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+@mixin gradient-primary {
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+}
+
+@mixin gradient-secondary {
+    background: linear-gradient(135deg, $secondary-color 0%, $secondary-light 100%);
+}
+
+@mixin gradient-hero {
+    background: linear-gradient(135deg, $primary-darker 0%, $secondary-darker 100%);
+}

@@ -1,0 +1,79 @@
+// Color Palette - Attendr Dark Theme
+
+// Background Colors
+$background-primary: #222;
+$background-secondary: #2a2a2a;
+$background-tertiary: #333;
+$background-elevated: #3a3a3a;
+$background-hover: #404040;
+
+// Text Colors
+$text-primary: #ddd;
+$text-secondary: #bbb;
+$text-muted: #888;
+$text-disabled: #666;
+$text-inverse: #222;
+
+// Primary Colors (Vibrant Blue)
+$primary-color: #2563eb;
+$primary-light: #3b82f6;
+$primary-lighter: #60a5fa;
+$primary-dark: #1d4ed8;
+$primary-darker: #1e40af;
+
+// Secondary Colors (Vibrant Turquoise)
+$secondary-color: #06b6d4;
+$secondary-light: #22d3ee;
+$secondary-lighter: #67e8f9;
+$secondary-dark: #0891b2;
+$secondary-darker: #0e7490;
+
+// Accent Colors
+$accent-success: #10b981;
+$accent-warning: #f59e0b;
+$accent-error: #ef4444;
+$accent-info: #3b82f6;
+
+// Border Colors
+$border-color: #444;
+$border-light: #555;
+$border-dark: #333;
+
+// Shadow
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+
+// Border Radius
+$radius-sm: 0.25rem;
+$radius-md: 0.5rem;
+$radius-lg: 0.75rem;
+$radius-xl: 1rem;
+$radius-full: 9999px;
+
+// Spacing
+$spacing-xs: 0.5rem;
+$spacing-sm: 0.75rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+$spacing-3xl: 4rem;
+
+// Typography
+$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
+$font-size-4xl: 2.25rem;
+$font-size-5xl: 3rem;
+
+// Transitions
+$transition-fast: 150ms ease-in-out;
+$transition-base: 250ms ease-in-out;
+$transition-slow: 350ms ease-in-out;

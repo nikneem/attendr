@@ -1,0 +1,78 @@
+/* You can add global styles to this file, and also import other style files */
+@use './styles/variables' as *;
+@use './styles/mixins' as *;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    font-family: $font-family-base;
+    font-size: $font-size-base;
+    background-color: $background-primary;
+    color: $text-primary;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: $spacing-md;
+}
+
+h1 {
+    font-size: $font-size-5xl;
+}
+
+h2 {
+    font-size: $font-size-4xl;
+}
+
+h3 {
+    font-size: $font-size-3xl;
+}
+
+h4 {
+    font-size: $font-size-2xl;
+}
+
+p {
+    margin-bottom: $spacing-md;
+}
+
+a {
+    color: $primary-light;
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover {
+        color: $primary-lighter;
+    }
+}
+
+button {
+    font-family: inherit;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-lg;
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0 $spacing-lg;
+}

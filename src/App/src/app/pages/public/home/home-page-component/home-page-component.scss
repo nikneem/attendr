@@ -1,0 +1,275 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.home-page {
+    min-height: 100vh;
+}
+
+// Hero Section
+.hero {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    @include gradient-hero;
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        max-width: 800px;
+        padding: $spacing-2xl;
+    }
+
+    .hero-title {
+        font-size: $font-size-5xl;
+        font-weight: 700;
+        margin-bottom: $spacing-lg;
+        color: $text-primary;
+
+        @media (max-width: 768px) {
+            font-size: $font-size-4xl;
+        }
+
+        .brand {
+            background: linear-gradient(135deg, $primary-lighter 0%, $secondary-lighter 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    }
+
+    .hero-subtitle {
+        font-size: $font-size-xl;
+        color: $text-secondary;
+        margin-bottom: $spacing-2xl;
+        line-height: 1.8;
+
+        @media (max-width: 768px) {
+            font-size: $font-size-lg;
+        }
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: $spacing-lg;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .hero-decoration {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .decoration-circle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.1;
+        animation: float 20s infinite ease-in-out;
+
+        &.circle-1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: $primary-color;
+            animation-delay: 0s;
+        }
+
+        &.circle-2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            right: 10%;
+            background: $secondary-color;
+            animation-delay: 5s;
+        }
+
+        &.circle-3 {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            right: -50px;
+            background: $primary-lighter;
+            animation-delay: 10s;
+        }
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-30px) scale(1.1);
+    }
+}
+
+// Features Section
+.features {
+    padding: $spacing-3xl 0;
+    background-color: $background-primary;
+
+    .section-title {
+        text-align: center;
+        font-size: $font-size-4xl;
+        margin-bottom: $spacing-3xl;
+        color: $text-primary;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: $spacing-xl;
+        margin-bottom: $spacing-2xl;
+    }
+
+    .feature-card {
+        @include panel;
+        text-align: center;
+        transition: all $transition-base;
+
+        &:hover {
+            transform: translateY(-8px);
+            box-shadow: $shadow-xl;
+            border-color: $primary-color;
+
+            .feature-icon {
+                background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+                transform: scale(1.1);
+            }
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto $spacing-lg;
+            background-color: $background-elevated;
+            border-radius: $radius-full;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all $transition-base;
+
+            svg {
+                width: 32px;
+                height: 32px;
+                color: $primary-light;
+            }
+        }
+
+        h3 {
+            font-size: $font-size-xl;
+            margin-bottom: $spacing-sm;
+            color: $text-primary;
+        }
+
+        p {
+            color: $text-secondary;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+    }
+}
+
+// CTA Section
+.cta {
+    padding: $spacing-3xl 0;
+    @include gradient-primary;
+
+    .cta-content {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto;
+
+        h2 {
+            font-size: $font-size-3xl;
+            margin-bottom: $spacing-lg;
+            color: $text-primary;
+        }
+
+        p {
+            font-size: $font-size-lg;
+            color: $text-secondary;
+            margin-bottom: $spacing-2xl;
+            line-height: 1.8;
+        }
+    }
+}
+
+// Button Styles
+.btn {
+    padding: $spacing-sm $spacing-xl;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all $transition-base;
+    display: inline-block;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    &.btn-primary {
+        background-color: $primary-color;
+        color: $text-primary;
+
+        &:hover {
+            background-color: $primary-light;
+        }
+    }
+
+    &.btn-secondary {
+        background-color: transparent;
+        color: $text-primary;
+        border: 2px solid $secondary-color;
+
+        &:hover {
+            background-color: $secondary-color;
+            border-color: $secondary-light;
+        }
+    }
+
+    &.btn-lg {
+        padding: $spacing-md $spacing-2xl;
+        font-size: $font-size-lg;
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        min-height: 70vh;
+
+        .hero-content {
+            padding: $spacing-xl;
+        }
+    }
+
+    .cta {
+        padding: $spacing-2xl 0;
+
+        .cta-content h2 {
+            font-size: $font-size-2xl;
+        }
+    }
+}
