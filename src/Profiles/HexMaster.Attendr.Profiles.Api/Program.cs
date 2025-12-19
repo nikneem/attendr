@@ -1,6 +1,7 @@
 using HexMaster.Attendr.Profiles.Api.Endpoints;
 using HexMaster.Attendr.Profiles.Extensions;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Extensions;
+using HexMaster.Attendr.Core.Cache.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ builder.Services.AddAuthorization();
 builder.Services
     .AddAttendrProfilesServices()
     .AddProfilesTableStorage(builder.Configuration);
+
+// Register shared cache client
+builder.Services.AddAttendrCache(builder.Configuration);
 
 var app = builder.Build();
 
