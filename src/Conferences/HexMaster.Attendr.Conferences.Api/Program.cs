@@ -3,6 +3,10 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.Conferences.Api.Endpoints;
+using HexMaster.Attendr.Conferences;
+using HexMaster.Attendr.Conferences.Data.MongoDb;
+using HexMaster.Attendr.Conferences.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +48,10 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
+// Register repositories and services
+builder.Services.AddSingleton<IConferenceRepository, InMemoryConferenceRepository>();
+builder.Services.AddAttendrConferencesServices();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,5 +63,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map endpoints
+app.MapConferencesEndpoints();
 
 app.Run();
