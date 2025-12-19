@@ -5,7 +5,7 @@ export const authConfig: PassedInitialConfig = {
     authority: 'https://attendr.eu.auth0.com',
     redirectUrl: window.location.origin,
     clientId: 'uGNx931vqgAbGRXf0pDN6ApR5PDot9e8',
-    scope: 'openid profile offline_access',
+    scope: 'openid profile offline_access https://api.attendr.com',
     responseType: 'code',
     silentRenew: true,
     useRefreshToken: true,
