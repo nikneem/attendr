@@ -45,7 +45,8 @@ public sealed class InMemoryGroupRepository : IGroupRepository
         int pageNumber,
         CancellationToken cancellationToken = default)
     {
-        var query = _groups.Values.AsEnumerable();
+        // Only include searchable groups
+        var query = _groups.Values.Where(g => g.Settings.IsSearchable).AsEnumerable();
 
         // Apply search filter if provided
         if (!string.IsNullOrWhiteSpace(searchQuery))

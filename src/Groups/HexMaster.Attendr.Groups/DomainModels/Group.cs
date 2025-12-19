@@ -87,7 +87,7 @@ public sealed class Group
         Guid ownerId,
         string ownerName,
         bool isPublic = false,
-        bool isSearchable = false)
+        bool isSearchable = true)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
 
