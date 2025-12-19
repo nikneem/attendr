@@ -4,15 +4,21 @@
             <div class="header-content">
                 <h3 class="title">All Groups</h3>
                 <div class="search-bar">
-                    <span class="p-input-icon-left p-input-icon-right">
-                        <i class="pi pi-search"></i>
-                        <input type="text" pInputText [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
-                            placeholder="Search groups..." class="search-input" />
+                    <p-iconfield>
+                        <p-inputicon styleClass="pi pi-search" />
+                        <input
+                            type="text"
+                            pInputText
+                            [(ngModel)]="searchQuery"
+                            (input)="onSearchInput()"
+                            (keyup)="onSearchKeyup($event)"
+                            placeholder="Search groups..."
+                            class="search-input"
+                        />
                         @if (searchQuery) {
-                        <i class="pi pi-times clear-icon" (click)="onSearchClear()"></i>
+                        <p-inputicon styleClass="pi pi-times clear-icon" (click)="onSearchClear()" />
                         }
-                    </span>
-                    <p-button icon="pi pi-search" (click)="onSearch()" [disabled]="store.loading()" />
+                    </p-iconfield>
                 </div>
             </div>
         </ng-template>

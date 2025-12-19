@@ -42,27 +42,29 @@
 
     .search-bar {
         display: flex;
-        gap: 0.5rem;
         align-items: center;
         flex: 1;
         justify-content: flex-end;
         max-width: 500px;
 
-        .p-input-icon-left,
-        .p-input-icon-right {
-            flex: 1;
-        }
-
-        .search-input {
+        ::ng-deep p-iconfield {
             width: 100%;
-        }
 
-        .clear-icon {
-            cursor: pointer;
-            color: var(--text-color-secondary);
+            .p-iconfield {
+                width: 100%;
+            }
 
-            &:hover {
-                color: var(--text-color);
+            .search-input {
+                width: 100%;
+            }
+
+            .clear-icon {
+                cursor: pointer;
+                color: var(--text-color-secondary);
+
+                &:hover {
+                    color: var(--text-color);
+                }
             }
         }
     }
