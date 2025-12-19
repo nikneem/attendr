@@ -53,26 +53,40 @@
             }
 
             .p-menuitem-link {
-                color: $primary-color;
+                color: $primary-color !important;
                 height: 100%;
                 display: flex;
                 align-items: center;
                 padding: 0 $spacing-lg;
                 transition: color $transition-fast;
+                background-color: transparent !important;
+
+                .p-menuitem-text {
+                    color: $primary-color;
+                }
 
                 &:hover {
-                    color: $primary-light;
-                    background-color: transparent;
+                    color: $primary-light !important;
+                    background-color: transparent !important;
+
+                    .p-menuitem-text {
+                        color: $primary-light;
+                    }
                 }
 
                 &:focus {
-                    box-shadow: none;
+                    box-shadow: none !important;
                 }
             }
 
+            .p-menuitem.router-link-active .p-menuitem-link,
             .p-menuitem-link.router-link-active {
-                color: #fff;
+                color: #fff !important;
                 font-weight: 600;
+
+                .p-menuitem-text {
+                    color: #fff;
+                }
             }
 
             .p-menubar-end {
