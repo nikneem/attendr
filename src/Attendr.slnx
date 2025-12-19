@@ -21,5 +21,8 @@
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Tests/HexMaster.Attendr.Profiles.Tests.csproj" Id="ce8e19b6-6967-41a4-b3b7-4b46fce3466b" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles/HexMaster.Attendr.Profiles.csproj" Id="da665b12-fcab-4a98-948a-971cdca2a076" />
   </Folder>
+  <Folder Name="/Proxy/">
+    <Project Path="HexMaster.Attendr.Proxy.Api/HexMaster.Attendr.Proxy.Api.csproj" Id="2697225b-ac66-4b1c-ad83-d20beda55f6b" />
+  </Folder>
   <Project Path="Shared/HexMaster.Attendr.Core/HexMaster.Attendr.Core.csproj" Id="5cc48635-17ed-472e-95fc-bc418fd62534" />
 </Solution>
