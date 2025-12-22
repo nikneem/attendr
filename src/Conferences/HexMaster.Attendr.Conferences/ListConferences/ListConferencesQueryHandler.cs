@@ -1,14 +1,13 @@
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.Core.Observability;
-using HexMaster.Attendr.Core.QueryHandlers;
-using System.Diagnostics;
+using HexMaster.Attendr.Core.CommandHandlers;
 
 namespace HexMaster.Attendr.Conferences.ListConferences;
 
 public sealed class ListConferencesQueryHandler(IConferenceRepository repository)
     : IQueryHandler<ListConferencesQuery, ListConferencesResult>
 {
-    public async Task<ListConferencesResult> HandleAsync(
+    public async Task<ListConferencesResult> Handle(
         ListConferencesQuery query,
         CancellationToken cancellationToken = default)
     {
@@ -40,4 +39,5 @@ public sealed class ListConferencesQueryHandler(IConferenceRepository repository
 
         return new ListConferencesResult(items, totalCount, query.PageNumber, pageSize);
     }
+
 }

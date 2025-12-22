@@ -51,6 +51,7 @@ builder.Services.AddAuthorization();
 // Register repositories and services
 builder.Services.AddSingleton<IConferenceRepository, InMemoryConferenceRepository>();
 builder.Services.AddAttendrConferencesServices();
+builder.Services.AddDaprSidekick();
 
 var app = builder.Build();
 

@@ -1,24 +1,21 @@
-using System.Text.Json;
-using StackExchange.Redis;
+using Dapr.Client;
 
 namespace HexMaster.Attendr.Core.Cache;
 
 public sealed class AttendrCacheClient : IAttendrCacheClient
 {
-    private readonly IConnectionMultiplexer _multiplexer;
+    private readonly DaprClient _daprClient;
     private readonly TimeSpan _defaultTtl;
-    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly string _storeName;
 
-    public AttendrCacheClient(IConnectionMultiplexer multiplexer, AttendrCacheOptions options)
+    public AttendrCacheClient(DaprClient daprClient, AttendrCacheOptions options)
     {
-        _multiplexer = multiplexer ?? throw new ArgumentNullException(nameof(multiplexer));
+        _daprClient = daprClient ?? throw new ArgumentNullException(nameof(daprClient));
         ArgumentNullException.ThrowIfNull(options);
         _defaultTtl = TimeSpan.FromSeconds(Math.Max(1, options.DefaultTtlSeconds));
-        _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false
-        };
+        _storeName = string.IsNullOrWhiteSpace(options.StoreName)
+            ? throw new ArgumentException("StoreName is required", nameof(options))
+            : options.StoreName;
     }
 
     public async Task<T?> GetOrSetAsync<T>(string key, Func<CancellationToken, Task<T?>> factory, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
@@ -26,19 +23,17 @@ public sealed class AttendrCacheClient : IAttendrCacheClient
         if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
         ArgumentNullException.ThrowIfNull(factory);
 
-        var db = _multiplexer.GetDatabase();
-        var cached = await db.StringGetAsync(key).ConfigureAwait(false);
-        if (cached.HasValue)
+        try
         {
-            try
+            var cached = await _daprClient.GetStateAsync<T>(_storeName, key, cancellationToken: cancellationToken).ConfigureAwait(false);
+            if (cached is not null)
             {
-                var value = JsonSerializer.Deserialize<T>(cached.ToString(), _jsonOptions);
-                return value;
+                return cached;
             }
-            catch
-            {
-                // If deserialization fails, fall through to recompute and overwrite
-            }
+        }
+        catch
+        {
+            // If retrieval fails, fall through to recompute
         }
 
         var fresh = await factory(cancellationToken).ConfigureAwait(false);
@@ -47,18 +42,26 @@ public sealed class AttendrCacheClient : IAttendrCacheClient
             return default;
         }
 
-        var payload = JsonSerializer.Serialize(fresh, _jsonOptions);
         var expiry = ttl ?? _defaultTtl;
-        await db.StringSetAsync(key, payload, expiry).ConfigureAwait(false);
+        var metadata = new Dictionary<string, string>
+        {
+            { "ttlInSeconds", ((int)expiry.TotalSeconds).ToString() }
+        };
+
+        await _daprClient.SaveStateAsync(_storeName, key, fresh, metadata: metadata, cancellationToken: cancellationToken).ConfigureAwait(false);
         return fresh;
     }
 
     public async Task SetAsync<T>(string key, T value, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
-        var db = _multiplexer.GetDatabase();
-        var payload = JsonSerializer.Serialize(value, _jsonOptions);
+
         var expiry = ttl ?? _defaultTtl;
-        await db.StringSetAsync(key, payload, expiry).ConfigureAwait(false);
+        var metadata = new Dictionary<string, string>
+        {
+            { "ttlInSeconds", ((int)expiry.TotalSeconds).ToString() }
+        };
+
+        await _daprClient.SaveStateAsync(_storeName, key, value, metadata: metadata, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 }

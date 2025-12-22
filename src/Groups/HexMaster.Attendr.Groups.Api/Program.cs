@@ -58,6 +58,7 @@ builder.Services.AddProfilesIntegration(builder.Configuration);
 
 // Register Groups module services
 builder.Services.AddAttendrGroupsServices();
+builder.Services.AddDaprSidekick();
 
 // Register repository (in-memory for now)
 builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();

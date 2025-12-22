@@ -2,7 +2,6 @@ using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.CreateConference;
 using HexMaster.Attendr.Conferences.ListConferences;
 using HexMaster.Attendr.Core.CommandHandlers;
-using HexMaster.Attendr.Core.QueryHandlers;
 
 namespace HexMaster.Attendr.Conferences.Api.Endpoints;
 
@@ -37,7 +36,7 @@ public static class ConferencesEndpoints
         CancellationToken cancellationToken = default)
     {
         var query = new ListConferencesQuery(search, pageSize, pageNumber);
-        var result = await handler.HandleAsync(query, cancellationToken);
+        var result = await handler.Handle(query, cancellationToken);
         return Results.Ok(result);
     }
 

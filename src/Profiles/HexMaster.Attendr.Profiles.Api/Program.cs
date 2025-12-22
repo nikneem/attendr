@@ -53,8 +53,7 @@ builder.Services
     .AddAttendrProfilesServices()
     .AddProfilesTableStorage(builder.Configuration);
 
-// Register shared cache client
-builder.Services.AddAttendrCache(builder.Configuration);
+builder.Services.AddDaprSidekick();
 
 var app = builder.Build();
 
