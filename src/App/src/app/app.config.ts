@@ -9,6 +9,7 @@ import { routes } from './app.routes';
 import { authConfig } from './auth/auth.config';
 import { OidcSecurityService, provideAuth, authInterceptor } from 'angular-auth-oidc-client';
 import { retryInterceptor } from './shared/interceptors/retry.interceptor';
+import { AuthCallbackHandler } from './auth/auth-callback.handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,8 +28,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       multi: true,
-      deps: [OidcSecurityService],
-      useFactory: (oidc: OidcSecurityService) => () => oidc.checkAuth().subscribe(),
+      deps: [OidcSecurityService, AuthCallbackHandler],
+      useFactory: (oidc: OidcSecurityService, authCallback: AuthCallbackHandler) => () => {
+        authCallback.handleAuthCallback();
+        return oidc.checkAuth().toPromise();
+      },
     }
   ]
 };
