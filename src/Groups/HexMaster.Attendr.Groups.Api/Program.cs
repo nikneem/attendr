@@ -7,8 +7,7 @@ using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Groups.Api.Endpoints;
 using HexMaster.Attendr.Groups.Extensions;
-using HexMaster.Attendr.Groups;
-using HexMaster.Attendr.Groups.Data.TableStorage;
+using HexMaster.Attendr.Groups.Data.MongoDb.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,8 +60,8 @@ builder.Services.AddAttendrGroupsServices();
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();
 
-// Register repository (in-memory for now)
-builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
+// Register MongoDB repository
+builder.Services.AddMongoDbGroupRepository(builder.Configuration);
 
 var app = builder.Build();
 
