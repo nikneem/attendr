@@ -4,9 +4,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Profiles.Api.Endpoints;
-using HexMaster.Attendr.Profiles.Extensions;
 using HexMaster.Attendr.Profiles.Data.MongoDb.Extensions;
-using HexMaster.Attendr.Core.Cache.Extensions;
+using HexMaster.Attendr.Profiles.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

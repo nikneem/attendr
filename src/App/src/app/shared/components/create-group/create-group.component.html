@@ -1,29 +1,17 @@
 <div class="create-group-form">
     <div class="form-field">
         <label for="groupName">Group Name</label>
-        <input 
-            id="groupName"
-            type="text" 
-            pInputText 
-            [(ngModel)]="groupName"
-            placeholder="Enter group name"
-            [disabled]="isCreating"
-            (keyup.enter)="onSubmit()"
-            class="w-full" />
+        <input id="groupName" type="text" pInputText [(ngModel)]="groupName" placeholder="Enter group name"
+            [disabled]="isCreating" (keyup.enter)="onSubmit()" class="w-full" />
         @if (validationError) {
-            <small class="error-message">{{ validationError }}</small>
+        <small class="error-message">{{ validationError }}</small>
         }
         <small class="help-text">Only alphanumeric characters and spaces allowed (3-100 characters)</small>
     </div>
 
     <div class="form-actions">
-        <button 
-            pButton 
-            label="Create Group" 
-            icon="pi pi-check"
-            [loading]="isCreating"
-            [disabled]="!groupName.trim() || isCreating"
-            (click)="onSubmit()">
+        <button pButton label="Create Group" icon="pi pi-check" [loading]="isCreating"
+            [disabled]="!groupName.trim() || isCreating" (click)="onSubmit()">
         </button>
     </div>
 </div>
