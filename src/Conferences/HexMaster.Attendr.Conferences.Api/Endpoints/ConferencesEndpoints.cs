@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.CreateConference;
+using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
 using HexMaster.Attendr.Core.CommandHandlers;
 
@@ -18,6 +19,13 @@ public static class ConferencesEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization();
 
+        group.MapGet("/{id:guid}", GetConference)
+            .WithName("GetConference")
+            .Produces<ConferenceDetailsDto>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization();
+
         group.MapPost("/", CreateConference)
             .WithName("CreateConference")
             .Produces<CreateConferenceResult>(StatusCodes.Status201Created)
@@ -26,6 +34,22 @@ public static class ConferencesEndpoints
             .RequireAuthorization();
 
         return app;
+    }
+
+    private static async Task<IResult> GetConference(
+        Guid id,
+        IQueryHandler<GetConferenceQuery, ConferenceDetailsDto?> handler,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetConferenceQuery(id);
+        var result = await handler.Handle(query, cancellationToken);
+
+        if (result == null)
+        {
+            return Results.NotFound(new { error = "Conference not found" });
+        }
+
+        return Results.Ok(result);
     }
 
     private static async Task<IResult> ListConferences(

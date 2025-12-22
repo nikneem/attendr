@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
@@ -15,6 +16,7 @@ import { CreateConferenceComponent } from '../../../shared/components/create-con
 })
 export class ConferencesPageComponent implements OnInit {
     private readonly conferencesService = inject(ConferencesService);
+    private readonly router = inject(Router);
 
     conferences: ConferenceListItemDto[] = [];
     loading = false;
@@ -48,6 +50,10 @@ export class ConferencesPageComponent implements OnInit {
     onConferenceCreated(conference: { id: string; title: string }): void {
         this.showCreateDialog = false;
         this.loadConferences(); // Reload the list to show the new conference
+    }
+
+    viewConference(conferenceId: string): void {
+        this.router.navigate(['/app/conferences', conferenceId]);
     }
 
     formatDate(dateString: string): string {

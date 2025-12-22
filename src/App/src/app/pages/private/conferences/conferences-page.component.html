@@ -24,7 +24,7 @@
         } @else {
         <div class="conferences-grid">
             @for (conference of conferences; track conference.id) {
-            <p-card [styleClass]="'conference-card'">
+            <p-card [styleClass]="'conference-card'" (click)="viewConference(conference.id)">
                 @if (conference.imageUrl) {
                 <ng-template pTemplate="header">
                     <img [src]="conference.imageUrl" [alt]="conference.title" class="conference-image" />

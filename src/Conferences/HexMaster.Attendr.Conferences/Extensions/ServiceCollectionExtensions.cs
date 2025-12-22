@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.CreateConference;
+using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
 using HexMaster.Attendr.Core.CommandHandlers;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
 
         // Register query handlers
         services.AddScoped<IQueryHandler<ListConferencesQuery, ListConferencesResult>, ListConferencesQueryHandler>();
+        services.AddScoped<IQueryHandler<GetConferenceQuery, ConferenceDetailsDto?>, GetConferenceQueryHandler>();
 
         return services;
     }

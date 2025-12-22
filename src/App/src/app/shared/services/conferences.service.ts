@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { ListConferencesResult } from '../models/list-conferences-result';
 import { CreateConferenceRequest } from '../models/create-conference-request.model';
 import { ConferenceListItemDto } from '../models/conference-list-item-dto';
+import { ConferenceDetailsDto } from '../models/conference-details-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -27,6 +28,10 @@ export class ConferencesService {
         }
 
         return this.http.get<ListConferencesResult>(this.apiUrl, { params });
+    }
+
+    getConference(id: string): Observable<ConferenceDetailsDto> {
+        return this.http.get<ConferenceDetailsDto>(`${this.apiUrl}/${id}`);
     }
 
     createConference(request: CreateConferenceRequest): Observable<ConferenceListItemDto> {
