@@ -17,7 +17,6 @@
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Abstractions/HexMaster.Attendr.Profiles.Abstractions.csproj" Id="f5b681e2-660a-4ad5-927d-873a03c38c03" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Api/HexMaster.Attendr.Profiles.Api.csproj" Id="c078012f-8731-4ba4-aa95-b7494b85c751" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Data.MongoDb/HexMaster.Attendr.Profiles.Data.MongoDb.csproj" Id="30b24758-10d0-4afe-b1a1-b212810e710a" />
-    <Project Path="Profiles/HexMaster.Attendr.Profiles.Data.TableStorage/HexMaster.Attendr.Profiles.Data.TableStorage.csproj" Id="1e78abdb-79a4-4220-acb8-e1629c45878d" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Integrations/HexMaster.Attendr.Profiles.Integrations.csproj" Id="2108a46d-133c-41ae-be2b-8062ac40b81f" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Tests/HexMaster.Attendr.Profiles.Tests.csproj" Id="ce8e19b6-6967-41a4-b3b7-4b46fce3466b" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles/HexMaster.Attendr.Profiles.csproj" Id="da665b12-fcab-4a98-948a-971cdca2a076" />
