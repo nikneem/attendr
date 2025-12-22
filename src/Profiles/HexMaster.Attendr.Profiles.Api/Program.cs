@@ -5,7 +5,7 @@ using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Profiles.Api.Endpoints;
 using HexMaster.Attendr.Profiles.Extensions;
-using HexMaster.Attendr.Profiles.Data.TableStorage.Extensions;
+using HexMaster.Attendr.Profiles.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Core.Cache.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,7 +51,7 @@ builder.Services.AddAuthorization();
 // Register Profiles module services
 builder.Services
     .AddAttendrProfilesServices()
-    .AddProfilesTableStorage(builder.Configuration);
+    .AddMongoDbProfileRepository(builder.Configuration);
 
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();

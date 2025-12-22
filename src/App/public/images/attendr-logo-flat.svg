@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="131.82877mm"
+   height="43.201191mm"
+   viewBox="0 0 131.82877 43.201191"
+   version="1.1"
+   id="svg1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient2">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="0.45466849"
+         id="stop2" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0.92016238"
+         id="stop3" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient2"
+       id="linearGradient3"
+       x1="109.84706"
+       y1="-200.82629"
+       x2="109.84706"
+       y2="-68.997574"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.90219396,0,0,0.90219396,1.6072504,-17.947769)" />
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-45.714183,-92.824134)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:33.8667px;font-family:'Special Elite';-inkscape-font-specification:'Special Elite';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+       x="111.21516"
+       y="116.30592"
+       id="text1"><tspan
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Special Elite';-inkscape-font-specification:'Special Elite';text-align:center;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke-width:2"
+         x="111.21516"
+         y="116.30592">attendr</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30.5543px;font-family:'Special Elite';-inkscape-font-specification:'Special Elite';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:url(#linearGradient3);fill-opacity:1;stroke-width:1.80439;stroke-linecap:round;stroke-linejoin:round"
+       x="100.33764"
+       y="-129.58659"
+       id="text2"
+       transform="scale(1.1084091,-0.90219396)"><tspan
+         id="tspan2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Special Elite';-inkscape-font-specification:'Special Elite';text-align:center;text-anchor:middle;fill:url(#linearGradient3);fill-opacity:1;stroke-width:1.80439"
+         x="100.33764"
+         y="-129.58659">attendr</tspan></text>
+  </g>
+</svg>

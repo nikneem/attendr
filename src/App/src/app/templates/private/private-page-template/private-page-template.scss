@@ -1,6 +1,11 @@
 @use '../../../../styles/variables' as *;
 @use '../../../../styles/mixins' as *;
 
+.small {
+    height: 36px;
+    margin-top: 8px;
+}
+
 .private-template {
     min-height: 100vh;
     background-color: $background-primary;

@@ -54,6 +54,23 @@ public static class GroupsEndpoints
             return Results.BadRequest(new { error = "Name is required" });
         }
 
+        // Validate name contains only alphanumeric characters and spaces
+        if (!System.Text.RegularExpressions.Regex.IsMatch(request.Name, @"^[a-zA-Z0-9\s]+$"))
+        {
+            return Results.BadRequest(new { error = "Name can only contain alphanumeric characters and spaces" });
+        }
+
+        // Validate name length
+        if (request.Name.Trim().Length < 3)
+        {
+            return Results.BadRequest(new { error = "Name must be at least 3 characters long" });
+        }
+
+        if (request.Name.Trim().Length > 100)
+        {
+            return Results.BadRequest(new { error = "Name must not exceed 100 characters" });
+        }
+
         // Extract SubjectId from JWT token
         var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
                      ?? user.FindFirst("sub")?.Value;
