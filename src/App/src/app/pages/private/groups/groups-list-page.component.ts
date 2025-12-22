@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, ChangeDetectorRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
@@ -31,6 +32,7 @@ import { GroupDetailsViewComponent } from '../../../shared/components/group-deta
 })
 export class GroupsListPageComponent implements OnInit {
     private readonly groupsStore = inject(AllGroupsStore);
+    private readonly router = inject(Router);
     private readonly cdr = inject(ChangeDetectorRef);
 
     groups = this.groupsStore.groups;
@@ -68,8 +70,14 @@ export class GroupsListPageComponent implements OnInit {
     }
 
     viewGroupDetails(group: GroupListItemDto): void {
-        this.selectedGroup.set(group);
-        this.showDetailsDialog.set(true);
+        if (group.isMember) {
+            // Navigate to details page for members
+            this.router.navigate(['/app/groups', group.id]);
+        } else {
+            // Show modal for non-members
+            this.selectedGroup.set(group);
+            this.showDetailsDialog.set(true);
+        }
     }
 
     onJoinGroup(groupId: string): void {

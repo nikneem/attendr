@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ListGroupsResult } from '../models/list-groups-result';
+import { GroupDetailsDto } from '../models/group-details-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -25,5 +26,9 @@ export class AllGroupsService {
         }
 
         return this.http.get<ListGroupsResult>(this.apiUrl, { params });
+    }
+
+    getGroupDetails(id: string): Observable<GroupDetailsDto> {
+        return this.http.get<GroupDetailsDto>(`${this.apiUrl}/${id}`);
     }
 }

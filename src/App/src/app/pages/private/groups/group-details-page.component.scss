@@ -1,0 +1,182 @@
+.group-details-page {
+    padding: 1rem 0;
+
+    @media (min-width: 768px) {
+        padding: 2rem 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 0.75rem;
+
+        @media (min-width: 768px) {
+            padding: 0 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            padding: 0 2rem;
+        }
+    }
+
+    .loading-container,
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+        gap: 1rem;
+        color: var(--text-color-secondary);
+
+        @media (min-width: 768px) {
+            padding: 4rem 2rem;
+        }
+    }
+
+    .error-container {
+        color: var(--red-500);
+
+        i {
+            color: var(--red-500);
+        }
+    }
+
+    .group-header {
+        margin-bottom: 2rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        @media (min-width: 768px) {
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+
+            .header-title-section {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+
+                h1 {
+                    margin: 0;
+                    font-size: 1.75rem;
+                    font-weight: 600;
+                    color: white;
+                    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                    flex: 1;
+                    min-width: 0;
+                    word-wrap: break-word;
+
+                    @media (min-width: 480px) {
+                        font-size: 2rem;
+                    }
+
+                    @media (min-width: 768px) {
+                        font-size: 2.25rem;
+                    }
+
+                    @media (min-width: 1024px) {
+                        font-size: 2.5rem;
+                    }
+                }
+
+                ::ng-deep p-tag {
+                    flex-shrink: 0;
+                }
+            }
+
+            .header-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.875rem;
+
+                .info-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    color: rgba(255, 255, 255, 0.95);
+                    font-size: 1rem;
+                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+                    @media (min-width: 768px) {
+                        font-size: 1.125rem;
+                    }
+
+                    i {
+                        color: rgba(255, 255, 255, 0.9);
+                        flex-shrink: 0;
+                        font-size: 1.125rem;
+                        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+
+                        @media (min-width: 768px) {
+                            font-size: 1.25rem;
+                        }
+                    }
+
+                    span {
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+    }
+
+    .group-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        @media (min-width: 768px) {
+            gap: 2rem;
+        }
+
+        ::ng-deep .section-card {
+            .p-card-header {
+                padding: 1.25rem 1.5rem;
+                background: var(--surface-50);
+                border-bottom: 1px solid var(--surface-border);
+            }
+
+            .p-card-body {
+                padding: 1.5rem;
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+
+            h2 {
+                margin: 0;
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--text-color);
+
+                @media (min-width: 768px) {
+                    font-size: 1.5rem;
+                }
+            }
+        }
+
+        p {
+            margin: 0;
+            color: var(--text-color-secondary);
+        }
+    }
+}

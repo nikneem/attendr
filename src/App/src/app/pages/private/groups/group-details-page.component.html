@@ -1,0 +1,54 @@
+<div class="group-details-page">
+    <div class="container">
+        @if (loading()) {
+        <div class="loading-container">
+            <p-progressSpinner />
+            <p>Loading group details...</p>
+        </div>
+        } @else if (error()) {
+        <div class="error-container">
+            <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
+            <p>{{ error() }}</p>
+        </div>
+        } @else if (group()) {
+        <div class="group-header">
+            <div class="header-content">
+                <div class="header-title-section">
+                    <h1>{{ group()!.name }}</h1>
+                    @if (group()!.isMember) {
+                    <p-tag value="Joined" severity="success" icon="pi pi-check" />
+                    }
+                </div>
+                <div class="header-info">
+                    <div class="info-item">
+                        <i class="pi pi-users"></i>
+                        <span>{{ group()!.memberCount }} {{ group()!.memberCount === 1 ? 'member' : 'members' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group-sections">
+            <p-card styleClass="section-card">
+                <ng-template pTemplate="header">
+                    <div class="section-header">
+                        <h2>Members</h2>
+                        <p-tag value="Coming Soon" severity="info"></p-tag>
+                    </div>
+                </ng-template>
+                <p>Member list will be displayed here.</p>
+            </p-card>
+
+            <p-card styleClass="section-card">
+                <ng-template pTemplate="header">
+                    <div class="section-header">
+                        <h2>Activities</h2>
+                        <p-tag value="Coming Soon" severity="info"></p-tag>
+                    </div>
+                </ng-template>
+                <p>Group activities and events will be displayed here.</p>
+            </p-card>
+        </div>
+        }
+    </div>
+</div>
