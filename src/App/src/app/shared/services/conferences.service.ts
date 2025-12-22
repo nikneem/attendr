@@ -3,6 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ListConferencesResult } from '../models/list-conferences-result';
+import { CreateConferenceRequest } from '../models/create-conference-request.model';
+import { ConferenceListItemDto } from '../models/conference-list-item-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -25,5 +27,9 @@ export class ConferencesService {
         }
 
         return this.http.get<ListConferencesResult>(this.apiUrl, { params });
+    }
+
+    createConference(request: CreateConferenceRequest): Observable<ConferenceListItemDto> {
+        return this.http.post<ConferenceListItemDto>(this.apiUrl, request);
     }
 }

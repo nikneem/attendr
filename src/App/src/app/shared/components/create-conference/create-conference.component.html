@@ -1,0 +1,68 @@
+<div class="create-conference-form">
+    <div class="form-field">
+        <label for="conferenceTitle">Conference Title <span class="required">*</span></label>
+        <input id="conferenceTitle" type="text" pInputText [(ngModel)]="title" placeholder="Enter conference title"
+            [disabled]="isCreating" class="w-full" />
+    </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label for="conferenceCity">City</label>
+            <input id="conferenceCity" type="text" pInputText [(ngModel)]="city" placeholder="Enter city"
+                [disabled]="isCreating" class="w-full" />
+        </div>
+
+        <div class="form-field">
+            <label for="conferenceCountry">Country</label>
+            <input id="conferenceCountry" type="text" pInputText [(ngModel)]="country" placeholder="Enter country"
+                [disabled]="isCreating" class="w-full" />
+        </div>
+    </div>
+
+    <div class="form-field">
+        <label for="dateRange">Conference Dates <span class="required">*</span></label>
+        <p-datepicker id="dateRange" [(ngModel)]="dateRange" selectionMode="range" [showIcon]="true"
+            [disabled]="isCreating" dateFormat="yy-mm-dd" placeholder="Select date range" styleClass="w-full"
+            [readonlyInput]="true" appendTo="body">
+        </p-datepicker>
+        <small class="help-text">Select start and end dates for the conference</small>
+    </div>
+
+    <div class="sync-source-section">
+        <div class="form-field checkbox-field">
+            <p-checkbox [(ngModel)]="hasSyncSource" [binary]="true" inputId="hasSyncSource" [disabled]="isCreating">
+            </p-checkbox>
+            <label for="hasSyncSource">Add Synchronization Source</label>
+        </div>
+
+        @if (hasSyncSource) {
+        <div class="sync-source-fields">
+            <div class="form-field">
+                <label for="syncSourceType">Source Type <span class="required">*</span></label>
+                <p-select id="syncSourceType" [(ngModel)]="syncSourceType" [options]="sourceTypeOptions"
+                    placeholder="Select source type" [disabled]="isCreating" styleClass="w-full">
+                </p-select>
+            </div>
+
+            <div class="form-field">
+                <label for="syncSourceUrl">Source URL <span class="required">*</span></label>
+                <input id="syncSourceUrl" type="url" pInputText [(ngModel)]="syncSourceUrl"
+                    placeholder="https://example.com/api/conference" [disabled]="isCreating" class="w-full" />
+            </div>
+        </div>
+        }
+    </div>
+
+    @if (validationError) {
+    <div class="error-message">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ validationError }}</span>
+    </div>
+    }
+
+    <div class="form-actions">
+        <button pButton label="Create Conference" icon="pi pi-check" [loading]="isCreating"
+            [disabled]="!title.trim() || !dateRange || dateRange.length < 2 || isCreating" (click)="onSubmit()">
+        </button>
+    </div>
+</div>

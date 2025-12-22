@@ -2,12 +2,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
 import { ConferencesService } from '../../../shared/services/conferences.service';
 import { ConferenceListItemDto } from '../../../shared/models/conference-list-item-dto';
+import { CreateConferenceComponent } from '../../../shared/components/create-conference/create-conference.component';
 
 @Component({
     selector: 'attn-conferences-page',
-    imports: [CommonModule, ButtonModule, CardModule],
+    imports: [CommonModule, ButtonModule, CardModule, DialogModule, CreateConferenceComponent],
     templateUrl: './conferences-page.component.html',
     styleUrl: './conferences-page.component.scss',
 })
@@ -17,6 +19,7 @@ export class ConferencesPageComponent implements OnInit {
     conferences: ConferenceListItemDto[] = [];
     loading = false;
     error: string | null = null;
+    showCreateDialog = false;
 
     ngOnInit(): void {
         this.loadConferences();
@@ -39,8 +42,12 @@ export class ConferencesPageComponent implements OnInit {
     }
 
     onAddConference(): void {
-        // TODO: Implement add conference
-        console.log('Add conference clicked');
+        this.showCreateDialog = true;
+    }
+
+    onConferenceCreated(conference: { id: string; title: string }): void {
+        this.showCreateDialog = false;
+        this.loadConferences(); // Reload the list to show the new conference
     }
 
     formatDate(dateString: string): string {

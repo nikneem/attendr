@@ -77,3 +77,17 @@ button {
     width: 100%;
     padding: 0 $spacing-lg;
 }
+
+// Fix z-index for PrimeNG datepicker overlay to appear above dialogs
+// Use very high z-index to ensure it's always on top
+.p-datepicker-panel,
+.p-datepicker,
+.p-component-overlay,
+.p-datepicker-mask {
+    z-index: 9999 !important;
+}
+
+// Ensure connected overlays also have higher z-index
+.p-connected-overlay {
+    z-index: 9999 !important;
+}

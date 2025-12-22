@@ -49,3 +49,8 @@
         }
     </div>
 </div>
+
+<p-dialog header="Create New Conference" [(visible)]="showCreateDialog" [modal]="true" [style]="{ width: '600px' }"
+    [draggable]="false" [resizable]="false">
+    <attn-create-conference (conferenceCreated)="onConferenceCreated($event)"></attn-create-conference>
+</p-dialog>
