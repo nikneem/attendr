@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MyGroupDto } from '../models/my-group-dto';
+import { CreateGroupRequest } from '../models/create-group-request';
+import { CreateGroupResult } from '../models/create-group-result';
 
 @Injectable({
     providedIn: 'root',
@@ -13,5 +15,9 @@ export class JoinedGroupsService {
 
     getMyGroups(): Observable<MyGroupDto[]> {
         return this.http.get<MyGroupDto[]>(`${this.apiUrl}/my-groups`);
+    }
+
+    createGroup(request: CreateGroupRequest): Observable<CreateGroupResult> {
+        return this.http.post<CreateGroupResult>(this.apiUrl, request);
     }
 }

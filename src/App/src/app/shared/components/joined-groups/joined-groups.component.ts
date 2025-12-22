@@ -6,33 +6,45 @@ import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { JoinedGroupsStore } from '../../stores/joined-groups.store';
 import { AllGroupsComponent } from '../all-groups/all-groups.component';
+import { CreateGroupComponent } from '../create-group/create-group.component';
 
 @Component({
     selector: 'attn-joined-groups',
-    imports: [CommonModule, ButtonModule, TableModule, CardModule, DialogModule, AllGroupsComponent],
+    imports: [CommonModule, ButtonModule, TableModule, CardModule, DialogModule, AllGroupsComponent, CreateGroupComponent],
     templateUrl: './joined-groups.component.html',
     styleUrl: './joined-groups.component.scss',
 })
 export class JoinedGroupsComponent implements OnInit {
     readonly store = inject(JoinedGroupsStore);
     showJoinGroupDialog = false;
+    showCreateGroupDialog = false;
 
     ngOnInit(): void {
         this.store.loadGroups();
     }
 
     onCreateGroup(): void {
-        // TODO: Implement create group navigation
-        console.log('Create group clicked');
+        this.showCreateGroupDialog = true;
     }
 
     onJoinGroup(): void {
         this.showJoinGroupDialog = true;
     }
 
-    onDialogHide(): void {
+    onCreateDialogHide(): void {
+        this.showCreateGroupDialog = false;
+    }
+
+    onJoinDialogHide(): void {
         this.showJoinGroupDialog = false;
         // Refresh the list of joined groups when the dialog closes
         this.store.refresh();
+    }
+
+    onGroupCreated(group: { id: string; name: string; memberCount: number }): void {
+        // Add the new group to the store
+        this.store.addGroup(group);
+        // Close the dialog
+        this.showCreateGroupDialog = false;
     }
 }

@@ -35,4 +35,13 @@ export class JoinedGroupsStore {
     refresh(): void {
         this.loadGroups();
     }
+
+    addGroup(group: { id: string; name: string; memberCount: number }): void {
+        const newGroup: MyGroupDto = {
+            id: group.id,
+            name: group.name,
+            memberCount: group.memberCount,
+        };
+        this._groups.update(groups => [...groups, newGroup]);
+    }
 }

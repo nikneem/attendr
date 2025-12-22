@@ -1,0 +1,31 @@
+.create-group-form {
+    padding: 1rem;
+
+    .form-field {
+        margin-bottom: 1.5rem;
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .error-message {
+            display: block;
+            color: var(--p-red-500);
+            margin-top: 0.25rem;
+        }
+
+        .help-text {
+            display: block;
+            color: var(--p-surface-500);
+            margin-top: 0.25rem;
+        }
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+}
