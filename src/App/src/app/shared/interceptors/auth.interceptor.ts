@@ -16,7 +16,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return oidcSecurityService.getAccessToken().pipe(
         take(1),
         switchMap((accessToken) => {
-            debugger;
             if (accessToken) {
                 const clonedRequest = req.clone({
                     setHeaders: {

@@ -37,22 +37,24 @@
         } @else {
         <div class="groups-grid">
             @for (group of groups(); track group.id) {
-            <p-card [styleClass]="'group-card'" (click)="viewGroupDetails(group)">
-                <div class="group-header">
-                    <div class="group-title-section">
-                        <h3 class="group-name">{{ group.name }}</h3>
-                        @if (group.isMember) {
-                        <p-tag value="Joined" severity="success" icon="pi pi-check"></p-tag>
-                        }
+            <div class="group-card-wrapper" (click)="viewGroupDetails(group)">
+                <p-card [styleClass]="'group-card'">
+                    <div class="group-header">
+                        <div class="group-title-section">
+                            <h3 class="group-name">{{ group.name }}</h3>
+                            @if (group.isMember) {
+                            <p-tag value="Joined" severity="success" icon="pi pi-check"></p-tag>
+                            }
+                        </div>
                     </div>
-                </div>
-                <div class="group-info">
-                    <div class="info-item">
-                        <i class="pi pi-users"></i>
-                        <span>{{ group.memberCount }} {{ group.memberCount === 1 ? 'member' : 'members' }}</span>
+                    <div class="group-info">
+                        <div class="info-item">
+                            <i class="pi pi-users"></i>
+                            <span>{{ group.memberCount }} {{ group.memberCount === 1 ? 'member' : 'members' }}</span>
+                        </div>
                     </div>
-                </div>
-            </p-card>
+                </p-card>
+            </div>
             }
         </div>
 

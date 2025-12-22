@@ -122,15 +122,24 @@
             grid-template-columns: repeat(3, 1fr);
         }
 
-        ::ng-deep .group-card {
+        .group-card-wrapper {
             height: 100%;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 6px;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+                ::ng-deep .group-card {
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
             }
+        }
+
+        ::ng-deep .group-card {
+            height: 100%;
+            transition: box-shadow 0.2s;
 
             .p-card-body {
                 padding: 1.5rem;

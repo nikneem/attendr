@@ -39,6 +39,71 @@
                 <p>Member list will be displayed here.</p>
             </p-card>
 
+            <div class="pending-section">
+                <div class="pending-column">
+                    <p-card styleClass="section-card">
+                        <ng-template pTemplate="header">
+                            <div class="section-header">
+                                <h3>Join Requests</h3>
+                                <p-tag [value]="'0'" severity="warn"></p-tag>
+                            </div>
+                        </ng-template>
+                        <div class="empty-state-small">
+                            <i class="pi pi-inbox"></i>
+                            <p>No pending join requests</p>
+                        </div>
+                        <!-- TODO: Add actual join requests list
+                        <div class="request-list">
+                            <div class="request-item">
+                                <div class="request-info">
+                                    <i class="pi pi-user"></i>
+                                    <div class="request-details">
+                                        <span class="request-name">John Doe</span>
+                                        <span class="request-date">2 days ago</span>
+                                    </div>
+                                </div>
+                                <div class="request-actions">
+                                    <button pButton icon="pi pi-check" severity="success" [text]="true" [rounded]="true" pTooltip="Approve"></button>
+                                    <button pButton icon="pi pi-times" severity="danger" [text]="true" [rounded]="true" pTooltip="Reject"></button>
+                                </div>
+                            </div>
+                        </div>
+                        -->
+                    </p-card>
+                </div>
+
+                <div class="pending-column">
+                    <p-card styleClass="section-card">
+                        <ng-template pTemplate="header">
+                            <div class="section-header">
+                                <h3>Pending Invitations</h3>
+                                <p-tag [value]="'0'" severity="info"></p-tag>
+                            </div>
+                        </ng-template>
+                        <div class="empty-state-small">
+                            <i class="pi pi-inbox"></i>
+                            <p>No pending invitations</p>
+                        </div>
+                        <!-- TODO: Add actual invitations list
+                        <div class="invitation-list">
+                            <div class="invitation-item">
+                                <div class="invitation-info">
+                                    <i class="pi pi-envelope"></i>
+                                    <div class="invitation-details">
+                                        <span class="invitation-name">Jane Smith</span>
+                                        <span class="invitation-date">Expires in 5 days</span>
+                                    </div>
+                                </div>
+                                <div class="invitation-actions">
+                                    <button pButton icon="pi pi-times" severity="secondary" [text]="true" [rounded]="true" pTooltip="Cancel invitation"></button>
+                                </div>
+                            </div>
+                        </div>
+                        -->
+                    </p-card>
+                </div>
+            </div>
+
             <p-card styleClass="section-card">
                 <ng-template pTemplate="header">
                     <div class="section-header">

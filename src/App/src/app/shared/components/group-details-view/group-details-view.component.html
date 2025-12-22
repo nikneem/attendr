@@ -28,7 +28,7 @@
             </div>
             <div class="info-value">
                 <p-tag [value]="group().isPublic ? 'Public' : 'Private'"
-                    [severity]="group().isPublic ? 'success' : 'warning'"
+                    [severity]="group().isPublic ? 'success' : 'warn'"
                     [icon]="group().isPublic ? 'pi pi-lock-open' : 'pi pi-lock'" />
             </div>
         </div>
@@ -67,11 +67,10 @@
 
     <div class="actions-section">
         @if (group().isPublic) {
-        <button pButton label="Join Group" icon="pi pi-sign-in" (click)="onJoin()" class="join-button"
-            [styleClass]="'w-full'"></button>
+        <button pButton label="Join Group" icon="pi pi-sign-in" (click)="onJoin()" class="join-button w-full"></button>
         } @else {
         <button pButton label="Request Access" icon="pi pi-send" (click)="onRequestAccess()" severity="secondary"
-            class="request-button" [styleClass]="'w-full'"></button>
+            class="request-button w-full"></button>
         }
     </div>
     }
