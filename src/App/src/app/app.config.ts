@@ -29,8 +29,9 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       multi: true,
       deps: [OidcSecurityService, AuthCallbackHandler],
-      useFactory: (oidc: OidcSecurityService, authCallback: AuthCallbackHandler) => () => {
-        authCallback.handleAuthCallback();
+      useFactory: (oidc: OidcSecurityService, authHandler: AuthCallbackHandler) => () => {
+        // authHandler is injected here to ensure it's instantiated and its constructor runs
+        // checkAuth will handle both regular page loads and OAuth callbacks
         return oidc.checkAuth().toPromise();
       },
     }

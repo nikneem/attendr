@@ -23,6 +23,9 @@ internal sealed class GroupDocument
 
     [BsonElement("invitations")]
     public List<GroupInvitationDocument> Invitations { get; set; } = new();
+
+    [BsonElement("joinRequests")]
+    public List<GroupJoinRequestDocument> JoinRequests { get; set; } = new();
 }
 
 internal sealed class GroupSettingsDocument
@@ -62,4 +65,18 @@ internal sealed class GroupInvitationDocument
     [BsonElement("expirationDate")]
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTimeOffset ExpirationDate { get; set; }
+}
+
+internal sealed class GroupJoinRequestDocument
+{
+    [BsonElement("id")]
+    [BsonRepresentation(BsonType.String)]
+    public Guid Id { get; set; }
+
+    [BsonElement("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [BsonElement("requestedAt")]
+    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+    public DateTimeOffset RequestedAt { get; set; }
 }

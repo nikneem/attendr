@@ -31,6 +31,12 @@ internal static class GroupMapper
                 Name = i.Name,
                 AcceptanceCode = i.AcceptanceCode,
                 ExpirationDate = i.ExpirationDate
+            }).ToList(),
+            JoinRequests = group.JoinRequests.Select(jr => new GroupJoinRequestDocument
+            {
+                Id = jr.Id,
+                Name = jr.Name,
+                RequestedAt = jr.RequestedAt
             }).ToList()
         };
     }
@@ -69,6 +75,14 @@ internal static class GroupMapper
                     invitationDoc.Name,
                     invitationDoc.ExpirationDate);
             }
+        }
+
+        // Reconstitute join requests
+        foreach (var joinRequestDoc in document.JoinRequests)
+        {
+            group.AddJoinRequest(
+                joinRequestDoc.Id,
+                joinRequestDoc.Name);
         }
 
         return group;

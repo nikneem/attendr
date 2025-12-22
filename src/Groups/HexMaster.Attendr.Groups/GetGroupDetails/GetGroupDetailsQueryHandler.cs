@@ -38,12 +38,35 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
             return null;
         }
 
+        // Get current member role
+        var currentMember = group.Members.FirstOrDefault(m => m.Id == query.ProfileId);
+        var currentMemberRole = currentMember?.Role;
+
+        // Map members to DTOs
+        var members = group.Members
+            .Select(m => new GetGroupDetailsMemberDto(m.Id, m.Name, m.Role))
+            .ToList();
+
+        // Map invitations to DTOs
+        var invitations = group.Invitations
+            .Select(i => new GroupInvitationDto(i.Id, i.Name, i.ExpirationDate))
+            .ToList();
+
+        // Map join requests to DTOs
+        var joinRequests = group.JoinRequests
+            .Select(jr => new GroupJoinRequestDto(jr.Id, jr.Name, jr.RequestedAt))
+            .ToList();
+
         // Map to DTO with membership information
         return new GroupDetailsDto(
             group.Id,
             group.Name,
             group.Members.Count,
-            group.Members.Any(m => m.Id == query.ProfileId),
-            group.Settings.IsPublic);
+            currentMember != null,
+            group.Settings.IsPublic,
+            currentMemberRole,
+            members,
+            invitations,
+            joinRequests);
     }
 }

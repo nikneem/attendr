@@ -24,6 +24,7 @@ public sealed class Group
 
     private readonly List<GroupMember> _members = new();
     private readonly List<GroupInvitation> _invitations = new();
+    private readonly List<GroupJoinRequest> _joinRequests = new();
 
     /// <summary>
     /// Gets the collection of members in the group.
@@ -34,6 +35,11 @@ public sealed class Group
     /// Gets the collection of pending invitations for the group.
     /// </summary>
     public IReadOnlyCollection<GroupInvitation> Invitations => _invitations.AsReadOnly();
+
+    /// <summary>
+    /// Gets the collection of pending join requests for the group.
+    /// </summary>
+    public IReadOnlyCollection<GroupJoinRequest> JoinRequests => _joinRequests.AsReadOnly();
 
     private Group()
     {
@@ -312,6 +318,62 @@ public sealed class Group
     public void CleanupExpiredInvitations()
     {
         _invitations.RemoveAll(i => i.IsExpired());
+    }
+
+    /// <summary>
+    /// Adds a join request to the group.
+    /// </summary>
+    /// <param name="profileId">The ID of the profile requesting to join.</param>
+    /// <param name="profileName">The name of the profile requesting to join.</param>
+    /// <exception cref="InvalidOperationException">Thrown when user is already a member or has a pending request.</exception>
+    public void AddJoinRequest(Guid profileId, string profileName)
+    {
+        if (_members.Any(m => m.Id == profileId))
+        {
+            throw new InvalidOperationException("User is already a member of the group.");
+        }
+
+        if (_joinRequests.Any(jr => jr.Id == profileId))
+        {
+            throw new InvalidOperationException("User already has a pending join request.");
+        }
+
+        _joinRequests.Add(new GroupJoinRequest(profileId, profileName, DateTimeOffset.UtcNow));
+    }
+
+    /// <summary>
+    /// Approves a join request and adds the user as a member.
+    /// </summary>
+    /// <param name="profileId">The ID of the profile whose request is being approved.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the join request is not found.</exception>
+    public void ApproveJoinRequest(Guid profileId)
+    {
+        var joinRequest = _joinRequests.FirstOrDefault(jr => jr.Id == profileId);
+
+        if (joinRequest == null)
+        {
+            throw new InvalidOperationException("Join request not found.");
+        }
+
+        AddMember(joinRequest.Id, joinRequest.Name, GroupRole.Member);
+        _joinRequests.Remove(joinRequest);
+    }
+
+    /// <summary>
+    /// Declines a join request and removes it from the group.
+    /// </summary>
+    /// <param name="profileId">The ID of the profile whose request is being declined.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the join request is not found.</exception>
+    public void DeclineJoinRequest(Guid profileId)
+    {
+        var joinRequest = _joinRequests.FirstOrDefault(jr => jr.Id == profileId);
+
+        if (joinRequest == null)
+        {
+            throw new InvalidOperationException("Join request not found.");
+        }
+
+        _joinRequests.Remove(joinRequest);
     }
 
     /// <summary>
