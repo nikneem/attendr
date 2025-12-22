@@ -1,0 +1,78 @@
+<div class="group-details-view">
+    <div class="group-header">
+        <div class="header-content">
+            <h2 class="group-name">{{ group().name }}</h2>
+            @if (group().isMember) {
+            <p-tag value="Joined" severity="success" icon="pi pi-check" />
+            }
+        </div>
+    </div>
+
+    <p-divider />
+
+    <div class="group-info-section">
+        <div class="info-row">
+            <div class="info-label">
+                <i class="pi pi-users"></i>
+                <span>Members</span>
+            </div>
+            <div class="info-value">
+                <strong>{{ group().memberCount }}</strong>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">
+                <i class="pi pi-lock" [class.pi-lock-open]="group().isPublic"></i>
+                <span>Access Type</span>
+            </div>
+            <div class="info-value">
+                <p-tag [value]="group().isPublic ? 'Public' : 'Private'"
+                    [severity]="group().isPublic ? 'success' : 'warning'"
+                    [icon]="group().isPublic ? 'pi pi-lock-open' : 'pi pi-lock'" />
+            </div>
+        </div>
+    </div>
+
+    <p-divider />
+
+    <div class="access-info-section">
+        @if (group().isPublic) {
+        <div class="info-card public-info">
+            <div class="info-header">
+                <i class="pi pi-info-circle"></i>
+                <h4>Public Group</h4>
+            </div>
+            <p>
+                This is a public group. Anyone can join immediately without approval. All members can see the group's
+                content and participate in activities.
+            </p>
+        </div>
+        } @else {
+        <div class="info-card private-info">
+            <div class="info-header">
+                <i class="pi pi-info-circle"></i>
+                <h4>Private Group</h4>
+            </div>
+            <p>
+                This is a private group. You need to request access to join. A group administrator will review your
+                request and approve or deny it. Only approved members can see the group's content.
+            </p>
+        </div>
+        }
+    </div>
+
+    @if (!group().isMember) {
+    <p-divider />
+
+    <div class="actions-section">
+        @if (group().isPublic) {
+        <button pButton label="Join Group" icon="pi pi-sign-in" (click)="onJoin()" class="join-button"
+            [styleClass]="'w-full'"></button>
+        } @else {
+        <button pButton label="Request Access" icon="pi pi-send" (click)="onRequestAccess()" severity="secondary"
+            class="request-button" [styleClass]="'w-full'"></button>
+        }
+    </div>
+    }
+</div>

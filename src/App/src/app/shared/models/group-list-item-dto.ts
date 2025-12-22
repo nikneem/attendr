@@ -3,4 +3,5 @@ export interface GroupListItemDto {
     name: string;
     memberCount: number;
     isMember: boolean;
+    isPublic: boolean;
 }

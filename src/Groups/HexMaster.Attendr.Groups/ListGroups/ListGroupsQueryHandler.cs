@@ -44,7 +44,8 @@ public sealed class ListGroupsQueryHandler : IQueryHandler<ListGroupsQuery, List
                 g.Id,
                 g.Name,
                 g.Members.Count,
-                g.Members.Any(m => m.Id == query.ProfileId)))
+                g.Members.Any(m => m.Id == query.ProfileId),
+                g.Settings.IsPublic))
             .ToList()
             .AsReadOnly();
 

@@ -6,33 +6,14 @@
 
         <div class="search-section">
             <div class="search-input-wrapper">
-                <input
-                    type="text"
-                    pInputText
-                    [(ngModel)]="searchInput"
-                    (keyup.enter)="onSearch()"
-                    placeholder="Search groups by name..."
-                    class="search-input"
-                />
+                <input type="text" pInputText [(ngModel)]="searchInput" (keyup.enter)="onSearch()"
+                    placeholder="Search groups by name..." class="search-input" />
                 @if (searchInput) {
-                <button
-                    pButton
-                    icon="pi pi-times"
-                    [text]="true"
-                    [rounded]="true"
-                    class="clear-button"
-                    (click)="onClearSearch()"
-                    pTooltip="Clear search"
-                ></button>
+                <button pButton icon="pi pi-times" [text]="true" [rounded]="true" class="clear-button"
+                    (click)="onClearSearch()" pTooltip="Clear search"></button>
                 }
             </div>
-            <button
-                pButton
-                label="Search"
-                icon="pi pi-search"
-                (click)="onSearch()"
-                [disabled]="loading()"
-            ></button>
+            <button pButton label="Search" icon="pi pi-search" (click)="onSearch()" [disabled]="loading()"></button>
         </div>
 
         @if (loading()) {
@@ -56,7 +37,7 @@
         } @else {
         <div class="groups-grid">
             @for (group of groups(); track group.id) {
-            <p-card [styleClass]="'group-card'">
+            <p-card [styleClass]="'group-card'" (click)="viewGroupDetails(group)">
                 <div class="group-header">
                     <div class="group-title-section">
                         <h3 class="group-name">{{ group.name }}</h3>
@@ -76,16 +57,19 @@
         </div>
 
         <div class="pagination-section">
-            <p-paginator
-                [rows]="pageSize()"
-                [totalRecords]="totalCount()"
-                [first]="(pageNumber() - 1) * pageSize()"
-                (onPageChange)="onPageChange($event)"
-                [rowsPerPageOptions]="[10, 25, 50, 100]"
+            <p-paginator [rows]="pageSize()" [totalRecords]="totalCount()" [first]="(pageNumber() - 1) * pageSize()"
+                (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="[10, 25, 50, 100]"
                 [showCurrentPageReport]="true"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} groups"
-            ></p-paginator>
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} groups"></p-paginator>
         </div>
         }
     </div>
 </div>
+
+<p-dialog header="Group Details" [(visible)]="showDetailsDialog" [modal]="true"
+    [style]="{ width: '600px', maxWidth: '95vw' }" [draggable]="false" [resizable]="false">
+    @if (selectedGroup()) {
+    <attn-group-details-view [group]="selectedGroup()!" (joinRequested)="onJoinGroup($event)"
+        (requestAccessRequested)="onRequestAccess($event)" />
+    }
+</p-dialog>

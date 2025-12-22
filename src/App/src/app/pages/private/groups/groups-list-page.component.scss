@@ -124,6 +124,7 @@
 
         ::ng-deep .group-card {
             height: 100%;
+            cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
 
             &:hover {
