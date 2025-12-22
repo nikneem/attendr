@@ -7,7 +7,7 @@
 
         @if (loading) {
         <div class="loading-container">
-            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            <p-progressSpinner />
             <p>Loading conferences...</p>
         </div>
         } @else if (error) {
@@ -25,11 +25,13 @@
         <div class="conferences-grid">
             @for (conference of conferences; track conference.id) {
             <p-card [styleClass]="'conference-card'" (click)="viewConference(conference.id)">
-                @if (conference.imageUrl) {
-                <ng-template pTemplate="header">
-                    <img [src]="conference.imageUrl" [alt]="conference.title" class="conference-image" />
-                </ng-template>
-                }
+                <div class="conference-visual"
+                    [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : 'url(/images/attendr-logo-flat.svg)'">
+                    <div class="visual-header">
+                        <h3 class="visual-title" [pTooltip]="conference.title" tooltipPosition="bottom">{{
+                            conference.title }}</h3>
+                    </div>
+                </div>
                 <div class="conference-content">
                     <h3 class="conference-title">{{ conference.title }}</h3>
                     <div class="conference-details">

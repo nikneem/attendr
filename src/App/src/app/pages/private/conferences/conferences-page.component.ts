@@ -1,46 +1,55 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConferencesService } from '../../../shared/services/conferences.service';
 import { ConferenceListItemDto } from '../../../shared/models/conference-list-item-dto';
 import { CreateConferenceComponent } from '../../../shared/components/create-conference/create-conference.component';
 
 @Component({
     selector: 'attn-conferences-page',
-    imports: [CommonModule, ButtonModule, CardModule, DialogModule, CreateConferenceComponent],
+    imports: [CommonModule, ButtonModule, CardModule, DialogModule, ProgressSpinnerModule, TooltipModule, CreateConferenceComponent],
     templateUrl: './conferences-page.component.html',
     styleUrl: './conferences-page.component.scss',
 })
 export class ConferencesPageComponent implements OnInit {
     private readonly conferencesService = inject(ConferencesService);
     private readonly router = inject(Router);
+    private readonly cdr = inject(ChangeDetectorRef);
 
     conferences: ConferenceListItemDto[] = [];
-    loading = false;
+    loading = true;
     error: string | null = null;
     showCreateDialog = false;
 
     ngOnInit(): void {
-        this.loadConferences();
+        // Defer loading to avoid ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(() => this.loadConferences(), 0);
     }
 
     loadConferences(): void {
         this.loading = true;
         this.error = null;
 
-        this.conferencesService.listConferences(undefined, 50, 1).subscribe({
-            next: (result) => {
-                this.conferences = result.conferences;
-                this.loading = false;
-            },
-            error: (err) => {
-                this.error = err.message || 'Failed to load conferences';
-                this.loading = false;
-            },
-        });
+        this.conferencesService
+            .listConferences(undefined, 50, 1)
+            .subscribe({
+                next: (result) => {
+                    this.conferences = result.conferences;
+                    this.loading = false;
+                    this.cdr.markForCheck();
+                },
+                error: (err) => {
+                    this.error = err.message || 'Failed to load conferences';
+                    this.loading = false;
+                    this.cdr.markForCheck();
+                },
+            });
     }
 
     onAddConference(): void {

@@ -48,29 +48,54 @@
             height: 100%;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
 
             &:hover {
                 transform: translateY(-4px);
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             }
 
-            .p-card-header {
-                padding: 0;
-                overflow: hidden;
-
-                .conference-image {
-                    width: 100%;
-                    height: 180px;
-                    object-fit: cover;
-                }
-            }
-
             .p-card-body {
-                padding: 1.25rem;
+                padding: 0;
+            }
+        }
+
+        .conference-visual {
+            height: 220px;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: var(--surface-ground);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            margin: 1rem;
+            position: relative;
+
+            .visual-header {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+                padding: 1rem;
+
+                .visual-title {
+                    margin: 0;
+                    font-size: 1.125rem;
+                    font-weight: 600;
+                    color: white;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+                }
             }
         }
 
         .conference-content {
+            padding: 1.25rem;
+
             .conference-title {
                 margin: 0 0 1rem 0;
                 font-size: 1.25rem;

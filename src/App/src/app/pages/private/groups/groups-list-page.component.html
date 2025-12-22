@@ -1,0 +1,91 @@
+<div class="groups-list-page">
+    <div class="container">
+        <div class="header-section">
+            <h1>Groups</h1>
+        </div>
+
+        <div class="search-section">
+            <div class="search-input-wrapper">
+                <input
+                    type="text"
+                    pInputText
+                    [(ngModel)]="searchInput"
+                    (keyup.enter)="onSearch()"
+                    placeholder="Search groups by name..."
+                    class="search-input"
+                />
+                @if (searchInput) {
+                <button
+                    pButton
+                    icon="pi pi-times"
+                    [text]="true"
+                    [rounded]="true"
+                    class="clear-button"
+                    (click)="onClearSearch()"
+                    pTooltip="Clear search"
+                ></button>
+                }
+            </div>
+            <button
+                pButton
+                label="Search"
+                icon="pi pi-search"
+                (click)="onSearch()"
+                [disabled]="loading()"
+            ></button>
+        </div>
+
+        @if (loading()) {
+        <div class="loading-container">
+            <p-progressSpinner />
+            <p>Loading groups...</p>
+        </div>
+        } @else if (error()) {
+        <div class="error-container">
+            <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
+            <p>{{ error() }}</p>
+        </div>
+        } @else if (groups().length === 0) {
+        <div class="empty-state">
+            <i class="pi pi-users" style="font-size: 3rem"></i>
+            <p>No groups found</p>
+            @if (searchQuery()) {
+            <p class="suggestion">Try adjusting your search or clear the search to see all groups.</p>
+            }
+        </div>
+        } @else {
+        <div class="groups-grid">
+            @for (group of groups(); track group.id) {
+            <p-card [styleClass]="'group-card'">
+                <div class="group-header">
+                    <div class="group-title-section">
+                        <h3 class="group-name">{{ group.name }}</h3>
+                        @if (group.isMember) {
+                        <p-tag value="Joined" severity="success" icon="pi pi-check"></p-tag>
+                        }
+                    </div>
+                </div>
+                <div class="group-info">
+                    <div class="info-item">
+                        <i class="pi pi-users"></i>
+                        <span>{{ group.memberCount }} {{ group.memberCount === 1 ? 'member' : 'members' }}</span>
+                    </div>
+                </div>
+            </p-card>
+            }
+        </div>
+
+        <div class="pagination-section">
+            <p-paginator
+                [rows]="pageSize()"
+                [totalRecords]="totalCount()"
+                [first]="(pageNumber() - 1) * pageSize()"
+                (onPageChange)="onPageChange($event)"
+                [rowsPerPageOptions]="[10, 25, 50, 100]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} groups"
+            ></p-paginator>
+        </div>
+        }
+    </div>
+</div>

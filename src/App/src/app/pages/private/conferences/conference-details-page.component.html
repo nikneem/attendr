@@ -12,29 +12,42 @@
         </div>
         } @else if (conference) {
         <div class="conference-header">
-            @if (conference.imageUrl) {
-            <div class="conference-image">
-                <img [src]="conference.imageUrl" [alt]="conference.title" />
-            </div>
-            }
-            <div class="conference-info">
-                <h1>{{ conference.title }}</h1>
-                <div class="conference-meta">
-                    <div class="meta-item">
-                        <i class="pi pi-calendar"></i>
-                        <span>{{ formatDateRange(conference.startDate, conference.endDate) }}</span>
+            <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" (click)="openEditDialog()"
+                pTooltip="Edit conference" class="edit-button" />
+            <div class="header-panel details-panel">
+                <div class="panel-overlay"></div>
+                <div class="panel-content">
+                    <div class="header-title-row">
+                        <h1>{{ conference.title }}</h1>
                     </div>
-                    <div class="meta-item">
-                        <i class="pi pi-map-marker"></i>
-                        <span>{{ conference.city }}, {{ conference.country }}</span>
+                    <div class="conference-meta">
+                        <div class="meta-item">
+                            <i class="pi pi-calendar"></i>
+                            <span>{{ formatDateRange(conference.startDate, conference.endDate) }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="pi pi-map-marker"></i>
+                            <span>{{ conference.city }}, {{ conference.country }}</span>
+                        </div>
+                        @if (conference.synchronizationSource) {
+                        <div class="meta-item">
+                            <i class="pi pi-sync"></i>
+                            <span>Synced from {{ conference.synchronizationSource.sourceType }}</span>
+                        </div>
+                        }
                     </div>
-                    @if (conference.synchronizationSource) {
-                    <div class="meta-item">
-                        <i class="pi pi-sync"></i>
-                        <span>Synced from {{ conference.synchronizationSource.sourceType }}</span>
-                    </div>
-                    }
                 </div>
+            </div>
+
+            <div class="header-panel visual-panel"
+                [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : 'none'">
+                <div class="panel-overlay"></div>
+                @if (!conference.imageUrl) {
+                <div class="panel-content placeholder-content">
+                    <i class="pi pi-image"></i>
+                    <span>No image</span>
+                </div>
+                }
             </div>
         </div>
 
@@ -78,6 +91,11 @@
                 </div>
             </p-card>
         </div>
+
+        <p-dialog header="Edit Conference" [(visible)]="showEditDialog" [modal]="true"
+            [style]="{ width: '90vw', 'max-width': '600px' }" [draggable]="false" [resizable]="false">
+            <attn-edit-conference [conference]="conference" (conferenceUpdated)="onConferenceUpdated()" />
+        </p-dialog>
         }
     </div>
 </div>

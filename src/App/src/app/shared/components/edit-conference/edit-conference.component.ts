@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, input, output, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -8,16 +8,19 @@ import { SelectModule } from 'primeng/select';
 import { ConferencesService } from '../../services/conferences.service';
 import { MessageService } from 'primeng/api';
 import { CreateConferenceRequest } from '../../models/create-conference-request.model';
+import { ConferenceDetailsDto } from '../../models/conference-details-dto';
 
 @Component({
-    selector: 'attn-create-conference',
+    selector: 'attn-edit-conference',
     imports: [FormsModule, ButtonModule, InputTextModule, DatePickerModule, CheckboxModule, SelectModule],
-    templateUrl: './create-conference.component.html',
-    styleUrl: './create-conference.component.scss',
+    templateUrl: './edit-conference.component.html',
+    styleUrl: './edit-conference.component.scss',
 })
-export class CreateConferenceComponent {
+export class EditConferenceComponent {
     private readonly conferencesService = inject(ConferencesService);
     private readonly messageService = inject(MessageService);
+
+    conference = input.required<ConferenceDetailsDto>();
 
     title = '';
     city = '';
@@ -29,14 +32,39 @@ export class CreateConferenceComponent {
     syncSourceType = '';
     syncSourceUrl = '';
 
-    sourceTypeOptions = [
-        { label: 'Sessionize', value: 'Sessionize' }
-    ];
+    sourceTypeOptions = [{ label: 'Sessionize', value: 'Sessionize' }];
 
-    isCreating = false;
+    isUpdating = false;
     validationError = '';
 
-    conferenceCreated = output<{ id: string; title: string }>();
+    conferenceUpdated = output<void>();
+
+    constructor() {
+        effect(() => {
+            const conf = this.conference();
+            if (conf) {
+                this.initializeForm(conf);
+            }
+        });
+    }
+
+    private initializeForm(conf: ConferenceDetailsDto): void {
+        this.title = conf.title;
+        this.city = conf.city || '';
+        this.country = conf.country || '';
+        this.imageUrl = conf.imageUrl || '';
+        this.dateRange = [new Date(conf.startDate), new Date(conf.endDate)];
+
+        if (conf.synchronizationSource) {
+            this.hasSyncSource = true;
+            this.syncSourceType = conf.synchronizationSource.sourceType;
+            this.syncSourceUrl = conf.synchronizationSource.sourceUrl;
+        } else {
+            this.hasSyncSource = false;
+            this.syncSourceType = '';
+            this.syncSourceUrl = '';
+        }
+    }
 
     validateForm(): boolean {
         this.validationError = '';
@@ -86,7 +114,6 @@ export class CreateConferenceComponent {
                 return false;
             }
 
-            // Basic URL validation
             try {
                 new URL(this.syncSourceUrl.trim());
             } catch {
@@ -103,7 +130,7 @@ export class CreateConferenceComponent {
             return;
         }
 
-        this.isCreating = true;
+        this.isUpdating = true;
 
         const request: CreateConferenceRequest = {
             title: this.title.trim(),
@@ -121,25 +148,14 @@ export class CreateConferenceComponent {
             };
         }
 
-        this.conferencesService.createConference(request).subscribe({
-            next: (result) => {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: `Conference "${result.title}" created successfully`,
-                });
-
-                this.conferenceCreated.emit({
-                    id: result.id,
-                    title: result.title,
-                });
-
-                this.resetForm();
-                this.isCreating = false;
+        this.conferencesService.updateConference(this.conference().id, request).subscribe({
+            next: () => {
+                this.conferenceUpdated.emit();
+                this.isUpdating = false;
             },
             error: (error) => {
-                this.isCreating = false;
-                const errorMessage = error.error?.error || 'Failed to create conference';
+                this.isUpdating = false;
+                const errorMessage = error.error?.error || 'Failed to update conference';
                 this.validationError = errorMessage;
                 this.messageService.add({
                     severity: 'error',
@@ -155,17 +171,5 @@ export class CreateConferenceComponent {
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
-    }
-
-    private resetForm() {
-        this.title = '';
-        this.city = '';
-        this.country = '';
-        this.imageUrl = '';
-        this.dateRange = null;
-        this.hasSyncSource = false;
-        this.syncSourceType = '';
-        this.syncSourceUrl = '';
-        this.validationError = '';
     }
 }

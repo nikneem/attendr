@@ -1,0 +1,199 @@
+.groups-list-page {
+    padding: 1rem 0;
+
+    @media (min-width: 768px) {
+        padding: 2rem 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 0.75rem;
+
+        @media (min-width: 768px) {
+            padding: 0 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            padding: 0 2rem;
+        }
+    }
+
+    .header-section {
+        margin-bottom: 2rem;
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-color);
+
+            @media (min-width: 768px) {
+                font-size: 2.5rem;
+            }
+        }
+    }
+
+    .search-section {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-direction: column;
+
+        @media (min-width: 768px) {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+
+            .search-input {
+                width: 100%;
+                padding-right: 3rem;
+            }
+
+            .clear-button {
+                position: absolute;
+                right: 0.25rem;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+
+        button:not(.clear-button) {
+            white-space: nowrap;
+        }
+    }
+
+    .loading-container,
+    .error-container,
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+        gap: 1rem;
+        color: var(--text-color-secondary);
+        text-align: center;
+
+        @media (min-width: 768px) {
+            padding: 4rem 2rem;
+        }
+
+        i {
+            color: var(--text-color-secondary);
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .suggestion {
+            font-size: 0.9rem;
+            color: var(--text-color-secondary);
+            opacity: 0.8;
+        }
+    }
+
+    .error-container {
+        color: var(--red-500);
+
+        i {
+            color: var(--red-500);
+        }
+    }
+
+    .groups-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+
+        @media (min-width: 640px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (min-width: 1024px) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        ::ng-deep .group-card {
+            height: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .p-card-body {
+                padding: 1.5rem;
+            }
+        }
+
+        .group-header {
+            margin-bottom: 1rem;
+
+            .group-title-section {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+
+                .group-name {
+                    margin: 0;
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: var(--text-color);
+                    flex: 1;
+                    min-width: 0;
+                    word-wrap: break-word;
+                }
+
+                ::ng-deep p-tag {
+                    flex-shrink: 0;
+                }
+            }
+        }
+
+        .group-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+
+            .info-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--text-color-secondary);
+                font-size: 0.9rem;
+
+                i {
+                    font-size: 0.875rem;
+                    color: var(--primary-500);
+                }
+            }
+        }
+    }
+
+    .pagination-section {
+        margin-top: 2rem;
+
+        ::ng-deep .p-paginator {
+            background: var(--surface-card);
+            border: 1px solid var(--surface-border);
+            border-radius: 6px;
+            padding: 0.75rem;
+
+            .p-paginator-current {
+                color: var(--text-color-secondary);
+                font-size: 0.875rem;
+            }
+        }
+    }
+}

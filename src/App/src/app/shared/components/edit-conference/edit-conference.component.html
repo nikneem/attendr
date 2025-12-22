@@ -1,0 +1,70 @@
+<form (ngSubmit)="onSubmit()" class="edit-conference-form">
+    @if (validationError) {
+    <div class="validation-error">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ validationError }}</span>
+    </div>
+    }
+
+    <div class="form-field">
+        <label for="title">Conference Title *</label>
+        <input pInputText id="title" [(ngModel)]="title" name="title" placeholder="Enter conference title"
+            [disabled]="isUpdating" required />
+    </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label for="city">City</label>
+            <input pInputText id="city" [(ngModel)]="city" name="city" placeholder="City" [disabled]="isUpdating" />
+        </div>
+
+        <div class="form-field">
+            <label for="country">Country</label>
+            <input pInputText id="country" [(ngModel)]="country" name="country" placeholder="Country"
+                [disabled]="isUpdating" />
+        </div>
+    </div>
+
+    <div class="form-field">
+        <label for="imageUrl">Image URL</label>
+        <input pInputText id="imageUrl" [(ngModel)]="imageUrl" name="imageUrl"
+            placeholder="https://example.com/image.jpg" [disabled]="isUpdating" />
+    </div>
+
+    <div class="form-field">
+        <label for="dateRange">Date Range *</label>
+        <p-datepicker [(ngModel)]="dateRange" name="dateRange" selectionMode="range" [readonlyInput]="true"
+            dateFormat="M dd, yy" placeholder="Select date range" [disabled]="isUpdating" appendTo="body"
+            [showIcon]="true" />
+    </div>
+
+    <div class="sync-source-section">
+        <div class="checkbox-field">
+            <p-checkbox [(ngModel)]="hasSyncSource" [binary]="true" inputId="hasSyncSource" name="hasSyncSource"
+                [disabled]="isUpdating" />
+            <label for="hasSyncSource">Enable synchronization source</label>
+        </div>
+
+        @if (hasSyncSource) {
+        <div class="sync-fields">
+            <div class="form-field">
+                <label for="syncSourceType">Source Type *</label>
+                <p-select [(ngModel)]="syncSourceType" [options]="sourceTypeOptions" optionLabel="label"
+                    optionValue="value" placeholder="Select source type" name="syncSourceType" [disabled]="isUpdating"
+                    [style]="{ width: '100%' }" />
+            </div>
+
+            <div class="form-field">
+                <label for="syncSourceUrl">Source URL *</label>
+                <input pInputText id="syncSourceUrl" [(ngModel)]="syncSourceUrl" name="syncSourceUrl"
+                    placeholder="https://sessionize.com/api/..." [disabled]="isUpdating" />
+            </div>
+        </div>
+        }
+    </div>
+
+    <div class="form-actions">
+        <p-button type="submit" label="Update Conference" icon="pi pi-check" [loading]="isUpdating"
+            [disabled]="isUpdating" />
+    </div>
+</form>

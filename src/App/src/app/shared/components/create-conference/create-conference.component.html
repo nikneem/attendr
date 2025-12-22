@@ -20,6 +20,13 @@
     </div>
 
     <div class="form-field">
+        <label for="imageUrl">Image URL</label>
+        <input id="imageUrl" type="url" pInputText [(ngModel)]="imageUrl" placeholder="https://example.com/image.jpg"
+            [disabled]="isCreating" class="w-full" />
+        <small class="help-text">Optional: URL to an image representing the conference</small>
+    </div>
+
+    <div class="form-field">
         <label for="dateRange">Conference Dates <span class="required">*</span></label>
         <p-datepicker id="dateRange" [(ngModel)]="dateRange" selectionMode="range" [showIcon]="true"
             [disabled]="isCreating" dateFormat="yy-mm-dd" placeholder="Select date range" styleClass="w-full"

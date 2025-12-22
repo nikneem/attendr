@@ -51,7 +51,7 @@ public sealed class CreateConferenceCommandHandler : ICommandHandler<CreateConfe
             command.Country,
             command.StartDate,
             command.EndDate,
-            null, // ImageUrl - not provided when creating from command
+            command.ImageUrl,
             syncSource);
 
         // Persist the conference

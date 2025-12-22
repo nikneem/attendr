@@ -2,6 +2,7 @@ using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.CreateConference;
 using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
+using HexMaster.Attendr.Conferences.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
 
 namespace HexMaster.Attendr.Conferences.Api.Endpoints;
@@ -30,6 +31,14 @@ public static class ConferencesEndpoints
             .WithName("CreateConference")
             .Produces<CreateConferenceResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization();
+
+        group.MapPut("/{id:guid}", UpdateConference)
+            .WithName("UpdateConference")
+            .Produces<ConferenceDetailsDto>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization();
 
@@ -87,6 +96,7 @@ public static class ConferencesEndpoints
                 request.Title.Trim(),
                 request.City?.Trim() ?? "Unknown",
                 request.Country?.Trim() ?? "Unknown",
+                request.ImageUrl?.Trim(),
                 request.StartDate,
                 request.EndDate,
                 request.SynchronizationSource);
@@ -95,6 +105,55 @@ public static class ConferencesEndpoints
             var result = await handler.Handle(command, cancellationToken);
 
             return Results.Created($"/api/conferences/{result.Id}", result);
+        }
+        catch (ArgumentException ex)
+        {
+            return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> UpdateConference(
+        Guid id,
+        CreateConferenceRequest request,
+        ICommandHandler<UpdateConferenceCommand, ConferenceDetailsDto> handler,
+        CancellationToken cancellationToken)
+    {
+        // Validate input
+        if (string.IsNullOrWhiteSpace(request.Title))
+        {
+            return Results.BadRequest(new { error = "Title is required" });
+        }
+
+        if (request.EndDate < request.StartDate)
+        {
+            return Results.BadRequest(new { error = "End date cannot be before start date" });
+        }
+
+        try
+        {
+            // Create command
+            var command = new UpdateConferenceCommand(
+                id,
+                request.Title.Trim(),
+                request.City?.Trim() ?? "Unknown",
+                request.Country?.Trim() ?? "Unknown",
+                request.ImageUrl?.Trim(),
+                request.StartDate,
+                request.EndDate,
+                request.SynchronizationSource);
+
+            // Execute command
+            var result = await handler.Handle(command, cancellationToken);
+
+            return Results.Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            return Results.NotFound(new { error = "Conference not found" });
         }
         catch (ArgumentException ex)
         {

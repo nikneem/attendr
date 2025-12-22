@@ -37,4 +37,8 @@ export class ConferencesService {
     createConference(request: CreateConferenceRequest): Observable<ConferenceListItemDto> {
         return this.http.post<ConferenceListItemDto>(this.apiUrl, request);
     }
+
+    updateConference(id: string, request: CreateConferenceRequest): Observable<ConferenceDetailsDto> {
+        return this.http.put<ConferenceDetailsDto>(`${this.apiUrl}/${id}`, request);
+    }
 }
