@@ -18,6 +18,7 @@ internal static class ConferenceMapper
             Country = conference.Country,
             StartDate = conference.StartDate.ToDateTime(TimeOnly.MinValue),
             EndDate = conference.EndDate.ToDateTime(TimeOnly.MinValue),
+            ImageUrl = conference.ImageUrl,
             SynchronizationSource = conference.SynchronizationSource != null
                 ? new SynchronizationSourceDocument
                 {
@@ -68,6 +69,7 @@ internal static class ConferenceMapper
             document.Country,
             DateOnly.FromDateTime(document.StartDate),
             DateOnly.FromDateTime(document.EndDate),
+            document.ImageUrl,
             synchronizationSource);
 
         // Reconstitute rooms

@@ -1,0 +1,101 @@
+.conferences-page {
+    padding: 2rem;
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+    }
+
+    .loading-container,
+    .error-container,
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        text-align: center;
+
+        i {
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--p-surface-600);
+        }
+    }
+
+    .conferences-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+
+        ::ng-deep .conference-card {
+            height: 100%;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            }
+
+            .p-card-header {
+                padding: 0;
+                overflow: hidden;
+
+                .conference-image {
+                    width: 100%;
+                    height: 180px;
+                    object-fit: cover;
+                }
+            }
+
+            .p-card-body {
+                padding: 1.25rem;
+            }
+        }
+
+        .conference-content {
+            .conference-title {
+                margin: 0 0 1rem 0;
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--p-surface-900);
+            }
+
+            .conference-details {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+
+                .detail-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    color: var(--p-surface-600);
+                    font-size: 0.9rem;
+
+                    i {
+                        font-size: 0.875rem;
+                        color: var(--p-primary-500);
+                    }
+                }
+            }
+        }
+    }
+}

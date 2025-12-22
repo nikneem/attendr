@@ -31,6 +31,7 @@ public sealed class ListConferencesQueryHandler(IConferenceRepository repository
             c.Country,
             c.StartDate,
             c.EndDate,
+            c.ImageUrl,
             c.SynchronizationSource != null
         )).ToList();
 

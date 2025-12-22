@@ -7,5 +7,6 @@ public sealed record ConferenceListItemDto(
     string? Country,
     DateOnly StartDate,
     DateOnly EndDate,
+    string? ImageUrl,
     bool HasSynchronizationSource
 );

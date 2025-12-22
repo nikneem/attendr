@@ -38,6 +38,11 @@ public sealed class Conference
     public DateOnly EndDate { get; private set; }
 
     /// <summary>
+    /// Gets the URL to an image representing the conference (logo or visual).
+    /// </summary>
+    public string? ImageUrl { get; private set; }
+
+    /// <summary>
     /// Gets the synchronization source configuration for the conference.
     /// </summary>
     public SynchronizationSource? SynchronizationSource { get; private set; }
@@ -78,7 +83,8 @@ public sealed class Conference
         string city,
         string country,
         DateOnly startDate,
-        DateOnly endDate)
+        DateOnly endDate,
+        string? imageUrl = null)
     {
         if (id == Guid.Empty)
         {
@@ -111,6 +117,7 @@ public sealed class Conference
         Country = country;
         StartDate = startDate;
         EndDate = endDate;
+        ImageUrl = imageUrl;
     }
 
     /// <summary>
@@ -121,6 +128,7 @@ public sealed class Conference
     /// <param name="country">The country where the conference is held.</param>
     /// <param name="startDate">The start date of the conference.</param>
     /// <param name="endDate">The end date of the conference.</param>
+    /// <param name="imageUrl">Optional URL to an image representing the conference.</param>
     /// <param name="synchronizationSource">Optional synchronization source configuration.</param>
     /// <returns>A new instance of <see cref="Conference"/>.</returns>
     public static Conference Create(
@@ -129,6 +137,7 @@ public sealed class Conference
         string country,
         DateOnly startDate,
         DateOnly endDate,
+        string? imageUrl = null,
         SynchronizationSource? synchronizationSource = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(title, nameof(title));
@@ -136,7 +145,7 @@ public sealed class Conference
         ArgumentException.ThrowIfNullOrWhiteSpace(country, nameof(country));
 
         var id = Guid.NewGuid();
-        var conference = new Conference(id, title, city, country, startDate, endDate);
+        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl);
         conference.SynchronizationSource = synchronizationSource;
         return conference;
     }
@@ -150,6 +159,7 @@ public sealed class Conference
     /// <param name="country">The country where the conference is held.</param>
     /// <param name="startDate">The start date of the conference.</param>
     /// <param name="endDate">The end date of the conference.</param>
+    /// <param name="imageUrl">Optional URL to an image representing the conference.</param>
     /// <param name="synchronizationSource">Optional synchronization source configuration.</param>
     /// <returns>A new instance of <see cref="Conference"/>.</returns>
     public static Conference FromPersisted(
@@ -159,9 +169,10 @@ public sealed class Conference
         string country,
         DateOnly startDate,
         DateOnly endDate,
+        string? imageUrl = null,
         SynchronizationSource? synchronizationSource = null)
     {
-        var conference = new Conference(id, title, city, country, startDate, endDate);
+        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl);
         conference.SynchronizationSource = synchronizationSource;
         return conference;
     }
@@ -250,7 +261,8 @@ public sealed class Conference
     /// <param name="country">The new country.</param>
     /// <param name="startDate">The new start date.</param>
     /// <param name="endDate">The new end date.</param>
-    public void UpdateDetails(string title, string city, string country, DateOnly startDate, DateOnly endDate)
+    /// <param name="imageUrl">Optional URL to an image representing the conference.</param>
+    public void UpdateDetails(string title, string city, string country, DateOnly startDate, DateOnly endDate, string? imageUrl = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(title, nameof(title));
         ArgumentException.ThrowIfNullOrWhiteSpace(city, nameof(city));
@@ -266,6 +278,7 @@ public sealed class Conference
         Country = country;
         StartDate = startDate;
         EndDate = endDate;
+        ImageUrl = imageUrl;
     }
 
     /// <summary>

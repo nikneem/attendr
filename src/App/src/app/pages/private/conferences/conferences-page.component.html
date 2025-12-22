@@ -1,0 +1,51 @@
+<div class="conferences-page">
+    <div class="container">
+        <div class="header-section">
+            <h1>Upcoming Conferences</h1>
+            <button pButton label="Add Conference" icon="pi pi-plus" (click)="onAddConference()"></button>
+        </div>
+
+        @if (loading) {
+        <div class="loading-container">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            <p>Loading conferences...</p>
+        </div>
+        } @else if (error) {
+        <div class="error-container">
+            <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
+            <p>{{ error }}</p>
+        </div>
+        } @else if (conferences.length === 0) {
+        <div class="empty-state">
+            <i class="pi pi-calendar" style="font-size: 3rem"></i>
+            <p>No conferences available</p>
+            <button pButton label="Add Your First Conference" icon="pi pi-plus" (click)="onAddConference()"></button>
+        </div>
+        } @else {
+        <div class="conferences-grid">
+            @for (conference of conferences; track conference.id) {
+            <p-card [styleClass]="'conference-card'">
+                @if (conference.imageUrl) {
+                <ng-template pTemplate="header">
+                    <img [src]="conference.imageUrl" [alt]="conference.title" class="conference-image" />
+                </ng-template>
+                }
+                <div class="conference-content">
+                    <h3 class="conference-title">{{ conference.title }}</h3>
+                    <div class="conference-details">
+                        <div class="detail-item">
+                            <i class="pi pi-calendar"></i>
+                            <span>{{ formatDateRange(conference.startDate, conference.endDate) }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="pi pi-map-marker"></i>
+                            <span>{{ conference.city }}, {{ conference.country }}</span>
+                        </div>
+                    </div>
+                </div>
+            </p-card>
+            }
+        </div>
+        }
+    </div>
+</div>

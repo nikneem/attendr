@@ -29,6 +29,10 @@ internal sealed class ConferenceDocument
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime EndDate { get; set; }
 
+    [BsonElement("imageUrl")]
+    [BsonIgnoreIfNull]
+    public string? ImageUrl { get; set; }
+
     [BsonElement("synchronizationSource")]
     [BsonIgnoreIfNull]
     public SynchronizationSourceDocument? SynchronizationSource { get; set; }
