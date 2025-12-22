@@ -54,6 +54,7 @@ builder.Services
     .AddProfilesTableStorage(builder.Configuration);
 
 builder.Services.AddDaprSidekick();
+builder.Services.AddDaprClient();
 
 var app = builder.Build();
 

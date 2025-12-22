@@ -51,7 +51,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Register shared cache client
-builder.Services.AddAttendrCache(builder.Configuration);
+builder.Services.AddAttendrCache();
 
 // Register profiles integration service
 builder.Services.AddProfilesIntegration(builder.Configuration);
@@ -59,6 +59,7 @@ builder.Services.AddProfilesIntegration(builder.Configuration);
 // Register Groups module services
 builder.Services.AddAttendrGroupsServices();
 builder.Services.AddDaprSidekick();
+builder.Services.AddDaprClient();
 
 // Register repository (in-memory for now)
 builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();

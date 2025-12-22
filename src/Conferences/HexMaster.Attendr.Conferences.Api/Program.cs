@@ -4,8 +4,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Conferences.Api.Endpoints;
-using HexMaster.Attendr.Conferences;
-using HexMaster.Attendr.Conferences.Data.MongoDb;
+using HexMaster.Attendr.Conferences.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Conferences.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,7 +48,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Register repositories and services
-builder.Services.AddSingleton<IConferenceRepository, InMemoryConferenceRepository>();
+builder.Services.AddMongoDbConferenceRepository(builder.Configuration);
 builder.Services.AddAttendrConferencesServices();
 builder.Services.AddDaprSidekick();
 

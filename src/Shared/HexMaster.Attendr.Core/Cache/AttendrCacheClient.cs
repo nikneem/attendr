@@ -2,21 +2,10 @@ using Dapr.Client;
 
 namespace HexMaster.Attendr.Core.Cache;
 
-public sealed class AttendrCacheClient : IAttendrCacheClient
+public sealed class AttendrCacheClient(DaprClient daprClient) : IAttendrCacheClient
 {
-    private readonly DaprClient _daprClient;
-    private readonly TimeSpan _defaultTtl;
-    private readonly string _storeName;
-
-    public AttendrCacheClient(DaprClient daprClient, AttendrCacheOptions options)
-    {
-        _daprClient = daprClient ?? throw new ArgumentNullException(nameof(daprClient));
-        ArgumentNullException.ThrowIfNull(options);
-        _defaultTtl = TimeSpan.FromSeconds(Math.Max(1, options.DefaultTtlSeconds));
-        _storeName = string.IsNullOrWhiteSpace(options.StoreName)
-            ? throw new ArgumentException("StoreName is required", nameof(options))
-            : options.StoreName;
-    }
+    private readonly TimeSpan _defaultTtl = TimeSpan.FromMinutes(15);
+    private readonly string _storeName = "statestore";
 
     public async Task<T?> GetOrSetAsync<T>(string key, Func<CancellationToken, Task<T?>> factory, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
     {
@@ -25,7 +14,7 @@ public sealed class AttendrCacheClient : IAttendrCacheClient
 
         try
         {
-            var cached = await _daprClient.GetStateAsync<T>(_storeName, key, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var cached = await daprClient.GetStateAsync<T>(_storeName, key, cancellationToken: cancellationToken).ConfigureAwait(false);
             if (cached is not null)
             {
                 return cached;
@@ -48,7 +37,7 @@ public sealed class AttendrCacheClient : IAttendrCacheClient
             { "ttlInSeconds", ((int)expiry.TotalSeconds).ToString() }
         };
 
-        await _daprClient.SaveStateAsync(_storeName, key, fresh, metadata: metadata, cancellationToken: cancellationToken).ConfigureAwait(false);
+        await daprClient.SaveStateAsync(_storeName, key, fresh, metadata: metadata, cancellationToken: cancellationToken).ConfigureAwait(false);
         return fresh;
     }
 
@@ -62,6 +51,6 @@ public sealed class AttendrCacheClient : IAttendrCacheClient
             { "ttlInSeconds", ((int)expiry.TotalSeconds).ToString() }
         };
 
-        await _daprClient.SaveStateAsync(_storeName, key, value, metadata: metadata, cancellationToken: cancellationToken).ConfigureAwait(false);
+        await daprClient.SaveStateAsync(_storeName, key, value, metadata: metadata, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 }

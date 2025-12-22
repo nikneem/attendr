@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
@@ -17,6 +18,9 @@ public static class ServiceCollectionExtensions
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddAttendrProfilesServices(this IServiceCollection services)
     {
+
+        services.AddAttendrCache();
+
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateProfileCommand, CreateProfileResult>, CreateProfileCommandHandler>();
 

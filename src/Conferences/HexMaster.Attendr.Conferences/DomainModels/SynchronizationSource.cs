@@ -71,6 +71,18 @@ public sealed class SynchronizationSource
     }
 
     /// <summary>
+    /// Factory method to create a synchronization source from persisted data.
+    /// </summary>
+    /// <param name="sourceType">The type of synchronization source.</param>
+    /// <param name="sourceUrl">The source URL (can be null).</param>
+    /// <param name="apiKey">The API key (can be null).</param>
+    /// <returns>A new instance of <see cref="SynchronizationSource"/>.</returns>
+    public static SynchronizationSource FromPersisted(SynchronizationSourceType sourceType, string? sourceUrl, string? apiKey)
+    {
+        return new SynchronizationSource(sourceType, sourceUrl, apiKey);
+    }
+
+    /// <summary>
     /// Updates the source URL.
     /// </summary>
     /// <param name="sourceUrl">The new source URL.</param>
