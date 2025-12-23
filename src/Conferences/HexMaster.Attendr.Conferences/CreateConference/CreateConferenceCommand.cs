@@ -1,4 +1,5 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
+using HexMaster.Attendr.Core.CommandHandlers;
 
 namespace HexMaster.Attendr.Conferences.CreateConference;
 
@@ -19,4 +20,4 @@ public sealed record CreateConferenceCommand(
     string? ImageUrl,
     DateOnly StartDate,
     DateOnly EndDate,
-    SynchronizationSourceDto? SynchronizationSource);
+    SynchronizationSourceDto? SynchronizationSource) : IAttendrCommand;

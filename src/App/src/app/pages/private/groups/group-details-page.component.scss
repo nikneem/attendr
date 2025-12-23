@@ -224,8 +224,15 @@
                     }
                 }
 
-                .member-role {
+                .member-actions {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
                     flex-shrink: 0;
+
+                    .member-role {
+                        flex-shrink: 0;
+                    }
                 }
             }
         }

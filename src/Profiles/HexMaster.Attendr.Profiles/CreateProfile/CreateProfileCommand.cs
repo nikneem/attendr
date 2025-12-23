@@ -1,3 +1,5 @@
+using HexMaster.Attendr.Core.CommandHandlers;
+
 namespace HexMaster.Attendr.Profiles.CreateProfile;
 
 /// <summary>
@@ -13,4 +15,4 @@ public sealed record CreateProfileCommand(
     string DisplayName,
     string FirstName,
     string LastName,
-    string Email);
+    string Email) : IAttendrCommand;

@@ -28,6 +28,16 @@ public sealed class MongoDbGroupRepository : IGroupRepository
     }
 
     /// <inheritdoc />
+    public async Task UpdateAsync(Group group, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(group);
+
+        var document = GroupMapper.ToDocument(group);
+        var filter = Builders<GroupDocument>.Filter.Eq(g => g.Id, group.Id);
+        await _collection.ReplaceOneAsync(filter, document, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async Task<Group?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var filter = Builders<GroupDocument>.Filter.Eq(g => g.Id, id);

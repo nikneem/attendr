@@ -2,10 +2,14 @@ using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
+using HexMaster.Attendr.Groups.ApproveJoinRequest;
+using HexMaster.Attendr.Groups.DenyJoinRequest;
 using HexMaster.Attendr.Groups.DomainModels;
 using HexMaster.Attendr.Groups.GetGroupDetails;
 using HexMaster.Attendr.Groups.GetMyGroups;
+using HexMaster.Attendr.Groups.JoinGroup;
 using HexMaster.Attendr.Groups.ListGroups;
+using HexMaster.Attendr.Groups.RemoveMember;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
@@ -44,6 +48,41 @@ public static class GroupsEndpoints
             .Produces<GroupDetailsDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization();
+
+        group.MapPost("/{id:guid}/members", JoinGroup)
+            .WithName("JoinGroup")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
+        group.MapDelete("/{id:guid}/members/{memberId:guid}", RemoveMember)
+            .WithName("RemoveMember")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
+        group.MapPost("/{id:guid}/join-requests/{profileId:guid}/approve", ApproveJoinRequest)
+            .WithName("ApproveJoinRequest")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
+        group.MapPost("/{id:guid}/join-requests/{profileId:guid}/deny", DenyJoinRequest)
+            .WithName("DenyJoinRequest")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization();
 
         return app;
@@ -237,6 +276,213 @@ public static class GroupsEndpoints
             }
 
             return Results.Ok(result);
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> JoinGroup(
+        Guid id,
+        IProfilesIntegrationService profilesIntegration,
+        ICommandHandler<JoinGroupCommand> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        // Extract SubjectId from JWT token
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            // Resolve the current user's profile
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            // Create and execute command
+            var command = new JoinGroupCommand(
+                id,
+                Guid.Parse(profile.ProfileId),
+                profile.DisplayName);
+
+            await handler.Handle(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> RemoveMember(
+        Guid id,
+        Guid memberId,
+        IProfilesIntegrationService profilesIntegration,
+        ICommandHandler<RemoveMemberCommand> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        // Extract SubjectId from JWT token
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            // Resolve the current user's profile
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            // Create and execute command
+            var command = new RemoveMemberCommand(
+                id,
+                memberId,
+                Guid.Parse(profile.ProfileId));
+
+            await handler.Handle(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Check if it's a permission error
+            if (ex.Message.Contains("permission") || ex.Message.Contains("not a member"))
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status403Forbidden,
+                    detail: ex.Message);
+            }
+
+            return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> ApproveJoinRequest(
+        Guid id,
+        Guid profileId,
+        IProfilesIntegrationService profilesIntegration,
+        ICommandHandler<ApproveJoinRequestCommand> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        // Extract SubjectId from JWT token
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            // Resolve the current user's profile
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            // Create and execute command
+            var command = new ApproveJoinRequestCommand(
+                id,
+                profileId,
+                Guid.Parse(profile.ProfileId));
+
+            await handler.Handle(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Check if it's a permission error
+            if (ex.Message.Contains("permission") || ex.Message.Contains("not a member"))
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status403Forbidden,
+                    detail: ex.Message);
+            }
+
+            return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> DenyJoinRequest(
+        Guid id,
+        Guid profileId,
+        IProfilesIntegrationService profilesIntegration,
+        ICommandHandler<DenyJoinRequestCommand> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        // Extract SubjectId from JWT token
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            // Resolve the current user's profile
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            // Create and execute command
+            var command = new DenyJoinRequestCommand(
+                id,
+                profileId,
+                Guid.Parse(profile.ProfileId));
+
+            await handler.Handle(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Check if it's a permission error
+            if (ex.Message.Contains("permission") || ex.Message.Contains("not a member"))
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status403Forbidden,
+                    detail: ex.Message);
+            }
+
+            return Results.BadRequest(new { error = ex.Message });
         }
         catch (Exception)
         {

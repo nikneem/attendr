@@ -100,21 +100,37 @@ export class GroupDetailsPageComponent implements OnInit {
     }
 
     approveJoinRequest(requestId: string): void {
-        console.log('Approve request:', requestId);
-        // TODO: Implement approve API call
-        // this.groupsService.approveJoinRequest(this.group()!.id, requestId).subscribe({
-        //     next: () => this.loadGroupDetails(this.group()!.id),
-        //     error: (err) => console.error('Failed to approve request:', err)
-        // });
+        const groupId = this.group()?.id;
+        if (!groupId) {
+            return;
+        }
+
+        this.groupsService.approveJoinRequest(groupId, requestId).subscribe({
+            next: () => {
+                this.loadGroupDetails(groupId);
+            },
+            error: (err) => {
+                console.error('Failed to approve request:', err);
+                alert(err.error?.error || 'Failed to approve join request. Please try again.');
+            }
+        });
     }
 
     declineJoinRequest(requestId: string): void {
-        console.log('Decline request:', requestId);
-        // TODO: Implement decline API call
-        // this.groupsService.declineJoinRequest(this.group()!.id, requestId).subscribe({
-        //     next: () => this.loadGroupDetails(this.group()!.id),
-        //     error: (err) => console.error('Failed to decline request:', err)
-        // });
+        const groupId = this.group()?.id;
+        if (!groupId) {
+            return;
+        }
+
+        this.groupsService.denyJoinRequest(groupId, requestId).subscribe({
+            next: () => {
+                this.loadGroupDetails(groupId);
+            },
+            error: (err) => {
+                console.error('Failed to decline request:', err);
+                alert(err.error?.error || 'Failed to decline join request. Please try again.');
+            }
+        });
     }
 
     cancelInvitation(invitationId: string): void {
@@ -124,5 +140,37 @@ export class GroupDetailsPageComponent implements OnInit {
         //     next: () => this.loadGroupDetails(this.group()!.id),
         //     error: (err) => console.error('Failed to cancel invitation:', err)
         // });
+    }
+
+    canRemoveMember(memberId: string, memberRole: number): boolean {
+        // Only owners and managers can remove members
+        if (!this.isOwnerOrManager()) {
+            return false;
+        }
+
+        // Can't remove yourself
+        // Can't remove owners (unless there are multiple owners, but we'll let the backend handle that)
+        return memberRole !== 0;
+    }
+
+    removeMember(memberId: string): void {
+        if (!confirm('Are you sure you want to remove this member from the group?')) {
+            return;
+        }
+
+        const groupId = this.group()?.id;
+        if (!groupId) {
+            return;
+        }
+
+        this.groupsService.removeMember(groupId, memberId).subscribe({
+            next: () => {
+                this.loadGroupDetails(groupId);
+            },
+            error: (err) => {
+                console.error('Failed to remove member:', err);
+                alert(err.error?.error || 'Failed to remove member. Please try again.');
+            }
+        });
     }
 }

@@ -15,6 +15,13 @@ public interface IGroupRepository
     Task AddAsync(Group group, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Updates an existing group in the repository.
+    /// </summary>
+    /// <param name="group">The group to update.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    Task UpdateAsync(Group group, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieves a group by its ID.
     /// </summary>
     /// <param name="id">The group ID.</param>

@@ -31,4 +31,20 @@ export class AllGroupsService {
     getGroupDetails(id: string): Observable<GroupDetailsDto> {
         return this.http.get<GroupDetailsDto>(`${this.apiUrl}/${id}`);
     }
+
+    joinGroup(groupId: string): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/${groupId}/members`, {});
+    }
+
+    removeMember(groupId: string, memberId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${groupId}/members/${memberId}`);
+    }
+
+    approveJoinRequest(groupId: string, profileId: string): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/${groupId}/join-requests/${profileId}/approve`, {});
+    }
+
+    denyJoinRequest(groupId: string, profileId: string): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/${groupId}/join-requests/${profileId}/deny`, {});
+    }
 }
