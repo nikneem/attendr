@@ -1,7 +1,9 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
+using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Conferences.CreateConference;
 using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
+using HexMaster.Attendr.Conferences.Services;
 using HexMaster.Attendr.Conferences.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +14,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddAttendrConferencesServices(this IServiceCollection services)
     {
-
+        // Register services
+        services.AddScoped<ISessionizeSyncService, SessionizeSyncService>();
 
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateConferenceCommand, CreateConferenceResult>, CreateConferenceCommandHandler>();
