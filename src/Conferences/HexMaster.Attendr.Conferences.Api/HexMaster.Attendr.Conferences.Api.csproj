@@ -22,6 +22,7 @@
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Sessionize.Api.Client" Version="2.0.1" />
   </ItemGroup>
 

@@ -2,6 +2,7 @@ using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Groups.GetGroupDetails;
 using HexMaster.Attendr.Groups.GetMyGroups;
 using HexMaster.Attendr.Groups.ListGroups;
+using HexMaster.Attendr.Groups.Observability;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Groups.Extensions;
@@ -10,6 +11,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddAttendrGroupsServices(this IServiceCollection services)
     {
+        // Register metrics
+        services.AddSingleton<GroupMetrics>();
+
         // Register query handlers
         services.AddScoped<IQueryHandler<GetMyGroupsQuery, IReadOnlyCollection<MyGroupDto>>, GetMyGroupsQueryHandler>();
         services.AddScoped<IQueryHandler<ListGroupsQuery, ListGroupsResult>, ListGroupsQueryHandler>();

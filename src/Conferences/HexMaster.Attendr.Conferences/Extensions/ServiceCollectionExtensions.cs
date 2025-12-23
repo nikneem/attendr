@@ -3,6 +3,7 @@ using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Conferences.CreateConference;
 using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
+using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Conferences.Services;
 using HexMaster.Attendr.Conferences.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
@@ -14,6 +15,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddAttendrConferencesServices(this IServiceCollection services)
     {
+        // Register metrics
+        services.AddSingleton<ConferenceMetrics>();
+
         // Register services
         services.AddScoped<ISessionizeSyncService, SessionizeSyncService>();
 

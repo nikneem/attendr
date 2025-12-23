@@ -2,6 +2,7 @@ using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
+using HexMaster.Attendr.Profiles.Observability;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +21,8 @@ public static class ServiceCollectionExtensions
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddAttendrProfilesServices(this IServiceCollection services, IConfiguration configuration)
     {
+        // Register metrics
+        services.AddSingleton<ProfileMetrics>();
 
         services.AddAttendrCache(configuration);
 

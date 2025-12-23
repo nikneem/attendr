@@ -1,12 +1,28 @@
+using System.Diagnostics;
+using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Core.CommandHandlers;
+using Microsoft.Extensions.Logging;
 
 namespace HexMaster.Attendr.Conferences.ListConferences;
 
-public sealed class ListConferencesQueryHandler(IConferenceRepository repository)
-    : IQueryHandler<ListConferencesQuery, ListConferencesResult>
+public sealed class ListConferencesQueryHandler : IQueryHandler<ListConferencesQuery, ListConferencesResult>
 {
+    private readonly IConferenceRepository _repository;
+    private readonly ConferenceMetrics _metrics;
+    private readonly ILogger<ListConferencesQueryHandler> _logger;
+
+    public ListConferencesQueryHandler(
+        IConferenceRepository repository,
+        ConferenceMetrics metrics,
+        ILogger<ListConferencesQueryHandler> logger)
+    {
+        _repository = repository;
+        _metrics = metrics;
+        _logger = logger;
+    }
+
     public async Task<ListConferencesResult> Handle(
         ListConferencesQuery query,
         CancellationToken cancellationToken = default)
@@ -18,7 +34,7 @@ public sealed class ListConferencesQueryHandler(IConferenceRepository repository
 
         var pageSize = PaginationConstants.NormalizePageSize(query.PageSize);
 
-        var (conferences, totalCount) = await repository.ListConferencesAsync(
+        var (conferences, totalCount) = await _repository.ListConferencesAsync(
             query.SearchQuery,
             query.PageNumber,
             pageSize,
@@ -37,8 +53,12 @@ public sealed class ListConferencesQueryHandler(IConferenceRepository repository
 
         activity?.SetTag("total_count", totalCount);
         activity?.SetTag("returned_count", items.Count);
+        activity?.SetStatus(ActivityStatusCode.Ok);
+
+        _metrics.RecordConferencesListed(items.Count);
+
+        _logger.LogInformation("Listed {Count} conferences (page {Page}, total {Total})", items.Count, query.PageNumber, totalCount);
 
         return new ListConferencesResult(items, totalCount, query.PageNumber, pageSize);
     }
-
 }

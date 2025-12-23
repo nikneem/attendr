@@ -13,12 +13,14 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/ConferenceCreatedHandler", ConferenceCreatedHandler)
             .WithName("ConferenceCreatedHandler")
+            .AllowAnonymous()
             .WithTopic("pubsub", "conference.created")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
         group.MapPost("/ConferenceUpdatedHandler", ConferenceUpdatedHandler)
             .WithName("ConferenceUpdatedHandler")
+            .AllowAnonymous()
             .WithTopic("pubsub", "conference.updated")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);

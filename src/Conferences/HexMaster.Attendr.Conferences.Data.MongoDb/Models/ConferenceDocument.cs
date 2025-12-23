@@ -54,11 +54,8 @@ internal sealed class SynchronizationSourceDocument
 
     [BsonElement("sourceUrl")]
     [BsonIgnoreIfNull]
-    public string? SourceUrl { get; set; }
+    public string? SourceLocationOrApiKey { get; set; }
 
-    [BsonElement("apiKey")]
-    [BsonIgnoreIfNull]
-    public string? ApiKey { get; set; }
 }
 
 internal sealed class RoomDocument

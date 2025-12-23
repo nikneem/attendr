@@ -40,7 +40,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
         // Check if the conference has a Sessionize synchronization source
         if (conference.SynchronizationSource == null ||
             conference.SynchronizationSource.SourceType != SynchronizationSourceType.Sessionize ||
-            string.IsNullOrWhiteSpace(conference.SynchronizationSource.ApiKey))
+            string.IsNullOrWhiteSpace(conference.SynchronizationSource.SourceLocationOrApiKey))
         {
             _logger.LogInformation("Conference {ConferenceId} does not have Sessionize synchronization configured, skipping", conferenceId);
             return new SessionizeSyncResult(
@@ -51,10 +51,10 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
         }
 
         _logger.LogInformation("Fetching data from Sessionize for conference {ConferenceId} with API ID {ApiId}",
-            conferenceId, conference.SynchronizationSource.ApiKey);
+            conferenceId, conference.SynchronizationSource.SourceLocationOrApiKey);
 
         // Fetch speakers
-        var sessionizeSpeakers = await _sessionizeApiClient.GetSpeakersListAsync(conference.SynchronizationSource.ApiKey, cancellationToken);
+        var sessionizeSpeakers = await _sessionizeApiClient.GetSpeakersListAsync(conference.SynchronizationSource.SourceLocationOrApiKey, cancellationToken);
         var speakerIdMapping = new Dictionary<string, Guid>(); // Maps external ID to local GUID
 
         foreach (var sessionizeSpeaker in sessionizeSpeakers)
@@ -95,7 +95,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
         }
 
         // Fetch schedule to get rooms and sessions
-        var scheduleGrid = await _sessionizeApiClient.GetScheduleGridAsync(conference.SynchronizationSource.ApiKey, cancellationToken);
+        var scheduleGrid = await _sessionizeApiClient.GetScheduleGridAsync(conference.SynchronizationSource.SourceLocationOrApiKey, cancellationToken);
         var roomIdMapping = new Dictionary<string, Guid>(); // Maps room ID (as external ID) to local GUID
 
         // First pass: collect all unique rooms

@@ -8,6 +8,7 @@ using HexMaster.Attendr.Conferences.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Conferences.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
 using Sessionize.Api.Client.DependencyInjection;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddOpenTelemetry()
         metrics
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
+            .AddMeter("HexMaster.Attendr.Conferences")
             .AddOtlpExporter();
     });
 
@@ -63,9 +65,9 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 

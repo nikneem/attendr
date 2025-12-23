@@ -244,8 +244,10 @@ public sealed class Conference
         }
 
         // Validate presentation dates are within conference dates
-        if (presentation.StartDateTime.Date < StartDate.ToDateTime(TimeOnly.MinValue) ||
-            presentation.EndDateTime.Date > EndDate.ToDateTime(TimeOnly.MaxValue))
+        var presentationStartDate = DateOnly.FromDateTime(presentation.StartDateTime);
+        var presentationEndDate = DateOnly.FromDateTime(presentation.EndDateTime);
+
+        if (presentationStartDate < StartDate || presentationEndDate > EndDate)
         {
             throw new InvalidOperationException("Presentation dates must be within conference dates.");
         }

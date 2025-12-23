@@ -16,15 +16,14 @@ internal static class ConferenceMapper
             Title = conference.Title,
             City = conference.City,
             Country = conference.Country,
-            StartDate = conference.StartDate.ToDateTime(TimeOnly.MinValue),
-            EndDate = conference.EndDate.ToDateTime(TimeOnly.MinValue),
+            StartDate = conference.StartDate.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
+            EndDate = conference.EndDate.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
             ImageUrl = conference.ImageUrl,
             SynchronizationSource = conference.SynchronizationSource != null
                 ? new SynchronizationSourceDocument
                 {
                     SourceType = (int)conference.SynchronizationSource.SourceType,
-                    SourceUrl = conference.SynchronizationSource.SourceUrl,
-                    ApiKey = conference.SynchronizationSource.ApiKey
+                    SourceLocationOrApiKey = conference.SynchronizationSource.SourceLocationOrApiKey,
                 }
                 : null,
             Rooms = conference.Rooms.Select(r => new RoomDocument
@@ -61,8 +60,7 @@ internal static class ConferenceMapper
         var synchronizationSource = document.SynchronizationSource != null
             ? SynchronizationSource.FromPersisted(
                 (SynchronizationSourceType)document.SynchronizationSource.SourceType,
-                document.SynchronizationSource.SourceUrl,
-                document.SynchronizationSource.ApiKey)
+                document.SynchronizationSource.SourceLocationOrApiKey)
             : null;
 
         var conference = Conference.FromPersisted(

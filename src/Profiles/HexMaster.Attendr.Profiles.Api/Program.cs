@@ -6,6 +6,7 @@ using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Profiles.Api.Endpoints;
 using HexMaster.Attendr.Profiles.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Profiles.Extensions;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddOpenTelemetry()
         metrics
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
+            .AddMeter("HexMaster.Attendr.Profiles")
             .AddOtlpExporter();
     });
 
@@ -61,6 +63,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();

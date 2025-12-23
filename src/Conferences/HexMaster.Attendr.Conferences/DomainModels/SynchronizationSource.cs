@@ -14,12 +14,7 @@ public sealed class SynchronizationSource
     /// <summary>
     /// Gets the source URL for the synchronization endpoint.
     /// </summary>
-    public string? SourceUrl { get; private set; }
-
-    /// <summary>
-    /// Gets the API key for authenticating with the synchronization source.
-    /// </summary>
-    public string? ApiKey { get; private set; }
+    public string? SourceLocationOrApiKey { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SynchronizationSource"/> class.
@@ -29,11 +24,10 @@ public sealed class SynchronizationSource
         SourceType = SynchronizationSourceType.Sessionize;
     }
 
-    private SynchronizationSource(SynchronizationSourceType sourceType, string? sourceUrl, string? apiKey)
+    private SynchronizationSource(SynchronizationSourceType sourceType, string? sourceLocationOrApiKey)
     {
         SourceType = sourceType;
-        SourceUrl = sourceUrl;
-        ApiKey = apiKey;
+        SourceLocationOrApiKey = sourceLocationOrApiKey;
     }
 
     /// <summary>
@@ -43,31 +37,14 @@ public sealed class SynchronizationSource
     /// <param name="sourceUrl">The source URL.</param>
     /// <returns>A new instance of <see cref="SynchronizationSource"/>.</returns>
     /// <exception cref="ArgumentException">Thrown when sourceUrl is null or whitespace.</exception>
-    public static SynchronizationSource CreateWithUrl(SynchronizationSourceType sourceType, string sourceUrl)
+    public static SynchronizationSource CreateWithUrl(SynchronizationSourceType sourceType, string sourceLocationOrApiKey)
     {
-        if (string.IsNullOrWhiteSpace(sourceUrl))
+        if (string.IsNullOrWhiteSpace(sourceLocationOrApiKey))
         {
-            throw new ArgumentException("Source URL cannot be empty.", nameof(sourceUrl));
+            throw new ArgumentException("Source URL cannot be empty.", nameof(sourceLocationOrApiKey));
         }
 
-        return new SynchronizationSource(sourceType, sourceUrl, null);
-    }
-
-    /// <summary>
-    /// Creates a new instance of <see cref="SynchronizationSource"/> with an API key.
-    /// </summary>
-    /// <param name="sourceType">The type of synchronization source.</param>
-    /// <param name="apiKey">The API key.</param>
-    /// <returns>A new instance of <see cref="SynchronizationSource"/>.</returns>
-    /// <exception cref="ArgumentException">Thrown when apiKey is null or whitespace.</exception>
-    public static SynchronizationSource CreateWithApiKey(SynchronizationSourceType sourceType, string apiKey)
-    {
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            throw new ArgumentException("API key cannot be empty.", nameof(apiKey));
-        }
-
-        return new SynchronizationSource(sourceType, null, apiKey);
+        return new SynchronizationSource(sourceType, sourceLocationOrApiKey);
     }
 
     /// <summary>
@@ -77,9 +54,9 @@ public sealed class SynchronizationSource
     /// <param name="sourceUrl">The source URL (can be null).</param>
     /// <param name="apiKey">The API key (can be null).</param>
     /// <returns>A new instance of <see cref="SynchronizationSource"/>.</returns>
-    public static SynchronizationSource FromPersisted(SynchronizationSourceType sourceType, string? sourceUrl, string? apiKey)
+    public static SynchronizationSource FromPersisted(SynchronizationSourceType sourceType, string? sourceLocationOrApiKey)
     {
-        return new SynchronizationSource(sourceType, sourceUrl, apiKey);
+        return new SynchronizationSource(sourceType, sourceLocationOrApiKey);
     }
 
     /// <summary>
@@ -87,30 +64,15 @@ public sealed class SynchronizationSource
     /// </summary>
     /// <param name="sourceUrl">The new source URL.</param>
     /// <exception cref="ArgumentException">Thrown when sourceUrl is null or whitespace.</exception>
-    public void UpdateSourceUrl(string sourceUrl)
+    public void UpdateSourceLocation(string sourceUrl)
     {
         if (string.IsNullOrWhiteSpace(sourceUrl))
         {
             throw new ArgumentException("Source URL cannot be empty.", nameof(sourceUrl));
         }
 
-        SourceUrl = sourceUrl;
-        ApiKey = null;
+        SourceLocationOrApiKey = sourceUrl;
     }
 
-    /// <summary>
-    /// Updates the API key.
-    /// </summary>
-    /// <param name="apiKey">The new API key.</param>
-    /// <exception cref="ArgumentException">Thrown when apiKey is null or whitespace.</exception>
-    public void UpdateApiKey(string apiKey)
-    {
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            throw new ArgumentException("API key cannot be empty.", nameof(apiKey));
-        }
 
-        ApiKey = apiKey;
-        SourceUrl = null;
-    }
 }
