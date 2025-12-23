@@ -1,16 +1,22 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Services;
 
 namespace HexMaster.Attendr.Conferences.UpdateConference;
 
 public sealed class UpdateConferenceCommandHandler : ICommandHandler<UpdateConferenceCommand, ConferenceDetailsDto>
 {
     private readonly IConferenceRepository _repository;
+    private readonly IIntegrationEventPublisher _eventPublisher;
 
-    public UpdateConferenceCommandHandler(IConferenceRepository repository)
+    public UpdateConferenceCommandHandler(
+        IConferenceRepository repository,
+        IIntegrationEventPublisher eventPublisher)
     {
         _repository = repository;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<ConferenceDetailsDto> Handle(UpdateConferenceCommand command, CancellationToken cancellationToken)
@@ -41,6 +47,18 @@ public sealed class UpdateConferenceCommandHandler : ICommandHandler<UpdateConfe
         }
 
         await _repository.UpdateAsync(conference, cancellationToken);
+
+        // Publish integration event
+        var conferenceUpdatedEvent = new ConferenceUpdatedEvent
+        {
+            ConferenceId = conference.Id,
+            Title = conference.Title,
+            City = conference.City,
+            Country = conference.Country,
+            StartDate = conference.StartDate,
+            EndDate = conference.EndDate
+        };
+        await _eventPublisher.PublishAsync(conferenceUpdatedEvent, cancellationToken);
 
         return new ConferenceDetailsDto(
             conference.Id,

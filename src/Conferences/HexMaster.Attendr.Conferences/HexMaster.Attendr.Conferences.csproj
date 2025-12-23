@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
+    <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Conferences.Abstractions\HexMaster.Attendr.Conferences.Abstractions.csproj" />
   </ItemGroup>
 

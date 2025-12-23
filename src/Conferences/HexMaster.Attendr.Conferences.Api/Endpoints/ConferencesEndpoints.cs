@@ -4,8 +4,6 @@ using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
 using HexMaster.Attendr.Conferences.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
-using HexMaster.Attendr.IntegrationEvents.Events;
-using HexMaster.Attendr.IntegrationEvents.Services;
 
 namespace HexMaster.Attendr.Conferences.Api.Endpoints;
 
@@ -78,7 +76,6 @@ public static class ConferencesEndpoints
     private static async Task<IResult> CreateConference(
         CreateConferenceRequest request,
         ICommandHandler<CreateConferenceCommand, CreateConferenceResult> handler,
-        IIntegrationEventPublisher eventPublisher,
         CancellationToken cancellationToken)
     {
         // Validate input
@@ -107,18 +104,6 @@ public static class ConferencesEndpoints
             // Execute command
             var result = await handler.Handle(command, cancellationToken);
 
-            // Publish integration event
-            var conferenceCreatedEvent = new ConferenceCreatedEvent
-            {
-                ConferenceId = result.Id,
-                Title = result.Title,
-                City = request.City?.Trim() ?? "Unknown",
-                Country = request.Country?.Trim() ?? "Unknown",
-                StartDate = request.StartDate,
-                EndDate = request.EndDate
-            };
-            await eventPublisher.PublishAsync(conferenceCreatedEvent, cancellationToken);
-
             return Results.Created($"/api/conferences/{result.Id}", result);
         }
         catch (ArgumentException ex)
@@ -135,7 +120,6 @@ public static class ConferencesEndpoints
         Guid id,
         CreateConferenceRequest request,
         ICommandHandler<UpdateConferenceCommand, ConferenceDetailsDto> handler,
-        IIntegrationEventPublisher eventPublisher,
         CancellationToken cancellationToken)
     {
         // Validate input
@@ -164,18 +148,6 @@ public static class ConferencesEndpoints
 
             // Execute command
             var result = await handler.Handle(command, cancellationToken);
-
-            // Publish integration event
-            var conferenceUpdatedEvent = new ConferenceUpdatedEvent
-            {
-                ConferenceId = result.Id,
-                Title = result.Title,
-                City = result.City ?? "Unknown",
-                Country = result.Country ?? "Unknown",
-                StartDate = result.StartDate,
-                EndDate = result.EndDate
-            };
-            await eventPublisher.PublishAsync(conferenceUpdatedEvent, cancellationToken);
 
             return Results.Ok(result);
         }
