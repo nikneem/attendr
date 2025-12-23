@@ -1,9 +1,7 @@
 <div class="presentation-details">
     <div class="details-header">
         <h2 class="presentation-title">{{ presentation().title }}</h2>
-        <button 
-            class="favorite-button" 
-            (click)="toggleFavorite()"
+        <button class="favorite-button" (click)="toggleFavorite()"
             [attr.aria-label]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'">
             <i [class]="isFavorite() ? 'pi pi-star-fill' : 'pi pi-star'"></i>
         </button>
@@ -18,13 +16,13 @@
                 <span class="info-value">{{ getSpeakerNames() }}</span>
             </div>
             }
-            
+
             <div class="info-item">
                 <i class="pi pi-calendar"></i>
                 <span class="info-label">Start:</span>
                 <span class="info-value">{{ formatDateTime(presentation().startDateTime) }}</span>
             </div>
-            
+
             <div class="info-item">
                 <i class="pi pi-calendar"></i>
                 <span class="info-label">End:</span>

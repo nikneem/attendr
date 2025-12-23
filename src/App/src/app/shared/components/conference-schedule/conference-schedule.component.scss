@@ -1,4 +1,4 @@
-@import '../../../../styles/variables';
+@use '../../../../styles/variables' as vars;
 
 .schedule-container {
     width: 100%;
@@ -87,7 +87,7 @@
     position: absolute;
     top: 8px;
     bottom: 8px;
-    background: $primary-darker;
+    background: vars.$primary-darker;
     border-radius: 8px;
     padding: 12px;
     cursor: pointer;
@@ -96,7 +96,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
     &:hover {
-        background: $primary-dark;
+        background: vars.$primary-dark;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         z-index: 10;

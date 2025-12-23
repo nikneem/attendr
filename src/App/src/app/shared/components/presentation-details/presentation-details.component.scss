@@ -1,13 +1,13 @@
-@import '../../../../styles/variables';
+@use '../../../../styles/variables' as vars;
 
 .presentation-details {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     padding: 1.5rem;
-    background: $background-secondary;
-    border-radius: $radius-md;
-    border: 1px solid $border-color;
+    background: vars.$background-secondary;
+    border-radius: vars.$radius-md;
+    border: 1px solid vars.$border-color;
 }
 
 .details-header {
@@ -22,7 +22,7 @@
     margin: 0;
     font-size: 1.75rem;
     font-weight: 600;
-    color: $text-primary;
+    color: vars.$text-primary;
     line-height: 1.3;
     padding-right: 3rem;
 }
@@ -33,11 +33,11 @@
     right: 0;
     background: transparent;
     border: none;
-    color: $accent-warning;
+    color: vars.$accent-warning;
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
-    border-radius: $radius-sm;
+    border-radius: vars.$radius-sm;
     transition: all 0.2s;
     line-height: 1;
 
@@ -76,10 +76,10 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: $text-primary;
+    color: vars.$text-primary;
 
     i {
-        color: $primary-color;
+        color: vars.$primary-color;
         font-size: 1.125rem;
         width: 1.25rem;
         flex-shrink: 0;
@@ -87,12 +87,12 @@
 
     .info-label {
         font-weight: 600;
-        color: $text-secondary;
+        color: vars.$text-secondary;
         min-width: 80px;
     }
 
     .info-value {
-        color: $text-primary;
+        color: vars.$text-primary;
     }
 }
 
@@ -108,9 +108,9 @@
     height: 80px;
     border-radius: 50%;
     overflow: hidden;
-    background: $background-elevated;
-    border: 3px solid $primary-color;
-    box-shadow: $shadow-md;
+    background: vars.$background-elevated;
+    border: 3px solid vars.$primary-color;
+    box-shadow: vars.$shadow-md;
 
     img {
         width: 100%;
@@ -124,20 +124,20 @@
     flex-direction: column;
     gap: 0.75rem;
     padding-top: 1rem;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid vars.$border-color;
 
     h3 {
         margin: 0;
         font-size: 1.25rem;
         font-weight: 600;
-        color: $text-primary;
+        color: vars.$text-primary;
     }
 
     p {
         margin: 0;
         font-size: 1rem;
         line-height: 1.6;
-        color: $text-secondary;
+        color: vars.$text-secondary;
         white-space: pre-wrap;
     }
 }
