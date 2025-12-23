@@ -37,6 +37,15 @@ internal static class GroupMapper
                 Id = jr.Id,
                 Name = jr.Name,
                 RequestedAt = jr.RequestedAt
+            }).ToList(),
+            FollowedConferences = group.FollowedConferences.Select(fc => new FollowedConferenceDocument
+            {
+                ConferenceId = fc.ConferenceId,
+                Name = fc.Name,
+                City = fc.City,
+                Country = fc.Country,
+                StartDate = fc.StartDate,
+                EndDate = fc.EndDate
             }).ToList()
         };
     }
@@ -83,6 +92,18 @@ internal static class GroupMapper
             group.AddJoinRequest(
                 joinRequestDoc.Id,
                 joinRequestDoc.Name);
+        }
+
+        // Reconstitute followed conferences
+        foreach (var conferenceDoc in document.FollowedConferences)
+        {
+            group.FollowConference(
+                conferenceDoc.ConferenceId,
+                conferenceDoc.Name,
+                conferenceDoc.City,
+                conferenceDoc.Country,
+                conferenceDoc.StartDate,
+                conferenceDoc.EndDate);
         }
 
         return group;

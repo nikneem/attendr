@@ -25,6 +25,7 @@ public sealed class Group
     private readonly List<GroupMember> _members = new();
     private readonly List<GroupInvitation> _invitations = new();
     private readonly List<GroupJoinRequest> _joinRequests = new();
+    private readonly List<FollowedConference> _followedConferences = new();
 
     /// <summary>
     /// Gets the collection of members in the group.
@@ -40,6 +41,11 @@ public sealed class Group
     /// Gets the collection of pending join requests for the group.
     /// </summary>
     public IReadOnlyCollection<GroupJoinRequest> JoinRequests => _joinRequests.AsReadOnly();
+
+    /// <summary>
+    /// Gets the collection of conferences followed by the group.
+    /// </summary>
+    public IReadOnlyCollection<FollowedConference> FollowedConferences => _followedConferences.AsReadOnly();
 
     private Group()
     {
@@ -384,5 +390,64 @@ public sealed class Group
     public GroupMember GetOwner()
     {
         return _members.First(m => m.Role == GroupRole.Owner);
+    }
+
+    /// <summary>
+    /// Adds a conference to the group's followed conferences list.
+    /// </summary>
+    /// <param name="conferenceId">The ID of the conference to follow.</param>
+    /// <param name="name">The name of the conference.</param>
+    /// <param name="city">The city where the conference is held.</param>
+    /// <param name="country">The country where the conference is held.</param>
+    /// <param name="startDate">The start date of the conference.</param>
+    /// <param name="endDate">The end date of the conference.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the conference is already being followed.</exception>
+    public void FollowConference(
+        Guid conferenceId,
+        string name,
+        string city,
+        string country,
+        DateOnly startDate,
+        DateOnly endDate)
+    {
+        if (_followedConferences.Any(fc => fc.ConferenceId == conferenceId))
+        {
+            throw new InvalidOperationException("Conference is already being followed by this group.");
+        }
+
+        _followedConferences.Add(new FollowedConference(
+            conferenceId,
+            name,
+            city,
+            country,
+            startDate,
+            endDate));
+    }
+
+    /// <summary>
+    /// Removes a conference from the group's followed conferences list.
+    /// </summary>
+    /// <param name="conferenceId">The ID of the conference to unfollow.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the conference is not being followed.</exception>
+    public void UnfollowConference(Guid conferenceId)
+    {
+        var conference = _followedConferences.FirstOrDefault(fc => fc.ConferenceId == conferenceId);
+
+        if (conference == null)
+        {
+            throw new InvalidOperationException("Conference is not being followed by this group.");
+        }
+
+        _followedConferences.Remove(conference);
+    }
+
+    /// <summary>
+    /// Gets all current and future conferences followed by the group.
+    /// Historic conferences are filtered out.
+    /// </summary>
+    /// <returns>Collection of current and future followed conferences.</returns>
+    public IEnumerable<FollowedConference> GetCurrentAndFutureFollowedConferences()
+    {
+        return _followedConferences.Where(fc => fc.IsCurrentOrFuture()).OrderBy(fc => fc.StartDate);
     }
 }

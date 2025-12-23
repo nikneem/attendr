@@ -144,11 +144,37 @@
             <p-card styleClass="section-card">
                 <ng-template pTemplate="header">
                     <div class="section-header">
-                        <h2>Activities</h2>
-                        <p-tag value="Coming Soon" severity="info"></p-tag>
+                        <h2>Followed Conferences</h2>
+                        <p-tag [value]="group()!.followedConferences.length.toString()" severity="info"></p-tag>
                     </div>
                 </ng-template>
-                <p>Group activities and events will be displayed here.</p>
+                @if (group()!.followedConferences.length > 0) {
+                <div class="conferences-list">
+                    @for (conference of group()!.followedConferences; track conference.id) {
+                    <div class="conference-item">
+                        <div class="conference-info">
+                            <i class="pi pi-calendar"></i>
+                            <div class="conference-details">
+                                <span class="conference-name">{{ conference.name }}</span>
+                                <span class="conference-location">
+                                    <i class="pi pi-map-marker"></i>
+                                    {{ conference.location }}
+                                </span>
+                                <span class="conference-dates">
+                                    {{ conference.startDate | date: 'mediumDate' }} - {{ conference.endDate | date:
+                                    'mediumDate' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+                } @else {
+                <div class="empty-state-small">
+                    <i class="pi pi-calendar"></i>
+                    <p>No followed conferences yet</p>
+                </div>
+                }
             </p-card>
         </div>
         }

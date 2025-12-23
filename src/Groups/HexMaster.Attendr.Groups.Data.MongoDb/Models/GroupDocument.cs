@@ -26,6 +26,9 @@ internal sealed class GroupDocument
 
     [BsonElement("joinRequests")]
     public List<GroupJoinRequestDocument> JoinRequests { get; set; } = new();
+
+    [BsonElement("followedConferences")]
+    public List<FollowedConferenceDocument> FollowedConferences { get; set; } = new();
 }
 
 internal sealed class GroupSettingsDocument
@@ -79,4 +82,26 @@ internal sealed class GroupJoinRequestDocument
     [BsonElement("requestedAt")]
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTimeOffset RequestedAt { get; set; }
+}
+
+internal sealed class FollowedConferenceDocument
+{
+    [BsonElement("conferenceId")]
+    [BsonRepresentation(BsonType.String)]
+    public Guid ConferenceId { get; set; }
+
+    [BsonElement("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [BsonElement("city")]
+    public string City { get; set; } = string.Empty;
+
+    [BsonElement("country")]
+    public string Country { get; set; } = string.Empty;
+
+    [BsonElement("startDate")]
+    public DateOnly StartDate { get; set; }
+
+    [BsonElement("endDate")]
+    public DateOnly EndDate { get; set; }
 }

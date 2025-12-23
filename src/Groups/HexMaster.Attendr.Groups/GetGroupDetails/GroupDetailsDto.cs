@@ -14,6 +14,7 @@ using HexMaster.Attendr.Groups.DomainModels;
 /// <param name="Members">The list of members in the group.</param>
 /// <param name="Invitations">The list of pending invitations.</param>
 /// <param name="JoinRequests">The list of pending join requests.</param>
+/// <param name="FollowedConferences">The list of current and future conferences followed by the group.</param>
 public sealed record GroupDetailsDto(
     Guid Id,
     string Name,
@@ -23,4 +24,5 @@ public sealed record GroupDetailsDto(
     GroupRole? CurrentMemberRole,
     List<GetGroupDetailsMemberDto> Members,
     List<GroupInvitationDto> Invitations,
-    List<GroupJoinRequestDto> JoinRequests);
+    List<GroupJoinRequestDto> JoinRequests,
+    List<FollowedConferenceDto> FollowedConferences);

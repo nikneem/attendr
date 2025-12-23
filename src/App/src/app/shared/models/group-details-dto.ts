@@ -16,6 +16,14 @@ export interface GroupJoinRequestDto {
     requestedAt: string;
 }
 
+export interface FollowedConferenceDto {
+    id: string;
+    name: string;
+    location: string;
+    startDate: string;
+    endDate: string;
+}
+
 export interface GroupDetailsDto {
     id: string;
     name: string;
@@ -26,4 +34,5 @@ export interface GroupDetailsDto {
     members: GroupMemberDto[];
     invitations: GroupInvitationDto[];
     joinRequests: GroupJoinRequestDto[];
+    followedConferences: FollowedConferenceDto[];
 }

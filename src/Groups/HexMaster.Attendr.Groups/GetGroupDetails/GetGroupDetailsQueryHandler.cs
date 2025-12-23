@@ -90,6 +90,16 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
                 .Select(jr => new GroupJoinRequestDto(jr.Id, jr.Name, jr.RequestedAt))
                 .ToList();
 
+            // Map followed conferences to DTOs (only current and future conferences)
+            var followedConferences = group.GetCurrentAndFutureFollowedConferences()
+                .Select(fc => new FollowedConferenceDto(
+                    fc.ConferenceId,
+                    fc.Name,
+                    fc.GetLocation(),
+                    fc.StartDate,
+                    fc.EndDate))
+                .ToList();
+
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordGroupQueried(found: true);
             _metrics.RecordOperationDuration("GetGroupDetails", stopwatch.Elapsed.TotalMilliseconds, success: true);
@@ -107,7 +117,8 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
                 currentMemberRole,
                 members,
                 invitations,
-                joinRequests);
+                joinRequests,
+                followedConferences);
         }
         catch (Exception ex)
         {
