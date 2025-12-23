@@ -12,6 +12,8 @@ import { TagModule } from 'primeng/tag';
 import { AllGroupsStore } from '../../../shared/stores/all-groups.store';
 import { GroupListItemDto } from '../../../shared/models/group-list-item-dto';
 import { GroupDetailsViewComponent } from '../../../shared/components/group-details-view/group-details-view.component';
+import { AllGroupsService } from '../../../shared/services/all-groups.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'attn-groups-list-page',
@@ -32,6 +34,8 @@ import { GroupDetailsViewComponent } from '../../../shared/components/group-deta
 })
 export class GroupsListPageComponent implements OnInit {
     private readonly groupsStore = inject(AllGroupsStore);
+    private readonly groupsService = inject(AllGroupsService);
+    private readonly messageService = inject(MessageService);
     private readonly router = inject(Router);
     private readonly cdr = inject(ChangeDetectorRef);
 
@@ -81,14 +85,44 @@ export class GroupsListPageComponent implements OnInit {
     }
 
     onJoinGroup(groupId: string): void {
-        console.log('Join group:', groupId);
-        // TODO: Implement join group functionality
-        this.showDetailsDialog.set(false);
+        this.groupsService.joinGroup(groupId).subscribe({
+            next: () => {
+                this.showDetailsDialog.set(false);
+                this.groupsStore.loadGroups(); // Refresh the list
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Successfully joined the group',
+                });
+            },
+            error: (err: any) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: err.error?.error || 'Failed to join group. Please try again.',
+                });
+            }
+        });
     }
 
     onRequestAccess(groupId: string): void {
-        console.log('Request access to group:', groupId);
-        // TODO: Implement request access functionality
-        this.showDetailsDialog.set(false);
+        this.groupsService.joinGroup(groupId).subscribe({
+            next: () => {
+                this.showDetailsDialog.set(false);
+                this.groupsStore.loadGroups(); // Refresh the list
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Access request sent successfully',
+                });
+            },
+            error: (err: any) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: err.error?.error || 'Failed to request access. Please try again.',
+                });
+            }
+        });
     }
 }

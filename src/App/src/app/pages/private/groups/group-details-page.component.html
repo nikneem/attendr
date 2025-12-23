@@ -26,6 +26,11 @@
                         <i class="pi pi-users"></i>
                         <span>{{ group()!.memberCount }} {{ group()!.memberCount === 1 ? 'member' : 'members' }}</span>
                     </div>
+                    @if (!group()!.isMember) {
+                    <button pButton [label]="group()!.isPublic ? 'Join Group' : 'Request to Join'"
+                        [icon]="group()!.isPublic ? 'pi pi-sign-in' : 'pi pi-send'" (click)="joinGroup()"
+                        [loading]="joiningGroup()"></button>
+                    }
                 </div>
             </div>
         </div>

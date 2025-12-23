@@ -66,7 +66,6 @@ internal sealed class GroupInvitationDocument
     public string AcceptanceCode { get; set; } = string.Empty;
 
     [BsonElement("expirationDate")]
-    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTimeOffset ExpirationDate { get; set; }
 }
 
@@ -80,7 +79,6 @@ internal sealed class GroupJoinRequestDocument
     public string Name { get; set; } = string.Empty;
 
     [BsonElement("requestedAt")]
-    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTimeOffset RequestedAt { get; set; }
 }
 

@@ -10,6 +10,7 @@ import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { AllGroupsService } from '../../../shared/services/all-groups.service';
 import { GroupDetailsDto } from '../../../shared/models/group-details-dto';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'attn-group-details-page',
@@ -19,12 +20,14 @@ import { GroupDetailsDto } from '../../../shared/models/group-details-dto';
 })
 export class GroupDetailsPageComponent implements OnInit {
     private readonly groupsService = inject(AllGroupsService);
+    private readonly messageService = inject(MessageService);
     private readonly route = inject(ActivatedRoute);
     private readonly cdr = inject(ChangeDetectorRef);
 
     group = signal<GroupDetailsDto | null>(null);
     loading = signal(true);
     error = signal<string | null>(null);
+    joiningGroup = signal(false);
 
     roleOptions = [
         { label: 'Owner', value: 0 },
@@ -169,7 +172,41 @@ export class GroupDetailsPageComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Failed to remove member:', err);
-                alert(err.error?.error || 'Failed to remove member. Please try again.');
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: err.error?.error || 'Failed to remove member. Please try again.',
+                });
+            }
+        });
+    }
+
+    joinGroup(): void {
+        const groupId = this.group()?.id;
+        if (!groupId || this.joiningGroup()) {
+            return;
+        }
+
+        this.joiningGroup.set(true);
+
+        this.groupsService.joinGroup(groupId).subscribe({
+            next: () => {
+                this.loadGroupDetails(groupId);
+                this.joiningGroup.set(false);
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Successfully joined the group',
+                });
+            },
+            error: (err) => {
+                console.error('Failed to join group:', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: err.error?.error || 'Failed to join group. Please try again.',
+                });
+                this.joiningGroup.set(false);
             }
         });
     }
