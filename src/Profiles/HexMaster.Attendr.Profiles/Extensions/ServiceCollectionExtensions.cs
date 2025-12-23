@@ -2,6 +2,7 @@ using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Profiles.Extensions;
@@ -15,11 +16,12 @@ public static class ServiceCollectionExtensions
     /// Registers all Attendr Profiles services including command handlers and repositories.
     /// </summary>
     /// <param name="services">The service collection.</param>
+    /// <param name="configuration">The configuration instance.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddAttendrProfilesServices(this IServiceCollection services)
+    public static IServiceCollection AddAttendrProfilesServices(this IServiceCollection services, IConfiguration configuration)
     {
 
-        services.AddAttendrCache();
+        services.AddAttendrCache(configuration);
 
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateProfileCommand, CreateProfileResult>, CreateProfileCommandHandler>();

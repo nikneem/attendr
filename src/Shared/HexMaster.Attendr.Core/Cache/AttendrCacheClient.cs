@@ -1,11 +1,13 @@
 using Dapr.Client;
+using HexMaster.Attendr.Core.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace HexMaster.Attendr.Core.Cache;
 
-public sealed class AttendrCacheClient(DaprClient daprClient) : IAttendrCacheClient
+public sealed class AttendrCacheClient(DaprClient daprClient, IOptions<DaprOptions> daprOptions) : IAttendrCacheClient
 {
     private readonly TimeSpan _defaultTtl = TimeSpan.FromMinutes(15);
-    private readonly string _storeName = "statestore";
+    private readonly string _storeName = daprOptions.Value.SharedStateStoreName;
 
     public async Task<T?> GetOrSetAsync<T>(string key, Func<CancellationToken, Task<T?>> factory, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
     {

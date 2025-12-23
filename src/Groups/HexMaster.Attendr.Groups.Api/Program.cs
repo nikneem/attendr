@@ -50,7 +50,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Register shared cache client
-builder.Services.AddAttendrCache();
+builder.Services.AddAttendrCache(builder.Configuration);
 
 // Register profiles integration service
 builder.Services.AddProfilesIntegration(builder.Configuration);

@@ -49,7 +49,7 @@ builder.Services.AddAuthorization();
 
 // Register Profiles module services
 builder.Services
-    .AddAttendrProfilesServices()
+    .AddAttendrProfilesServices(builder.Configuration)
     .AddMongoDbProfileRepository(builder.Configuration);
 
 builder.Services.AddDaprSidekick();
