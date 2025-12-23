@@ -10,6 +10,7 @@
     <ProjectReference Include="../../Shared/HexMaster.Attendr.Core/HexMaster.Attendr.Core.csproj" />
     <ProjectReference Include="../HexMaster.Attendr.Conferences/HexMaster.Attendr.Conferences.csproj" />
     <ProjectReference Include="../HexMaster.Attendr.Conferences.Data.MongoDb/HexMaster.Attendr.Conferences.Data.MongoDb.csproj" />
+    <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+    <PackageReference Include="Sessionize.Api.Client" Version="2.0.1" />
   </ItemGroup>
 
 </Project>

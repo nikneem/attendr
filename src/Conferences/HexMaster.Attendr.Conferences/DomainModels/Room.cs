@@ -16,6 +16,11 @@ public sealed class Room
     public string Name { get; private set; }
 
     /// <summary>
+    /// Gets the external ID from the synchronization source.
+    /// </summary>
+    public string? ExternalId { get; private set; }
+
+    /// <summary>
     /// Gets the capacity of the room.
     /// </summary>
     public int Capacity { get; private set; }
@@ -26,8 +31,9 @@ public sealed class Room
     /// <param name="id">The unique identifier of the room.</param>
     /// <param name="name">The name of the room.</param>
     /// <param name="capacity">The capacity of the room.</param>
+    /// <param name="externalId">The external ID from the synchronization source.</param>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-    public Room(Guid id, string name, int capacity)
+    public Room(Guid id, string name, int capacity, string? externalId = null)
     {
         if (id == Guid.Empty)
         {
@@ -47,6 +53,7 @@ public sealed class Room
         Id = id;
         Name = name;
         Capacity = capacity;
+        ExternalId = externalId;
     }
 
     /// <summary>
@@ -54,10 +61,11 @@ public sealed class Room
     /// </summary>
     /// <param name="name">The name of the room.</param>
     /// <param name="capacity">The capacity of the room.</param>
+    /// <param name="externalId">The external ID from the synchronization source.</param>
     /// <returns>A new instance of <see cref="Room"/>.</returns>
-    public static Room Create(string name, int capacity)
+    public static Room Create(string name, int capacity, string? externalId = null)
     {
         var id = Guid.NewGuid();
-        return new Room(id, name, capacity);
+        return new Room(id, name, capacity, externalId);
     }
 }

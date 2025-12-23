@@ -16,9 +16,9 @@ public sealed class Speaker
     public string Name { get; private set; }
 
     /// <summary>
-    /// Gets the biography of the speaker.
+    /// Gets the external ID from the synchronization source.
     /// </summary>
-    public string Biography { get; private set; }
+    public string? ExternalId { get; private set; }
 
     /// <summary>
     /// Gets the company or organization the speaker represents.
@@ -26,14 +26,20 @@ public sealed class Speaker
     public string? Company { get; private set; }
 
     /// <summary>
+    /// Gets the URL to the speaker's profile picture.
+    /// </summary>
+    public string? ProfilePictureUrl { get; private set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="Speaker"/> class.
     /// </summary>
     /// <param name="id">The unique identifier of the speaker.</param>
     /// <param name="name">The name of the speaker.</param>
-    /// <param name="biography">The biography of the speaker.</param>
     /// <param name="company">The company or organization the speaker represents.</param>
+    /// <param name="profilePictureUrl">The URL to the speaker's profile picture.</param>
+    /// <param name="externalId">The external ID from the synchronization source.</param>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-    public Speaker(Guid id, string name, string biography, string? company = null)
+    public Speaker(Guid id, string name, string? company = null, string? profilePictureUrl = null, string? externalId = null)
     {
         if (id == Guid.Empty)
         {
@@ -45,27 +51,24 @@ public sealed class Speaker
             throw new ArgumentException("Speaker name cannot be empty.", nameof(name));
         }
 
-        if (string.IsNullOrWhiteSpace(biography))
-        {
-            throw new ArgumentException("Speaker biography cannot be empty.", nameof(biography));
-        }
-
         Id = id;
         Name = name;
-        Biography = biography;
         Company = company;
+        ProfilePictureUrl = profilePictureUrl;
+        ExternalId = externalId;
     }
 
     /// <summary>
     /// Factory method to create a new speaker.
     /// </summary>
     /// <param name="name">The name of the speaker.</param>
-    /// <param name="biography">The biography of the speaker.</param>
     /// <param name="company">The company or organization the speaker represents.</param>
+    /// <param name="profilePictureUrl">The URL to the speaker's profile picture.</param>
+    /// <param name="externalId">The external ID from the synchronization source.</param>
     /// <returns>A new instance of <see cref="Speaker"/>.</returns>
-    public static Speaker Create(string name, string biography, string? company = null)
+    public static Speaker Create(string name, string? company = null, string? profilePictureUrl = null, string? externalId = null)
     {
         var id = Guid.NewGuid();
-        return new Speaker(id, name, biography, company);
+        return new Speaker(id, name, company, profilePictureUrl, externalId);
     }
 }

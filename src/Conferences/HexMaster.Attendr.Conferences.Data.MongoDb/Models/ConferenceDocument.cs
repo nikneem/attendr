@@ -70,6 +70,10 @@ internal sealed class RoomDocument
     [BsonElement("name")]
     public string Name { get; set; } = string.Empty;
 
+    [BsonElement("externalId")]
+    [BsonIgnoreIfNull]
+    public string? ExternalId { get; set; }
+
     [BsonElement("capacity")]
     public int Capacity { get; set; }
 }
@@ -83,12 +87,17 @@ internal sealed class SpeakerDocument
     [BsonElement("name")]
     public string Name { get; set; } = string.Empty;
 
-    [BsonElement("biography")]
-    public string Biography { get; set; } = string.Empty;
+    [BsonElement("externalId")]
+    [BsonIgnoreIfNull]
+    public string? ExternalId { get; set; }
 
     [BsonElement("company")]
     [BsonIgnoreIfNull]
     public string? Company { get; set; }
+
+    [BsonElement("profilePictureUrl")]
+    [BsonIgnoreIfNull]
+    public string? ProfilePictureUrl { get; set; }
 }
 
 internal sealed class PresentationDocument
@@ -114,6 +123,10 @@ internal sealed class PresentationDocument
     [BsonElement("roomId")]
     [BsonRepresentation(BsonType.String)]
     public Guid RoomId { get; set; }
+
+    [BsonElement("externalId")]
+    [BsonIgnoreIfNull]
+    public string? ExternalId { get; set; }
 
     [BsonElement("speakerIds")]
     public List<Guid> SpeakerIds { get; set; } = new();

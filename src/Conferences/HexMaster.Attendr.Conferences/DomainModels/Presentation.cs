@@ -35,6 +35,16 @@ public sealed class Presentation
     /// </summary>
     public Guid RoomId { get; private set; }
 
+    /// <summary>
+    /// Gets the external ID from the synchronization source.
+    /// </summary>
+    public string? ExternalId { get; private set; }
+
+    /// <summary>
+    /// Gets a value indicating whether the presentation has been modified.
+    /// </summary>
+    public bool HasChanges { get; private set; }
+
     private readonly List<Guid> _speakerIds = new();
 
     /// <summary>
@@ -52,6 +62,7 @@ public sealed class Presentation
     /// <param name="endDateTime">The end date and time.</param>
     /// <param name="roomId">The ID of the room.</param>
     /// <param name="speakerIds">The collection of speaker IDs.</param>
+    /// <param name="externalId">The external ID from the synchronization source.</param>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
     public Presentation(
         Guid id,
@@ -60,7 +71,8 @@ public sealed class Presentation
         DateTime startDateTime,
         DateTime endDateTime,
         Guid roomId,
-        IEnumerable<Guid> speakerIds)
+        IEnumerable<Guid> speakerIds,
+        string? externalId = null)
     {
         if (id == Guid.Empty)
         {
@@ -106,6 +118,7 @@ public sealed class Presentation
         StartDateTime = startDateTime;
         EndDateTime = endDateTime;
         RoomId = roomId;
+        ExternalId = externalId;
         _speakerIds.AddRange(speakerIdList);
     }
 
@@ -118,6 +131,7 @@ public sealed class Presentation
     /// <param name="endDateTime">The end date and time.</param>
     /// <param name="roomId">The ID of the room.</param>
     /// <param name="speakerIds">The collection of speaker IDs.</param>
+    /// <param name="externalId">The external ID from the synchronization source.</param>
     /// <returns>A new instance of <see cref="Presentation"/>.</returns>
     public static Presentation Create(
         string title,
@@ -125,10 +139,11 @@ public sealed class Presentation
         DateTime startDateTime,
         DateTime endDateTime,
         Guid roomId,
-        IEnumerable<Guid> speakerIds)
+        IEnumerable<Guid> speakerIds,
+        string? externalId = null)
     {
         var id = Guid.NewGuid();
-        return new Presentation(id, title, @abstract, startDateTime, endDateTime, roomId, speakerIds);
+        return new Presentation(id, title, @abstract, startDateTime, endDateTime, roomId, speakerIds, externalId);
     }
 
     /// <summary>
@@ -148,10 +163,29 @@ public sealed class Presentation
             throw new ArgumentException("End date/time must be after start date/time.", nameof(endDateTime));
         }
 
-        Title = title;
-        Abstract = @abstract;
-        StartDateTime = startDateTime;
-        EndDateTime = endDateTime;
+        if (!string.Equals(Title, title, StringComparison.Ordinal))
+        {
+            Title = title;
+            HasChanges = true;
+        }
+
+        if (!string.Equals(Abstract, @abstract, StringComparison.Ordinal))
+        {
+            Abstract = @abstract;
+            HasChanges = true;
+        }
+
+        if (StartDateTime != startDateTime)
+        {
+            StartDateTime = startDateTime;
+            HasChanges = true;
+        }
+
+        if (EndDateTime != endDateTime)
+        {
+            EndDateTime = endDateTime;
+            HasChanges = true;
+        }
     }
 
     /// <summary>
@@ -165,7 +199,11 @@ public sealed class Presentation
             throw new ArgumentException("Room ID cannot be empty.", nameof(roomId));
         }
 
-        RoomId = roomId;
+        if (RoomId != roomId)
+        {
+            RoomId = roomId;
+            HasChanges = true;
+        }
     }
 
     /// <summary>
@@ -187,6 +225,7 @@ public sealed class Presentation
         }
 
         _speakerIds.Add(speakerId);
+        HasChanges = true;
     }
 
     /// <summary>
@@ -207,7 +246,11 @@ public sealed class Presentation
             throw new InvalidOperationException("Cannot remove the last speaker from a presentation.");
         }
 
-        if (!_speakerIds.Remove(speakerId))
+        if (_speakerIds.Remove(speakerId))
+        {
+            HasChanges = true;
+        }
+        else
         {
             throw new InvalidOperationException($"Speaker with ID {speakerId} is not assigned to this presentation.");
         }

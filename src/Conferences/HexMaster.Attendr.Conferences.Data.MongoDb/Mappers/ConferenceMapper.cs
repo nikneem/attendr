@@ -31,14 +31,16 @@ internal static class ConferenceMapper
             {
                 Id = r.Id,
                 Name = r.Name,
+                ExternalId = r.ExternalId,
                 Capacity = r.Capacity
             }).ToList(),
             Speakers = conference.Speakers.Select(s => new SpeakerDocument
             {
                 Id = s.Id,
                 Name = s.Name,
-                Biography = s.Biography,
-                Company = s.Company
+                ExternalId = s.ExternalId,
+                Company = s.Company,
+                ProfilePictureUrl = s.ProfilePictureUrl
             }).ToList(),
             Presentations = conference.Presentations.Select(p => new PresentationDocument
             {
@@ -48,6 +50,7 @@ internal static class ConferenceMapper
                 StartDateTime = p.StartDateTime,
                 EndDateTime = p.EndDateTime,
                 RoomId = p.RoomId,
+                ExternalId = p.ExternalId,
                 SpeakerIds = p.SpeakerIds.ToList()
             }).ToList()
         };
@@ -75,14 +78,14 @@ internal static class ConferenceMapper
         // Reconstitute rooms
         foreach (var roomDoc in document.Rooms)
         {
-            var room = new Room(roomDoc.Id, roomDoc.Name, roomDoc.Capacity);
+            var room = new Room(roomDoc.Id, roomDoc.Name, roomDoc.Capacity, roomDoc.ExternalId);
             conference.AddRoom(room);
         }
 
         // Reconstitute speakers
         foreach (var speakerDoc in document.Speakers)
         {
-            var speaker = new Speaker(speakerDoc.Id, speakerDoc.Name, speakerDoc.Biography, speakerDoc.Company);
+            var speaker = new Speaker(speakerDoc.Id, speakerDoc.Name, speakerDoc.Company, speakerDoc.ProfilePictureUrl, speakerDoc.ExternalId);
             conference.AddSpeaker(speaker);
         }
 
@@ -96,7 +99,8 @@ internal static class ConferenceMapper
                 presDoc.StartDateTime,
                 presDoc.EndDateTime,
                 presDoc.RoomId,
-                presDoc.SpeakerIds);
+                presDoc.SpeakerIds,
+                presDoc.ExternalId);
             conference.AddPresentation(presentation);
         }
 

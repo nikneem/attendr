@@ -6,6 +6,7 @@ using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Conferences.Api.Endpoints;
 using HexMaster.Attendr.Conferences.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Conferences.Extensions;
+using Sessionize.Api.Client.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,7 @@ builder.Services.AddAuthorization();
 // Register repositories and services
 builder.Services.AddMongoDbConferenceRepository(builder.Configuration);
 builder.Services.AddAttendrConferencesServices();
+builder.Services.AddSessionizeApiClient();
 builder.Services.AddDaprSidekick();
 
 var app = builder.Build();
@@ -66,5 +68,7 @@ app.UseAuthorization();
 
 // Map endpoints
 app.MapConferencesEndpoints();
+app.MapEventHandlersEndpoints();
+app.MapSubscribeHandler();
 
 app.Run();
