@@ -1,0 +1,220 @@
+@import '../../../../styles/variables';
+
+.schedule-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.schedule-day {
+    min-width: 1200px;
+}
+
+.timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.timeline-header {
+    position: sticky;
+    top: 0;
+    background: var(--surface-ground);
+    z-index: 2;
+    border-bottom: 1px solid var(--surface-border);
+}
+
+.timeline-time-labels {
+    display: flex;
+    padding-left: 150px;
+    min-height: 40px;
+    align-items: center;
+}
+
+.time-label {
+    width: 300px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    border-left: 1px solid var(--surface-border);
+    padding: 8px 4px;
+
+    &:first-child {
+        border-left: none;
+    }
+}
+
+.timeline-body {
+    position: relative;
+}
+
+.timeline-rooms {
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline-room {
+    display: flex;
+    align-items: stretch;
+    min-height: 120px;
+    border-bottom: 1px solid var(--surface-border);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.room-label {
+    width: 150px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    font-weight: 600;
+    border-right: 2px solid var(--surface-border);
+    background: var(--surface-50);
+}
+
+.room-timeline {
+    flex: 1;
+    position: relative;
+    padding: 8px 0;
+}
+
+.timeline-session {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    background: $primary-darker;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    overflow: visible;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+        background: $primary-dark;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        z-index: 10;
+    }
+}
+
+.session-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--primary-color-text);
+    height: 100%;
+}
+
+.session-title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.session-body {
+    display: flex;
+    gap: 12px;
+    flex: 1;
+    align-items: flex-start;
+    min-height: 0;
+}
+
+.session-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    justify-content: space-between;
+}
+
+.session-speakers {
+    font-size: 0.875rem;
+    opacity: 0.95;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.session-time {
+    font-size: 0.8125rem;
+    opacity: 0.9;
+    font-weight: 600;
+    margin-top: auto;
+}
+
+.session-speaker-images {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 48px;
+}
+
+.session-speaker-image {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.2s, z-index 0s;
+
+    &:not(:first-child) {
+        margin-left: -16px;
+    }
+
+    &:hover {
+        transform: scale(1.1);
+        z-index: 100 !important;
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.empty-schedule {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 32px;
+    color: var(--text-color-secondary);
+
+    i {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    p {
+        font-size: 1.125rem;
+        margin: 0;
+    }
+}
+
+::ng-deep .p-tabs {
+    .p-tabs-nav {
+        background: var(--surface-ground);
+        border-bottom: 2px solid var(--surface-border);
+    }
+
+    .p-tabs-panels {
+        padding: 0;
+        background: transparent;
+    }
+}

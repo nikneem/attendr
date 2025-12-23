@@ -37,9 +37,9 @@ public sealed class GetConferenceQueryHandler : IQueryHandler<GetConferenceQuery
 
         try
         {
-            var conference = await _conferenceRepository.GetByIdAsync(query.ConferenceId, cancellationToken);
+            var conferenceDetails = await _conferenceRepository.GetDetailsByIdAsync(query.ConferenceId, cancellationToken);
 
-            if (conference == null)
+            if (conferenceDetails == null)
             {
                 activity?.SetStatus(ActivityStatusCode.Ok);
                 activity?.SetTag("conference.found", false);
@@ -51,32 +51,16 @@ public sealed class GetConferenceQueryHandler : IQueryHandler<GetConferenceQuery
             }
 
             activity?.SetTag("conference.found", true);
-            activity?.SetTag("conference.title", conference.Title);
-            activity?.SetTag("conference.has_sync_source", conference.SynchronizationSource is not null);
-
-            SynchronizationSourceDto? syncSourceDto = null;
-            if (conference.SynchronizationSource != null)
-            {
-                syncSourceDto = new SynchronizationSourceDto(
-                    conference.SynchronizationSource.SourceType.ToString(),
-                    conference.SynchronizationSource.SourceLocationOrApiKey ?? string.Empty);
-            }
+            activity?.SetTag("conference.title", conferenceDetails.Title);
+            activity?.SetTag("conference.has_sync_source", conferenceDetails.SynchronizationSource is not null);
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordConferenceQueried(found: true);
             _metrics.RecordOperationDuration("GetConference", stopwatch.Elapsed.TotalMilliseconds, success: true);
 
-            _logger.LogInformation("Retrieved conference {ConferenceId}: {Title}", conference.Id, conference.Title);
+            _logger.LogInformation("Retrieved conference {ConferenceId}: {Title}", conferenceDetails.Id, conferenceDetails.Title);
 
-            return new ConferenceDetailsDto(
-                conference.Id,
-                conference.Title,
-                conference.City,
-                conference.Country,
-                conference.StartDate,
-                conference.EndDate,
-                conference.ImageUrl,
-                syncSourceDto);
+            return conferenceDetails;
         }
         catch (Exception ex)
         {

@@ -100,7 +100,9 @@ public sealed class UpdateConferenceCommandHandler : ICommandHandler<UpdateConfe
                     ? new SynchronizationSourceDto(
                         conference.SynchronizationSource.SourceType.ToString(),
                         conference.SynchronizationSource.SourceLocationOrApiKey ?? string.Empty)
-                    : null);
+                    : null,
+                new List<SpeakerDto>(),
+                new List<PresentationDto>());
         }
         catch (Exception ex)
         {

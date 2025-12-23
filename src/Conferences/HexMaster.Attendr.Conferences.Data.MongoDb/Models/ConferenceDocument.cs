@@ -126,5 +126,6 @@ internal sealed class PresentationDocument
     public string? ExternalId { get; set; }
 
     [BsonElement("speakerIds")]
+    [BsonRepresentation(BsonType.String)]
     public List<Guid> SpeakerIds { get; set; } = new();
 }

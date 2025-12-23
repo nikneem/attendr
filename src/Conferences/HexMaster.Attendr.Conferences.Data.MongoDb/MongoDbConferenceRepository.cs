@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.Data.MongoDb.Mappers;
 using HexMaster.Attendr.Conferences.Data.MongoDb.Models;
 using HexMaster.Attendr.Conferences.DomainModels;
@@ -34,6 +35,15 @@ public sealed class MongoDbConferenceRepository : IConferenceRepository
         var document = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
         return document != null ? ConferenceMapper.ToDomain(document) : null;
+    }
+
+    /// <inheritdoc />
+    public async Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<ConferenceDocument>.Filter.Eq(c => c.Id, id);
+        var document = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+
+        return document != null ? ConferenceDocumentToDtoMapper.ToDetailsDto(document) : null;
     }
 
     /// <inheritdoc />

@@ -55,40 +55,20 @@
             <p-card styleClass="section-card">
                 <ng-template pTemplate="header">
                     <div class="section-header">
+                        <h2>Schedule</h2>
+                    </div>
+                </ng-template>
+                <attn-conference-schedule [presentations]="conference.presentations" [startDate]="conference.startDate"
+                    [endDate]="conference.endDate" />
+            </p-card>
+
+            <p-card styleClass="section-card">
+                <ng-template pTemplate="header">
+                    <div class="section-header">
                         <h2>Speakers</h2>
-                        <p-tag value="Coming Soon" severity="info"></p-tag>
                     </div>
                 </ng-template>
-                <div class="empty-section">
-                    <i class="pi pi-users" style="font-size: 3rem"></i>
-                    <p>Speaker management will be available soon</p>
-                </div>
-            </p-card>
-
-            <p-card styleClass="section-card">
-                <ng-template pTemplate="header">
-                    <div class="section-header">
-                        <h2>Rooms</h2>
-                        <p-tag value="Coming Soon" severity="info"></p-tag>
-                    </div>
-                </ng-template>
-                <div class="empty-section">
-                    <i class="pi pi-building" style="font-size: 3rem"></i>
-                    <p>Room management will be available soon</p>
-                </div>
-            </p-card>
-
-            <p-card styleClass="section-card">
-                <ng-template pTemplate="header">
-                    <div class="section-header">
-                        <h2>Presentations</h2>
-                        <p-tag value="Coming Soon" severity="info"></p-tag>
-                    </div>
-                </ng-template>
-                <div class="empty-section">
-                    <i class="pi pi-video" style="font-size: 3rem"></i>
-                    <p>Presentation management will be available soon</p>
-                </div>
+                <attn-speaker-tiles [speakers]="conference.speakers" />
             </p-card>
         </div>
 

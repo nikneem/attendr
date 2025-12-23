@@ -1,3 +1,6 @@
+import { SpeakerDto } from './speaker-dto';
+import { PresentationDto } from './presentation-dto';
+
 export interface SynchronizationSource {
     sourceType: string;
     sourceUrl: string;
@@ -12,4 +15,6 @@ export interface ConferenceDetailsDto {
     endDate: string;
     imageUrl?: string;
     synchronizationSource?: SynchronizationSource;
+    speakers: SpeakerDto[];
+    presentations: PresentationDto[];
 }

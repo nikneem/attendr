@@ -1,0 +1,150 @@
+@if (scheduleDays().length === 0) {
+<div class="empty-schedule">
+    <i class="pi pi-calendar-times"></i>
+    <p>No sessions scheduled</p>
+</div>
+} @else if (scheduleDays().length === 1) {
+<div class="schedule-container">
+    @for (day of scheduleDays(); track day.date) {
+    <div class="schedule-day">
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <div class="timeline-time-labels">
+                    @for (timeLabel of getTimeLabels(day); track timeLabel) {
+                    <div class="time-label">{{ timeLabel }}</div>
+                    }
+                </div>
+            </div>
+            <div class="timeline-body">
+                <div class="timeline-rooms">
+                    @for (room of day.rooms; track room; let i = $index) {
+                    <div class="timeline-room">
+                        <div class="room-label">{{ room }}</div>
+                        <div class="room-timeline">
+                            @for (session of getTimelineSessions(day); track session.presentation.id) {
+                            @if (session.roomIndex === i) {
+                            <div class="timeline-session" [style.left.px]="session.startPixels"
+                                [style.width.px]="session.widthPixels"
+                                (click)="openPresentationDetails(session.presentation)">
+                                <div class="session-content">
+                                    <div class="session-title" [attr.title]="session.presentation.title">{{
+                                        session.presentation.title }}</div>
+                                    <div class="session-body">
+                                        <div class="session-info">
+                                            @if (session.presentation.speakers.length > 0) {
+                                            <div class="session-speakers"
+                                                [attr.title]="getSpeakerNames(session.presentation)">
+                                                {{ getSpeakerNames(session.presentation) }}
+                                            </div>
+                                            }
+                                            <div class="session-time">
+                                                {{ formatTime(session.presentation.startDateTime) }} - {{
+                                                formatTime(session.presentation.endDateTime) }}
+                                            </div>
+                                        </div>
+                                        @if (getSpeakerImages(session.presentation).length > 0) {
+                                        <div class="session-speaker-images">
+                                            @for (speaker of getSpeakerImages(session.presentation); track speaker.id;
+                                            let i = $index) {
+                                            <div class="session-speaker-image" [style.z-index]="i">
+                                                <img [src]="speaker.profilePictureUrl" [alt]="speaker.name" />
+                                            </div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+} @else {
+<p-tabs [value]="0">
+    <p-tablist>
+        @for (day of scheduleDays(); track day.date; let i = $index) {
+        <p-tab [value]="i">{{ day.dateLabel }}</p-tab>
+        }
+    </p-tablist>
+    <p-tabpanels>
+        @for (day of scheduleDays(); track day.date; let i = $index) {
+        <p-tabpanel [value]="i">
+            <div class="schedule-day">
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <div class="timeline-time-labels">
+                            @for (timeLabel of getTimeLabels(day); track timeLabel) {
+                            <div class="time-label">{{ timeLabel }}</div>
+                            }
+                        </div>
+                    </div>
+                    <div class="timeline-body">
+                        <div class="timeline-rooms">
+                            @for (room of day.rooms; track room; let roomIndex = $index) {
+                            <div class="timeline-room">
+                                <div class="room-label">{{ room }}</div>
+                                <div class="room-timeline">
+                                    @for (session of getTimelineSessions(day); track session.presentation.id) {
+                                    @if (session.roomIndex === roomIndex) {
+                                    <div class="timeline-session" [style.left.px]="session.startPixels"
+                                        [style.width.px]="session.widthPixels"
+                                        (click)="openPresentationDetails(session.presentation)">
+                                        <div class="session-content">
+                                            <div class="session-title" [attr.title]="session.presentation.title">{{
+                                                session.presentation.title }}</div>
+                                            <div class="session-body">
+                                                <div class="session-info">
+                                                    @if (session.presentation.speakers.length > 0) {
+                                                    <div class="session-speakers"
+                                                        [attr.title]="getSpeakerNames(session.presentation)">
+                                                        {{ getSpeakerNames(session.presentation) }}
+                                                    </div>
+                                                    }
+                                                    <div class="session-time">
+                                                        {{ formatTime(session.presentation.startDateTime) }} - {{
+                                                        formatTime(session.presentation.endDateTime) }}
+                                                    </div>
+                                                </div>
+                                                @if (getSpeakerImages(session.presentation).length > 0) {
+                                                <div class="session-speaker-images">
+                                                    @for (speaker of getSpeakerImages(session.presentation); track
+                                                    speaker.id; let i = $index) {
+                                                    <div class="session-speaker-image" [style.z-index]="i">
+                                                        <img [src]="speaker.profilePictureUrl" [alt]="speaker.name" />
+                                                    </div>
+                                                    }
+                                                </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                    }
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p-tabpanel>
+        }
+    </p-tabpanels>
+</p-tabs>
+}
+
+<p-dialog [header]="selectedPresentation() ? 'Session Details' : ''" [(visible)]="showDialog" [modal]="true"
+    [style]="{ width: '90vw', 'max-width': '800px' }" [draggable]="false" [resizable]="false">
+    @if (selectedPresentation()) {
+    <attn-presentation-details [presentation]="selectedPresentation()!" [isFavorite]="false"
+        (favoriteToggled)="onFavoriteToggled($event)">
+    </attn-presentation-details>
+    }
+</p-dialog>

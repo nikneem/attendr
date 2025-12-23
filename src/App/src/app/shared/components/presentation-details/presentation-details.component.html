@@ -1,0 +1,58 @@
+<div class="presentation-details">
+    <div class="details-header">
+        <h2 class="presentation-title">{{ presentation().title }}</h2>
+        <button 
+            class="favorite-button" 
+            (click)="toggleFavorite()"
+            [attr.aria-label]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'">
+            <i [class]="isFavorite() ? 'pi pi-star-fill' : 'pi pi-star'"></i>
+        </button>
+    </div>
+
+    <div class="details-body">
+        <div class="details-info">
+            @if (presentation().speakers.length > 0) {
+            <div class="info-item">
+                <i class="pi pi-user"></i>
+                <span class="info-label">Speaker(s):</span>
+                <span class="info-value">{{ getSpeakerNames() }}</span>
+            </div>
+            }
+            
+            <div class="info-item">
+                <i class="pi pi-calendar"></i>
+                <span class="info-label">Start:</span>
+                <span class="info-value">{{ formatDateTime(presentation().startDateTime) }}</span>
+            </div>
+            
+            <div class="info-item">
+                <i class="pi pi-calendar"></i>
+                <span class="info-label">End:</span>
+                <span class="info-value">{{ formatDateTime(presentation().endDateTime) }}</span>
+            </div>
+
+            <div class="info-item">
+                <i class="pi pi-map-marker"></i>
+                <span class="info-label">Room:</span>
+                <span class="info-value">{{ presentation().roomName }}</span>
+            </div>
+        </div>
+
+        @if (getSpeakerImages().length > 0) {
+        <div class="details-speakers">
+            @for (speaker of getSpeakerImages(); track speaker.id) {
+            <div class="speaker-image-large">
+                <img [src]="speaker.profilePictureUrl" [alt]="speaker.name" />
+            </div>
+            }
+        </div>
+        }
+    </div>
+
+    @if (presentation().abstract) {
+    <div class="details-abstract">
+        <h3>Abstract</h3>
+        <p>{{ presentation().abstract }}</p>
+    </div>
+    }
+</div>

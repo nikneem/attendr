@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.DomainModels;
 
 namespace HexMaster.Attendr.Conferences;
@@ -15,12 +16,20 @@ public interface IConferenceRepository
     Task AddAsync(Conference conference, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieves a conference by its ID.
+    /// Retrieves a conference by its ID as a domain model (for write operations).
     /// </summary>
     /// <param name="id">The conference ID.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The conference if found; otherwise, null.</returns>
     Task<Conference?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves conference details by its ID as a DTO (for read operations).
+    /// </summary>
+    /// <param name="id">The conference ID.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The conference details DTO if found; otherwise, null.</returns>
+    Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing conference in the repository.

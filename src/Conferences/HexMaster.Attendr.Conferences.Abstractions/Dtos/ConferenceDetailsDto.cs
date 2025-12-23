@@ -11,6 +11,8 @@ namespace HexMaster.Attendr.Conferences.Abstractions.Dtos;
 /// <param name="EndDate">The end date of the conference.</param>
 /// <param name="ImageUrl">Optional URL to a conference image or logo.</param>
 /// <param name="SynchronizationSource">Optional synchronization source configuration.</param>
+/// <param name="Speakers">The list of speakers at the conference.</param>
+/// <param name="Presentations">The list of presentations at the conference.</param>
 public sealed record ConferenceDetailsDto(
     Guid Id,
     string Title,
@@ -19,4 +21,7 @@ public sealed record ConferenceDetailsDto(
     DateOnly StartDate,
     DateOnly EndDate,
     string? ImageUrl,
-    SynchronizationSourceDto? SynchronizationSource);
+    SynchronizationSourceDto? SynchronizationSource,
+    List<SpeakerDto> Speakers,
+    List<PresentationDto> Presentations);
+

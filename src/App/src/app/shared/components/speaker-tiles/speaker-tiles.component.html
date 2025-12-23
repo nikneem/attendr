@@ -1,0 +1,21 @@
+@if (sortedSpeakers().length === 0) {
+<div class="empty-speakers">
+    <i class="pi pi-users"></i>
+    <p>No speakers announced yet</p>
+</div>
+} @else {
+<div class="speakers-grid">
+    @for (speaker of sortedSpeakers(); track speaker.id) {
+    <div class="speaker-tile">
+        <div class="speaker-avatar">
+            @if (speaker.profilePictureUrl) {
+            <img [src]="speaker.profilePictureUrl" [alt]="speaker.name" />
+            } @else {
+            <div class="speaker-initials">{{ getInitials(speaker.name) }}</div>
+            }
+        </div>
+        <div class="speaker-name">{{ speaker.name }}</div>
+    </div>
+    }
+</div>
+}

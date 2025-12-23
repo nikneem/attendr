@@ -1,0 +1,143 @@
+@import '../../../../styles/variables';
+
+.presentation-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: $background-secondary;
+    border-radius: $radius-md;
+    border: 1px solid $border-color;
+}
+
+.details-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    position: relative;
+}
+
+.presentation-title {
+    flex: 1;
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: $text-primary;
+    line-height: 1.3;
+    padding-right: 3rem;
+}
+
+.favorite-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: $accent-warning;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: $radius-sm;
+    transition: all 0.2s;
+    line-height: 1;
+
+    &:hover {
+        background: rgba(245, 158, 11, 0.1);
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    i {
+        display: block;
+    }
+}
+
+.details-body {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+}
+
+.details-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: $text-primary;
+
+    i {
+        color: $primary-color;
+        font-size: 1.125rem;
+        width: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: $text-secondary;
+        min-width: 80px;
+    }
+
+    .info-value {
+        color: $text-primary;
+    }
+}
+
+.details-speakers {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.speaker-image-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: $background-elevated;
+    border: 3px solid $primary-color;
+    box-shadow: $shadow-md;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.details-abstract {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid $border-color;
+
+    h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $text-primary;
+    }
+
+    p {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: $text-secondary;
+        white-space: pre-wrap;
+    }
+}

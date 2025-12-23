@@ -10,11 +10,24 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ConferencesService } from '../../../shared/services/conferences.service';
 import { ConferenceDetailsDto } from '../../../shared/models/conference-details-dto';
 import { EditConferenceComponent } from '../../../shared/components/edit-conference/edit-conference.component';
+import { ConferenceScheduleComponent } from '../../../shared/components/conference-schedule/conference-schedule.component';
+import { SpeakerTilesComponent } from '../../../shared/components/speaker-tiles/speaker-tiles.component';
 import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'attn-conference-details-page',
-    imports: [CommonModule, CardModule, TagModule, ProgressSpinnerModule, ButtonModule, DialogModule, TooltipModule, EditConferenceComponent],
+    imports: [
+        CommonModule,
+        CardModule,
+        TagModule,
+        ProgressSpinnerModule,
+        ButtonModule,
+        DialogModule,
+        TooltipModule,
+        EditConferenceComponent,
+        ConferenceScheduleComponent,
+        SpeakerTilesComponent,
+    ],
     templateUrl: './conference-details-page.component.html',
     styleUrl: './conference-details-page.component.scss',
 })
