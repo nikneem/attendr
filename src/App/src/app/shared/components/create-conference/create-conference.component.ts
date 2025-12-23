@@ -82,15 +82,12 @@ export class CreateConferenceComponent {
             }
 
             if (!this.syncSourceUrl.trim()) {
-                this.validationError = 'Synchronization source URL is required';
+                this.validationError = 'API Key is required';
                 return false;
             }
 
-            // Basic URL validation
-            try {
-                new URL(this.syncSourceUrl.trim());
-            } catch {
-                this.validationError = 'Please enter a valid URL for synchronization source';
+            if (this.syncSourceUrl.trim().length > 256) {
+                this.validationError = 'API Key must not exceed 256 characters';
                 return false;
             }
         }

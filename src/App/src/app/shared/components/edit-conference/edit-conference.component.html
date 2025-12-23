@@ -55,9 +55,9 @@
             </div>
 
             <div class="form-field">
-                <label for="syncSourceUrl">Source URL *</label>
-                <input pInputText id="syncSourceUrl" [(ngModel)]="syncSourceUrl" name="syncSourceUrl"
-                    placeholder="https://sessionize.com/api/..." [disabled]="isUpdating" />
+                <label for="syncSourceUrl">API Key *</label>
+                <input pInputText id="syncSourceUrl" [(ngModel)]="syncSourceUrl" name="syncSourceUrl" type="text"
+                    placeholder="Enter your API key" [disabled]="isUpdating" maxlength="256" />
             </div>
         </div>
         }
