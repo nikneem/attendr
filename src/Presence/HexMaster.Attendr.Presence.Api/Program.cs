@@ -1,8 +1,65 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.Core.Cache.Extensions;
+using HexMaster.Attendr.Conferences.Integrations.Extensions;
+using HexMaster.Attendr.Presence.Data.MongoDb.Extensions;
+using HexMaster.Attendr.Presence.Api.Endpoints;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure OpenTelemetry
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddSource(ActivitySources.Presence.Name)
+            .AddOtlpExporter();
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddMeter("HexMaster.Attendr.Presence")
+            .AddOtlpExporter();
+    });
+
+builder.Logging.AddOpenTelemetry(logging =>
+{
+    logging
+        .AddOtlpExporter()
+        .IncludeFormattedMessage = true;
+});
+
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.Authority = "https://attendr.eu.auth0.com/";
+    options.Audience = "https://api.attendr.com";
+});
+builder.Services.AddAuthorization();
+
+// Register shared cache client
+builder.Services.AddAttendrCache(builder.Configuration);
+
+// Register integration services
+builder.Services.AddConferencesIntegration(builder.Configuration);
+
+// Register Presence module services
+builder.Services.AddMongoDbPresenceRepository(builder.Configuration);
+builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Services.ICreateConferencePresenceService, HexMaster.Attendr.Presence.Api.Services.CreateConferencePresenceService>();
+builder.Services.AddDaprSidekick();
+builder.Services.AddDaprClient();
 
 var app = builder.Build();
 
@@ -12,30 +69,14 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// Map event handler endpoints
+app.MapEventHandlers();
+app.MapPresenceEndpoints();
+app.UseCloudEvents();
+app.MapSubscribeHandler();
 
 app.Run();
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

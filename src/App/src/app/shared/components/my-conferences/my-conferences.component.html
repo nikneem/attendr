@@ -1,0 +1,54 @@
+<p-card class="my-conferences-card">
+    <ng-template pTemplate="header">
+        <div class="card-header">
+            <h2>My Conferences</h2>
+        </div>
+    </ng-template>
+
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+
+    <div *ngIf="loading" class="loading-spinner">
+        <p>Loading conferences...</p>
+    </div>
+
+    <div *ngIf="!loading && conferences.length === 0" class="empty-state">
+        <p>No upcoming conferences found.</p>
+    </div>
+
+    <div *ngIf="!loading && conferences.length > 0" class="table-wrapper">
+        <table class="conferences-table">
+            <thead>
+                <tr>
+                    <th>Conference Name</th>
+                    <th>Location</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Attending</th>
+                    <th>Rating Required</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of conferences">
+                    <td>{{ row.conferenceName }}</td>
+                    <td>{{ row.location }}</td>
+                    <td>{{ row.startDate | date: 'short' }}</td>
+                    <td>{{ row.endDate | date: 'short' }}</td>
+                    <td>
+                        <p-tag
+                            [value]="getAttendanceText(row.isAttending)"
+                            [severity]="getAttendanceSeverity(row.isAttending)"
+                        ></p-tag>
+                    </td>
+                    <td>
+                        <p-tag
+                            [value]="getRatingRequiredText(row.ratingRequired)"
+                            [severity]="getRatingRequiredSeverity(row.ratingRequired)"
+                        ></p-tag>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</p-card>

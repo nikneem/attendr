@@ -1,0 +1,41 @@
+.my-conferences-card {
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--surface-border);
+
+    h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+}
+
+.table-caption {
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+}
+
+.empty-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color-secondary);
+}
+
+.error-message {
+    padding: 1rem;
+    background-color: var(--red-50);
+    border: 1px solid var(--red-200);
+    border-radius: 4px;
+    color: var(--red-700);
+    margin-bottom: 1rem;
+}
+
+:global(.p-datatable) {
+    .p-datatable-thead > tr > th {
+        font-weight: 600;
+    }
+}

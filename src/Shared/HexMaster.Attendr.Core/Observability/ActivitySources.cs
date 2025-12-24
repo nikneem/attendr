@@ -30,6 +30,12 @@ public static class ActivitySources
     public static readonly ActivitySource Conferences = new($"{Namespace}.Conferences", Version);
 
     /// <summary>
+    /// ActivitySource for Presence module operations.
+    /// Used for tracing conference presence and attendance tracking operations.
+    /// </summary>
+    public static readonly ActivitySource Presence = new($"{Namespace}.Presence", Version);
+
+    /// <summary>
     /// ActivitySource for proxy/gateway operations.
     /// Used for tracing reverse proxy request flows.
     /// </summary>
