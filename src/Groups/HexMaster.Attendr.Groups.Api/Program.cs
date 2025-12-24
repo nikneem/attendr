@@ -9,6 +9,7 @@ using HexMaster.Attendr.Conferences.Integrations.Extensions;
 using HexMaster.Attendr.Groups.Api.Endpoints;
 using HexMaster.Attendr.Groups.Extensions;
 using HexMaster.Attendr.Groups.Data.MongoDb.Extensions;
+using HexMaster.Attendr.IntegrationEvents.Extensions;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +62,7 @@ builder.Services.AddConferencesIntegration(builder.Configuration);
 
 // Register Groups module services
 builder.Services.AddAttendrGroupsServices();
+builder.Services.AddIntegrationEvents(builder.Configuration);
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();
 
