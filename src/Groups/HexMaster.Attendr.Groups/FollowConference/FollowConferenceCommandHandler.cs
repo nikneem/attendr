@@ -4,6 +4,8 @@ using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Groups.DomainModels;
 using HexMaster.Attendr.Groups.Observability;
+using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
 
@@ -18,17 +20,20 @@ public sealed class FollowConferenceCommandHandler : ICommandHandler<FollowConfe
 {
     private readonly IGroupRepository _groupRepository;
     private readonly IConferencesIntegrationService _conferencesIntegration;
+    private readonly IIntegrationEventPublisher _eventPublisher;
     private readonly GroupMetrics _metrics;
     private readonly ILogger<FollowConferenceCommandHandler> _logger;
 
     public FollowConferenceCommandHandler(
         IGroupRepository groupRepository,
         IConferencesIntegrationService conferencesIntegration,
+        IIntegrationEventPublisher eventPublisher,
         GroupMetrics metrics,
         ILogger<FollowConferenceCommandHandler> logger)
     {
         _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
         _conferencesIntegration = conferencesIntegration ?? throw new ArgumentNullException(nameof(conferencesIntegration));
+        _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -103,6 +108,16 @@ public sealed class FollowConferenceCommandHandler : ICommandHandler<FollowConfe
 
             // Persist changes
             await _groupRepository.UpdateAsync(group, cancellationToken);
+
+            // Publish integration event for all group member profiles
+            var profileIds = group.Members.Select(m => m.Id).Distinct().ToArray();
+            var profilesFollowedConferenceEvent = new ProfilesFollowedConferenceEvent
+            {
+                ConferenceId = command.ConferenceId,
+                ProfileIds = profileIds
+            };
+
+            await _eventPublisher.PublishAsync(profilesFollowedConferenceEvent, cancellationToken);
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordOperationDuration("FollowConference", stopwatch.Elapsed.TotalMilliseconds, success: true);

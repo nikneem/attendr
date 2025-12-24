@@ -8,6 +8,8 @@ public sealed class ConferencePresence
     public DateOnly StartDate { get; private set; }
     public DateOnly EndDate { get; private set; }
     public Guid ProfileId { get; private set; }
+    public bool IsFollowing { get; private set; }
+    public bool IsAttending { get; private set; }
 
     private readonly List<PresentationPresence> _presentations = new();
     public IReadOnlyCollection<PresentationPresence> Presentations => _presentations.AsReadOnly();
@@ -29,6 +31,8 @@ public sealed class ConferencePresence
         DateOnly startDate,
         DateOnly endDate,
         Guid profileId,
+        bool isFollowing = false,
+        bool isAttending = false,
         IEnumerable<PresentationPresence>? presentations = null)
     {
         if (conferenceId == Guid.Empty)
@@ -55,6 +59,8 @@ public sealed class ConferencePresence
         StartDate = startDate;
         EndDate = endDate;
         ProfileId = profileId;
+        IsFollowing = isFollowing;
+        IsAttending = isAttending;
 
         if (presentations != null)
         {

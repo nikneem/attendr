@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
-    <ProjectReference Include="..\Conferences\HexMaster.Attendr.Conferences.Abstractions\HexMaster.Attendr.Conferences.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Conferences.Abstractions\HexMaster.Attendr.Conferences.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
