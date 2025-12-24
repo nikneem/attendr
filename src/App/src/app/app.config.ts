@@ -3,13 +3,13 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
-import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
 import { authConfig } from './auth/auth.config';
 import { OidcSecurityService, provideAuth, authInterceptor } from 'angular-auth-oidc-client';
 import { retryInterceptor } from './shared/interceptors/retry.interceptor';
 import { AuthCallbackHandler } from './auth/auth-callback.handler';
+import { AttendrPreset } from './theme/attendr.preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     ),
     providePrimeNG({
       theme: {
-        preset: Aura
+        preset: AttendrPreset
       }
     }),
     MessageService,
