@@ -5,8 +5,10 @@ using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Conferences.Integrations.Extensions;
+using HexMaster.Attendr.IntegrationEvents.Extensions;
 using HexMaster.Attendr.Presence.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Presence.Api.Endpoints;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +60,7 @@ builder.Services.AddConferencesIntegration(builder.Configuration);
 // Register Presence module services
 builder.Services.AddMongoDbPresenceRepository(builder.Configuration);
 builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Services.ICreateConferencePresenceService, HexMaster.Attendr.Presence.Api.Services.CreateConferencePresenceService>();
+builder.Services.AddIntegrationEvents(builder.Configuration);
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();
 
@@ -67,14 +70,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
+// Require authentication by default
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map event handler endpoints
-app.MapEventHandlers();
+// Map endpoints
 app.MapPresenceEndpoints();
+app.MapEventHandlersEndpoints();
 app.UseCloudEvents();
 app.MapSubscribeHandler();
 

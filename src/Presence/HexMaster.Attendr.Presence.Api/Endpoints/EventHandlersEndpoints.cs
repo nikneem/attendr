@@ -1,99 +1,44 @@
 using Dapr;
-using Dapr.Client;
 using HexMaster.Attendr.IntegrationEvents.Events;
 using HexMaster.Attendr.Presence.Api.Services;
-using HexMaster.Attendr.Presence.Services;
-using System.Security.Claims;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
 
-public static class PresenceEndpoints
+/// <summary>
+/// Event handler endpoints for processing integration events via Dapr pub/sub.
+/// These endpoints allow anonymous access for internal event processing.
+/// </summary>
+public static class EventHandlersEndpoints
 {
-    public static IEndpointRouteBuilder MapPresenceEndpoints(this IEndpointRouteBuilder app)
-    {
-        var group = app.MapGroup("/api/presence")
-            .WithName("Presence")
-            .RequireAuthorization();
-
-        group.MapGet("/my-conferences", GetMyConferences)
-            .WithName("GetMyConferences")
-            .Produces<List<MyConferenceResponse>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status401Unauthorized);
-
-        return app;
-    }
-
-    private static async Task<IResult> GetMyConferences(
-        HttpContext context,
-        IConferencePresenceRepository repository,
-        ILogger<Program> logger,
-        CancellationToken cancellationToken)
-    {
-        var profileIdClaim = context.User.FindFirst("sub") ?? context.User.FindFirst(ClaimTypes.NameIdentifier);
-        if (profileIdClaim is null || !Guid.TryParse(profileIdClaim.Value, out var profileId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            var allPresences = await repository.GetByProfileIdAsync(profileId, cancellationToken);
-            var now = DateTime.UtcNow;
-
-            var currentAndFuture = allPresences
-                .Where(p => p.EndDate >= DateOnly.FromDateTime(now))
-                .OrderBy(p => p.StartDate)
-                .Select(p => new MyConferenceResponse(
-                    p.ConferenceId,
-                    p.ConferenceName,
-                    p.Location,
-                    p.StartDate.ToDateTime(TimeOnly.MinValue),
-                    p.EndDate.ToDateTime(TimeOnly.MaxValue),
-                    p.IsAttending))
-                .ToList();
-
-            return Results.Ok(currentAndFuture);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error retrieving conferences for profile {ProfileId}", profileId);
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-}
-
-public sealed record MyConferenceResponse(
-    Guid ConferenceId,
-    string ConferenceName,
-    string Location,
-    DateTime StartDate,
-    DateTime EndDate,
-    bool IsAttending);
-
-public static class EventHandlers
-{
-    public static IEndpointRouteBuilder MapEventHandlers(this IEndpointRouteBuilder app)
+    /// <summary>
+    /// Maps event handler endpoints to the application.
+    /// These endpoints allow anonymous access.
+    /// </summary>
+    public static IEndpointRouteBuilder MapEventHandlersEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapPost("/events/profile-followed-conference",
             ProfileFollowedConferenceHandler)
             .WithName("HandleProfileFollowedConference")
+            .WithTopic("dapr-pubsub", "profile-followed-conference")
             .Accepts<ProfileFollowedConferenceEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
 
         app.MapPost("/events/profiles-followed-conference",
             ProfilesFollowedConferenceHandler)
             .WithName("HandleProfilesFollowedConference")
+            .WithTopic("dapr-pubsub", "profiles-followed-conference")
             .Accepts<ProfilesFollowedConferenceEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
 
         return app;
     }
 
-    [Topic("dapr-pubsub", "profile-followed-conference")]
     private static async Task<IResult> ProfileFollowedConferenceHandler(
         ProfileFollowedConferenceEvent @event,
         ICreateConferencePresenceService createPresenceService,
@@ -116,7 +61,6 @@ public static class EventHandlers
         }
     }
 
-    [Topic("dapr-pubsub", "profiles-followed-conference")]
     private static async Task<IResult> ProfilesFollowedConferenceHandler(
         ProfilesFollowedConferenceEvent @event,
         ICreateConferencePresenceService createPresenceService,

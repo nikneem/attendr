@@ -78,6 +78,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+// Require authentication by default
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
