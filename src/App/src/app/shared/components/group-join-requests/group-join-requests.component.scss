@@ -1,0 +1,81 @@
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.request-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--border-radius);
+    transition: all 0.2s;
+
+    &:hover {
+        background-color: var(--surface-hover);
+    }
+}
+
+.request-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    >i {
+        color: var(--primary-color);
+        margin-top: 0.25rem;
+    }
+}
+
+.request-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.request-name {
+    font-weight: 500;
+}
+
+.request-date {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+}
+
+.request-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.empty-state-small {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--text-color-secondary);
+
+    i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        margin: 0;
+    }
+}

@@ -36,156 +36,17 @@
         </div>
 
         <div class="group-sections">
-            <p-card styleClass="section-card">
-                <ng-template pTemplate="header">
-                    <div class="section-header">
-                        <h2>Followed Conferences</h2>
-                        <p-tag [value]="group()!.followedConferences.length.toString()" severity="info"></p-tag>
-                    </div>
-                </ng-template>
-                @if (group()!.followedConferences.length > 0) {
-                <div class="conferences-list">
-                    @for (conference of group()!.followedConferences; track conference.id) {
-                    <div class="conference-item">
-                        <div class="conference-info">
-                            <i class="pi pi-calendar"></i>
-                            <div class="conference-details">
-                                <span class="conference-name">{{ conference.name }}</span>
-                                <span class="conference-location">
-                                    <i class="pi pi-map-marker"></i>
-                                    {{ conference.location }}
-                                </span>
-                                <span class="conference-dates">
-                                    {{ conference.startDate | date: 'mediumDate' }} - {{ conference.endDate | date:
-                                    'mediumDate' }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    }
-                </div>
-                } @else {
-                <div class="empty-state-small">
-                    <i class="pi pi-calendar"></i>
-                    <p>No followed conferences yet</p>
-                </div>
-                }
-            </p-card>
+            <attn-group-conferences />
 
-            <p-card styleClass="section-card">
-                <ng-template pTemplate="header">
-                    <div class="section-header">
-                        <h2>Members</h2>
-                        <p-tag [value]="group()!.members.length.toString()" severity="info"></p-tag>
-                    </div>
-                </ng-template>
-                @if (group()!.members.length > 0) {
-                <div class="members-list">
-                    @for (member of group()!.members; track member.id) {
-                    <div class="member-item">
-                        <div class="member-info">
-                            <i class="pi pi-user"></i>
-                            <span class="member-name">{{ member.name }}</span>
-                        </div>
-                        <div class="member-actions">
-                            <div class="member-role">
-                                @if (isOwner() && member.role !== 0) {
-                                <p-select [options]="roleOptions" [(ngModel)]="member.role"
-                                    (onChange)="onRoleChange(member.id, $event.value)"
-                                    [style]="{'min-width': '120px'}" />
-                                } @else {
-                                <p-tag [value]="getRoleName(member.role)" [severity]="getRoleSeverity(member.role)" />
-                                }
-                            </div>
-                            @if (canRemoveMember(member.id, member.role)) {
-                            <button pButton icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true"
-                                pTooltip="Remove member" (click)="removeMember(member.id)"></button>
-                            }
-                        </div>
-                    </div>
-                    }
-                </div>
-                } @else {
-                <div class="empty-state-small">
-                    <i class="pi pi-users"></i>
-                    <p>No members</p>
-                </div>
-                }
-            </p-card>
+            <attn-group-members [groupId]="groupId()" />
 
             <div class="pending-section">
                 <div class="pending-column">
-                    <p-card styleClass="section-card">
-                        <ng-template pTemplate="header">
-                            <div class="section-header">
-                                <h3>Join Requests</h3>
-                                <p-tag [value]="group()!.joinRequests.length.toString()" severity="warn"></p-tag>
-                            </div>
-                        </ng-template>
-                        @if (group()!.joinRequests.length > 0 && isOwnerOrManager()) {
-                        <div class="request-list">
-                            @for (request of group()!.joinRequests; track request.id) {
-                            <div class="request-item">
-                                <div class="request-info">
-                                    <i class="pi pi-user"></i>
-                                    <div class="request-details">
-                                        <span class="request-name">{{ request.name }}</span>
-                                        <span class="request-date">{{ request.requestedAt | date: 'short' }}</span>
-                                    </div>
-                                </div>
-                                <div class="request-actions">
-                                    <button pButton icon="pi pi-check" severity="success" [text]="true" [rounded]="true"
-                                        pTooltip="Approve" (click)="approveJoinRequest(request.id)"></button>
-                                    <button pButton icon="pi pi-times" severity="danger" [text]="true" [rounded]="true"
-                                        pTooltip="Decline" (click)="declineJoinRequest(request.id)"></button>
-                                </div>
-                            </div>
-                            }
-                        </div>
-                        } @else {
-                        <div class="empty-state-small">
-                            <i class="pi pi-inbox"></i>
-                            <p>No pending join requests</p>
-                        </div>
-                        }
-                    </p-card>
+                    <attn-group-join-requests [groupId]="groupId()" />
                 </div>
 
                 <div class="pending-column">
-                    <p-card styleClass="section-card">
-                        <ng-template pTemplate="header">
-                            <div class="section-header">
-                                <h3>Pending Invitations</h3>
-                                <p-tag [value]="group()!.invitations.length.toString()" severity="info"></p-tag>
-                            </div>
-                        </ng-template>
-                        @if (group()!.invitations.length > 0 && isOwner()) {
-                        <div class="invitation-list">
-                            @for (invitation of group()!.invitations; track invitation.id) {
-                            <div class="invitation-item">
-                                <div class="invitation-info">
-                                    <i class="pi pi-envelope"></i>
-                                    <div class="invitation-details">
-                                        <span class="invitation-name">{{ invitation.name }}</span>
-                                        <span class="invitation-date">Expires {{ invitation.expirationDate | date:
-                                            'short' }}</span>
-                                    </div>
-                                </div>
-                                <div class="invitation-actions">
-                                    <button pButton icon="pi pi-times" severity="secondary" [text]="true"
-                                        [rounded]="true" pTooltip="Cancel invitation"
-                                        (click)="cancelInvitation(invitation.id)"></button>
-                                </div>
-                            </div>
-                            }
-                        </div>
-                        } @else {
-                        <div class="empty-state-small">
-                            <i class="pi pi-inbox"></i>
-                            <p>No pending invitations</p>
-                        </div>
-                        }
-                    </p-card>
+                    <attn-group-invitations [groupId]="groupId()" />
                 </div>
             </div>
         </div>

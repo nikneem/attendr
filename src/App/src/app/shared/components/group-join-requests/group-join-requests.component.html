@@ -1,0 +1,34 @@
+<p-card styleClass="section-card">
+    <ng-template pTemplate="header">
+        <div class="section-header">
+            <h3>Join Requests</h3>
+            <p-tag [value]="joinRequests().length.toString()" severity="warn"></p-tag>
+        </div>
+    </ng-template>
+    @if (joinRequests().length > 0 && isOwnerOrManager()) {
+    <div class="request-list">
+        @for (request of joinRequests(); track request.id) {
+        <div class="request-item">
+            <div class="request-info">
+                <i class="pi pi-user"></i>
+                <div class="request-details">
+                    <span class="request-name">{{ request.name }}</span>
+                    <span class="request-date">{{ request.requestedAt | date: 'short' }}</span>
+                </div>
+            </div>
+            <div class="request-actions">
+                <button pButton icon="pi pi-check" severity="success" [text]="true" [rounded]="true" pTooltip="Approve"
+                    (click)="approveJoinRequest(request.id)"></button>
+                <button pButton icon="pi pi-times" severity="danger" [text]="true" [rounded]="true" pTooltip="Decline"
+                    (click)="declineJoinRequest(request.id)"></button>
+            </div>
+        </div>
+        }
+    </div>
+    } @else {
+    <div class="empty-state-small">
+        <i class="pi pi-inbox"></i>
+        <p>No pending join requests</p>
+    </div>
+    }
+</p-card>

@@ -1,0 +1,32 @@
+<p-card styleClass="section-card">
+    <ng-template pTemplate="header">
+        <div class="section-header">
+            <h3>Pending Invitations</h3>
+            <p-tag [value]="invitations().length.toString()" severity="info"></p-tag>
+        </div>
+    </ng-template>
+    @if (invitations().length > 0 && isOwner()) {
+    <div class="invitation-list">
+        @for (invitation of invitations(); track invitation.id) {
+        <div class="invitation-item">
+            <div class="invitation-info">
+                <i class="pi pi-envelope"></i>
+                <div class="invitation-details">
+                    <span class="invitation-name">{{ invitation.name }}</span>
+                    <span class="invitation-date">Expires {{ invitation.expirationDate | date: 'short' }}</span>
+                </div>
+            </div>
+            <div class="invitation-actions">
+                <button pButton icon="pi pi-times" severity="secondary" [text]="true" [rounded]="true"
+                    pTooltip="Cancel invitation" (click)="cancelInvitation(invitation.id)"></button>
+            </div>
+        </div>
+        }
+    </div>
+    } @else {
+    <div class="empty-state-small">
+        <i class="pi pi-inbox"></i>
+        <p>No pending invitations</p>
+    </div>
+    }
+</p-card>

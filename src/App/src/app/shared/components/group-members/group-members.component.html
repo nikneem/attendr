@@ -1,0 +1,39 @@
+<p-card styleClass="section-card">
+    <ng-template pTemplate="header">
+        <div class="section-header">
+            <h2>Members</h2>
+            <p-tag [value]="members().length.toString()" severity="info"></p-tag>
+        </div>
+    </ng-template>
+    @if (members().length > 0) {
+    <div class="members-list">
+        @for (member of members(); track member.id) {
+        <div class="member-item">
+            <div class="member-info">
+                <i class="pi pi-user"></i>
+                <span class="member-name">{{ member.name }}</span>
+            </div>
+            <div class="member-actions">
+                <div class="member-role">
+                    @if (isOwner() && member.role !== 0) {
+                    <p-select [options]="roleOptions" [(ngModel)]="member.role"
+                        (onChange)="onRoleChange(member.id, $event.value)" [style]="{'min-width': '120px'}" />
+                    } @else {
+                    <p-tag [value]="getRoleName(member.role)" [severity]="getRoleSeverity(member.role)" />
+                    }
+                </div>
+                @if (canRemoveMember(member.role)) {
+                <button pButton icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true"
+                    pTooltip="Remove member" (click)="removeMember(member.id)"></button>
+                }
+            </div>
+        </div>
+        }
+    </div>
+    } @else {
+    <div class="empty-state-small">
+        <i class="pi pi-users"></i>
+        <p>No members</p>
+    </div>
+    }
+</p-card>

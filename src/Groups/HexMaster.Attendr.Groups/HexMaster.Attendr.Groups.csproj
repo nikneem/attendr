@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
+    <ProjectReference Include="..\..\Conferences\HexMaster.Attendr.Conferences\HexMaster.Attendr.Conferences.csproj" />
   </ItemGroup>
 
 </Project>

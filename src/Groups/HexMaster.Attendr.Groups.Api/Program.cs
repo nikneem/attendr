@@ -8,6 +8,7 @@ using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Groups.Api.Endpoints;
 using HexMaster.Attendr.Groups.Extensions;
 using HexMaster.Attendr.Groups.Data.MongoDb.Extensions;
+using HexMaster.Attendr.Conferences.Data.MongoDb.Extensions;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,8 +63,9 @@ builder.Services.AddAttendrGroupsServices();
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();
 
-// Register MongoDB repository
+// Register MongoDB repositories
 builder.Services.AddMongoDbGroupRepository(builder.Configuration);
+builder.Services.AddMongoDbConferenceRepository(builder.Configuration);
 
 var app = builder.Build();
 

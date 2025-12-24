@@ -5,11 +5,14 @@ using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.ApproveJoinRequest;
 using HexMaster.Attendr.Groups.DenyJoinRequest;
 using HexMaster.Attendr.Groups.DomainModels;
+using HexMaster.Attendr.Groups.FollowConference;
 using HexMaster.Attendr.Groups.GetGroupDetails;
+using HexMaster.Attendr.Groups.GetGroupFollowedConferences;
 using HexMaster.Attendr.Groups.GetMyGroups;
 using HexMaster.Attendr.Groups.JoinGroup;
 using HexMaster.Attendr.Groups.ListGroups;
 using HexMaster.Attendr.Groups.RemoveMember;
+using HexMaster.Attendr.Groups.UnfollowConference;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
@@ -82,6 +85,32 @@ public static class GroupsEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
+        var conferencesGroup = group.MapGroup("/{id:guid}/conferences")
+            .WithName("GroupConferences");
+
+        conferencesGroup.MapPost("/", FollowConference)
+            .WithName("FollowConference")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
+        conferencesGroup.MapDelete("/{conferenceId:guid}", UnfollowConference)
+            .WithName("UnfollowConference")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
+        conferencesGroup.MapGet("/", GetFollowedConferences)
+            .WithName("GetFollowedConferences")
+            .Produces<IReadOnlyCollection<GetGroupDetails.FollowedConferenceDto>>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization();
 
@@ -483,6 +512,140 @@ public static class GroupsEndpoints
             }
 
             return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> FollowConference(
+        Guid id,
+        FollowConferenceRequest request,
+        IProfilesIntegrationService profilesIntegration,
+        ICommandHandler<FollowConferenceCommand> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            var command = new FollowConferenceCommand(
+                id,
+                request.ConferenceId,
+                Guid.Parse(profile.ProfileId));
+
+            await handler.Handle(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            if (ex.Message.Contains("not a member"))
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status403Forbidden,
+                    detail: ex.Message);
+            }
+
+            return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> UnfollowConference(
+        Guid id,
+        Guid conferenceId,
+        IProfilesIntegrationService profilesIntegration,
+        ICommandHandler<UnfollowConferenceCommand> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            var command = new UnfollowConferenceCommand(
+                id,
+                conferenceId,
+                Guid.Parse(profile.ProfileId));
+
+            await handler.Handle(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            if (ex.Message.Contains("not a member"))
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status403Forbidden,
+                    detail: ex.Message);
+            }
+
+            return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> GetFollowedConferences(
+        Guid id,
+        IProfilesIntegrationService profilesIntegration,
+        IQueryHandler<GetGroupFollowedConferencesQuery, IReadOnlyCollection<GetGroupDetails.FollowedConferenceDto>> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            var query = new GetGroupFollowedConferencesQuery(id, Guid.Parse(profile.ProfileId));
+            var result = await handler.Handle(query, cancellationToken);
+
+            return Results.Ok(result);
         }
         catch (Exception)
         {
