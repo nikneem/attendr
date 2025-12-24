@@ -25,12 +25,9 @@
 .conference-tile {
     position: relative;
     width: 280px;
-    height: 180px;
     border-radius: 14px;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--surface-200), var(--surface-0));
-    background-size: cover;
-    background-position: center;
+    background: var(--surface-0);
     flex-shrink: 0;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -39,6 +36,34 @@
         transform: translateY(-4px);
         box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12);
     }
+}
+
+.tile-visual {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: var(--surface-200);
+    background-size: cover;
+    background-position: center;
+}
+
+.tile-visual-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+.tile-visual-title {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    right: 2.25rem;
+    /* leave room for trash icon */
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.25rem;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .tile-action {
@@ -53,66 +78,46 @@
     }
 }
 
-.tile-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.55) 100%);
-    pointer-events: none;
-}
-
-.tile-content {
-    position: absolute;
-    inset: 0;
+.tile-info {
+    background: #e0e0e0;
+    /* solid grey area */
+    color: var(--text-color);
+    padding: 0.75rem;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding: 1rem;
-    color: #fff;
-    gap: 0.35rem;
+    gap: 0.4rem;
 }
 
-.tile-title {
-    font-weight: 700;
-    font-size: 1.05rem;
-    line-height: 1.25rem;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-
-.tile-meta {
+.meta-row {
     display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.9);
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
 
-    .meta {
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-
-        i {
-            font-size: 0.85rem;
-        }
+    i {
+        font-size: 0.9rem;
     }
 }
 
-.tile-stats {
+.stats-row {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
 }
 
 .pill {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: #fff;
     padding: 0.3rem 0.6rem;
     border-radius: 999px;
     font-size: 0.8rem;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    backdrop-filter: blur(3px);
+}
+
+.info-pill {
+    background: var(--surface-300);
+    border: 1px solid var(--surface-border);
+    color: var(--text-color);
 }
 
 .empty-state-small {

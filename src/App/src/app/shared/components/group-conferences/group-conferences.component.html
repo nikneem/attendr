@@ -15,25 +15,25 @@
     <div class="conferences-list">
         <div class="tile-row">
             @for (conference of conferences(); track conference.id) {
-            <div class="conference-tile"
-                [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : null">
-                @if (isOwnerOrManager()) {
-                <button type="button" class="tile-action" pButton icon="pi pi-trash"
-                    (click)="confirmUnfollow(conference.id, conference.name)" [text]="true"></button>
-                }
-                <div class="tile-overlay"></div>
-                <div class="tile-content">
-                    <div class="tile-title">{{ conference.name }}</div>
-                    <div class="tile-meta">
-                        <span class="meta"><i class="pi pi-map-marker"></i> {{ conference.location }}</span>
-                        <span class="meta"><i class="pi pi-calendar"></i> {{ conference.startDate | date: 'mediumDate'
-                            }} -
-                            {{ conference.endDate | date: 'mediumDate' }}</span>
-                    </div>
-                    <div class="tile-stats">
-                        <span class="pill"><i class="pi pi-microphone"></i> {{ conference.sessionsCount || 0 }}
+            <div class="conference-tile">
+                <div class="tile-visual"
+                    [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : null">
+                    @if (isOwnerOrManager()) {
+                    <button type="button" class="tile-action" pButton icon="pi pi-trash"
+                        (click)="confirmUnfollow(conference.id, conference.name)" [text]="true"></button>
+                    }
+                    <div class="tile-visual-overlay"></div>
+                    <div class="tile-visual-title">{{ conference.name }}</div>
+                </div>
+                <div class="tile-info">
+                    <div class="meta-row"><i class="pi pi-map-marker"></i> {{ conference.location }}</div>
+                    <div class="meta-row"><i class="pi pi-calendar"></i> {{ conference.startDate | date: 'mediumDate'
+                        }} - {{ conference.endDate | date: 'mediumDate' }}</div>
+                    <div class="stats-row">
+                        <span class="pill info-pill"><i class="pi pi-microphone"></i> {{ conference.sessionsCount || 0
+                            }}
                             sessions</span>
-                        <span class="pill"><i class="pi pi-users"></i> {{ conference.speakersCount || 0 }}
+                        <span class="pill info-pill"><i class="pi pi-users"></i> {{ conference.speakersCount || 0 }}
                             speakers</span>
                     </div>
                 </div>
