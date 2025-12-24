@@ -36,16 +36,12 @@
                     <td>{{ row.startDate | date: 'short' }}</td>
                     <td>{{ row.endDate | date: 'short' }}</td>
                     <td>
-                        <p-tag
-                            [value]="getAttendanceText(row.isAttending)"
-                            [severity]="getAttendanceSeverity(row.isAttending)"
-                        ></p-tag>
+                        <p-tag [value]="getAttendanceText(row.isAttending)"
+                            [severity]="getAttendanceSeverity(row.isAttending)"></p-tag>
                     </td>
                     <td>
-                        <p-tag
-                            [value]="getRatingRequiredText(row.ratingRequired)"
-                            [severity]="getRatingRequiredSeverity(row.ratingRequired)"
-                        ></p-tag>
+                        <p-tag [value]="getRatingRequiredText(row.ratingRequired)"
+                            [severity]="getRatingRequiredSeverity(row.ratingRequired)"></p-tag>
                     </td>
                 </tr>
             </tbody>
