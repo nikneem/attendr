@@ -97,6 +97,16 @@ internal sealed class FollowedConferenceDocument
     [BsonElement("country")]
     public string Country { get; set; } = string.Empty;
 
+    [BsonElement("imageUrl")]
+    [BsonIgnoreIfNull]
+    public string? ImageUrl { get; set; }
+
+    [BsonElement("speakersCount")]
+    public int SpeakersCount { get; set; }
+
+    [BsonElement("sessionsCount")]
+    public int SessionsCount { get; set; }
+
     [BsonElement("startDate")]
     public DateOnly StartDate { get; set; }
 

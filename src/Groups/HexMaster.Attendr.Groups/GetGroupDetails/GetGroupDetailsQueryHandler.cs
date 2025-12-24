@@ -97,7 +97,10 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
                     fc.Name,
                     fc.GetLocation(),
                     fc.StartDate,
-                    fc.EndDate))
+                    fc.EndDate,
+                    fc.ImageUrl,
+                    fc.SpeakersCount,
+                    fc.SessionsCount))
                 .ToList();
 
             activity?.SetStatus(ActivityStatusCode.Ok);

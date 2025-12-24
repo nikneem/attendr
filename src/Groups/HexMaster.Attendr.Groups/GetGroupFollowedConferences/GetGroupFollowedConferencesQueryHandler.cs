@@ -8,7 +8,7 @@ using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Groups.GetGroupFollowedConferences;
 
-public sealed class GetGroupFollowedConferencesQueryHandler 
+public sealed class GetGroupFollowedConferencesQueryHandler
     : IQueryHandler<GetGroupFollowedConferencesQuery, IReadOnlyCollection<FollowedConferenceDto>>
 {
     private readonly IGroupRepository _groupRepository;
@@ -26,7 +26,7 @@ public sealed class GetGroupFollowedConferencesQueryHandler
     }
 
     public async Task<IReadOnlyCollection<FollowedConferenceDto>> Handle(
-        GetGroupFollowedConferencesQuery query, 
+        GetGroupFollowedConferencesQuery query,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(query);
@@ -72,7 +72,10 @@ public sealed class GetGroupFollowedConferencesQueryHandler
                 fc.Name,
                 fc.GetLocation(),
                 fc.StartDate,
-                fc.EndDate)).ToList();
+                fc.EndDate,
+                fc.ImageUrl,
+                fc.SpeakersCount,
+                fc.SessionsCount)).ToList();
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             activity?.SetTag("conferences.count", dtos.Count);

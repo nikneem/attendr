@@ -399,6 +399,9 @@ public sealed class Group
     /// <param name="name">The name of the conference.</param>
     /// <param name="city">The city where the conference is held.</param>
     /// <param name="country">The country where the conference is held.</param>
+    /// <param name="imageUrl">Optional visual for the conference.</param>
+    /// <param name="speakersCount">Total speakers count.</param>
+    /// <param name="sessionsCount">Total sessions/presentations count.</param>
     /// <param name="startDate">The start date of the conference.</param>
     /// <param name="endDate">The end date of the conference.</param>
     /// <exception cref="InvalidOperationException">Thrown when the conference is already being followed.</exception>
@@ -407,6 +410,9 @@ public sealed class Group
         string name,
         string city,
         string country,
+        string? imageUrl,
+        int speakersCount,
+        int sessionsCount,
         DateOnly startDate,
         DateOnly endDate)
     {
@@ -420,6 +426,9 @@ public sealed class Group
             name,
             city,
             country,
+            imageUrl,
+            speakersCount,
+            sessionsCount,
             startDate,
             endDate));
     }

@@ -5,30 +5,41 @@
             <div class="header-actions">
                 <p-tag [value]="conferences().length.toString()" severity="info"></p-tag>
                 @if (isOwnerOrManager()) {
-                    <button pButton type="button" label="Select Conferences to Follow" icon="pi pi-plus" (click)="openJoinDialog()"></button>
+                <button pButton type="button" label="Select Conferences to Follow" icon="pi pi-plus"
+                    (click)="openJoinDialog()"></button>
                 }
             </div>
         </div>
     </ng-template>
     @if (conferences().length > 0) {
     <div class="conferences-list">
-        @for (conference of conferences(); track conference.id) {
-        <div class="conference-item">
-            <div class="conference-info">
-                <i class="pi pi-calendar"></i>
-                <div class="conference-details">
-                    <span class="conference-name">{{ conference.name }}</span>
-                    <span class="conference-location">
-                        <i class="pi pi-map-marker"></i>
-                        {{ conference.location }}
-                    </span>
-                    <span class="conference-dates">
-                        {{ conference.startDate | date: 'mediumDate' }} - {{ conference.endDate | date: 'mediumDate' }}
-                    </span>
+        <div class="tile-row">
+            @for (conference of conferences(); track conference.id) {
+            <div class="conference-tile"
+                [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : null">
+                @if (isOwnerOrManager()) {
+                <button type="button" class="tile-action" pButton icon="pi pi-trash"
+                    (click)="confirmUnfollow(conference.id, conference.name)" [text]="true"></button>
+                }
+                <div class="tile-overlay"></div>
+                <div class="tile-content">
+                    <div class="tile-title">{{ conference.name }}</div>
+                    <div class="tile-meta">
+                        <span class="meta"><i class="pi pi-map-marker"></i> {{ conference.location }}</span>
+                        <span class="meta"><i class="pi pi-calendar"></i> {{ conference.startDate | date: 'mediumDate'
+                            }} -
+                            {{ conference.endDate | date: 'mediumDate' }}</span>
+                    </div>
+                    <div class="tile-stats">
+                        <span class="pill"><i class="pi pi-microphone"></i> {{ conference.sessionsCount || 0 }}
+                            sessions</span>
+                        <span class="pill"><i class="pi pi-users"></i> {{ conference.speakersCount || 0 }}
+                            speakers</span>
+                    </div>
                 </div>
             </div>
+            }
         </div>
-        }
     </div>
     } @else {
     <div class="empty-state-small">
@@ -37,7 +48,15 @@
     </div>
     }
 
-    <p-dialog [visible]="showJoinDialog()" (visibleChange)="showJoinDialog.set($event)" [modal]="true" [style]="{width: '900px', maxWidth: '95vw'}" header="Follow Conferences">
+    <p-dialog [visible]="showJoinDialog()" (visibleChange)="showJoinDialog.set($event)" [modal]="true"
+        [style]="{width: '900px', maxWidth: '95vw'}" header="Follow Conferences">
+        @if (showJoinDialog()) {
         <attn-conferences-group-join></attn-conferences-group-join>
+        }
     </p-dialog>
+
+    <attn-confirmation-dialog [visible]="showUnfollowDialog()" [title]="'Remove conference'"
+        [message]="unfollowMessage()" (visibleChange)="onUnfollowDialogVisibilityChange($event)"
+        (confirm)="onUnfollowConfirmed()" (cancel)="onUnfollowCancelled()">
+    </attn-confirmation-dialog>
 </p-card>

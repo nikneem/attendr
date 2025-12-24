@@ -22,6 +22,9 @@ export interface FollowedConferenceDto {
     location: string;
     startDate: string;
     endDate: string;
+    imageUrl?: string;
+    speakersCount: number;
+    sessionsCount: number;
 }
 
 export interface GroupDetailsDto {

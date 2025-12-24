@@ -44,6 +44,9 @@ internal static class GroupMapper
                 Name = fc.Name,
                 City = fc.City,
                 Country = fc.Country,
+                ImageUrl = fc.ImageUrl,
+                SpeakersCount = fc.SpeakersCount,
+                SessionsCount = fc.SessionsCount,
                 StartDate = fc.StartDate,
                 EndDate = fc.EndDate
             }).ToList()
@@ -102,6 +105,9 @@ internal static class GroupMapper
                 conferenceDoc.Name,
                 conferenceDoc.City,
                 conferenceDoc.Country,
+                conferenceDoc.ImageUrl,
+                conferenceDoc.SpeakersCount,
+                conferenceDoc.SessionsCount,
                 conferenceDoc.StartDate,
                 conferenceDoc.EndDate);
         }

@@ -95,6 +95,9 @@ public sealed class FollowConferenceCommandHandler : ICommandHandler<FollowConfe
                 conference.Title,
                 conference.City,
                 conference.Country,
+                conference.ImageUrl,
+                conference.Speakers.Count,
+                conference.Presentations.Count,
                 conference.StartDate,
                 conference.EndDate);
 

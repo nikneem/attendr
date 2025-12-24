@@ -48,7 +48,10 @@ public sealed class ListConferencesQueryHandler : IQueryHandler<ListConferencesQ
             c.StartDate,
             c.EndDate,
             c.ImageUrl,
-            c.SynchronizationSource != null
+            c.SynchronizationSource != null,
+            c.Speakers.Count,
+            c.Rooms.Count,
+            c.Presentations.Count
         )).ToList();
 
         activity?.SetTag("total_count", totalCount);

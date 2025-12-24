@@ -108,6 +108,17 @@ export class GroupDetailsStore {
         });
     }
 
+    unfollowConference(groupId: string, conferenceId: string): void {
+        this.groupsService.unfollowConference(groupId, conferenceId).subscribe({
+            next: () => {
+                this.loadGroupDetails(groupId);
+            },
+            error: (err) => {
+                this._error.set(err.error?.error || 'Failed to unfollow conference');
+            },
+        });
+    }
+
     clearError(): void {
         this._error.set(null);
     }

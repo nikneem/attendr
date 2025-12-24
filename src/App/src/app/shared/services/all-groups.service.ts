@@ -51,4 +51,8 @@ export class AllGroupsService {
     followConference(groupId: string, conferenceId: string): Observable<void> {
         return this.http.post<void>(`${this.apiUrl}/${groupId}/conferences`, { conferenceId });
     }
+
+    unfollowConference(groupId: string, conferenceId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${groupId}/conferences/${conferenceId}`);
+    }
 }

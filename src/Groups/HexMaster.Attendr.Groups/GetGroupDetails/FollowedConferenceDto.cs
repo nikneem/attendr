@@ -8,9 +8,15 @@ namespace HexMaster.Attendr.Groups.GetGroupDetails;
 /// <param name="Location">The location of the conference (city and country).</param>
 /// <param name="StartDate">The start date of the conference.</param>
 /// <param name="EndDate">The end date of the conference.</param>
+/// <param name="ImageUrl">An optional visual for the conference.</param>
+/// <param name="SpeakersCount">The number of speakers for the conference.</param>
+/// <param name="SessionsCount">The number of sessions/presentations for the conference.</param>
 public sealed record FollowedConferenceDto(
     Guid Id,
     string Name,
     string Location,
     DateOnly StartDate,
-    DateOnly EndDate);
+    DateOnly EndDate,
+    string? ImageUrl,
+    int SpeakersCount,
+    int SessionsCount);

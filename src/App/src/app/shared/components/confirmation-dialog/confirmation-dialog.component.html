@@ -1,0 +1,8 @@
+<p-dialog [visible]="visible" (visibleChange)="visibleChange.emit($event)" [modal]="true" [closable]="false"
+    [style]="{width: '420px', maxWidth: '95vw'}" [draggable]="false" [resizable]="false" [header]="title">
+    <div class="message">{{ message }}</div>
+    <div class="actions">
+        <button pButton type="button" label="Cancel" class="p-button-text" (click)="onCancel()"></button>
+        <button pButton type="button" label="Yes" icon="pi pi-check" (click)="onConfirm()"></button>
+    </div>
+</p-dialog>

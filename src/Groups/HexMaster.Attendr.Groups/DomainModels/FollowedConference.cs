@@ -26,6 +26,21 @@ public sealed class FollowedConference
     public string Country { get; private set; }
 
     /// <summary>
+    /// Gets an optional visual (image) for the conference.
+    /// </summary>
+    public string? ImageUrl { get; private set; }
+
+    /// <summary>
+    /// Gets the number of speakers linked to the conference.
+    /// </summary>
+    public int SpeakersCount { get; private set; }
+
+    /// <summary>
+    /// Gets the number of sessions/presentations linked to the conference.
+    /// </summary>
+    public int SessionsCount { get; private set; }
+
+    /// <summary>
     /// Gets the start date of the conference.
     /// </summary>
     public DateOnly StartDate { get; private set; }
@@ -49,6 +64,9 @@ public sealed class FollowedConference
         string name,
         string city,
         string country,
+        string? imageUrl,
+        int speakersCount,
+        int sessionsCount,
         DateOnly startDate,
         DateOnly endDate)
     {
@@ -81,6 +99,9 @@ public sealed class FollowedConference
         Name = name;
         City = city;
         Country = country;
+        ImageUrl = imageUrl;
+        SpeakersCount = speakersCount;
+        SessionsCount = sessionsCount;
         StartDate = startDate;
         EndDate = endDate;
     }
