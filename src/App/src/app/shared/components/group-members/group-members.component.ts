@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
-import { GroupDetailsStore } from '../../stores/group-details.store';
+import { GroupDetailsStore } from '@stores/group-details.store';
 
 @Component({
     selector: 'attn-group-members',

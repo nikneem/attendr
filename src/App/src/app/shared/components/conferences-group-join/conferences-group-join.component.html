@@ -1,0 +1,33 @@
+<div class="join-container">
+  <div class="header">
+    <h3>Select Conferences to Follow</h3>
+  </div>
+
+  @if (loading()) {
+    <div class="loading"><p-progressSpinner styleClass="small"></p-progressSpinner></div>
+  } @else if (error()) {
+    <div class="error">{{ error() }}</div>
+  } @else {
+    <div class="list">
+      @for (c of items(); track c.id) {
+        <p-card styleClass="item-card">
+          <div class="item">
+            <div class="info">
+              <div class="title">{{ c.title }}</div>
+              <div class="location"><i class="pi pi-map-marker"></i> {{ c.city }}, {{ c.country }}</div>
+              <div class="dates">{{ c.startDate | date: 'mediumDate' }} - {{ c.endDate | date: 'mediumDate' }}</div>
+              <div class="counts">
+                <span class="pill" pTooltip="Speakers"><i class="pi pi-users"></i> {{ c.speakersCount ?? '—' }}</span>
+                <span class="pill" pTooltip="Presentations"><i class="pi pi-microphone"></i> {{ c.presentationsCount ?? '—' }}</span>
+              </div>
+            </div>
+            <div class="actions">
+              <button pButton type="button" label="Following" [disabled]="true" *ngIf="isAlreadyFollowed(c.id)"></button>
+              <button pButton type="button" label="Follow" icon="pi pi-plus" [disabled]="isFollowing(c.id)" *ngIf="!isAlreadyFollowed(c.id)" (click)="follow(c.id)"></button>
+            </div>
+          </div>
+        </p-card>
+      }
+    </div>
+  }
+</div>

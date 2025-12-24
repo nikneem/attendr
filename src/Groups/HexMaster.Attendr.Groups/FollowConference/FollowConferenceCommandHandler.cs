@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using HexMaster.Attendr.Conferences;
+using HexMaster.Attendr.Conferences.Integrations.Abstractions;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Groups.DomainModels;
@@ -12,23 +12,23 @@ namespace HexMaster.Attendr.Groups.FollowConference;
 /// <summary>
 /// Command handler to follow a conference in a group.
 /// Validates that the requesting user is a member of the group.
-/// Validates that the conference exists.
+/// Validates that the conference exists using the conferences integration service.
 /// </summary>
 public sealed class FollowConferenceCommandHandler : ICommandHandler<FollowConferenceCommand>
 {
     private readonly IGroupRepository _groupRepository;
-    private readonly IConferenceRepository _conferenceRepository;
+    private readonly IConferencesIntegrationService _conferencesIntegration;
     private readonly GroupMetrics _metrics;
     private readonly ILogger<FollowConferenceCommandHandler> _logger;
 
     public FollowConferenceCommandHandler(
         IGroupRepository groupRepository,
-        IConferenceRepository conferenceRepository,
+        IConferencesIntegrationService conferencesIntegration,
         GroupMetrics metrics,
         ILogger<FollowConferenceCommandHandler> logger)
     {
         _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
-        _conferenceRepository = conferenceRepository ?? throw new ArgumentNullException(nameof(conferenceRepository));
+        _conferencesIntegration = conferencesIntegration ?? throw new ArgumentNullException(nameof(conferencesIntegration));
         _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -74,8 +74,8 @@ public sealed class FollowConferenceCommandHandler : ICommandHandler<FollowConfe
                 throw new InvalidOperationException("You are not a member of this group.");
             }
 
-            // Get conference from repository to validate it exists and get details
-            var conference = await _conferenceRepository.GetByIdAsync(command.ConferenceId, cancellationToken);
+            // Get conference details using integration service (with cache-aside pattern)
+            var conference = await _conferencesIntegration.GetConferenceDetails(command.ConferenceId, cancellationToken);
 
             if (conference is null)
             {

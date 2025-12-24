@@ -7,11 +7,11 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { ConferencesService } from '../../../shared/services/conferences.service';
-import { ConferenceDetailsDto } from '../../../shared/models/conference-details-dto';
-import { EditConferenceComponent } from '../../../shared/components/edit-conference/edit-conference.component';
-import { ConferenceScheduleComponent } from '../../../shared/components/conference-schedule/conference-schedule.component';
-import { SpeakerTilesComponent } from '../../../shared/components/speaker-tiles/speaker-tiles.component';
+import { ConferencesService } from '@services/conferences.service';
+import { ConferenceDetailsDto } from '@models/conference-details-dto';
+import { EditConferenceComponent } from '@components/edit-conference/edit-conference.component';
+import { ConferenceScheduleComponent } from '@components/conference-schedule/conference-schedule.component';
+import { SpeakerTilesComponent } from '@components/speaker-tiles/speaker-tiles.component';
 import { MessageService } from 'primeng/api';
 
 @Component({

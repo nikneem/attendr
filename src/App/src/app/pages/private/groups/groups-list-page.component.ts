@@ -9,10 +9,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
-import { AllGroupsStore } from '../../../shared/stores/all-groups.store';
-import { GroupListItemDto } from '../../../shared/models/group-list-item-dto';
-import { GroupDetailsViewComponent } from '../../../shared/components/group-details-view/group-details-view.component';
-import { AllGroupsService } from '../../../shared/services/all-groups.service';
+import { AllGroupsStore } from '@stores/all-groups.store';
+import { GroupListItemDto } from '@models/group-list-item-dto';
+import { GroupDetailsViewComponent } from '@components/group-details-view/group-details-view.component';
+import { AllGroupsService } from '@services/all-groups.service';
 import { MessageService } from 'primeng/api';
 
 @Component({

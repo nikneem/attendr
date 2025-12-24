@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PresentationDto } from '../../models/presentation-dto';
+import { PresentationDto } from '@models/presentation-dto';
 
 @Component({
     selector: 'attn-presentation-details',

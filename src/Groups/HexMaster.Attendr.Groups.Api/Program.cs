@@ -5,10 +5,10 @@ using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
+using HexMaster.Attendr.Conferences.Integrations.Extensions;
 using HexMaster.Attendr.Groups.Api.Endpoints;
 using HexMaster.Attendr.Groups.Extensions;
 using HexMaster.Attendr.Groups.Data.MongoDb.Extensions;
-using HexMaster.Attendr.Conferences.Data.MongoDb.Extensions;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,17 +55,17 @@ builder.Services.AddAuthorization();
 // Register shared cache client
 builder.Services.AddAttendrCache(builder.Configuration);
 
-// Register profiles integration service
+// Register integration services
 builder.Services.AddProfilesIntegration(builder.Configuration);
+builder.Services.AddConferencesIntegration(builder.Configuration);
 
 // Register Groups module services
 builder.Services.AddAttendrGroupsServices();
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();
 
-// Register MongoDB repositories
+// Register MongoDB repository
 builder.Services.AddMongoDbGroupRepository(builder.Configuration);
-builder.Services.AddMongoDbConferenceRepository(builder.Configuration);
 
 var app = builder.Build();
 

@@ -1,4 +1,4 @@
-using HexMaster.Attendr.Core.Cache;
+using HexMaster.Attendr.Core.Configuration;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,19 +15,21 @@ public static class ServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
-        services.AddOptions<ProfilesIntegrationOptions>()
-            .BindConfiguration(ProfilesIntegrationOptions.SectionName)
-            .Validate(o => !string.IsNullOrWhiteSpace(o.BaseUrl), "Profiles Integration BaseUrl is required");
+        // Register AttendrConfiguration for base URL
+        services.AddOptions<AttendrConfiguration>()
+            .BindConfiguration(AttendrConfiguration.SectionName)
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Integration.Profiles), "Attendr:Integration:Profiles is required");
 
-        // Typed HttpClient with base address from options
+        // Register ProfilesIntegrationOptions for cache TTL
+        services.AddOptions<ProfilesIntegrationOptions>()
+            .BindConfiguration(ProfilesIntegrationOptions.SectionName);
+
+        // Typed HttpClient with base address from AttendrConfiguration
         services.AddHttpClient<IProfilesIntegrationService, ProfilesIntegrationService>((sp, client) =>
         {
-            var opts = sp.GetRequiredService<IOptions<ProfilesIntegrationOptions>>().Value;
-            client.BaseAddress = new Uri(opts.BaseUrl);
+            var config = sp.GetRequiredService<IOptions<AttendrConfiguration>>().Value;
+            client.BaseAddress = new Uri(config.Integration.Profiles);
         });
-
-        // Ensure cache client is available (registered elsewhere via AddAttendrCache)
-        services.AddOptions();
 
         return services;
     }

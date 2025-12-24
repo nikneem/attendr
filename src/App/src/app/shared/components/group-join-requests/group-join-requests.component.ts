@@ -5,7 +5,7 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
-import { GroupDetailsStore } from '../../stores/group-details.store';
+import { GroupDetailsStore } from '@stores/group-details.store';
 
 @Component({
     selector: 'attn-group-join-requests',

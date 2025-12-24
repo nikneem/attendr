@@ -174,18 +174,7 @@
     }
 }
 
-display: flex;
-align-items: center;
-gap: 0.75rem;
-flex: 1;
-min-width: 0;
 
-i {
-    font-size: 1.25rem;
-    color: var(--primary-500);
-    flex-shrink: 0;
-}
-}
 
 .request-details,
 .invitation-details {
@@ -215,7 +204,6 @@ i {
     display: flex;
     gap: 0.5rem;
     flex-shrink: 0;
-}
 }
 
 .conferences-list {
@@ -313,5 +301,4 @@ p {
     margin: 0;
     color: var(--text-color-secondary);
 }
-}
-}
+ 

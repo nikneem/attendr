@@ -4,9 +4,9 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
-import { JoinedGroupsStore } from '../../stores/joined-groups.store';
-import { AllGroupsComponent } from '../all-groups/all-groups.component';
-import { CreateGroupComponent } from '../create-group/create-group.component';
+import { JoinedGroupsStore } from '@stores/joined-groups.store';
+import { AllGroupsComponent } from '@components/all-groups/all-groups.component';
+import { CreateGroupComponent } from '@components/create-group/create-group.component';
 
 @Component({
     selector: 'attn-joined-groups',

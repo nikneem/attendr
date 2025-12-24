@@ -47,4 +47,8 @@ export class AllGroupsService {
     denyJoinRequest(groupId: string, profileId: string): Observable<void> {
         return this.http.post<void>(`${this.apiUrl}/${groupId}/join-requests/${profileId}/deny`, {});
     }
+
+    followConference(groupId: string, conferenceId: string): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/${groupId}/conferences`, { conferenceId });
+    }
 }

@@ -21,7 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
     <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
-    <ProjectReference Include="..\..\Conferences\HexMaster.Attendr.Conferences.Data.MongoDb\HexMaster.Attendr.Conferences.Data.MongoDb.csproj" />
+    <ProjectReference Include="..\..\HexMaster.Attendr.Conferences.Integrations\HexMaster.Attendr.Conferences.Integrations.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Groups\HexMaster.Attendr.Groups.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Groups.Abstractions\HexMaster.Attendr.Groups.Abstractions.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Groups.Data.MongoDb\HexMaster.Attendr.Groups.Data.MongoDb.csproj" />

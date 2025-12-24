@@ -97,6 +97,17 @@ export class GroupDetailsStore {
         });
     }
 
+    followConference(groupId: string, conferenceId: string): void {
+        this.groupsService.followConference(groupId, conferenceId).subscribe({
+            next: () => {
+                this.loadGroupDetails(groupId);
+            },
+            error: (err) => {
+                this._error.set(err.error?.error || 'Failed to follow conference');
+            },
+        });
+    }
+
     clearError(): void {
         this._error.set(null);
     }

@@ -2,7 +2,12 @@
     <ng-template pTemplate="header">
         <div class="section-header">
             <h2>Followed Conferences</h2>
-            <p-tag [value]="conferences().length.toString()" severity="info"></p-tag>
+            <div class="header-actions">
+                <p-tag [value]="conferences().length.toString()" severity="info"></p-tag>
+                @if (isOwnerOrManager()) {
+                    <button pButton type="button" label="Select Conferences to Follow" icon="pi pi-plus" (click)="openJoinDialog()"></button>
+                }
+            </div>
         </div>
     </ng-template>
     @if (conferences().length > 0) {
@@ -31,4 +36,8 @@
         <p>No followed conferences yet</p>
     </div>
     }
+
+    <p-dialog [visible]="showJoinDialog()" (visibleChange)="showJoinDialog.set($event)" [modal]="true" [style]="{width: '900px', maxWidth: '95vw'}" header="Follow Conferences">
+        <attn-conferences-group-join></attn-conferences-group-join>
+    </p-dialog>
 </p-card>

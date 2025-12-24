@@ -5,11 +5,11 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { MessageService } from 'primeng/api';
-import { GroupDetailsStore } from '../../../shared/stores/group-details.store';
-import { GroupMembersComponent } from '../../../shared/components/group-members/group-members.component';
-import { GroupConferencesComponent } from '../../../shared/components/group-conferences/group-conferences.component';
-import { GroupJoinRequestsComponent } from '../../../shared/components/group-join-requests/group-join-requests.component';
-import { GroupInvitationsComponent } from '../../../shared/components/group-invitations/group-invitations.component';
+import { GroupDetailsStore } from '@stores/group-details.store';
+import { GroupMembersComponent } from '@components/group-members/group-members.component';
+import { GroupConferencesComponent } from '@components/group-conferences/group-conferences.component';
+import { GroupJoinRequestsComponent } from '@components/group-join-requests/group-join-requests.component';
+import { GroupInvitationsComponent } from '@components/group-invitations/group-invitations.component';
 
 @Component({
     selector: 'attn-group-details-page',
@@ -24,7 +24,7 @@ import { GroupInvitationsComponent } from '../../../shared/components/group-invi
         GroupInvitationsComponent,
     ],
     templateUrl: './group-details-page.component.html',
-    styleUrl: './group-details-page.component.scss',
+    styleUrls: ['./group-details-page.component.scss'],
 })
 export class GroupDetailsPageComponent implements OnInit {
     private readonly store = inject(GroupDetailsStore);
@@ -46,58 +46,31 @@ export class GroupDetailsPageComponent implements OnInit {
     }
 
     joinGroup(): void {
-        const groupId = this.group()?.id;
-        if (!groupId || this.joiningGroup()) {
+        const id = this.group()?.id;
+        if (!id || this.joiningGroup()) {
             return;
         }
 
         this.joiningGroup.set(true);
+        this.store.joinGroup(id);
 
-        this.groupsService.joinGroup(groupId).subscribe({
-            next: () => {
-                this.loadGroupDetails(groupId);
-                this.joiningGroup.set(false);
+        // Provide feedback after store updates
+        setTimeout(() => {
+            this.joiningGroup.set(false);
+            if (!this.store.error()) {
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Success',
                     detail: 'Successfully joined the group',
                 });
-            },
-            error: (err) => {
-                console.error('Failed to join group:', err);
+            } else {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: err.error?.error || 'Failed to join group. Please try again.',
+                    detail: this.store.error() || 'Failed to join group',
                 });
-                this.joiningGroup.set(false);
+                this.store.clearError();
             }
-        });
+        }, 500);
     }
 }
-id = this.groupId();
-if (!id || this.joiningGroup()) {
-    return;
-}
-
-this.joiningGroup.set(true);
-this.store.joinGroup(id);
-
-// Check for success after a brief delay
-setTimeout(() => {
-    this.joiningGroup.set(false);
-    if (!this.store.error()) {
-        this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Successfully joined the group',
-        });
-    } else {
-        this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: this.store.error() || 'Failed to join group',
-        });
-        this.store.clearError();
-    }
-}, 500

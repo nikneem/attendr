@@ -1,6 +1,6 @@
 import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SpeakerDto } from '../../models/speaker-dto';
+import { SpeakerDto } from '@models/speaker-dto';
 
 @Component({
     selector: 'attn-speaker-tiles',

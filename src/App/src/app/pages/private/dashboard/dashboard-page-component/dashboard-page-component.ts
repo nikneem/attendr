@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { JoinedGroupsComponent } from '../../../../shared/components/joined-groups/joined-groups.component';
+import { JoinedGroupsComponent } from '@components/joined-groups/joined-groups.component';
 
 @Component({
     selector: 'attn-dashboard-page',

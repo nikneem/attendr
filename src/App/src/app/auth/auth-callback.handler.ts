@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { filter, switchMap, catchError, of, take } from 'rxjs';
-import { ProfileService } from '../shared/services/profile.service';
+import { ProfileService } from '@services/profile.service';
 
 @Injectable({
     providedIn: 'root'
