@@ -22,44 +22,40 @@ public static class GroupsEndpoints
     public static IEndpointRouteBuilder MapGroupsEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/groups")
-            .WithName("Groups");
+            .WithName("Groups")
+            .RequireAuthorization();
 
         group.MapPost("/", CreateGroup)
             .WithName("CreateGroup")
             .Produces<CreateGroupResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         group.MapGet("/my-groups", GetMyGroups)
             .WithName("GetMyGroups")
             .Produces<IReadOnlyCollection<MyGroupDto>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         group.MapGet("/", ListGroups)
             .WithName("ListGroups")
             .Produces<ListGroupsResult>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         group.MapGet("/{id:guid}", GetGroupDetails)
             .WithName("GetGroupDetails")
             .Produces<GroupDetailsDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/{id:guid}/members", JoinGroup)
             .WithName("JoinGroup")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         group.MapDelete("/{id:guid}/members/{memberId:guid}", RemoveMember)
             .WithName("RemoveMember")
@@ -67,8 +63,7 @@ public static class GroupsEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         group.MapPost("/{id:guid}/join-requests/{profileId:guid}/approve", ApproveJoinRequest)
             .WithName("ApproveJoinRequest")
@@ -76,8 +71,7 @@ public static class GroupsEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         group.MapPost("/{id:guid}/join-requests/{profileId:guid}/deny", DenyJoinRequest)
             .WithName("DenyJoinRequest")
@@ -85,8 +79,7 @@ public static class GroupsEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         var conferencesGroup = group.MapGroup("/{id:guid}/conferences")
             .WithName("GroupConferences");

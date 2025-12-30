@@ -5,6 +5,7 @@ using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Conferences.Integrations.Extensions;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
 using HexMaster.Attendr.Presence.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Presence.Api.Endpoints;
@@ -55,6 +56,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddAttendrCache(builder.Configuration);
 
 // Register integration services
+builder.Services.AddProfilesIntegration(builder.Configuration);
 builder.Services.AddConferencesIntegration(builder.Configuration);
 
 // Register Presence module services
@@ -73,7 +75,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-// Require authentication by default
 app.UseAuthentication();
 app.UseAuthorization();
 

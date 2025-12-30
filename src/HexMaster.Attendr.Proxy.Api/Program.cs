@@ -50,8 +50,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseCors("AllowFrontend");
 
-app.UseHttpsRedirection();
-
 app.MapReverseProxy();
 
 app.Run();

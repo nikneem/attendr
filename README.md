@@ -336,12 +336,6 @@ Contributions are welcome! Please follow these steps:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
-
-**Edward van Kuik (Nikneem)**
-
-- GitHub: [@nikneem](https://github.com/nikneem)
-
 ## 🙏 Acknowledgments
 
 - Built with [Angular](https://angular.io/) and [.NET](https://dotnet.microsoft.com/)

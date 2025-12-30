@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Presence.Services;
+using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
 
@@ -29,17 +30,33 @@ public static class PresenceEndpoints
     private static async Task<IResult> GetMyConferences(
         HttpContext context,
         IConferencePresenceRepository repository,
+        IProfilesIntegrationService profilesIntegration,
         ILogger<Program> logger,
         CancellationToken cancellationToken)
     {
-        var profileIdClaim = context.User.FindFirst("sub") ?? context.User.FindFirst(ClaimTypes.NameIdentifier);
-        if (profileIdClaim is null || !Guid.TryParse(profileIdClaim.Value, out var profileId))
+        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? context.User.FindFirst("sub")?.Value;
+                     
+        if (string.IsNullOrWhiteSpace(subjectId))
         {
             return Results.Unauthorized();
         }
 
         try
         {
+            // Resolve the Auth0 subject ID to a profile GUID
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
             var allPresences = await repository.GetByProfileIdAsync(profileId, cancellationToken);
             var now = DateTime.UtcNow;
 
@@ -59,7 +76,7 @@ public static class PresenceEndpoints
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error retrieving conferences for profile {ProfileId}", profileId);
+            logger.LogError(ex, "Error retrieving conferences for subject {SubjectId}", subjectId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
