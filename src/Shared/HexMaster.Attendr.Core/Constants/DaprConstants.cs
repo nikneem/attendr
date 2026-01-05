@@ -66,5 +66,10 @@ public static class DaprConstants
         /// Topic for profiles followed conference events (bulk).
         /// </summary>
         public const string ProfilesFollowedConference = "profiles-followed-conference";
+
+        /// <summary>
+        /// Topic for presentation updated events.
+        /// </summary>
+        public const string PresentationUpdated = "presentation.updated";
     }
 }

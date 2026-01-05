@@ -33,6 +33,7 @@ The event is published in the following scenarios:
 | `StartDateTime` | `DateTime` | The start date and time of the presentation |
 | `EndDateTime` | `DateTime` | The end date and time of the presentation |
 | `RoomId` | `Guid` | The ID of the room where the presentation is held |
+| `RoomName` | `string` | The name of the room where the presentation is held |
 | `SpeakerIds` | `IReadOnlyCollection<Guid>` | Collection of speaker IDs for this presentation |
 | `ExternalId` | `string?` | The external ID from the synchronization source (e.g., Sessionize session ID) |
 | `IsScheduleChanged` | `bool` | Indicates whether the schedule has changed |
@@ -61,6 +62,7 @@ var integrationEvent = new PresentationUpdatedEvent
     StartDateTime = presentation.StartDateTime,
     EndDateTime = presentation.EndDateTime,
     RoomId = presentation.RoomId,
+    RoomName = room.Name,
     SpeakerIds = presentation.SpeakerIds.ToList(),
     ExternalId = presentation.ExternalId,
     IsScheduleChanged = isScheduleChanged

@@ -44,6 +44,11 @@ public sealed class PresentationUpdatedEvent : IntegrationEvent
     public Guid RoomId { get; init; }
 
     /// <summary>
+    /// Gets the name of the room where the presentation is held.
+    /// </summary>
+    public string RoomName { get; init; } = string.Empty;
+
+    /// <summary>
     /// Gets the collection of speaker IDs for this presentation.
     /// </summary>
     public IReadOnlyCollection<Guid> SpeakerIds { get; init; } = Array.Empty<Guid>();

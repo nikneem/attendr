@@ -44,21 +44,7 @@ public sealed class CreateConferencePresenceService : ICreateConferencePresenceS
             throw new InvalidOperationException($"Conference {conferenceId} not found");
         }
 
-        // Map presentations from conference details
-        var presentations = details.Presentations
-            .Select(p => new PresentationPresence(
-                Guid.Parse(p.Id.ToString()),
-                p.Title.ToString(),
-                p.Abstract.ToString(),
-                p.RoomName.ToString(),
-                DateTime.Parse(p.StartDateTime.ToString()),
-                DateTime.Parse(p.EndDateTime.ToString()),
-                speakers: MapSpeakers(p.Speakers),
-                isRated: false,
-                isFavorite: false,
-                isCheckedIn: false,
-                rating: null))
-            .ToList();
+        // Note: Presentations will be created separately for each profile
 
         // Create presence records for each profile
         foreach (var profileId in profileIds)
@@ -82,7 +68,7 @@ public sealed class CreateConferencePresenceService : ICreateConferencePresenceS
                 profileId,
                 isFollowing: true,
                 isAttending: false,
-                presentations: presentations);
+                presentations: null);
 
             await _repository.AddAsync(presence, cancellationToken);
 

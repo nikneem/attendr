@@ -62,6 +62,7 @@ builder.Services.AddConferencesIntegration(builder.Configuration);
 // Register Presence module services
 builder.Services.AddMongoDbPresenceRepository(builder.Configuration);
 builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Services.ICreateConferencePresenceService, HexMaster.Attendr.Presence.Api.Services.CreateConferencePresenceService>();
+builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Services.IUpdatePresentationService, HexMaster.Attendr.Presence.Api.Services.UpdatePresentationService>();
 builder.Services.AddIntegrationEvents(builder.Configuration);
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();

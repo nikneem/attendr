@@ -36,6 +36,16 @@ public static class EventHandlersEndpoints
             .Produces(StatusCodes.Status500InternalServerError)
             .AllowAnonymous();
 
+        app.MapPost("/events/presentation-updated",
+            PresentationUpdatedHandler)
+            .WithName("HandlePresentationUpdated")
+            .WithTopic(DaprConstants.PubSub.DaprPubSubName, DaprConstants.Topics.PresentationUpdated)
+            .Accepts<PresentationUpdatedEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
+
         return app;
     }
 
@@ -79,6 +89,25 @@ public static class EventHandlersEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Error handling ProfilesFollowedConference for conference {ConferenceId}", @event.ConferenceId);
+            return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> PresentationUpdatedHandler(
+        PresentationUpdatedEvent @event,
+        IUpdatePresentationService updatePresentationService,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await updatePresentationService.HandlePresentationUpdatedAsync(@event, cancellationToken);
+
+            return Results.Ok(new { message = "Presentation updated", conferenceId = @event.ConferenceId, presentationId = @event.PresentationId });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error handling PresentationUpdated for conference {ConferenceId}, presentation {PresentationId}", @event.ConferenceId, @event.PresentationId);
             return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
         }
     }

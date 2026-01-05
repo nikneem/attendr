@@ -2,6 +2,8 @@ namespace HexMaster.Attendr.Presence.DomainModels;
 
 public sealed class PresentationPresence
 {
+    public Guid ProfileId { get; private set; }
+    public Guid ConferenceId { get; private set; }
     public Guid PresentationId { get; private set; }
     public string Title { get; private set; }
     public string Abstract { get; private set; }
@@ -17,6 +19,8 @@ public sealed class PresentationPresence
     public IReadOnlyCollection<PresentationSpeaker> Speakers => _speakers.AsReadOnly();
 
     public PresentationPresence(
+        Guid profileId,
+        Guid conferenceId,
         Guid presentationId,
         string title,
         string @abstract,
@@ -29,6 +33,16 @@ public sealed class PresentationPresence
         bool isCheckedIn = false,
         byte? rating = null)
     {
+        if (profileId == Guid.Empty)
+        {
+            throw new ArgumentException("Profile ID cannot be empty.", nameof(profileId));
+        }
+
+        if (conferenceId == Guid.Empty)
+        {
+            throw new ArgumentException("Conference ID cannot be empty.", nameof(conferenceId));
+        }
+
         if (presentationId == Guid.Empty)
         {
             throw new ArgumentException("Presentation ID cannot be empty.", nameof(presentationId));
@@ -43,6 +57,8 @@ public sealed class PresentationPresence
             throw new ArgumentException("End date/time must be after start date/time.", nameof(endDateTime));
         }
 
+        ProfileId = profileId;
+        ConferenceId = conferenceId;
         PresentationId = presentationId;
         Title = title;
         Abstract = @abstract;
@@ -70,5 +86,35 @@ public sealed class PresentationPresence
         }
 
         _speakers.Add(speaker);
+    }
+
+    public void UpdatePresentationInfo(
+        string title,
+        string @abstract,
+        string room,
+        DateTime startDateTime,
+        DateTime endDateTime,
+        IEnumerable<PresentationSpeaker> speakers)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(title, nameof(title));
+        ArgumentException.ThrowIfNullOrWhiteSpace(@abstract, nameof(@abstract));
+        ArgumentException.ThrowIfNullOrWhiteSpace(room, nameof(room));
+
+        if (endDateTime <= startDateTime)
+        {
+            throw new ArgumentException("End date/time must be after start date/time.", nameof(endDateTime));
+        }
+
+        Title = title;
+        Abstract = @abstract;
+        Room = room;
+        StartDateTime = startDateTime;
+        EndDateTime = endDateTime;
+
+        _speakers.Clear();
+        if (speakers != null)
+        {
+            _speakers.AddRange(speakers);
+        }
     }
 }

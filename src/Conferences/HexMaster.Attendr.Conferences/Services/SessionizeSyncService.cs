@@ -254,6 +254,9 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
         // Publish integration events for updated presentations
         foreach (var (presentation, isScheduleChanged) in updatedPresentations)
         {
+            var room = conference.Rooms.FirstOrDefault(r => r.Id == presentation.RoomId);
+            var roomName = room?.Name ?? "Unknown";
+
             var integrationEvent = new PresentationUpdatedEvent
             {
                 ConferenceId = conference.Id,
@@ -263,6 +266,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                 StartDateTime = presentation.StartDateTime,
                 EndDateTime = presentation.EndDateTime,
                 RoomId = presentation.RoomId,
+                RoomName = roomName,
                 SpeakerIds = presentation.SpeakerIds.ToList(),
                 ExternalId = presentation.ExternalId,
                 IsScheduleChanged = isScheduleChanged

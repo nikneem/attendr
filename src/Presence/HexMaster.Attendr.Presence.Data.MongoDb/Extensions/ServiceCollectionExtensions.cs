@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddSingleton<IConferencePresenceRepository, ConferencePresenceRepository>();
+        services.AddSingleton<IPresentationPresenceRepository, PresentationPresenceRepository>();
 
         return services;
     }
