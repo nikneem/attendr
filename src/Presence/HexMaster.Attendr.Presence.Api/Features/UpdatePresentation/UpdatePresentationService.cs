@@ -3,16 +3,9 @@ using HexMaster.Attendr.IntegrationEvents.Services;
 using HexMaster.Attendr.Presence.DomainModels;
 using HexMaster.Attendr.Presence.Services;
 
-namespace HexMaster.Attendr.Presence.Api.Services;
+namespace HexMaster.Attendr.Presence.Api.Features.UpdatePresentation;
 
-public interface IUpdatePresentationService
-{
-    Task HandlePresentationUpdatedAsync(
-        PresentationUpdatedEvent @event,
-        CancellationToken cancellationToken = default);
-}
-
-public sealed class UpdatePresentationService : IUpdatePresentationService
+public sealed class UpdatePresentationService
 {
     private readonly IPresentationPresenceRepository _repository;
     private readonly IIntegrationEventPublisher _eventPublisher;
@@ -28,7 +21,7 @@ public sealed class UpdatePresentationService : IUpdatePresentationService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task HandlePresentationUpdatedAsync(
+    public async Task ExecuteAsync(
         PresentationUpdatedEvent @event,
         CancellationToken cancellationToken = default)
     {

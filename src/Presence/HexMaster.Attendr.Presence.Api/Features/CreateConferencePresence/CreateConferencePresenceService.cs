@@ -1,19 +1,10 @@
 using HexMaster.Attendr.Conferences.Integrations.Abstractions;
 using HexMaster.Attendr.Presence.DomainModels;
 using HexMaster.Attendr.Presence.Services;
-using Microsoft.Extensions.Logging;
 
-namespace HexMaster.Attendr.Presence.Api.Services;
+namespace HexMaster.Attendr.Presence.Api.Features.CreateConferencePresence;
 
-public interface ICreateConferencePresenceService
-{
-    Task CreateForProfilesAsync(
-        Guid conferenceId,
-        IEnumerable<Guid> profileIds,
-        CancellationToken cancellationToken = default);
-}
-
-public sealed class CreateConferencePresenceService : ICreateConferencePresenceService
+public sealed class CreateConferencePresenceService
 {
     private readonly IConferencesIntegrationService _conferencesIntegration;
     private readonly IConferencePresenceRepository _repository;
@@ -29,7 +20,7 @@ public sealed class CreateConferencePresenceService : ICreateConferencePresenceS
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task CreateForProfilesAsync(
+    public async Task ExecuteAsync(
         Guid conferenceId,
         IEnumerable<Guid> profileIds,
         CancellationToken cancellationToken = default)
@@ -77,15 +68,5 @@ public sealed class CreateConferencePresenceService : ICreateConferencePresenceS
                 profileId,
                 conferenceId);
         }
-    }
-
-    private static IEnumerable<PresentationSpeaker> MapSpeakers(IEnumerable<dynamic> speakers)
-    {
-        return speakers
-            .Select(s => new PresentationSpeaker(
-                Guid.Parse(s.Id),
-                s.Name,
-                s.ProfilePictureUrl ?? string.Empty))
-            .ToList();
     }
 }

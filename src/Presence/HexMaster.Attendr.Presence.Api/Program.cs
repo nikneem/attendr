@@ -8,7 +8,10 @@ using HexMaster.Attendr.Conferences.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
 using HexMaster.Attendr.Presence.Data.MongoDb.Extensions;
-using HexMaster.Attendr.Presence.Api.Endpoints;
+using HexMaster.Attendr.Presence.Api.Features.GetMyConferences;
+using HexMaster.Attendr.Presence.Api.Features.RatePresentation;
+using HexMaster.Attendr.Presence.Api.Features.CreateConferencePresence;
+using HexMaster.Attendr.Presence.Api.Features.UpdatePresentation;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,12 +64,15 @@ builder.Services.AddConferencesIntegration(builder.Configuration);
 
 // Register Presence module services
 builder.Services.AddMongoDbPresenceRepository(builder.Configuration);
-builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Services.ICreateConferencePresenceService, HexMaster.Attendr.Presence.Api.Services.CreateConferencePresenceService>();
-builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Services.IUpdatePresentationService, HexMaster.Attendr.Presence.Api.Services.UpdatePresentationService>();
-builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Services.IPresentationRatingService, HexMaster.Attendr.Presence.Api.Services.PresentationRatingService>();
 builder.Services.AddIntegrationEvents(builder.Configuration);
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();
+
+// Register feature slice services
+builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Features.CreateConferencePresence.CreateConferencePresenceService>();
+builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Features.UpdatePresentation.UpdatePresentationService>();
+builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Features.RatePresentation.GetRandomPresentationToRateService>();
+builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Features.RatePresentation.RatePresentationService>();
 
 var app = builder.Build();
 
@@ -80,9 +86,16 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map endpoints
-app.MapPresenceEndpoints();
-app.MapEventHandlersEndpoints();
+// Map feature slice endpoints
+app.MapGetMyConferencesEndpoint();
+app.MapGetRandomPresentationToRateEndpoint();
+app.MapRatePresentationEndpoint();
+
+// Map event handler endpoints
+app.MapProfileFollowedConferenceEventHandler();
+app.MapProfilesFollowedConferenceEventHandler();
+app.MapPresentationUpdatedEventHandler();
+
 app.UseCloudEvents();
 app.MapSubscribeHandler();
 
