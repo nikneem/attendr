@@ -1,4 +1,4 @@
-using Dapr;
+using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
 using HexMaster.Attendr.Presence.Api.Services;
 
@@ -19,7 +19,7 @@ public static class EventHandlersEndpoints
         app.MapPost("/events/profile-followed-conference",
             ProfileFollowedConferenceHandler)
             .WithName("HandleProfileFollowedConference")
-            .WithTopic("dapr-pubsub", "profile-followed-conference")
+            .WithTopic(DaprConstants.PubSub.DaprPubSubName, DaprConstants.Topics.ProfileFollowedConference)
             .Accepts<ProfileFollowedConferenceEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -29,7 +29,7 @@ public static class EventHandlersEndpoints
         app.MapPost("/events/profiles-followed-conference",
             ProfilesFollowedConferenceHandler)
             .WithName("HandleProfilesFollowedConference")
-            .WithTopic("dapr-pubsub", "profiles-followed-conference")
+            .WithTopic(DaprConstants.PubSub.DaprPubSubName, DaprConstants.Topics.ProfilesFollowedConference)
             .Accepts<ProfilesFollowedConferenceEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)

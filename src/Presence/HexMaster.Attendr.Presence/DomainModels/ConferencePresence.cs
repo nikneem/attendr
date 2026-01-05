@@ -14,16 +14,6 @@ public sealed class ConferencePresence
     private readonly List<PresentationPresence> _presentations = new();
     public IReadOnlyCollection<PresentationPresence> Presentations => _presentations.AsReadOnly();
 
-    private ConferencePresence()
-    {
-        ConferenceId = Guid.Empty;
-        ConferenceName = string.Empty;
-        Location = string.Empty;
-        StartDate = DateOnly.MinValue;
-        EndDate = DateOnly.MinValue;
-        ProfileId = Guid.Empty;
-    }
-
     public ConferencePresence(
         Guid conferenceId,
         string conferenceName,

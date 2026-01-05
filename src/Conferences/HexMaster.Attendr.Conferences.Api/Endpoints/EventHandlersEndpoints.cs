@@ -1,5 +1,6 @@
 using Dapr;
 using HexMaster.Attendr.Conferences.Abstractions.Services;
+using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
 
 namespace HexMaster.Attendr.Conferences.Api.Endpoints;
@@ -14,14 +15,14 @@ public static class EventHandlersEndpoints
         group.MapPost("/ConferenceCreatedHandler", ConferenceCreatedHandler)
             .WithName("ConferenceCreatedHandler")
             .AllowAnonymous()
-            .WithTopic("pubsub", "conference.created")
+            .WithTopic(DaprConstants.PubSub.DefaultPubSubName, DaprConstants.Topics.ConferenceCreated)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
         group.MapPost("/ConferenceUpdatedHandler", ConferenceUpdatedHandler)
             .WithName("ConferenceUpdatedHandler")
             .AllowAnonymous()
-            .WithTopic("pubsub", "conference.updated")
+            .WithTopic(DaprConstants.PubSub.DefaultPubSubName, DaprConstants.Topics.ConferenceUpdated)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 

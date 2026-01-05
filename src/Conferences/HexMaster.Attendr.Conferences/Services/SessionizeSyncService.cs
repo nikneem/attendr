@@ -74,7 +74,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
             {
                 // Create new speaker with local GUID
                 var localSpeakerId = Guid.NewGuid();
-                var speaker = new Speaker(
+                var speaker = Speaker.FromPersisted(
                     localSpeakerId,
                     sessionizeSpeaker.FullName ?? "Unknown",
                     sessionizeSpeaker.TagLine,
@@ -115,7 +115,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                 }
                 else if (!roomIdMapping.ContainsKey(roomId))
                 {
-                    var roomEntity = new Room(Guid.NewGuid(), room.Name, 100, roomId); // Default capacity, using ID as externalId
+                    var roomEntity = Room.FromPersisted(Guid.NewGuid(), room.Name, 100, roomId); // Default capacity, using ID as externalId
 
                     try
                     {
@@ -193,10 +193,12 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                             }
                         }
 
-                        if (existingPresentation.HasChanges)
+                        if (existingPresentation.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified)
                         {
                             _logger.LogDebug("Updated presentation {PresentationId} - {PresentationTitle} (ExternalId: {ExternalId})",
-                                existingPresentation.Id, existingPresentation.Title, session.Id);
+                                existingPresentation.Id,
+                                existingPresentation.Title,
+                                 session.Id);
                         }
                         else
                         {

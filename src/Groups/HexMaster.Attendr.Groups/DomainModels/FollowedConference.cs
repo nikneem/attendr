@@ -50,15 +50,6 @@ public sealed class FollowedConference
     /// </summary>
     public DateOnly EndDate { get; private set; }
 
-    private FollowedConference()
-    {
-        // For ORM/deserialization
-        ConferenceId = Guid.Empty;
-        Name = string.Empty;
-        City = string.Empty;
-        Country = string.Empty;
-    }
-
     public FollowedConference(
         Guid conferenceId,
         string name,

@@ -1,3 +1,5 @@
+using HexMaster.Attendr.Core.DomainModels;
+
 namespace HexMaster.Attendr.Conferences.DomainModels;
 
 /// <summary>
@@ -5,13 +7,8 @@ namespace HexMaster.Attendr.Conferences.DomainModels;
 /// Follows Domain-Driven Design principles with private constructor,
 /// encapsulated collections, and behavior-focused methods.
 /// </summary>
-public sealed class Conference
+public sealed class Conference : StatefulDomainModel<Guid>
 {
-    /// <summary>
-    /// Gets the unique identifier for the conference.
-    /// </summary>
-    public Guid Id { get; private set; }
-
     /// <summary>
     /// Gets the title of the conference.
     /// </summary>
@@ -66,17 +63,6 @@ public sealed class Conference
     /// </summary>
     public IReadOnlyCollection<Presentation> Presentations => _presentations.AsReadOnly();
 
-    private Conference()
-    {
-        // For ORM/deserialization
-        Id = Guid.Empty;
-        Title = string.Empty;
-        City = string.Empty;
-        Country = string.Empty;
-        StartDate = DateOnly.MinValue;
-        EndDate = DateOnly.MinValue;
-    }
-
     private Conference(
         Guid id,
         string title,
@@ -84,7 +70,9 @@ public sealed class Conference
         string country,
         DateOnly startDate,
         DateOnly endDate,
-        string? imageUrl = null)
+        string? imageUrl,
+        DomainModelState initialState = DomainModelState.Pristine)
+        : base(id, initialState)
     {
         if (id == Guid.Empty)
         {
@@ -111,7 +99,6 @@ public sealed class Conference
             throw new ArgumentException("End date cannot be before start date.", nameof(endDate));
         }
 
-        Id = id;
         Title = title;
         City = city;
         Country = country;
@@ -145,7 +132,7 @@ public sealed class Conference
         ArgumentException.ThrowIfNullOrWhiteSpace(country, nameof(country));
 
         var id = Guid.NewGuid();
-        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl);
+        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl, DomainModelState.Created);
         conference.SynchronizationSource = synchronizationSource;
         return conference;
     }
@@ -275,12 +262,41 @@ public sealed class Conference
             throw new ArgumentException("End date cannot be before start date.", nameof(endDate));
         }
 
-        Title = title;
-        City = city;
-        Country = country;
-        StartDate = startDate;
-        EndDate = endDate;
-        ImageUrl = imageUrl;
+        if (ShouldUpdateProperty(Title, title))
+        {
+            Title = title;
+            UpdateModifiedOn();
+        }
+
+        if (ShouldUpdateProperty(City, city))
+        {
+            City = city;
+            UpdateModifiedOn();
+        }
+
+        if (ShouldUpdateProperty(Country, country))
+        {
+            Country = country;
+            UpdateModifiedOn();
+        }
+
+        if (ShouldUpdateProperty(StartDate, startDate))
+        {
+            StartDate = startDate;
+            UpdateModifiedOn();
+        }
+
+        if (ShouldUpdateProperty(EndDate, endDate))
+        {
+            EndDate = endDate;
+            UpdateModifiedOn();
+        }
+
+        if (ShouldUpdateProperty(ImageUrl, imageUrl))
+        {
+            ImageUrl = imageUrl;
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>

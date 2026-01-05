@@ -36,7 +36,7 @@ public static class PresenceEndpoints
     {
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                      ?? context.User.FindFirst("sub")?.Value;
-                     
+
         if (string.IsNullOrWhiteSpace(subjectId))
         {
             return Results.Unauthorized();

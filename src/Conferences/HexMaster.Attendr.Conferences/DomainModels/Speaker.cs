@@ -1,14 +1,12 @@
+using HexMaster.Attendr.Core.DomainModels;
+
 namespace HexMaster.Attendr.Conferences.DomainModels;
 
 /// <summary>
 /// Represents a speaker at a conference.
 /// </summary>
-public sealed class Speaker
+public sealed class Speaker : StatefulDomainModel<Guid>
 {
-    /// <summary>
-    /// Gets the unique identifier of the speaker.
-    /// </summary>
-    public Guid Id { get; private set; }
 
     /// <summary>
     /// Gets the name of the speaker.
@@ -38,20 +36,16 @@ public sealed class Speaker
     /// <param name="company">The company or organization the speaker represents.</param>
     /// <param name="profilePictureUrl">The URL to the speaker's profile picture.</param>
     /// <param name="externalId">The external ID from the synchronization source.</param>
+    /// <param name="initialState">The initial state of the speaker.</param>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-    public Speaker(Guid id, string name, string? company = null, string? profilePictureUrl = null, string? externalId = null)
+    private Speaker(Guid id, string name, string? company, string? profilePictureUrl, string? externalId, DomainModelState initialState = DomainModelState.Pristine)
+        : base(id, initialState)
     {
-        if (id == Guid.Empty)
-        {
-            throw new ArgumentException("Speaker ID cannot be empty.", nameof(id));
-        }
-
         if (string.IsNullOrWhiteSpace(name))
         {
             throw new ArgumentException("Speaker name cannot be empty.", nameof(name));
         }
 
-        Id = id;
         Name = name;
         Company = company;
         ProfilePictureUrl = profilePictureUrl;
@@ -69,6 +63,14 @@ public sealed class Speaker
     public static Speaker Create(string name, string? company = null, string? profilePictureUrl = null, string? externalId = null)
     {
         var id = Guid.NewGuid();
+        return new Speaker(id, name, company, profilePictureUrl, externalId, DomainModelState.Created);
+    }
+
+    /// <summary>
+    /// Factory method to load a speaker from persisted data.
+    /// </summary>
+    public static Speaker FromPersisted(Guid id, string name, string? company = null, string? profilePictureUrl = null, string? externalId = null)
+    {
         return new Speaker(id, name, company, profilePictureUrl, externalId);
     }
 }

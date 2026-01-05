@@ -1,15 +1,12 @@
+using HexMaster.Attendr.Core.DomainModels;
+
 namespace HexMaster.Attendr.Conferences.DomainModels;
 
 /// <summary>
 /// Represents a presentation at a conference.
 /// </summary>
-public sealed class Presentation
+public sealed class Presentation : StatefulDomainModel<Guid>
 {
-    /// <summary>
-    /// Gets the unique identifier of the presentation.
-    /// </summary>
-    public Guid Id { get; private set; }
-
     /// <summary>
     /// Gets the title of the presentation.
     /// </summary>
@@ -40,11 +37,6 @@ public sealed class Presentation
     /// </summary>
     public string? ExternalId { get; private set; }
 
-    /// <summary>
-    /// Gets a value indicating whether the presentation has been modified.
-    /// </summary>
-    public bool HasChanges { get; private set; }
-
     private readonly List<Guid> _speakerIds = new();
 
     /// <summary>
@@ -63,8 +55,9 @@ public sealed class Presentation
     /// <param name="roomId">The ID of the room.</param>
     /// <param name="speakerIds">The collection of speaker IDs.</param>
     /// <param name="externalId">The external ID from the synchronization source.</param>
+    /// <param name="initialState">The initial state of the presentation.</param>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-    public Presentation(
+    private Presentation(
         Guid id,
         string title,
         string @abstract,
@@ -72,7 +65,9 @@ public sealed class Presentation
         DateTime endDateTime,
         Guid roomId,
         IEnumerable<Guid> speakerIds,
-        string? externalId = null)
+        string? externalId,
+        DomainModelState initialState = DomainModelState.Pristine)
+        : base(id, initialState)
     {
         if (id == Guid.Empty)
         {
@@ -112,7 +107,6 @@ public sealed class Presentation
             throw new ArgumentException("Speaker IDs cannot be empty.", nameof(speakerIds));
         }
 
-        Id = id;
         Title = title;
         Abstract = @abstract;
         StartDateTime = startDateTime;
@@ -143,6 +137,31 @@ public sealed class Presentation
         string? externalId = null)
     {
         var id = Guid.NewGuid();
+        return new Presentation(id, title, @abstract, startDateTime, endDateTime, roomId, speakerIds, externalId, DomainModelState.Created);
+    }
+
+    /// <summary>
+    /// Factory method to load a presentation from persisted data.
+    /// </summary>
+    /// <param name="id">The unique identifier of the presentation.</param>
+    /// <param name="title">The title of the presentation.</param>
+    /// <param name="abstract">The abstract of the presentation.</param>
+    /// <param name="startDateTime">The start date and time.</param>
+    /// <param name="endDateTime">The end date and time.</param>
+    /// <param name="roomId">The ID of the room.</param>
+    /// <param name="speakerIds">The collection of speaker IDs.</param>
+    /// <param name="externalId">The external ID from the synchronization source.</param>
+    /// <returns>A presentation instance loaded from persistence.</returns>
+    public static Presentation FromPersisted(
+        Guid id,
+        string title,
+        string @abstract,
+        DateTime startDateTime,
+        DateTime endDateTime,
+        Guid roomId,
+        IEnumerable<Guid> speakerIds,
+        string? externalId = null)
+    {
         return new Presentation(id, title, @abstract, startDateTime, endDateTime, roomId, speakerIds, externalId);
     }
 
@@ -163,28 +182,28 @@ public sealed class Presentation
             throw new ArgumentException("End date/time must be after start date/time.", nameof(endDateTime));
         }
 
-        if (!string.Equals(Title, title, StringComparison.Ordinal))
+        if (ShouldUpdateProperty(Title, title))
         {
             Title = title;
-            HasChanges = true;
+            UpdateModifiedOn();
         }
 
-        if (!string.Equals(Abstract, @abstract, StringComparison.Ordinal))
+        if (ShouldUpdateProperty(Abstract, @abstract))
         {
             Abstract = @abstract;
-            HasChanges = true;
+            UpdateModifiedOn();
         }
 
-        if (StartDateTime != startDateTime)
+        if (ShouldUpdateProperty(StartDateTime, startDateTime))
         {
             StartDateTime = startDateTime;
-            HasChanges = true;
+            UpdateModifiedOn();
         }
 
-        if (EndDateTime != endDateTime)
+        if (ShouldUpdateProperty(EndDateTime, endDateTime))
         {
             EndDateTime = endDateTime;
-            HasChanges = true;
+            UpdateModifiedOn();
         }
     }
 
@@ -199,10 +218,10 @@ public sealed class Presentation
             throw new ArgumentException("Room ID cannot be empty.", nameof(roomId));
         }
 
-        if (RoomId != roomId)
+        if (ShouldUpdateProperty(RoomId, roomId))
         {
             RoomId = roomId;
-            HasChanges = true;
+            UpdateModifiedOn();
         }
     }
 
@@ -224,8 +243,10 @@ public sealed class Presentation
             throw new InvalidOperationException($"Speaker with ID {speakerId} is already assigned to this presentation.");
         }
 
+        TrackPropertyChange();
         _speakerIds.Add(speakerId);
-        HasChanges = true;
+        SetState(DomainModelState.Modified);
+        UpdateModifiedOn();
     }
 
     /// <summary>
@@ -248,7 +269,8 @@ public sealed class Presentation
 
         if (_speakerIds.Remove(speakerId))
         {
-            HasChanges = true;
+            SetState(DomainModelState.Modified);
+            UpdateModifiedOn();
         }
         else
         {

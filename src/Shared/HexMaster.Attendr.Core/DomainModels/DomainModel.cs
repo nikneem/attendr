@@ -28,9 +28,7 @@ public abstract class DomainModel<TId>
     /// Initializes a new instance of the <see cref="DomainModel{TId}"/> class.
     /// Protected parameterless constructor for ORM/serialization support.
     /// </summary>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Justification: Used for ORM/serialization.
     protected DomainModel()
-#pragma warning restore CS8618
     {
         Id = default!;
     }

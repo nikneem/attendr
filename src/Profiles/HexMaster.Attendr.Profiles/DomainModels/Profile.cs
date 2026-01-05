@@ -7,7 +7,7 @@ namespace HexMaster.Attendr.Profiles.DomainModels;
 /// Contains user profile information including personal details and profile settings.
 /// Follows Domain-Driven Design principles with private setters and behavior methods.
 /// </summary>
-public class Profile : DomainModel<string>
+public class Profile : StatefulDomainModel<string>
 {
     /// <summary>
     /// Gets the subject ID from the authentication provider (e.g., Auth0).
@@ -62,6 +62,11 @@ public class Profile : DomainModel<string>
     /// <param name="firstName">The first name of the profile owner.</param>
     /// <param name="lastName">The last name of the profile owner.</param>
     /// <param name="email">The email address of the profile owner.</param>
+    /// <param name="employee">The employee identifier or employee status.</param>
+    /// <param name="tagLine">The tag line or personal headline of the profile owner.</param>
+    /// <param name="isEnabled">Whether the profile is enabled.</param>
+    /// <param name="isSearchable">Whether the profile is searchable by other attendees.</param>
+    /// <param name="initialState">The initial state of the profile.</param>
     /// <exception cref="ArgumentNullException">Thrown when id or subjectId is null.</exception>
     /// <exception cref="ArgumentException">Thrown when required parameters are null or whitespace.</exception>
     private Profile(string id,
@@ -73,8 +78,9 @@ public class Profile : DomainModel<string>
             string? employee,
               string? tagLine,
              bool isEnabled,
-              bool isSearchable)
-        : base(id)
+              bool isSearchable,
+              DomainModelState initialState = DomainModelState.Pristine)
+        : base(id, initialState)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id, nameof(id));
         ArgumentException.ThrowIfNullOrWhiteSpace(subjectId, nameof(subjectId));
@@ -125,7 +131,8 @@ public class Profile : DomainModel<string>
             null,
             null,
             true,
-            false);
+            false,
+            DomainModelState.Created);
     }
 
     /// <summary>
@@ -179,8 +186,11 @@ public class Profile : DomainModel<string>
             throw new ArgumentException("Subject ID cannot be null or whitespace.", nameof(subjectId));
         }
 
-        SubjectId = subjectId.Trim();
-        UpdateModifiedOn();
+        if (ShouldUpdateProperty(SubjectId, subjectId.Trim()))
+        {
+            SubjectId = subjectId.Trim();
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>
@@ -195,8 +205,11 @@ public class Profile : DomainModel<string>
             throw new ArgumentException("Display name cannot be null or whitespace.", nameof(displayName));
         }
 
-        DisplayName = displayName.Trim();
-        UpdateModifiedOn();
+        if (ShouldUpdateProperty(DisplayName, displayName.Trim()))
+        {
+            DisplayName = displayName.Trim();
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>
@@ -211,8 +224,11 @@ public class Profile : DomainModel<string>
             throw new ArgumentException("First name cannot be null or whitespace.", nameof(firstName));
         }
 
-        FirstName = firstName.Trim();
-        UpdateModifiedOn();
+        if (ShouldUpdateProperty(FirstName, firstName.Trim()))
+        {
+            FirstName = firstName.Trim();
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>
@@ -227,8 +243,11 @@ public class Profile : DomainModel<string>
             throw new ArgumentException("Last name cannot be null or whitespace.", nameof(lastName));
         }
 
-        LastName = lastName.Trim();
-        UpdateModifiedOn();
+        if (ShouldUpdateProperty(LastName, lastName.Trim()))
+        {
+            LastName = lastName.Trim();
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>
@@ -248,8 +267,11 @@ public class Profile : DomainModel<string>
             throw new ArgumentException("Email format is invalid.", nameof(email));
         }
 
-        Email = email.Trim().ToLowerInvariant();
-        UpdateModifiedOn();
+        if (ShouldUpdateProperty(Email, email.Trim().ToLowerInvariant()))
+        {
+            Email = email.Trim().ToLowerInvariant();
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>
@@ -264,8 +286,11 @@ public class Profile : DomainModel<string>
             throw new ArgumentException("Employee cannot be null or whitespace.", nameof(employee));
         }
 
-        Employee = employee.Trim();
-        UpdateModifiedOn();
+        if (ShouldUpdateProperty(Employee, employee.Trim()))
+        {
+            Employee = employee.Trim();
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>
@@ -274,8 +299,12 @@ public class Profile : DomainModel<string>
     /// <param name="tagLine">The tag line to set. Can be empty or null to clear.</param>
     public void SetTagLine(string? tagLine)
     {
-        TagLine = string.IsNullOrWhiteSpace(tagLine) ? string.Empty : tagLine.Trim();
-        UpdateModifiedOn();
+        var newValue = string.IsNullOrWhiteSpace(tagLine) ? string.Empty : tagLine.Trim();
+        if (ShouldUpdateProperty(TagLine, newValue))
+        {
+            TagLine = newValue;
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>
@@ -284,8 +313,11 @@ public class Profile : DomainModel<string>
     /// <param name="isSearchable">True if the profile should be searchable; otherwise, false.</param>
     public void SetIsSearchable(bool isSearchable)
     {
-        IsSearchable = isSearchable;
-        UpdateModifiedOn();
+        if (ShouldUpdateProperty(IsSearchable, isSearchable))
+        {
+            IsSearchable = isSearchable;
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>
@@ -294,8 +326,11 @@ public class Profile : DomainModel<string>
     /// <param name="enabled">True if the profile should be enabled; otherwise, false.</param>
     public void SetEnabled(bool enabled)
     {
-        Enabled = enabled;
-        UpdateModifiedOn();
+        if (ShouldUpdateProperty(Enabled, enabled))
+        {
+            Enabled = enabled;
+            UpdateModifiedOn();
+        }
     }
 
 }

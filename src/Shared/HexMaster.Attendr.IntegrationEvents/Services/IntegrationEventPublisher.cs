@@ -1,13 +1,12 @@
 using Dapr.Client;
-using HexMaster.Attendr.Core.Configuration;
+using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
-using Microsoft.Extensions.Options;
 
 namespace HexMaster.Attendr.IntegrationEvents.Services;
 
-public sealed class IntegrationEventPublisher(DaprClient daprClient, IOptions<DaprOptions> daprOptions) : IIntegrationEventPublisher
+public sealed class IntegrationEventPublisher(DaprClient daprClient) : IIntegrationEventPublisher
 {
-    private readonly string _pubSubName = daprOptions.Value.PubSubName;
+    private readonly string _pubSubName = DaprConstants.PubSub.DefaultPubSubName;
 
     /// <inheritdoc/>
     public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : IntegrationEvent

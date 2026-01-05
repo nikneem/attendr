@@ -16,14 +16,6 @@ public sealed class SynchronizationSource
     /// </summary>
     public string? SourceLocationOrApiKey { get; private set; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SynchronizationSource"/> class.
-    /// </summary>
-    private SynchronizationSource()
-    {
-        SourceType = SynchronizationSourceType.Sessionize;
-    }
-
     private SynchronizationSource(SynchronizationSourceType sourceType, string? sourceLocationOrApiKey)
     {
         SourceType = sourceType;

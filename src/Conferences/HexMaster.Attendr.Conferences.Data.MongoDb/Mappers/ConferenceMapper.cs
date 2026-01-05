@@ -76,21 +76,21 @@ internal static class ConferenceMapper
         // Reconstitute rooms
         foreach (var roomDoc in document.Rooms)
         {
-            var room = new Room(roomDoc.Id, roomDoc.Name, roomDoc.Capacity, roomDoc.ExternalId);
+            var room = Room.FromPersisted(roomDoc.Id, roomDoc.Name, roomDoc.Capacity, roomDoc.ExternalId);
             conference.AddRoom(room);
         }
 
         // Reconstitute speakers
         foreach (var speakerDoc in document.Speakers)
         {
-            var speaker = new Speaker(speakerDoc.Id, speakerDoc.Name, speakerDoc.Company, speakerDoc.ProfilePictureUrl, speakerDoc.ExternalId);
+            var speaker = Speaker.FromPersisted(speakerDoc.Id, speakerDoc.Name, speakerDoc.Company, speakerDoc.ProfilePictureUrl, speakerDoc.ExternalId);
             conference.AddSpeaker(speaker);
         }
 
         // Reconstitute presentations
         foreach (var presDoc in document.Presentations)
         {
-            var presentation = new Presentation(
+            var presentation = Presentation.FromPersisted(
                 presDoc.Id,
                 presDoc.Title,
                 presDoc.Abstract,

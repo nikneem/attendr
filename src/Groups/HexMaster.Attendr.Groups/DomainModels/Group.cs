@@ -47,14 +47,6 @@ public sealed class Group
     /// </summary>
     public IReadOnlyCollection<FollowedConference> FollowedConferences => _followedConferences.AsReadOnly();
 
-    private Group()
-    {
-        // For ORM/deserialization
-        Id = Guid.Empty;
-        Name = string.Empty;
-        Settings = GroupSettings.CreateDefault();
-    }
-
     private Group(Guid id, string name, Guid ownerId, string ownerName, GroupSettings? settings = null)
     {
         if (id == Guid.Empty)

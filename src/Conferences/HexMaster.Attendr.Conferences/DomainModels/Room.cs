@@ -1,14 +1,12 @@
+using HexMaster.Attendr.Core.DomainModels;
+
 namespace HexMaster.Attendr.Conferences.DomainModels;
 
 /// <summary>
 /// Represents a room at a conference venue.
 /// </summary>
-public sealed class Room
+public sealed class Room : StatefulDomainModel<Guid>
 {
-    /// <summary>
-    /// Gets the unique identifier of the room.
-    /// </summary>
-    public Guid Id { get; private set; }
 
     /// <summary>
     /// Gets the name of the room.
@@ -32,14 +30,11 @@ public sealed class Room
     /// <param name="name">The name of the room.</param>
     /// <param name="capacity">The capacity of the room.</param>
     /// <param name="externalId">The external ID from the synchronization source.</param>
+    /// <param name="initialState">The initial state of the room.</param>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-    public Room(Guid id, string name, int capacity, string? externalId = null)
+    private Room(Guid id, string name, int capacity, string? externalId, DomainModelState initialState = DomainModelState.Pristine)
+        : base(id, initialState)
     {
-        if (id == Guid.Empty)
-        {
-            throw new ArgumentException("Room ID cannot be empty.", nameof(id));
-        }
-
         if (string.IsNullOrWhiteSpace(name))
         {
             throw new ArgumentException("Room name cannot be empty.", nameof(name));
@@ -50,7 +45,6 @@ public sealed class Room
             throw new ArgumentException("Room capacity must be greater than zero.", nameof(capacity));
         }
 
-        Id = id;
         Name = name;
         Capacity = capacity;
         ExternalId = externalId;
@@ -66,6 +60,14 @@ public sealed class Room
     public static Room Create(string name, int capacity, string? externalId = null)
     {
         var id = Guid.NewGuid();
+        return new Room(id, name, capacity, externalId, DomainModelState.Created);
+    }
+
+    /// <summary>
+    /// Factory method to load a room from persisted data.
+    /// </summary>
+    public static Room FromPersisted(Guid id, string name, int capacity, string? externalId = null)
+    {
         return new Room(id, name, capacity, externalId);
     }
 }

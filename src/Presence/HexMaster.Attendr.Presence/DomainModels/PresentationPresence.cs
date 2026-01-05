@@ -16,16 +16,6 @@ public sealed class PresentationPresence
     private readonly List<PresentationSpeaker> _speakers = new();
     public IReadOnlyCollection<PresentationSpeaker> Speakers => _speakers.AsReadOnly();
 
-    private PresentationPresence()
-    {
-        PresentationId = Guid.Empty;
-        Title = string.Empty;
-        Abstract = string.Empty;
-        Room = string.Empty;
-        StartDateTime = DateTime.MinValue;
-        EndDateTime = DateTime.MinValue;
-    }
-
     public PresentationPresence(
         Guid presentationId,
         string title,

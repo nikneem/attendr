@@ -6,13 +6,6 @@ public sealed class PresentationSpeaker
     public string Name { get; private set; }
     public string ProfilePictureUrl { get; private set; }
 
-    private PresentationSpeaker()
-    {
-        SpeakerId = Guid.Empty;
-        Name = string.Empty;
-        ProfilePictureUrl = string.Empty;
-    }
-
     public PresentationSpeaker(Guid speakerId, string name, string profilePictureUrl)
     {
         if (speakerId == Guid.Empty)
