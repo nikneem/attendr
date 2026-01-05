@@ -51,6 +51,6 @@ public static class PresentationPresenceMapper
             doc.Rating);
     }
 
-    public static string BuildId(Guid profileId, Guid conferenceId, Guid presentationId) => 
+    public static string BuildId(Guid profileId, Guid conferenceId, Guid presentationId) =>
         $"{profileId}:{conferenceId}:{presentationId}";
 }
