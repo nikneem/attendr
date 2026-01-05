@@ -2,8 +2,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using HexMaster.Attendr.Presence.Services;
+using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Presence.Features.GetMyConferences;
@@ -23,9 +24,9 @@ public static class GetMyConferencesEndpoint
 
     private static async Task<IResult> HandleAsync(
         HttpContext context,
-        IConferencePresenceRepository repository,
+        IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>> handler,
         IProfilesIntegrationService profilesIntegration,
-        ILogger logger,
+        [FromServices] ILogger logger,
         CancellationToken cancellationToken)
     {
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
@@ -51,26 +52,12 @@ public static class GetMyConferencesEndpoint
                 return Results.StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            var allPresences = await repository.GetByProfileIdAsync(profileId, cancellationToken);
-            var now = DateTime.UtcNow;
-
-            var currentAndFuture = allPresences
-                .Where(p => p.EndDate >= DateOnly.FromDateTime(now))
-                .OrderBy(p => p.StartDate)
-                .Select(p => new MyConferenceResponse(
-                    p.ConferenceId,
-                    p.ConferenceName,
-                    p.Location,
-                    p.StartDate.ToDateTime(TimeOnly.MinValue),
-                    p.EndDate.ToDateTime(TimeOnly.MaxValue),
-                    p.IsAttending))
-                .ToList();
-
-            return Results.Ok(currentAndFuture);
+            var result = await handler.Handle(new GetMyConferencesQuery(profileId), cancellationToken);
+            return Results.Ok(result);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error retrieving conferences for subject {SubjectId}", subjectId);
+            logger.LogError(ex, "Error retrieving conferences for user {SubjectId}", subjectId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

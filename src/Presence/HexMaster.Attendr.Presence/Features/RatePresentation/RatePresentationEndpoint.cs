@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Routing;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Logging;
+using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
@@ -29,9 +29,9 @@ public static class RatePresentationEndpoint
         Guid presentationId,
         RatePresentationDto ratingDto,
         HttpContext context,
-        RatePresentationService service,
+        ICommandHandler<RatePresentationCommand> handler,
         IProfilesIntegrationService profilesIntegration,
-        ILogger logger,
+        [FromServices] ILogger logger,
         CancellationToken cancellationToken)
     {
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
@@ -63,14 +63,11 @@ public static class RatePresentationEndpoint
                 return Results.StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            await service.ExecuteAsync(
-                profileId,
-                conferenceId,
-                presentationId,
-                ratingDto,
+            await handler.Handle(
+                new RatePresentationCommand(profileId, conferenceId, presentationId, ratingDto),
                 cancellationToken);
 
-            return Results.Ok(new { message = "Presentation rated successfully" });
+            return Results.Accepted();
         }
         catch (InvalidOperationException ex)
         {

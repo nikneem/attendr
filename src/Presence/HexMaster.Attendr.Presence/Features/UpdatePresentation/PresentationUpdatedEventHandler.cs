@@ -2,7 +2,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Mvc;
 using HexMaster.Attendr.Core.Constants;
+using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.IntegrationEvents.Events;
 
 namespace HexMaster.Attendr.Presence.Features.UpdatePresentation;
@@ -25,13 +27,13 @@ public static class PresentationUpdatedEventHandler
 
     private static async Task<IResult> HandleAsync(
         PresentationUpdatedEvent @event,
-        UpdatePresentationService service,
-        ILogger logger,
+        ICommandHandler<UpdatePresentationCommand> handler,
+        [FromServices] ILogger logger,
         CancellationToken cancellationToken)
     {
         try
         {
-            await service.ExecuteAsync(@event, cancellationToken);
+            await handler.Handle(new UpdatePresentationCommand(@event), cancellationToken);
 
             return Results.Ok(new { message = "Presentation updated", conferenceId = @event.ConferenceId, presentationId = @event.PresentationId });
         }

@@ -1,10 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Routing;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Logging;
+using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
-using HexMaster.Attendr.Presence.Services;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Presence.Features.RatePresentation;
@@ -27,9 +26,9 @@ public static class GetRandomPresentationToRateEndpoint
     private static async Task<IResult> HandleAsync(
         Guid conferenceId,
         HttpContext context,
-        GetRandomPresentationToRateService service,
+        IQueryHandler<GetRandomPresentationToRateQuery, PresentationToRateDto?> handler,
         IProfilesIntegrationService profilesIntegration,
-        ILogger logger,
+        [FromServices] ILogger logger,
         CancellationToken cancellationToken)
     {
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
@@ -55,14 +54,16 @@ public static class GetRandomPresentationToRateEndpoint
                 return Results.StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            var presentation = await service.ExecuteAsync(profileId, conferenceId, cancellationToken);
+            var result = await handler.Handle(
+                new GetRandomPresentationToRateQuery(profileId, conferenceId),
+                cancellationToken);
 
-            if (presentation == null)
+            if (result == null)
             {
                 return Results.NoContent();
             }
 
-            return Results.Ok(presentation);
+            return Results.Ok(result);
         }
         catch (Exception ex)
         {

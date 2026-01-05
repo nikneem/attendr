@@ -1,32 +1,37 @@
-using Microsoft.Extensions.Logging;
+using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.IntegrationEvents.Events;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using HexMaster.Attendr.Presence.DomainModels;
 using HexMaster.Attendr.Presence.Services;
+using Microsoft.Extensions.Logging;
 
 namespace HexMaster.Attendr.Presence.Features.UpdatePresentation;
 
-public sealed class UpdatePresentationService
+/// <summary>
+/// Command handler to update presentation information across all affected presentation presences.
+/// Publishes PresentationScheduleChangeEvent when schedule changes affect favorited presentations.
+/// </summary>
+public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePresentationCommand>
 {
     private readonly IPresentationPresenceRepository _repository;
     private readonly IIntegrationEventPublisher _eventPublisher;
-    private readonly ILogger<UpdatePresentationService> _logger;
+    private readonly ILogger<UpdatePresentationCommandHandler> _logger;
 
-    public UpdatePresentationService(
+    public UpdatePresentationCommandHandler(
         IPresentationPresenceRepository repository,
         IIntegrationEventPublisher eventPublisher,
-        ILogger<UpdatePresentationService> logger)
+        ILogger<UpdatePresentationCommandHandler> logger)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task ExecuteAsync(
-        PresentationUpdatedEvent @event,
-        CancellationToken cancellationToken = default)
+    public async Task Handle(UpdatePresentationCommand command, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(@event);
+        ArgumentNullException.ThrowIfNull(command.Event);
+
+        var @event = command.Event;
 
         _logger.LogInformation(
             "Handling PresentationUpdatedEvent for Conference {ConferenceId}, Presentation {PresentationId}",
@@ -57,12 +62,11 @@ public sealed class UpdatePresentationService
         // Update each presentation presence
         foreach (var presentation in presentations)
         {
-            // Create speakers list (we don't have full speaker info in the event, so we keep speaker IDs and preserve names/pictures)
+            // Create speakers list (preserve existing speaker info when available)
             var currentSpeakers = presentation.Speakers.ToDictionary(s => s.SpeakerId);
             var speakers = @event.SpeakerIds
                 .Select(id =>
                 {
-                    // Preserve existing speaker info if available, otherwise create with empty values
                     if (currentSpeakers.TryGetValue(id, out var existingSpeaker))
                     {
                         return existingSpeaker;
@@ -71,7 +75,7 @@ public sealed class UpdatePresentationService
                 })
                 .ToList();
 
-            // Update presentation info (preserving IsFavorite, IsCheckedIn, IsRated, Rating)
+            // Update presentation info (preserves IsFavorite, IsCheckedIn, IsRated, Rating)
             presentation.UpdatePresentationInfo(
                 @event.Title,
                 @event.Abstract,
@@ -119,4 +123,3 @@ public sealed class UpdatePresentationService
             @event.PresentationId);
     }
 }
-

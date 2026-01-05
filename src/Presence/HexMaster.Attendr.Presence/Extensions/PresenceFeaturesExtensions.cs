@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
@@ -12,11 +14,14 @@ public static class PresenceFeaturesExtensions
 {
     public static IServiceCollection AddPresenceFeatures(this IServiceCollection services)
     {
-        // Register feature services
-        services.AddScoped<CreateConferencePresenceService>();
-        services.AddScoped<UpdatePresentationService>();
-        services.AddScoped<GetRandomPresentationToRateService>();
-        services.AddScoped<RatePresentationService>();
+        // Register command handlers
+        services.AddScoped<ICommandHandler<CreateConferencePresenceCommand>, CreateConferencePresenceCommandHandler>();
+        services.AddScoped<ICommandHandler<RatePresentationCommand>, RatePresentationCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdatePresentationCommand>, UpdatePresentationCommandHandler>();
+
+        // Register query handlers
+        services.AddScoped<IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>>, GetMyConferencesQueryHandler>();
+        services.AddScoped<IQueryHandler<GetRandomPresentationToRateQuery, PresentationToRateDto?>, GetRandomPresentationToRateQueryHandler>();
 
         return services;
     }

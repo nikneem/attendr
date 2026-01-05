@@ -1,0 +1,50 @@
+using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Presence.Services;
+using Microsoft.Extensions.Logging;
+
+namespace HexMaster.Attendr.Presence.Features.GetMyConferences;
+
+/// <summary>
+/// Query handler to retrieve all current and future conferences for a profile.
+/// Returns conferences the user is following, ordered by start date.
+/// </summary>
+public sealed class GetMyConferencesQueryHandler : IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>>
+{
+    private readonly IConferencePresenceRepository _repository;
+    private readonly ILogger<GetMyConferencesQueryHandler> _logger;
+
+    public GetMyConferencesQueryHandler(
+        IConferencePresenceRepository repository,
+        ILogger<GetMyConferencesQueryHandler> logger)
+    {
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    public async Task<List<MyConferenceResponse>> Handle(GetMyConferencesQuery query, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting conferences for profile {ProfileId}", query.ProfileId);
+
+        var allPresences = await _repository.GetByProfileIdAsync(query.ProfileId, cancellationToken);
+        var now = DateTime.UtcNow;
+
+        var currentAndFuture = allPresences
+            .Where(p => p.EndDate >= DateOnly.FromDateTime(now))
+            .OrderBy(p => p.StartDate)
+            .Select(p => new MyConferenceResponse(
+                p.ConferenceId,
+                p.ConferenceName,
+                p.Location,
+                p.StartDate.ToDateTime(TimeOnly.MinValue),
+                p.EndDate.ToDateTime(TimeOnly.MaxValue),
+                p.IsAttending))
+            .ToList();
+
+        _logger.LogInformation(
+            "Found {Count} current/future conferences for profile {ProfileId}",
+            currentAndFuture.Count,
+            query.ProfileId);
+
+        return currentAndFuture;
+    }
+}

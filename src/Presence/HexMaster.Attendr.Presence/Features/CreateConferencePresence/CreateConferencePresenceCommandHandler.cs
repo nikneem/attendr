@@ -1,58 +1,58 @@
-using Microsoft.Extensions.Logging;
 using HexMaster.Attendr.Conferences.Integrations.Abstractions;
+using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.DomainModels;
 using HexMaster.Attendr.Presence.Services;
+using Microsoft.Extensions.Logging;
 
 namespace HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 
-public sealed class CreateConferencePresenceService
+/// <summary>
+/// Command handler to create conference presence records for profiles.
+/// Creates presence tracking when users follow a conference.
+/// </summary>
+public sealed class CreateConferencePresenceCommandHandler : ICommandHandler<CreateConferencePresenceCommand>
 {
     private readonly IConferencesIntegrationService _conferencesIntegration;
     private readonly IConferencePresenceRepository _repository;
-    private readonly ILogger<CreateConferencePresenceService> _logger;
+    private readonly ILogger<CreateConferencePresenceCommandHandler> _logger;
 
-    public CreateConferencePresenceService(
+    public CreateConferencePresenceCommandHandler(
         IConferencesIntegrationService conferencesIntegration,
         IConferencePresenceRepository repository,
-        ILogger<CreateConferencePresenceService> logger)
+        ILogger<CreateConferencePresenceCommandHandler> logger)
     {
         _conferencesIntegration = conferencesIntegration ?? throw new ArgumentNullException(nameof(conferencesIntegration));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task ExecuteAsync(
-        Guid conferenceId,
-        IEnumerable<Guid> profileIds,
-        CancellationToken cancellationToken = default)
+    public async Task Handle(CreateConferencePresenceCommand command, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(profileIds);
+        ArgumentNullException.ThrowIfNull(command.ProfileIds);
 
         // Fetch conference details once
-        var details = await _conferencesIntegration.GetConferenceDetails(conferenceId, cancellationToken);
+        var details = await _conferencesIntegration.GetConferenceDetails(command.ConferenceId, cancellationToken);
         if (details is null)
         {
-            _logger.LogWarning("Conference {ConferenceId} not found", conferenceId);
-            throw new InvalidOperationException($"Conference {conferenceId} not found");
+            _logger.LogWarning("Conference {ConferenceId} not found", command.ConferenceId);
+            throw new InvalidOperationException($"Conference {command.ConferenceId} not found");
         }
 
-        // Note: Presentations will be created separately for each profile
-
         // Create presence records for each profile
-        foreach (var profileId in profileIds)
+        foreach (var profileId in command.ProfileIds)
         {
-            var exists = await _repository.ExistsAsync(profileId, conferenceId, cancellationToken);
+            var exists = await _repository.ExistsAsync(profileId, command.ConferenceId, cancellationToken);
             if (exists)
             {
                 _logger.LogDebug(
                     "Presence already exists for profile {ProfileId} and conference {ConferenceId}",
                     profileId,
-                    conferenceId);
+                    command.ConferenceId);
                 continue;
             }
 
             var presence = new ConferencePresence(
-                conferenceId,
+                command.ConferenceId,
                 details.Title.ToString(),
                 $"{details.City}, {details.Country}",
                 DateOnly.Parse(details.StartDate.ToString()),
@@ -67,8 +67,7 @@ public sealed class CreateConferencePresenceService
             _logger.LogInformation(
                 "Created conference presence for profile {ProfileId} and conference {ConferenceId}",
                 profileId,
-                conferenceId);
+                command.ConferenceId);
         }
     }
 }
-

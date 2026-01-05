@@ -2,7 +2,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Mvc;
 using HexMaster.Attendr.Core.Constants;
+using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.IntegrationEvents.Events;
 
 namespace HexMaster.Attendr.Presence.Features.CreateConferencePresence;
@@ -25,18 +27,17 @@ public static class ProfilesFollowedConferenceEventHandler
 
     private static async Task<IResult> HandleAsync(
         ProfilesFollowedConferenceEvent @event,
-        CreateConferencePresenceService service,
-        ILogger logger,
+        ICommandHandler<CreateConferencePresenceCommand> handler,
+        [FromServices] ILogger logger,
         CancellationToken cancellationToken)
     {
         try
         {
-            await service.ExecuteAsync(
-                @event.ConferenceId,
-                @event.ProfileIds,
+            await handler.Handle(
+                new CreateConferencePresenceCommand(@event.ConferenceId, @event.ProfileIds),
                 cancellationToken);
 
-            return Results.Ok(new { message = "Conference presences processed", conferenceId = @event.ConferenceId, profiles = @event.ProfileIds.Count });
+            return Results.Ok(new { message = "Conference presences created", conferenceId = @event.ConferenceId, profileCount = @event.ProfileIds.Count });
         }
         catch (Exception ex)
         {
