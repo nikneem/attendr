@@ -117,4 +117,16 @@ public sealed class PresentationPresence
             _speakers.AddRange(speakers);
         }
     }
+
+    public void RatePresentation(byte? rating, bool isFavorite)
+    {
+        if (rating.HasValue && rating.Value > 5)
+        {
+            throw new ArgumentException("Rating must be between 0 and 5.", nameof(rating));
+        }
+
+        IsRated = true;
+        Rating = rating;
+        IsFavorite = isFavorite;
+    }
 }

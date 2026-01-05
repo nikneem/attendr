@@ -30,6 +30,33 @@ public sealed class PresentationPresenceRepository : IPresentationPresenceReposi
         return presentations.AsReadOnly();
     }
 
+    public async Task<PresentationPresence?> GetByIdAsync(
+        Guid profileId,
+        Guid conferenceId,
+        Guid presentationId,
+        CancellationToken cancellationToken = default)
+    {
+        var id = PresentationPresenceMapper.BuildId(profileId, conferenceId, presentationId);
+        var filter = Builders<PresentationPresenceDocument>.Filter.Eq(d => d.Id, id);
+        var doc = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        return doc != null ? PresentationPresenceMapper.ToDomain(doc) : null;
+    }
+
+    public async Task<IReadOnlyCollection<PresentationPresence>> GetUnratedByProfileAndConferenceAsync(
+        Guid profileId,
+        Guid conferenceId,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<PresentationPresenceDocument>.Filter.And(
+            Builders<PresentationPresenceDocument>.Filter.Eq(d => d.ProfileId, profileId),
+            Builders<PresentationPresenceDocument>.Filter.Eq(d => d.ConferenceId, conferenceId),
+            Builders<PresentationPresenceDocument>.Filter.Eq(d => d.IsRated, false));
+
+        var docs = await _collection.Find(filter).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var presentations = docs.Select(PresentationPresenceMapper.ToDomain).ToList();
+        return presentations.AsReadOnly();
+    }
+
     public async Task UpdateAsync(
         Guid profileId,
         Guid conferenceId,
