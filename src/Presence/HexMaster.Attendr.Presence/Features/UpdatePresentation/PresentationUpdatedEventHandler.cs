@@ -1,7 +1,11 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
 
-namespace HexMaster.Attendr.Presence.Api.Features.UpdatePresentation;
+namespace HexMaster.Attendr.Presence.Features.UpdatePresentation;
 
 public static class PresentationUpdatedEventHandler
 {
@@ -22,7 +26,7 @@ public static class PresentationUpdatedEventHandler
     private static async Task<IResult> HandleAsync(
         PresentationUpdatedEvent @event,
         UpdatePresentationService service,
-        ILogger<Program> logger,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         try
@@ -38,3 +42,5 @@ public static class PresentationUpdatedEventHandler
         }
     }
 }
+
+

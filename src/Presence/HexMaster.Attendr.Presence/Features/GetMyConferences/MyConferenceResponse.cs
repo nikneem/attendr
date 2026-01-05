@@ -1,4 +1,4 @@
-namespace HexMaster.Attendr.Presence.Api.Features.GetMyConferences;
+namespace HexMaster.Attendr.Presence.Features.GetMyConferences;
 
 /// <summary>
 /// Response model for user's conferences.

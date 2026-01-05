@@ -1,9 +1,13 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Services;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
-namespace HexMaster.Attendr.Presence.Api.Features.RatePresentation;
+namespace HexMaster.Attendr.Presence.Features.RatePresentation;
 
 public static class GetRandomPresentationToRateEndpoint
 {
@@ -25,7 +29,7 @@ public static class GetRandomPresentationToRateEndpoint
         HttpContext context,
         GetRandomPresentationToRateService service,
         IProfilesIntegrationService profilesIntegration,
-        ILogger<Program> logger,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
@@ -67,3 +71,5 @@ public static class GetRandomPresentationToRateEndpoint
         }
     }
 }
+
+

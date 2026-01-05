@@ -1,8 +1,12 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using HexMaster.Attendr.Presence.Services;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
-namespace HexMaster.Attendr.Presence.Api.Features.GetMyConferences;
+namespace HexMaster.Attendr.Presence.Features.GetMyConferences;
 
 public static class GetMyConferencesEndpoint
 {
@@ -21,7 +25,7 @@ public static class GetMyConferencesEndpoint
         HttpContext context,
         IConferencePresenceRepository repository,
         IProfilesIntegrationService profilesIntegration,
-        ILogger<Program> logger,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
@@ -71,3 +75,5 @@ public static class GetMyConferencesEndpoint
         }
     }
 }
+
+

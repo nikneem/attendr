@@ -1,7 +1,11 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
 
-namespace HexMaster.Attendr.Presence.Api.Features.CreateConferencePresence;
+namespace HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 
 public static class ProfilesFollowedConferenceEventHandler
 {
@@ -22,7 +26,7 @@ public static class ProfilesFollowedConferenceEventHandler
     private static async Task<IResult> HandleAsync(
         ProfilesFollowedConferenceEvent @event,
         CreateConferencePresenceService service,
-        ILogger<Program> logger,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         try
@@ -41,3 +45,5 @@ public static class ProfilesFollowedConferenceEventHandler
         }
     }
 }
+
+

@@ -1,9 +1,10 @@
+using Microsoft.Extensions.Logging;
 using HexMaster.Attendr.IntegrationEvents.Events;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using HexMaster.Attendr.Presence.DomainModels;
 using HexMaster.Attendr.Presence.Services;
 
-namespace HexMaster.Attendr.Presence.Api.Features.UpdatePresentation;
+namespace HexMaster.Attendr.Presence.Features.UpdatePresentation;
 
 public sealed class UpdatePresentationService
 {
@@ -118,3 +119,4 @@ public sealed class UpdatePresentationService
             @event.PresentationId);
     }
 }
+

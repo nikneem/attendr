@@ -1,8 +1,9 @@
+using Microsoft.Extensions.Logging;
 using HexMaster.Attendr.Conferences.Integrations.Abstractions;
 using HexMaster.Attendr.Presence.DomainModels;
 using HexMaster.Attendr.Presence.Services;
 
-namespace HexMaster.Attendr.Presence.Api.Features.CreateConferencePresence;
+namespace HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 
 public sealed class CreateConferencePresenceService
 {
@@ -70,3 +71,4 @@ public sealed class CreateConferencePresenceService
         }
     }
 }
+

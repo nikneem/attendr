@@ -1,7 +1,8 @@
+using Microsoft.Extensions.Logging;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Services;
 
-namespace HexMaster.Attendr.Presence.Api.Features.RatePresentation;
+namespace HexMaster.Attendr.Presence.Features.RatePresentation;
 
 public sealed class RatePresentationService
 {
@@ -58,3 +59,4 @@ public sealed class RatePresentationService
             profileId);
     }
 }
+

@@ -8,10 +8,7 @@ using HexMaster.Attendr.Conferences.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
 using HexMaster.Attendr.Presence.Data.MongoDb.Extensions;
-using HexMaster.Attendr.Presence.Api.Features.GetMyConferences;
-using HexMaster.Attendr.Presence.Api.Features.RatePresentation;
-using HexMaster.Attendr.Presence.Api.Features.CreateConferencePresence;
-using HexMaster.Attendr.Presence.Api.Features.UpdatePresentation;
+using HexMaster.Attendr.Presence.Extensions;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,10 +66,7 @@ builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();
 
 // Register feature slice services
-builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Features.CreateConferencePresence.CreateConferencePresenceService>();
-builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Features.UpdatePresentation.UpdatePresentationService>();
-builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Features.RatePresentation.GetRandomPresentationToRateService>();
-builder.Services.AddScoped<HexMaster.Attendr.Presence.Api.Features.RatePresentation.RatePresentationService>();
+builder.Services.AddPresenceFeatures();
 
 var app = builder.Build();
 
@@ -86,15 +80,8 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map feature slice endpoints
-app.MapGetMyConferencesEndpoint();
-app.MapGetRandomPresentationToRateEndpoint();
-app.MapRatePresentationEndpoint();
-
-// Map event handler endpoints
-app.MapProfileFollowedConferenceEventHandler();
-app.MapProfilesFollowedConferenceEventHandler();
-app.MapPresentationUpdatedEventHandler();
+// Map feature endpoints
+app.MapPresenceFeatures();
 
 app.UseCloudEvents();
 app.MapSubscribeHandler();
