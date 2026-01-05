@@ -1,5 +1,7 @@
 using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Conferences.DomainModels;
+using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using Sessionize.Api.Client.Abstractions;
 
@@ -12,15 +14,18 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
 {
     private readonly IConferenceRepository _conferenceRepository;
     private readonly ISessionizeApiClient _sessionizeApiClient;
+    private readonly IIntegrationEventPublisher _eventPublisher;
     private readonly ILogger<SessionizeSyncService> _logger;
 
     public SessionizeSyncService(
         IConferenceRepository conferenceRepository,
         ISessionizeApiClient sessionizeApiClient,
+        IIntegrationEventPublisher eventPublisher,
         ILogger<SessionizeSyncService> logger)
     {
         _conferenceRepository = conferenceRepository;
         _sessionizeApiClient = sessionizeApiClient;
+        _eventPublisher = eventPublisher;
         _logger = logger;
     }
 
@@ -132,6 +137,8 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
         }
 
         // Second pass: add/update presentations
+        var updatedPresentations = new List<(Presentation Presentation, bool IsScheduleChanged)>();
+
         foreach (var day in scheduleGrid)
         {
             foreach (var room in day.Rooms)
@@ -172,6 +179,12 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
 
                     if (existingPresentation != null)
                     {
+                        // Track if schedule changed (time or room)
+                        var isScheduleChanged =
+                            existingPresentation.StartDateTime != startDateTime ||
+                            existingPresentation.EndDateTime != endDateTime ||
+                            existingPresentation.RoomId != roomLocalId;
+
                         // Update existing presentation
                         existingPresentation.UpdateDetails(title, description, startDateTime, endDateTime);
                         existingPresentation.ChangeRoom(roomLocalId);
@@ -195,10 +208,12 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
 
                         if (existingPresentation.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified)
                         {
-                            _logger.LogDebug("Updated presentation {PresentationId} - {PresentationTitle} (ExternalId: {ExternalId})",
+                            updatedPresentations.Add((existingPresentation, isScheduleChanged));
+                            _logger.LogDebug("Updated presentation {PresentationId} - {PresentationTitle} (ExternalId: {ExternalId}), ScheduleChanged: {IsScheduleChanged}",
                                 existingPresentation.Id,
                                 existingPresentation.Title,
-                                 session.Id);
+                                session.Id,
+                                isScheduleChanged);
                         }
                         else
                         {
@@ -235,6 +250,32 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
 
         // Save the updated conference
         await _conferenceRepository.UpdateAsync(conference, cancellationToken);
+
+        // Publish integration events for updated presentations
+        foreach (var (presentation, isScheduleChanged) in updatedPresentations)
+        {
+            var integrationEvent = new PresentationUpdatedEvent
+            {
+                ConferenceId = conference.Id,
+                PresentationId = presentation.Id,
+                Title = presentation.Title,
+                Abstract = presentation.Abstract,
+                StartDateTime = presentation.StartDateTime,
+                EndDateTime = presentation.EndDateTime,
+                RoomId = presentation.RoomId,
+                SpeakerIds = presentation.SpeakerIds.ToList(),
+                ExternalId = presentation.ExternalId,
+                IsScheduleChanged = isScheduleChanged
+            };
+
+            await _eventPublisher.PublishAsync(integrationEvent, cancellationToken);
+
+            _logger.LogInformation(
+                "Published PresentationUpdatedEvent for presentation {PresentationId} - {PresentationTitle}, ScheduleChanged: {IsScheduleChanged}",
+                presentation.Id,
+                presentation.Title,
+                isScheduleChanged);
+        }
 
         _logger.LogInformation(
             "Successfully synchronized conference {ConferenceId} with Sessionize. Speakers: {SpeakerCount}, Rooms: {RoomCount}, Presentations: {PresentationCount}",
