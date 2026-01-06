@@ -69,16 +69,16 @@ export class MyConferencesComponent implements OnInit {
 
     updateAttendance(conferenceId: string, isAttending: boolean): void {
         this.updatingConference.set(conferenceId);
-        
+
         this.presenceService.updateAttendance(conferenceId, isAttending).subscribe({
             next: () => {
                 // Update the local state
-                const updatedConferences = this.conferences().map(c => 
+                const updatedConferences = this.conferences().map(c =>
                     c.conferenceId === conferenceId ? { ...c, isAttending } : c
                 );
                 this.conferences.set(updatedConferences);
                 this.updatingConference.set(null);
-                
+
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Success',
@@ -101,7 +101,7 @@ export class MyConferencesComponent implements OnInit {
         const start = new Date(startDate);
         const end = new Date(endDate);
         const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-        
+
         if (start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth()) {
             return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { day: 'numeric', year: 'numeric' })}`;
         }

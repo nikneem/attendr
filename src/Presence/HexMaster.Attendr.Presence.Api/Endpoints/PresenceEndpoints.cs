@@ -31,6 +31,7 @@ public static class PresenceEndpoints
 
         group.MapPut("/{conferenceId:guid}/attendance", UpdateAttendance)
             .WithName("UpdateAttendance")
+            .Accepts<UpdateAttendanceDto>("application/json")
             .Produces(StatusCodes.Status202Accepted)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -205,6 +206,7 @@ public static class PresenceEndpoints
 
     private static async Task<IResult> UpdateAttendance(
         Guid conferenceId,
+        UpdateAttendanceDto requestDto,
         HttpContext context,
         ICommandHandler<UpdateAttendanceCommand> handler,
         IProfilesIntegrationService profilesIntegration,
@@ -222,13 +224,6 @@ public static class PresenceEndpoints
 
         try
         {
-            // Read the request body to get isAttending value
-            var requestBody = await context.Request.ReadFromJsonAsync<UpdateAttendanceRequest>(cancellationToken);
-            if (requestBody is null)
-            {
-                return Results.BadRequest(new { error = "Request body is required." });
-            }
-
             // Resolve the Auth0 subject ID to a profile GUID
             var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
             if (profile is null)
@@ -243,7 +238,7 @@ public static class PresenceEndpoints
             }
 
             await handler.Handle(
-                new UpdateAttendanceCommand(conferenceId, profileId, requestBody.IsAttending),
+                new UpdateAttendanceCommand(conferenceId, profileId, requestDto.IsAttending),
                 cancellationToken);
 
             return Results.Accepted();
@@ -259,6 +254,4 @@ public static class PresenceEndpoints
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-
-    private record UpdateAttendanceRequest(bool IsAttending);
 }

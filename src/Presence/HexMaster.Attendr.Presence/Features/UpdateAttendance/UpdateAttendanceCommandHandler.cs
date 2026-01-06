@@ -20,7 +20,7 @@ public sealed class UpdateAttendanceCommandHandler : ICommandHandler<UpdateAtten
     public async Task Handle(UpdateAttendanceCommand command, CancellationToken cancellationToken)
     {
         var presence = await _repository.GetAsync(command.ConferenceId, command.ProfileId, cancellationToken);
-        
+
         if (presence is null)
         {
             _logger.LogWarning(

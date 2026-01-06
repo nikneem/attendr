@@ -39,24 +39,14 @@
                     </div>
                     <div class="action-row">
                         @if (!conference.isAttending) {
-                        <button 
-                            pButton 
-                            type="button" 
-                            label="I'm going" 
-                            icon="pi pi-check" 
+                        <button pButton type="button" label="I'm going" icon="pi pi-check"
                             [disabled]="updatingConference() === conference.conferenceId"
                             [loading]="updatingConference() === conference.conferenceId"
                             (click)="updateAttendance(conference.conferenceId, true)"
                             class="attendance-btn attend-btn"></button>
                         } @else {
-                        <button 
-                            pButton 
-                            type="button" 
-                            label="Changed my mind" 
-                            icon="pi pi-times" 
-                            severity="secondary"
-                            [outlined]="true"
-                            [disabled]="updatingConference() === conference.conferenceId"
+                        <button pButton type="button" label="Changed my mind" icon="pi pi-times" severity="secondary"
+                            [outlined]="true" [disabled]="updatingConference() === conference.conferenceId"
                             [loading]="updatingConference() === conference.conferenceId"
                             (click)="updateAttendance(conference.conferenceId, false)"
                             class="attendance-btn unattend-btn"></button>
