@@ -4,6 +4,7 @@ using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
+using HexMaster.Attendr.Presence.Features.UpdateAttendance;
 using HexMaster.Attendr.Presence.Features.UpdatePresentation;
 using HexMaster.Attendr.Presence.Observability;
 
@@ -28,6 +29,7 @@ public static class PresenceFeaturesExtensions
         services.AddScoped<ICommandHandler<CreateConferencePresenceCommand>, CreateConferencePresenceCommandHandler>();
         services.AddScoped<ICommandHandler<RatePresentationCommand>, RatePresentationCommandHandler>();
         services.AddScoped<ICommandHandler<UpdatePresentationCommand>, UpdatePresentationCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateAttendanceCommand>, UpdateAttendanceCommandHandler>();
 
         // Register query handlers
         services.AddScoped<IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>>, GetMyConferencesQueryHandler>();
