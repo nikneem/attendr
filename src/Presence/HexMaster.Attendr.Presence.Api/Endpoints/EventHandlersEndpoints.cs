@@ -22,7 +22,7 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/ProfileFollowedConferenceHandler", HandleProfileFollowedConference)
             .WithName("HandleProfileFollowedConference")
-            .WithTopic(DaprConstants.PubSub.DaprPubSubName, DaprConstants.Topics.ProfileFollowedConference)
+            .WithTopic(DaprConstants.PubSub.Name, DaprConstants.Topics.ProfileFollowedConference)
             .Accepts<ProfileFollowedConferenceEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -31,7 +31,7 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/ProfilesFollowedConferenceHandler", HandleProfilesFollowedConference)
             .WithName("HandleProfilesFollowedConference")
-            .WithTopic(DaprConstants.PubSub.DaprPubSubName, DaprConstants.Topics.ProfilesFollowedConference)
+            .WithTopic(DaprConstants.PubSub.Name, DaprConstants.Topics.ProfilesFollowedConference)
             .Accepts<ProfilesFollowedConferenceEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -40,7 +40,7 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/PresentationUpdatedHandler", HandlePresentationUpdated)
             .WithName("HandlePresentationUpdated")
-            .WithTopic(DaprConstants.PubSub.DaprPubSubName, DaprConstants.Topics.PresentationUpdated)
+            .WithTopic(DaprConstants.PubSub.Name, DaprConstants.Topics.PresentationUpdated)
             .Accepts<PresentationUpdatedEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)

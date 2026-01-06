@@ -15,14 +15,14 @@ public static class EventHandlersEndpoints
         group.MapPost("/ConferenceCreatedHandler", ConferenceCreatedHandler)
             .WithName("ConferenceCreatedHandler")
             .AllowAnonymous()
-            .WithTopic(DaprConstants.PubSub.DefaultPubSubName, DaprConstants.Topics.ConferenceCreated)
+            .WithTopic(DaprConstants.PubSub.Name, DaprConstants.Topics.ConferenceCreated)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
         group.MapPost("/ConferenceUpdatedHandler", ConferenceUpdatedHandler)
             .WithName("ConferenceUpdatedHandler")
             .AllowAnonymous()
-            .WithTopic(DaprConstants.PubSub.DefaultPubSubName, DaprConstants.Topics.ConferenceUpdated)
+            .WithTopic(DaprConstants.PubSub.Name, DaprConstants.Topics.ConferenceUpdated)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 

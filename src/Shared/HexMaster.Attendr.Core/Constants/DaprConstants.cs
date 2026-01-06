@@ -11,14 +11,9 @@ public static class DaprConstants
     public static class PubSub
     {
         /// <summary>
-        /// The default pub/sub component name used for integration events.
+        /// The pub/sub component name used for integration events.
         /// </summary>
-        public const string DefaultPubSubName = "pubsub";
-
-        /// <summary>
-        /// The Dapr pub/sub component name.
-        /// </summary>
-        public const string DaprPubSubName = "dapr-pubsub";
+        public const string Name = "pubsub";
     }
 
     /// <summary>

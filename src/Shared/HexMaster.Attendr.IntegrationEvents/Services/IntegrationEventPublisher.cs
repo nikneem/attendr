@@ -6,7 +6,7 @@ namespace HexMaster.Attendr.IntegrationEvents.Services;
 
 public sealed class IntegrationEventPublisher(DaprClient daprClient) : IIntegrationEventPublisher
 {
-    private readonly string _pubSubName = DaprConstants.PubSub.DefaultPubSubName;
+    private readonly string _pubSubName = DaprConstants.PubSub.Name;
 
     /// <inheritdoc/>
     public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : IntegrationEvent
