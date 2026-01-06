@@ -27,6 +27,9 @@
             @for (conference of conferences(); track conference.conferenceId) {
             <div class="conference-tile">
                 <div class="tile-visual">
+                    <button type="button" class="tile-action" pButton icon="pi pi-trash"
+                        (click)="confirmUnfollow(conference.conferenceId, conference.conferenceName)"
+                        [text]="true"></button>
                     <div class="tile-visual-overlay"></div>
                     <div class="tile-visual-title">{{ conference.conferenceName }}</div>
                 </div>
@@ -57,4 +60,9 @@
             }
         </div>
     </div>
+
+    <attn-confirmation-dialog [visible]="showUnfollowDialog()" [title]="'Remove conference'"
+        [message]="unfollowMessage()" (visibleChange)="onUnfollowDialogVisibilityChange($event)"
+        (confirm)="onUnfollowConfirmed()" (cancel)="onUnfollowCancelled()">
+    </attn-confirmation-dialog>
 </p-card>

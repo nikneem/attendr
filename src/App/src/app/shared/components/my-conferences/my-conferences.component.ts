@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { PresenceService } from '@services/presence.service';
 import { ConferencePresenceDto } from '@models/conference-presence-dto';
 import { MessageService } from 'primeng/api';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 interface ConferenceRow {
     conferenceId: string;
@@ -19,7 +20,7 @@ interface ConferenceRow {
 @Component({
     selector: 'attn-my-conferences',
     standalone: true,
-    imports: [CommonModule, CardModule, ButtonModule],
+    imports: [CommonModule, CardModule, ButtonModule, ConfirmationDialogComponent],
     templateUrl: './my-conferences.component.html',
     styleUrl: './my-conferences.component.scss',
 })
@@ -31,6 +32,12 @@ export class MyConferencesComponent implements OnInit {
     loading = signal(true);
     error = signal<string | null>(null);
     updatingConference = signal<string | null>(null);
+    showUnfollowDialog = signal(false);
+    pendingConference = signal<{ id: string; name: string } | null>(null);
+    unfollowMessage = computed(() => {
+        const pending = this.pendingConference();
+        return pending ? `Stop following ${pending.name}?` : '';
+    });
 
     ngOnInit(): void {
         this.loadConferences();
@@ -106,5 +113,57 @@ export class MyConferencesComponent implements OnInit {
             return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { day: 'numeric', year: 'numeric' })}`;
         }
         return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', { ...options, year: 'numeric' })}`;
+    }
+
+    confirmUnfollow(conferenceId: string, conferenceName: string): void {
+        this.pendingConference.set({ id: conferenceId, name: conferenceName });
+        this.showUnfollowDialog.set(true);
+    }
+
+    onUnfollowConfirmed(): void {
+        const pending = this.pendingConference();
+        if (!pending) {
+            this.resetUnfollowState();
+            return;
+        }
+
+        this.presenceService.unfollowConference(pending.id).subscribe({
+            next: () => {
+                // Remove the conference from the local state
+                const updatedConferences = this.conferences().filter(c => c.conferenceId !== pending.id);
+                this.conferences.set(updatedConferences);
+                this.resetUnfollowState();
+
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'You have unfollowed this conference'
+                });
+            },
+            error: (err) => {
+                console.error('Error unfollowing conference:', err);
+                this.resetUnfollowState();
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to unfollow conference. Please try again.'
+                });
+            }
+        });
+    }
+
+    onUnfollowCancelled(): void {
+        this.resetUnfollowState();
+    }
+
+    onUnfollowDialogVisibilityChange(visible: boolean): void {
+        if (!visible) {
+            this.resetUnfollowState();
+        }
+    }
+
+    private resetUnfollowState(): void {
+        this.showUnfollowDialog.set(false);
+        this.pendingConference.set(null);
     }
 }

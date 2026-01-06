@@ -18,4 +18,8 @@ export class PresenceService {
     updateAttendance(conferenceId: string, isAttending: boolean): Observable<void> {
         return this.http.put<void>(`${this.apiUrl}/${conferenceId}/attendance`, { isAttending });
     }
+
+    unfollowConference(conferenceId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${conferenceId}`);
+    }
 }
