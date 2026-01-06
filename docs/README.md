@@ -24,6 +24,7 @@ High-level architecture decisions and system design:
 
 Developer-focused guides and workflows:
 
+- **[Angular Development Guidelines](development/angular-guidelines.md)** - ⚠️ **REQUIRED READING** - Zoneless Angular patterns and best practices
 - Setup and installation instructions
 - Development workflows
 - Testing strategies
