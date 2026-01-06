@@ -11,6 +11,7 @@ interface ConferenceRow {
     conferenceId: string;
     conferenceName: string;
     location: string;
+    imageUrl?: string;
     startDate: string;
     endDate: string;
     isAttending: boolean;
@@ -57,6 +58,7 @@ export class MyConferencesComponent implements OnInit {
                         conferenceId: p.conferenceId,
                         conferenceName: p.conferenceName,
                         location: p.location,
+                        imageUrl: p.imageUrl,
                         startDate: p.startDate,
                         endDate: p.endDate,
                         isAttending: p.isAttending,

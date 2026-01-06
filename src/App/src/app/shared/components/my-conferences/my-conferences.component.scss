@@ -154,24 +154,4 @@
         width: 100%;
         justify-content: center;
     }
-
-    .attend-btn {
-        background: var(--green-500);
-        border-color: var(--green-500);
-
-        &:hover:not(:disabled) {
-            background: var(--green-600);
-            border-color: var(--green-600);
-        }
-    }
-
-    .unattend-btn {
-        border-color: var(--surface-400);
-        color: var(--text-color-secondary);
-
-        &:hover:not(:disabled) {
-            border-color: var(--surface-500);
-            background: var(--surface-100);
-        }
-    }
 }
