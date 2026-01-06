@@ -22,6 +22,9 @@ public sealed class ConferencePresenceDocument
     [BsonElement("location")]
     public string Location { get; set; } = string.Empty;
 
+    [BsonElement("imageUrl")]
+    public string? ImageUrl { get; set; }
+
     [BsonElement("startDate")]
     public DateOnly StartDate { get; set; }
 

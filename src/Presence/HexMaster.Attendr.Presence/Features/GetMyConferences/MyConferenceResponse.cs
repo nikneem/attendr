@@ -7,6 +7,7 @@ public sealed record MyConferenceResponse(
     Guid ConferenceId,
     string ConferenceName,
     string Location,
+    string? ImageUrl,
     DateTime StartDate,
     DateTime EndDate,
     bool IsAttending);

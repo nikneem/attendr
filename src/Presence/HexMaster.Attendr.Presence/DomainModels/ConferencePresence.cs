@@ -5,6 +5,7 @@ public sealed class ConferencePresence
     public Guid ConferenceId { get; private set; }
     public string ConferenceName { get; private set; }
     public string Location { get; private set; }
+    public string? ImageUrl { get; private set; }
     public DateOnly StartDate { get; private set; }
     public DateOnly EndDate { get; private set; }
     public Guid ProfileId { get; private set; }
@@ -21,6 +22,7 @@ public sealed class ConferencePresence
         DateOnly startDate,
         DateOnly endDate,
         Guid profileId,
+        string? imageUrl = null,
         bool isFollowing = false,
         bool isAttending = false,
         IEnumerable<PresentationPresence>? presentations = null)
@@ -46,6 +48,7 @@ public sealed class ConferencePresence
         ConferenceId = conferenceId;
         ConferenceName = conferenceName;
         Location = location;
+        ImageUrl = imageUrl;
         StartDate = startDate;
         EndDate = endDate;
         ProfileId = profileId;

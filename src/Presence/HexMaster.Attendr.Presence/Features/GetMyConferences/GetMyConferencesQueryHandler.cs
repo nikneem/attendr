@@ -48,6 +48,7 @@ public sealed class GetMyConferencesQueryHandler : IQueryHandler<GetMyConference
                     p.ConferenceId,
                     p.ConferenceName,
                     p.Location,
+                    p.ImageUrl,
                     p.StartDate.ToDateTime(TimeOnly.MinValue),
                     p.EndDate.ToDateTime(TimeOnly.MaxValue),
                     p.IsAttending))

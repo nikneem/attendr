@@ -14,6 +14,7 @@ public static class ConferencePresenceMapper
             ConferenceId = domain.ConferenceId,
             ConferenceName = domain.ConferenceName,
             Location = domain.Location,
+            ImageUrl = domain.ImageUrl,
             StartDate = domain.StartDate,
             EndDate = domain.EndDate,
             IsFollowing = domain.IsFollowing,
@@ -30,6 +31,7 @@ public static class ConferencePresenceMapper
             doc.StartDate,
             doc.EndDate,
             doc.ProfileId,
+            imageUrl: doc.ImageUrl,
             isFollowing: doc.IsFollowing,
             isAttending: doc.IsAttending,
             presentations: null);

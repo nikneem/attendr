@@ -76,6 +76,7 @@ public sealed class CreateConferencePresenceCommandHandler : ICommandHandler<Cre
                     DateOnly.Parse(details.StartDate.ToString()),
                     DateOnly.Parse(details.EndDate.ToString()),
                     profileId,
+                    imageUrl: details.ImageUrl,
                     isFollowing: true,
                     isAttending: false,
                     presentations: null);
