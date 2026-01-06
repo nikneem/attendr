@@ -3,7 +3,6 @@
         <div class="section-header">
             <h2>Followed Conferences</h2>
             <div class="header-actions">
-                <p-tag [value]="conferences().length.toString()" severity="info"></p-tag>
                 @if (isOwnerOrManager()) {
                 <button pButton type="button" label="Select Conferences to Follow" icon="pi pi-plus"
                     (click)="openJoinDialog()"></button>
@@ -36,6 +35,11 @@
                         <span class="pill info-pill"><i class="pi pi-users"></i> {{ conference.speakersCount || 0 }}
                             speakers</span>
                     </div>
+                    @if (isOwnerOrManager()) {
+                    <button pButton type="button" label="Unfollow" icon="pi pi-times" severity="secondary"
+                        [outlined]="true" size="small" class="unfollow-btn"
+                        (click)="confirmUnfollow(conference.id, conference.name)"></button>
+                    }
                 </div>
             </div>
             }
