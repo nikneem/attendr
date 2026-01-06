@@ -46,6 +46,18 @@ public interface IPresentationPresenceRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves all presentation presences for a specific profile and conference.
+    /// </summary>
+    /// <param name="profileId">The unique identifier of the profile.</param>
+    /// <param name="conferenceId">The unique identifier of the conference.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A read-only collection of presentation presences.</returns>
+    Task<IReadOnlyCollection<PresentationPresence>> GetByProfileAndConferenceAsync(
+        Guid profileId,
+        Guid conferenceId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Updates an existing presentation presence.
     /// </summary>
     /// <param name="profileId">The unique identifier of the profile.</param>
@@ -56,5 +68,18 @@ public interface IPresentationPresenceRepository
         Guid profileId,
         Guid conferenceId,
         PresentationPresence presentation,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes a specific presentation presence.
+    /// </summary>
+    /// <param name="profileId">The unique identifier of the profile.</param>
+    /// <param name="conferenceId">The unique identifier of the conference.</param>
+    /// <param name="presentationId">The unique identifier of the presentation.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    Task DeleteAsync(
+        Guid profileId,
+        Guid conferenceId,
+        Guid presentationId,
         CancellationToken cancellationToken = default);
 }

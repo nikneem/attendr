@@ -57,4 +57,11 @@ public sealed class ConferencePresenceRepository : IConferencePresenceRepository
         var filter = Builders<ConferencePresenceDocument>.Filter.Eq(d => d.Id, doc.Id);
         await _collection.ReplaceOneAsync(filter, doc, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public async Task DeleteAsync(Guid conferenceId, Guid profileId, CancellationToken cancellationToken = default)
+    {
+        var id = ConferencePresenceMapper.BuildId(profileId, conferenceId);
+        var filter = Builders<ConferencePresenceDocument>.Filter.Eq(d => d.Id, id);
+        await _collection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
+    }
 }

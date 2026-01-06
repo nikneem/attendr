@@ -46,4 +46,12 @@ public interface IConferencePresenceRepository
     /// <param name="presence">The conference presence to update.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     Task UpdateAsync(ConferencePresence presence, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes a conference presence for a specific profile and conference.
+    /// </summary>
+    /// <param name="conferenceId">The unique identifier of the conference.</param>
+    /// <param name="profileId">The unique identifier of the profile.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    Task DeleteAsync(Guid conferenceId, Guid profileId, CancellationToken cancellationToken = default);
 }
