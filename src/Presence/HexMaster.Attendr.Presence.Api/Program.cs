@@ -9,6 +9,7 @@ using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
 using HexMaster.Attendr.Presence.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Presence.Extensions;
+using HexMaster.Attendr.Presence.Api.Endpoints;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -80,8 +81,9 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map feature endpoints
-app.MapPresenceFeatures();
+// Map endpoints
+app.MapPresenceEndpoints();
+app.MapEventHandlersEndpoints();
 
 app.UseCloudEvents();
 app.MapSubscribeHandler();

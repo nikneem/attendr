@@ -3,7 +3,6 @@ using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Observability;
-using HexMaster.Attendr.Presence.Services;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
 

@@ -5,7 +5,6 @@ using HexMaster.Attendr.IntegrationEvents.Events;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using HexMaster.Attendr.Presence.DomainModels;
 using HexMaster.Attendr.Presence.Observability;
-using HexMaster.Attendr.Presence.Services;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
 

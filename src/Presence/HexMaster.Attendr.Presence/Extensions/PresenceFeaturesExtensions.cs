@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
@@ -11,8 +9,16 @@ using HexMaster.Attendr.Presence.Observability;
 
 namespace HexMaster.Attendr.Presence.Extensions;
 
+/// <summary>
+/// Extension methods for registering Presence feature services.
+/// </summary>
 public static class PresenceFeaturesExtensions
 {
+    /// <summary>
+    /// Registers all Presence feature services including command handlers, query handlers, and observability.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddPresenceFeatures(this IServiceCollection services)
     {
         // Register observability
@@ -28,21 +34,6 @@ public static class PresenceFeaturesExtensions
         services.AddScoped<IQueryHandler<GetRandomPresentationToRateQuery, PresentationToRateDto?>, GetRandomPresentationToRateQueryHandler>();
 
         return services;
-    }
-
-    public static IEndpointRouteBuilder MapPresenceFeatures(this IEndpointRouteBuilder app)
-    {
-        // Map feature endpoints
-        app.MapGetMyConferencesEndpoint();
-        app.MapGetRandomPresentationToRateEndpoint();
-        app.MapRatePresentationEndpoint();
-
-        // Map event handler endpoints
-        app.MapProfileFollowedConferenceEventHandler();
-        app.MapProfilesFollowedConferenceEventHandler();
-        app.MapPresentationUpdatedEventHandler();
-
-        return app;
     }
 }
 

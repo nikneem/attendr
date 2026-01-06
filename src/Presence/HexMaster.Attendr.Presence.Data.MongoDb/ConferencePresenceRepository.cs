@@ -1,11 +1,14 @@
+using HexMaster.Attendr.Presence;
 using HexMaster.Attendr.Presence.Data.MongoDb.Mappers;
 using HexMaster.Attendr.Presence.Data.MongoDb.Models;
 using HexMaster.Attendr.Presence.DomainModels;
-using HexMaster.Attendr.Presence.Services;
 using MongoDB.Driver;
 
 namespace HexMaster.Attendr.Presence.Data.MongoDb;
 
+/// <summary>
+/// MongoDB-based repository implementation for conference presence aggregates.
+/// </summary>
 public sealed class ConferencePresenceRepository : IConferencePresenceRepository
 {
     private readonly IMongoCollection<ConferencePresenceDocument> _collection;

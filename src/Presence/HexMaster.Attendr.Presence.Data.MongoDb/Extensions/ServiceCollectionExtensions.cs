@@ -1,4 +1,4 @@
-using HexMaster.Attendr.Presence.Services;
+using HexMaster.Attendr.Presence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -6,8 +6,17 @@ using MongoDB.Driver;
 
 namespace HexMaster.Attendr.Presence.Data.MongoDb.Extensions;
 
+/// <summary>
+/// Extension methods for registering MongoDB repositories in the service collection.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Registers MongoDB-based presence repositories with the service collection.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="configuration">The application configuration.</param>
+    /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddMongoDbPresenceRepository(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
