@@ -1,6 +1,90 @@
-# Attendr
+# Attendr Angular Frontend
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+
+## Important: Zoneless Configuration
+
+**This application is configured to run without Zone.js (zoneless mode).** This is a modern Angular configuration that provides better performance and more explicit change detection.
+
+### Key Requirements for Zoneless Angular
+
+When developing components and features for this application, you must follow these practices:
+
+1. **Use Signals for Reactive State**
+   - All component state that needs to trigger UI updates must use Angular signals
+   - Use `signal()` for mutable state, `computed()` for derived state
+   - Example:
+     ```typescript
+     import { Component, signal } from '@angular/core';
+     
+     export class MyComponent {
+       loading = signal(false);
+       data = signal<MyData[]>([]);
+       count = computed(() => this.data().length);
+     }
+     ```
+
+2. **Template Signal Syntax**
+   - Always call signals in templates using parentheses: `loading()`, `data()`
+   - Example:
+     ```html
+     <div *ngIf="loading()">Loading...</div>
+     <div *ngFor="let item of data()">{{ item.name }}</div>
+     ```
+
+3. **Update Signals with `.set()` or `.update()`**
+   - Use `.set(value)` to replace the entire value
+   - Use `.update(fn)` to modify based on the current value
+   - Example:
+     ```typescript
+     this.loading.set(true);
+     this.data.set(newData);
+     this.count.update(c => c + 1);
+     ```
+
+4. **Avoid Direct Property Mutations**
+   - ❌ Wrong: `this.loading = false;` (will not trigger change detection)
+   - ✅ Correct: `this.loading.set(false);` (triggers change detection)
+
+5. **No Zone.js Workarounds**
+   - Do not use `setTimeout()`, `ChangeDetectorRef.detectChanges()`, or `markForCheck()`
+   - These are Zone.js patterns and are not needed with signals
+
+### Migration Pattern
+
+If you encounter components using old patterns, migrate them to signals:
+
+**Before (Zone.js style):**
+```typescript
+export class OldComponent {
+  loading = false;
+  data: MyData[] = [];
+  
+  loadData() {
+    this.loading = true;
+    this.service.getData().subscribe(result => {
+      this.data = result;
+      this.loading = false;
+    });
+  }
+}
+```
+
+**After (Zoneless style):**
+```typescript
+export class NewComponent {
+  loading = signal(false);
+  data = signal<MyData[]>([]);
+  
+  loadData() {
+    this.loading.set(true);
+    this.service.getData().subscribe(result => {
+      this.data.set(result);
+      this.loading.set(false);
+    });
+  }
+}
+```
 
 ## Development server
 
