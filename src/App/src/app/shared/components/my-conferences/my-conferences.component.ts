@@ -64,7 +64,7 @@ export class MyConferencesComponent implements OnInit {
                         imageUrl: p.imageUrl,
                         startDate: p.startDate,
                         endDate: p.endDate,
-                        isFollowing: p.isFollowing,
+                        isFollowing: true, // All conferences returned by this endpoint are followed
                         isAttending: p.isAttending,
                         ratingRequired: false, // Will be computed from presentations via API if needed
                     }))
