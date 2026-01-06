@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { PresenceService } from '@services/presence.service';
@@ -14,6 +15,7 @@ interface ConferenceRow {
     imageUrl?: string;
     startDate: string;
     endDate: string;
+    isFollowing: boolean;
     isAttending: boolean;
     ratingRequired: boolean;
 }
@@ -28,6 +30,7 @@ interface ConferenceRow {
 export class MyConferencesComponent implements OnInit {
     private readonly presenceService = inject(PresenceService);
     private readonly messageService = inject(MessageService);
+    private readonly router = inject(Router);
 
     conferences = signal<ConferenceRow[]>([]);
     loading = signal(true);
@@ -61,6 +64,7 @@ export class MyConferencesComponent implements OnInit {
                         imageUrl: p.imageUrl,
                         startDate: p.startDate,
                         endDate: p.endDate,
+                        isFollowing: p.isFollowing,
                         isAttending: p.isAttending,
                         ratingRequired: false, // Will be computed from presentations via API if needed
                     }))
@@ -115,6 +119,10 @@ export class MyConferencesComponent implements OnInit {
             return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { day: 'numeric', year: 'numeric' })}`;
         }
         return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', { ...options, year: 'numeric' })}`;
+    }
+
+    navigateToRate(conferenceId: string): void {
+        this.router.navigate(['/app/conferences', conferenceId, 'rate']);
     }
 
     confirmUnfollow(conferenceId: string, conferenceName: string): void {
