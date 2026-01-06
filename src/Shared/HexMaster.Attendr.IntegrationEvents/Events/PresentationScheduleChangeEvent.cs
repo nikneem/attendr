@@ -1,3 +1,5 @@
+using HexMaster.Attendr.IntegrationEvents.Constants;
+
 namespace HexMaster.Attendr.IntegrationEvents.Events;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace HexMaster.Attendr.IntegrationEvents.Events;
 /// </summary>
 public sealed class PresentationScheduleChangeEvent : IntegrationEvent
 {
-    public override string EventType => "presentation.schedule-changed";
+    public override string EventType => IntegrationEventTopics.PresentationScheduleChanged;
 
     public Guid ConferenceId { get; set; }
     public Guid PresentationId { get; set; }

@@ -1,8 +1,10 @@
+using HexMaster.Attendr.IntegrationEvents.Constants;
+
 namespace HexMaster.Attendr.IntegrationEvents.Events;
 
 public sealed class ProfileUpdatedEvent : IntegrationEvent
 {
-    public override string EventType => "profile.updated";
+    public override string EventType => IntegrationEventTopics.ProfileUpdated;
 
     public string ProfileId { get; init; } = string.Empty;
     public string DisplayName { get; init; } = string.Empty;

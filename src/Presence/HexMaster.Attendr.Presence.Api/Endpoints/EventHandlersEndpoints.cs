@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Constants;
+using HexMaster.Attendr.IntegrationEvents.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
 using HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 using HexMaster.Attendr.Presence.Features.UpdatePresentation;
@@ -22,7 +23,7 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/ProfileFollowedConferenceHandler", HandleProfileFollowedConference)
             .WithName("HandleProfileFollowedConference")
-            .WithTopic(DaprConstants.PubSub.Name, DaprConstants.Topics.ProfileFollowedConference)
+            .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.ProfileFollowedConference)
             .Accepts<ProfileFollowedConferenceEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -31,7 +32,7 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/ProfilesFollowedConferenceHandler", HandleProfilesFollowedConference)
             .WithName("HandleProfilesFollowedConference")
-            .WithTopic(DaprConstants.PubSub.Name, DaprConstants.Topics.ProfilesFollowedConference)
+            .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.ProfilesFollowedConference)
             .Accepts<ProfilesFollowedConferenceEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -40,7 +41,7 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/PresentationUpdatedHandler", HandlePresentationUpdated)
             .WithName("HandlePresentationUpdated")
-            .WithTopic(DaprConstants.PubSub.Name, DaprConstants.Topics.PresentationUpdated)
+            .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.PresentationUpdated)
             .Accepts<PresentationUpdatedEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)

@@ -1,8 +1,10 @@
+using HexMaster.Attendr.IntegrationEvents.Constants;
+
 namespace HexMaster.Attendr.IntegrationEvents.Events;
 
 public sealed class ConferenceCreatedEvent : IntegrationEvent
 {
-    public override string EventType => "conference.created";
+    public override string EventType => IntegrationEventTopics.ConferenceCreated;
 
     public Guid ConferenceId { get; init; }
     public string Title { get; init; } = string.Empty;

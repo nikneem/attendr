@@ -26,45 +26,4 @@ public static class DaprConstants
         /// </summary>
         public const string SharedStateStoreName = "statestore";
     }
-
-    /// <summary>
-    /// Event topic names for integration events.
-    /// </summary>
-    public static class Topics
-    {
-        /// <summary>
-        /// Topic for conference created events.
-        /// </summary>
-        public const string ConferenceCreated = "conference.created";
-
-        /// <summary>
-        /// Topic for conference updated events.
-        /// </summary>
-        public const string ConferenceUpdated = "conference.updated";
-
-        /// <summary>
-        /// Topic for profile created events.
-        /// </summary>
-        public const string ProfileCreated = "profile.created";
-
-        /// <summary>
-        /// Topic for profile updated events.
-        /// </summary>
-        public const string ProfileUpdated = "profile.updated";
-
-        /// <summary>
-        /// Topic for profile followed conference events.
-        /// </summary>
-        public const string ProfileFollowedConference = "profile-followed-conference";
-
-        /// <summary>
-        /// Topic for profiles followed conference events (bulk).
-        /// </summary>
-        public const string ProfilesFollowedConference = "profiles-followed-conference";
-
-        /// <summary>
-        /// Topic for presentation updated events.
-        /// </summary>
-        public const string PresentationUpdated = "presentation.updated";
-    }
 }

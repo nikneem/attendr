@@ -1,3 +1,5 @@
+using HexMaster.Attendr.IntegrationEvents.Constants;
+
 namespace HexMaster.Attendr.IntegrationEvents.Events;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace HexMaster.Attendr.IntegrationEvents.Events;
 /// </summary>
 public sealed class PresentationUpdatedEvent : IntegrationEvent
 {
-    public override string EventType => "presentation.updated";
+    public override string EventType => IntegrationEventTopics.PresentationUpdated;
 
     /// <summary>
     /// Gets the ID of the conference this presentation belongs to.
