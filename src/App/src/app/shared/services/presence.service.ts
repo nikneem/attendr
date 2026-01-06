@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ConferencePresenceDto } from '../models/conference-presence-dto';
+import { PresentationToRateDto } from '../models/presentation-to-rate-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -21,5 +22,16 @@ export class PresenceService {
 
     unfollowConference(conferenceId: string): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${conferenceId}`);
+    }
+
+    getPresentationToRate(conferenceId: string): Observable<PresentationToRateDto> {
+        return this.http.get<PresentationToRateDto>(`${this.apiUrl}/${conferenceId}/rate`);
+    }
+
+    ratePresentation(conferenceId: string, presentationId: string, rating: number | null, isFavorite: boolean): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/${conferenceId}/rate/${presentationId}`, {
+            rating,
+            isFavorite
+        });
     }
 }

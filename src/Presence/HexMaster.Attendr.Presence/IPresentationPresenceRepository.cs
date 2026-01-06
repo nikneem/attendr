@@ -8,6 +8,21 @@ namespace HexMaster.Attendr.Presence;
 public interface IPresentationPresenceRepository
 {
     /// <summary>
+    /// Adds a new presentation presence to the repository.
+    /// </summary>
+    /// <param name="presentation">The presentation presence to add.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    Task AddAsync(PresentationPresence presentation, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Adds multiple presentation presences to the repository in a single bulk operation.
+    /// This method is optimized for inserting large numbers of presentation presences efficiently.
+    /// </summary>
+    /// <param name="presentations">The collection of presentation presences to add.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    Task AddManyAsync(IEnumerable<PresentationPresence> presentations, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieves all presentation presences for a specific conference and presentation.
     /// </summary>
     /// <param name="conferenceId">The unique identifier of the conference.</param>

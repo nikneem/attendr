@@ -1,0 +1,91 @@
+<div class="rate-sessions-page">
+    <div class="container">
+        <div class="header-section">
+            <button pButton icon="pi pi-arrow-left" [text]="true" (click)="goBack()" class="back-button"></button>
+            <h1>Rate Sessions</h1>
+        </div>
+
+        @if (loading()) {
+        <div class="loading-container">
+            <p-progressSpinner />
+            <p>Loading session...</p>
+        </div>
+        } @else if (error()) {
+        <div class="error-container">
+            <i class="pi pi-exclamation-triangle"></i>
+            <p>{{ error() }}</p>
+            <button pButton label="Try Again" (click)="loadPresentation()"></button>
+        </div>
+        } @else if (noMorePresentations()) {
+        <div class="empty-state">
+            <i class="pi pi-check-circle"></i>
+            <h2>All Done!</h2>
+            <p>You've rated all available sessions for this conference.</p>
+            <button pButton label="Back to Conference" (click)="goBack()"></button>
+        </div>
+        } @else if (presentation()) {
+        <div class="presentation-container">
+            <div class="swipe-indicators">
+                <div class="indicator left" [class.active]="swipeDirection() === 'left'">
+                    <i class="pi pi-times"></i>
+                    <span>Not Favorite</span>
+                </div>
+                <div class="indicator right" [class.active]="swipeDirection() === 'right'">
+                    <i class="pi pi-heart"></i>
+                    <span>Favorite</span>
+                </div>
+            </div>
+
+            <div class="card-wrapper">
+                <div class="presentation-card"
+                    [style.transform]="'translateX(' + swipeOffset() + 'px) rotate(' + (swipeOffset() / 20) + 'deg)'"
+                    (mousedown)="onMouseDown($event)" (touchstart)="onTouchStart($event)"
+                    (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()">
+                    <p-card>
+                        <ng-template pTemplate="header">
+                            <div class="card-header">
+                                <h2>{{ presentation()!.title }}</h2>
+                            </div>
+                        </ng-template>
+
+                        <div class="card-content">
+                            <div class="meta-info">
+                                <div class="meta-item">
+                                    <i class="pi pi-map-marker"></i>
+                                    <span>{{ presentation()!.room }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="pi pi-clock"></i>
+                                    <span>{{ formatDateTime(presentation()!.startDateTime) }}</span>
+                                </div>
+                            </div>
+
+                            <div class="abstract">
+                                <p>{{ presentation()!.abstract }}</p>
+                            </div>
+
+                            <div class="rating-section">
+                                <label>Your Rating (Optional)</label>
+                                <p-rating [(ngModel)]="rating" [stars]="5"></p-rating>
+                            </div>
+                        </div>
+
+                        <ng-template pTemplate="footer">
+                            <div class="card-footer">
+                                <button pButton label="Not Favorite" icon="pi pi-times" severity="secondary"
+                                    [outlined]="true" (click)="submitRating(false)" [disabled]="submitting()"></button>
+                                <button pButton label="Favorite" icon="pi pi-heart" (click)="submitRating(true)"
+                                    [disabled]="submitting()"></button>
+                            </div>
+                        </ng-template>
+                    </p-card>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <p><i class="pi pi-hand-pointer"></i> Swipe or drag the card left/right, or use the buttons below</p>
+            </div>
+        </div>
+        }
+    </div>
+</div>

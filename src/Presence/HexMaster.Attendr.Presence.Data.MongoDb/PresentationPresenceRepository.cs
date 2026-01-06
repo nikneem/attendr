@@ -19,6 +19,30 @@ public sealed class PresentationPresenceRepository : IPresentationPresenceReposi
         _collection = database.GetCollection<PresentationPresenceDocument>("presentationPresence");
     }
 
+    public async Task AddAsync(PresentationPresence presentation, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(presentation);
+        var doc = PresentationPresenceMapper.ToDocument(presentation.ProfileId, presentation.ConferenceId, presentation);
+        await _collection.InsertOneAsync(doc, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task AddManyAsync(IEnumerable<PresentationPresence> presentations, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(presentations);
+
+        var presentationsList = presentations.ToList();
+        if (presentationsList.Count == 0)
+        {
+            return;
+        }
+
+        var documents = presentationsList
+            .Select(p => PresentationPresenceMapper.ToDocument(p.ProfileId, p.ConferenceId, p))
+            .ToList();
+
+        await _collection.InsertManyAsync(documents, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<IReadOnlyCollection<PresentationPresence>> GetByConferenceAndPresentationAsync(
         Guid conferenceId,
         Guid presentationId,

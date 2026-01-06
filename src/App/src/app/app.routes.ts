@@ -3,6 +3,7 @@ import { HomePageComponent } from './pages/public/home/home-page-component/home-
 import { DashboardPageComponent } from './pages/private/dashboard/dashboard-page-component/dashboard-page-component';
 import { ConferencesPageComponent } from './pages/private/conferences/conferences-page.component';
 import { ConferenceDetailsPageComponent } from './pages/private/conferences/conference-details-page.component';
+import { RateSessionsPageComponent } from './pages/private/conferences/rate-sessions-page.component';
 import { GroupsListPageComponent } from './pages/private/groups/groups-list-page.component';
 import { GroupDetailsPageComponent } from './pages/private/groups/group-details-page.component';
 import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
@@ -19,6 +20,7 @@ export const routes: Routes = [
             { path: 'dashboard', component: DashboardPageComponent },
             { path: 'conferences', component: ConferencesPageComponent },
             { path: 'conferences/:id', component: ConferenceDetailsPageComponent },
+            { path: 'conferences/:id/rate', component: RateSessionsPageComponent },
             { path: 'groups', component: GroupsListPageComponent },
             { path: 'groups/:id', component: GroupDetailsPageComponent }
         ]
