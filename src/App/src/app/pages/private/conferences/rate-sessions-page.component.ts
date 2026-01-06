@@ -10,6 +10,12 @@ import { MessageService } from 'primeng/api';
 import { PresenceService } from '@services/presence.service';
 import { PresentationToRateDto } from '@models/presentation-to-rate-dto';
 
+interface CardInStack {
+    presentation: PresentationToRateDto | null;
+    rating: number | null;
+    isEmpty: boolean;
+}
+
 @Component({
     selector: 'attn-rate-sessions-page',
     standalone: true,
@@ -24,12 +30,11 @@ export class RateSessionsPageComponent implements OnInit {
     private readonly messageService = inject(MessageService);
 
     conferenceId = signal<string>('');
-    presentation = signal<PresentationToRateDto | null>(null);
-    rating = signal<number | null>(null);
+    cards = signal<CardInStack[]>([]);
     loading = signal(true);
     error = signal<string | null>(null);
     submitting = signal(false);
-    noMorePresentations = signal(false);
+    isAnimating = signal(false);
 
     // Swipe/drag state
     private startX = 0;
@@ -44,36 +49,83 @@ export class RateSessionsPageComponent implements OnInit {
         return offset > 0 ? 'right' : 'left';
     });
 
+    activeCard = computed(() => this.cards()[0] || null);
+
     ngOnInit(): void {
         this.conferenceId.set(this.route.snapshot.paramMap.get('id') || '');
         if (this.conferenceId()) {
-            this.loadPresentation();
+            this.loadInitialCards();
         }
     }
 
-    loadPresentation(): void {
+    loadInitialCards(): void {
         this.loading.set(true);
         this.error.set(null);
-        this.rating.set(null);
-        this.swipeOffset.set(0);
 
-        this.presenceService.getPresentationToRate(this.conferenceId()).subscribe({
-            next: (presentation) => {
-                this.presentation.set(presentation);
-                this.loading.set(false);
-                this.noMorePresentations.set(false);
-            },
-            error: (err) => {
-                if (err.status === 204) {
-                    this.noMorePresentations.set(true);
-                    this.presentation.set(null);
-                } else {
-                    console.error('Error loading presentation:', err);
-                    this.error.set('Failed to load presentation. Please try again.');
-                }
-                this.loading.set(false);
-            },
+        // Load 3 cards initially
+        const loadPromises = [this.fetchCard(), this.fetchCard(), this.fetchCard()];
+
+        Promise.all(loadPromises).then((cards) => {
+            const validCards = cards.filter((c) => c !== null) as CardInStack[];
+            
+            // If no cards loaded, show empty state card
+            if (validCards.length === 0) {
+                this.cards.set([{
+                    presentation: null,
+                    rating: null,
+                    isEmpty: true,
+                }]);
+            } else {
+                this.cards.set(validCards);
+            }
+            
+            this.loading.set(false);
         });
+    }
+
+    private fetchCard(): Promise<CardInStack | null> {
+        return new Promise((resolve) => {
+            this.presenceService.getPresentationToRate(this.conferenceId()).subscribe({
+                next: (presentation) => {
+                    resolve({
+                        presentation,
+                        rating: null,
+                        isEmpty: false,
+                    });
+                },
+                error: (err) => {
+                    if (err.status === 204) {
+                        // No more presentations
+                        resolve(null);
+                    } else {
+                        console.error('Error loading presentation:', err);
+                        resolve(null);
+                    }
+                },
+            });
+        });
+    }
+
+    private addEmptyCard(): void {
+        const currentCards = this.cards();
+        if (!currentCards.some((c) => c.isEmpty)) {
+            this.cards.set([
+                ...currentCards,
+                {
+                    presentation: null,
+                    rating: null,
+                    isEmpty: true,
+                },
+            ]);
+        }
+    }
+
+    updateRating(index: number, rating: number | null): void {
+        const currentCards = this.cards();
+        if (currentCards[index] && !currentCards[index].isEmpty) {
+            currentCards[index] = { ...currentCards[index], rating };
+            this.cards.set([...currentCards]);
+        }
     }
 
     // Mouse events
@@ -155,21 +207,53 @@ export class RateSessionsPageComponent implements OnInit {
     }
 
     submitRating(isFavorite: boolean): void {
-        const pres = this.presentation();
-        if (!pres || this.submitting()) return;
+        const activeCard = this.activeCard();
+        if (!activeCard || activeCard.isEmpty || this.submitting()) return;
+
+        const pres = activeCard.presentation;
+        if (!pres) return;
 
         this.submitting.set(true);
+        this.isAnimating.set(true);
 
         // Animate card out
         this.swipeOffset.set(isFavorite ? window.innerWidth : -window.innerWidth);
 
         setTimeout(() => {
             this.presenceService
-                .ratePresentation(this.conferenceId(), pres.presentationId, this.rating(), isFavorite)
+                .ratePresentation(this.conferenceId(), pres.presentationId, activeCard.rating, isFavorite)
                 .subscribe({
                     next: () => {
-                        this.submitting.set(false);
-                        this.loadPresentation();
+                        // Remove the top card
+                        const remainingCards = this.cards().slice(1);
+
+                        // Fetch a new card for the bottom
+                        this.fetchCard().then((newCard) => {
+                            if (newCard) {
+                                this.cards.set([...remainingCards, newCard]);
+                            } else {
+                                // No more cards available
+                                if (remainingCards.length === 0) {
+                                    // Show empty state card
+                                    this.cards.set([{
+                                        presentation: null,
+                                        rating: null,
+                                        isEmpty: true,
+                                    }]);
+                                } else {
+                                    this.cards.set(remainingCards);
+                                    // Add empty state card to the bottom
+                                    this.addEmptyCard();
+                                }
+                            }
+                            this.submitting.set(false);
+                            this.swipeOffset.set(0);
+                            
+                            // Reset animation state after cards have repositioned
+                            setTimeout(() => {
+                                this.isAnimating.set(false);
+                            }, 50);
+                        });
                     },
                     error: (err) => {
                         console.error('Error rating presentation:', err);
@@ -180,6 +264,7 @@ export class RateSessionsPageComponent implements OnInit {
                         });
                         this.submitting.set(false);
                         this.swipeOffset.set(0);
+                        this.isAnimating.set(false);
                     },
                 });
         }, 300);

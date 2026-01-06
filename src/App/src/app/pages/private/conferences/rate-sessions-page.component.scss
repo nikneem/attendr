@@ -116,17 +116,47 @@
         height: 600px;
         margin-bottom: 2rem;
         touch-action: pan-y;
+
+        &.no-transition .presentation-card {
+            transition: none !important;
+        }
     }
 
     .presentation-card {
         position: absolute;
         inset: 0;
-        cursor: grab;
-        transition: transform 0.3s ease;
+        transition: all 0.3s ease;
         user-select: none;
 
-        &:active {
-            cursor: grabbing;
+        &.top-card {
+            cursor: grab;
+            z-index: 30;
+            transform: translateY(0) rotate(0deg) scale(1);
+
+            &:active {
+                cursor: grabbing;
+            }
+        }
+
+        &.middle-card {
+            z-index: 20;
+            transform: translateY(10px) rotate(-2deg) scale(0.97);
+            pointer-events: none;
+        }
+
+        &.bottom-card {
+            z-index: 10;
+            transform: translateY(20px) rotate(2deg) scale(0.94);
+            pointer-events: none;
+        }
+
+        &.empty-card {
+            cursor: not-allowed;
+            opacity: 0.7;
+
+            &.top-card {
+                cursor: not-allowed;
+            }
         }
 
         :global(.p-card) {
@@ -166,12 +196,14 @@
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
+        height: 100%;
     }
 
     .meta-info {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
+        flex-shrink: 0;
     }
 
     .meta-item {
@@ -187,6 +219,11 @@
     }
 
     .abstract {
+        flex: 1;
+        overflow-y: auto;
+        min-height: 100px;
+        max-height: 200px;
+
         p {
             margin: 0;
             line-height: 1.6;
@@ -198,6 +235,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        flex-shrink: 0;
         gap: 0.75rem;
         padding: 1rem;
         background: var(--surface-50);
@@ -231,6 +269,37 @@
 
         i {
             margin-right: 0.5rem;
+        }
+    }
+
+    .empty-card-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        text-align: center;
+        min-height: 400px;
+
+        i {
+            font-size: 4rem;
+            color: var(--green-500);
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        p {
+            margin: 0 0 1.5rem 0;
+            color: var(--text-color-secondary);
+        }
+
+        .back-to-conferences-btn {
+            margin-top: 1rem;
         }
     }
 }

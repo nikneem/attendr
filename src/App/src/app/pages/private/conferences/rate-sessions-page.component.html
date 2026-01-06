@@ -14,16 +14,9 @@
         <div class="error-container">
             <i class="pi pi-exclamation-triangle"></i>
             <p>{{ error() }}</p>
-            <button pButton label="Try Again" (click)="loadPresentation()"></button>
+            <button pButton label="Try Again" (click)="loadInitialCards()"></button>
         </div>
-        } @else if (noMorePresentations()) {
-        <div class="empty-state">
-            <i class="pi pi-check-circle"></i>
-            <h2>All Done!</h2>
-            <p>You've rated all available sessions for this conference.</p>
-            <button pButton label="Back to Conference" (click)="goBack()"></button>
-        </div>
-        } @else if (presentation()) {
+        } @else if (cards().length > 0) {
         <div class="presentation-container">
             <div class="swipe-indicators">
                 <div class="indicator left" [class.active]="swipeDirection() === 'left'">
@@ -36,15 +29,35 @@
                 </div>
             </div>
 
-            <div class="card-wrapper">
+            <div class="card-wrapper" [class.no-transition]="isAnimating()">
+                @for (card of cards(); track $index) {
                 <div class="presentation-card"
-                    [style.transform]="'translateX(' + swipeOffset() + 'px) rotate(' + (swipeOffset() / 20) + 'deg)'"
-                    (mousedown)="onMouseDown($event)" (touchstart)="onTouchStart($event)"
-                    (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()">
+                    [class.top-card]="$index === 0"
+                    [class.middle-card]="$index === 1"
+                    [class.bottom-card]="$index === 2"
+                    [class.empty-card]="card.isEmpty"
+                    [style.transform]="$index === 0 ? 'translateX(' + swipeOffset() + 'px) rotate(' + (swipeOffset() / 20) + 'deg)' : ''"
+                    [style.z-index]="cards().length - $index"
+                    (mousedown)="$index === 0 && !card.isEmpty ? onMouseDown($event) : null"
+                    (touchstart)="$index === 0 && !card.isEmpty ? onTouchStart($event) : null"
+                    (touchmove)="$index === 0 && !card.isEmpty ? onTouchMove($event) : null"
+                    (touchend)="$index === 0 && !card.isEmpty ? onTouchEnd() : null">
+
+                    @if (card.isEmpty) {
+                    <p-card>
+                        <div class="empty-card-content">
+                            <i class="pi pi-check-circle"></i>
+                            <h3>All Sessions Rated</h3>
+                            <p>You've rated all available sessions for this conference.</p>
+                            <button pButton label="Back to My Conferences" icon="pi pi-arrow-left" 
+                                (click)="goBack()" class="back-to-conferences-btn"></button>
+                        </div>
+                    </p-card>
+                    } @else if (card.presentation) {
                     <p-card>
                         <ng-template pTemplate="header">
                             <div class="card-header">
-                                <h2>{{ presentation()!.title }}</h2>
+                                <h2>{{ card.presentation.title }}</h2>
                             </div>
                         </ng-template>
 
@@ -52,24 +65,27 @@
                             <div class="meta-info">
                                 <div class="meta-item">
                                     <i class="pi pi-map-marker"></i>
-                                    <span>{{ presentation()!.room }}</span>
+                                    <span>{{ card.presentation.room }}</span>
                                 </div>
                                 <div class="meta-item">
                                     <i class="pi pi-clock"></i>
-                                    <span>{{ formatDateTime(presentation()!.startDateTime) }}</span>
+                                    <span>{{ formatDateTime(card.presentation.startDateTime) }}</span>
                                 </div>
                             </div>
 
                             <div class="abstract">
-                                <p>{{ presentation()!.abstract }}</p>
+                                <p>{{ card.presentation.abstract }}</p>
                             </div>
 
+                            @if ($index === 0) {
                             <div class="rating-section">
                                 <label>Your Rating (Optional)</label>
-                                <p-rating [(ngModel)]="rating" [stars]="5"></p-rating>
+                                <p-rating [(ngModel)]="card.rating" [stars]="5" (ngModelChange)="updateRating($index, $event)"></p-rating>
                             </div>
+                            }
                         </div>
 
+                        @if ($index === 0) {
                         <ng-template pTemplate="footer">
                             <div class="card-footer">
                                 <button pButton label="Not Favorite" icon="pi pi-times" severity="secondary"
@@ -78,13 +94,18 @@
                                     [disabled]="submitting()"></button>
                             </div>
                         </ng-template>
+                        }
                     </p-card>
+                    }
                 </div>
+                }
             </div>
 
+            @if (activeCard() && !activeCard()!.isEmpty) {
             <div class="instructions">
                 <p><i class="pi pi-hand-pointer"></i> Swipe or drag the card left/right, or use the buttons below</p>
             </div>
+            }
         </div>
         }
     </div>
