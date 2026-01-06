@@ -69,4 +69,9 @@ public sealed class ConferencePresence
 
         _presentations.Add(presentation);
     }
+
+    public void UpdateAttendance(bool isAttending)
+    {
+        IsAttending = isAttending;
+    }
 }

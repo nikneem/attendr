@@ -41,4 +41,20 @@ public sealed class ConferencePresenceRepository : IConferencePresenceRepository
         var presences = docs.Select(ConferencePresenceMapper.ToDomain).ToList();
         return presences.AsReadOnly();
     }
+
+    public async Task<ConferencePresence?> GetAsync(Guid conferenceId, Guid profileId, CancellationToken cancellationToken = default)
+    {
+        var id = ConferencePresenceMapper.BuildId(profileId, conferenceId);
+        var filter = Builders<ConferencePresenceDocument>.Filter.Eq(d => d.Id, id);
+        var doc = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        return doc is not null ? ConferencePresenceMapper.ToDomain(doc) : null;
+    }
+
+    public async Task UpdateAsync(ConferencePresence presence, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(presence);
+        var doc = ConferencePresenceMapper.ToDocument(presence);
+        var filter = Builders<ConferencePresenceDocument>.Filter.Eq(d => d.Id, doc.Id);
+        await _collection.ReplaceOneAsync(filter, doc, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

@@ -3,6 +3,7 @@ using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
+using HexMaster.Attendr.Presence.Features.UpdateAttendance;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
@@ -25,6 +26,13 @@ public static class PresenceEndpoints
         group.MapGet("/my-conferences", GetMyConferences)
             .WithName("GetMyConferences")
             .Produces<List<MyConferenceResponse>>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapPut("/{conferenceId:guid}/attendance", UpdateAttendance)
+            .WithName("UpdateAttendance")
+            .Produces(StatusCodes.Status202Accepted)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
@@ -194,4 +202,63 @@ public static class PresenceEndpoints
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+
+    private static async Task<IResult> UpdateAttendance(
+        Guid conferenceId,
+        HttpContext context,
+        ICommandHandler<UpdateAttendanceCommand> handler,
+        IProfilesIntegrationService profilesIntegration,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("UpdateAttendanceEndpoint");
+        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? context.User.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            // Read the request body to get isAttending value
+            var requestBody = await context.Request.ReadFromJsonAsync<UpdateAttendanceRequest>(cancellationToken);
+            if (requestBody is null)
+            {
+                return Results.BadRequest(new { error = "Request body is required." });
+            }
+
+            // Resolve the Auth0 subject ID to a profile GUID
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            await handler.Handle(
+                new UpdateAttendanceCommand(conferenceId, profileId, requestBody.IsAttending),
+                cancellationToken);
+
+            return Results.Accepted();
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogWarning(ex, "Failed to update attendance for conference {ConferenceId}", conferenceId);
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error updating attendance for conference {ConferenceId}", conferenceId);
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private record UpdateAttendanceRequest(bool IsAttending);
 }

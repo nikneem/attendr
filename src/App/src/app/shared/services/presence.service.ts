@@ -14,4 +14,8 @@ export class PresenceService {
     getMyConferences(): Observable<ConferencePresenceDto[]> {
         return this.http.get<ConferencePresenceDto[]>(`${this.apiUrl}/my-conferences`);
     }
+
+    updateAttendance(conferenceId: string, isAttending: boolean): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/${conferenceId}/attendance`, { isAttending });
+    }
 }

@@ -22,34 +22,49 @@
             to attend!</p>
     </div>
 
-    <div *ngIf="!loading() && conferences().length > 0" class="table-wrapper">
-        <table class="conferences-table">
-            <thead>
-                <tr>
-                    <th>Conference Name</th>
-                    <th>Location</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Attending</th>
-                    <th>Rating Required</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let row of conferences()">
-                    <td>{{ row.conferenceName }}</td>
-                    <td>{{ row.location }}</td>
-                    <td>{{ row.startDate | date: 'short' }}</td>
-                    <td>{{ row.endDate | date: 'short' }}</td>
-                    <td>
-                        <p-tag [value]="getAttendanceText(row.isAttending)"
-                            [severity]="getAttendanceSeverity(row.isAttending)"></p-tag>
-                    </td>
-                    <td>
-                        <p-tag [value]="getRatingRequiredText(row.ratingRequired)"
-                            [severity]="getRatingRequiredSeverity(row.ratingRequired)"></p-tag>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div *ngIf="!loading() && conferences().length > 0" class="conferences-list">
+        <div class="tile-row">
+            @for (conference of conferences(); track conference.conferenceId) {
+            <div class="conference-tile">
+                <div class="tile-visual">
+                    <div class="tile-visual-overlay"></div>
+                    <div class="tile-visual-title">{{ conference.conferenceName }}</div>
+                </div>
+                <div class="tile-info">
+                    <div class="meta-row">
+                        <i class="pi pi-map-marker"></i> {{ conference.location }}
+                    </div>
+                    <div class="meta-row">
+                        <i class="pi pi-calendar"></i> {{ formatDateRange(conference.startDate, conference.endDate) }}
+                    </div>
+                    <div class="action-row">
+                        @if (!conference.isAttending) {
+                        <button 
+                            pButton 
+                            type="button" 
+                            label="I'm going" 
+                            icon="pi pi-check" 
+                            [disabled]="updatingConference() === conference.conferenceId"
+                            [loading]="updatingConference() === conference.conferenceId"
+                            (click)="updateAttendance(conference.conferenceId, true)"
+                            class="attendance-btn attend-btn"></button>
+                        } @else {
+                        <button 
+                            pButton 
+                            type="button" 
+                            label="Changed my mind" 
+                            icon="pi pi-times" 
+                            severity="secondary"
+                            [outlined]="true"
+                            [disabled]="updatingConference() === conference.conferenceId"
+                            [loading]="updatingConference() === conference.conferenceId"
+                            (click)="updateAttendance(conference.conferenceId, false)"
+                            class="attendance-btn unattend-btn"></button>
+                        }
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
     </div>
 </p-card>

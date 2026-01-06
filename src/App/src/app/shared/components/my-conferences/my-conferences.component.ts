@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
 import { PresenceService } from '@services/presence.service';
 import { ConferencePresenceDto } from '@models/conference-presence-dto';
+import { MessageService } from 'primeng/api';
 
 interface ConferenceRow {
     conferenceId: string;
@@ -19,16 +19,18 @@ interface ConferenceRow {
 @Component({
     selector: 'attn-my-conferences',
     standalone: true,
-    imports: [CommonModule, CardModule, TableModule, TagModule],
+    imports: [CommonModule, CardModule, ButtonModule],
     templateUrl: './my-conferences.component.html',
     styleUrl: './my-conferences.component.scss',
 })
 export class MyConferencesComponent implements OnInit {
     private readonly presenceService = inject(PresenceService);
+    private readonly messageService = inject(MessageService);
 
     conferences = signal<ConferenceRow[]>([]);
     loading = signal(true);
     error = signal<string | null>(null);
+    updatingConference = signal<string | null>(null);
 
     ngOnInit(): void {
         this.loadConferences();
@@ -65,19 +67,44 @@ export class MyConferencesComponent implements OnInit {
         });
     }
 
-    getAttendanceText(isAttending: boolean): string {
-        return isAttending ? 'Yes' : 'No';
+    updateAttendance(conferenceId: string, isAttending: boolean): void {
+        this.updatingConference.set(conferenceId);
+        
+        this.presenceService.updateAttendance(conferenceId, isAttending).subscribe({
+            next: () => {
+                // Update the local state
+                const updatedConferences = this.conferences().map(c => 
+                    c.conferenceId === conferenceId ? { ...c, isAttending } : c
+                );
+                this.conferences.set(updatedConferences);
+                this.updatingConference.set(null);
+                
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: isAttending ? 'You are now attending this conference' : 'You are no longer attending this conference'
+                });
+            },
+            error: (err) => {
+                console.error('Error updating attendance:', err);
+                this.updatingConference.set(null);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to update attendance. Please try again.'
+                });
+            }
+        });
     }
 
-    getAttendanceSeverity(isAttending: boolean): 'success' | 'warn' {
-        return isAttending ? 'success' : 'warn';
-    }
-
-    getRatingRequiredText(ratingRequired: boolean): string {
-        return ratingRequired ? 'Yes' : 'No';
-    }
-
-    getRatingRequiredSeverity(ratingRequired: boolean): 'danger' | 'info' {
-        return ratingRequired ? 'danger' : 'info';
+    formatDateRange(startDate: string, endDate: string): string {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+        
+        if (start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth()) {
+            return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { day: 'numeric', year: 'numeric' })}`;
+        }
+        return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', { ...options, year: 'numeric' })}`;
     }
 }
