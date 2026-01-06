@@ -28,9 +28,10 @@ public static class PresentationUpdatedEventHandler
     private static async Task<IResult> HandleAsync(
         PresentationUpdatedEvent @event,
         ICommandHandler<UpdatePresentationCommand> handler,
-        [FromServices] ILogger logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("PresentationUpdatedEventHandler");
         try
         {
             await handler.Handle(new UpdatePresentationCommand(@event), cancellationToken);

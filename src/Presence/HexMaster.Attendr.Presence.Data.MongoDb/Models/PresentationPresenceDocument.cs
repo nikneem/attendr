@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace HexMaster.Attendr.Presence.Data.MongoDb.Models;
@@ -8,12 +9,15 @@ public sealed class PresentationPresenceDocument
     public string Id { get; set; } = string.Empty; // profileId:conferenceId:presentationId
 
     [BsonElement("profileId")]
+    [BsonRepresentation(BsonType.String)]
     public Guid ProfileId { get; set; }
 
     [BsonElement("conferenceId")]
+    [BsonRepresentation(BsonType.String)]
     public Guid ConferenceId { get; set; }
 
     [BsonElement("presentationId")]
+    [BsonRepresentation(BsonType.String)]
     public Guid PresentationId { get; set; }
 
     [BsonElement("title")]
@@ -50,6 +54,7 @@ public sealed class PresentationPresenceDocument
 public sealed class PresentationSpeakerDocument
 {
     [BsonElement("speakerId")]
+    [BsonRepresentation(BsonType.String)]
     public Guid SpeakerId { get; set; }
 
     [BsonElement("name")]

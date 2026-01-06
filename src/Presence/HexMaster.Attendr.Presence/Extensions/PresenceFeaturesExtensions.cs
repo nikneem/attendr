@@ -7,6 +7,7 @@ using HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
 using HexMaster.Attendr.Presence.Features.UpdatePresentation;
+using HexMaster.Attendr.Presence.Observability;
 
 namespace HexMaster.Attendr.Presence.Extensions;
 
@@ -14,6 +15,9 @@ public static class PresenceFeaturesExtensions
 {
     public static IServiceCollection AddPresenceFeatures(this IServiceCollection services)
     {
+        // Register observability
+        services.AddSingleton<PresenceMetrics>();
+
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateConferencePresenceCommand>, CreateConferencePresenceCommandHandler>();
         services.AddScoped<ICommandHandler<RatePresentationCommand>, RatePresentationCommandHandler>();

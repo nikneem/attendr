@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace HexMaster.Attendr.Presence.Data.MongoDb.Models;
@@ -8,9 +9,11 @@ public sealed class ConferencePresenceDocument
     public string Id { get; set; } = string.Empty; // profileId:conferenceId
 
     [BsonElement("profileId")]
+    [BsonRepresentation(BsonType.String)]
     public Guid ProfileId { get; set; }
 
     [BsonElement("conferenceId")]
+    [BsonRepresentation(BsonType.String)]
     public Guid ConferenceId { get; set; }
 
     [BsonElement("conferenceName")]

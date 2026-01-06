@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Integrations.Services;
@@ -31,9 +33,10 @@ public static class RatePresentationEndpoint
         HttpContext context,
         ICommandHandler<RatePresentationCommand> handler,
         IProfilesIntegrationService profilesIntegration,
-        [FromServices] ILogger logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("RatePresentationEndpoint");
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                      ?? context.User.FindFirst("sub")?.Value;
 

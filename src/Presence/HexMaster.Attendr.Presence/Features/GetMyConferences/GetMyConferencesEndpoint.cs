@@ -26,9 +26,10 @@ public static class GetMyConferencesEndpoint
         HttpContext context,
         IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>> handler,
         IProfilesIntegrationService profilesIntegration,
-        [FromServices] ILogger logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("GetMyConferencesEndpoint");
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                      ?? context.User.FindFirst("sub")?.Value;
 

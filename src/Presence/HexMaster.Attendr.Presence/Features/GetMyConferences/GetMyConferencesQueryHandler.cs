@@ -1,6 +1,10 @@
+using System.Diagnostics;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.Presence.Observability;
 using HexMaster.Attendr.Presence.Services;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Presence.Features.GetMyConferences;
 
@@ -11,40 +15,65 @@ namespace HexMaster.Attendr.Presence.Features.GetMyConferences;
 public sealed class GetMyConferencesQueryHandler : IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>>
 {
     private readonly IConferencePresenceRepository _repository;
+    private readonly PresenceMetrics _metrics;
     private readonly ILogger<GetMyConferencesQueryHandler> _logger;
 
     public GetMyConferencesQueryHandler(
         IConferencePresenceRepository repository,
+        PresenceMetrics metrics,
         ILogger<GetMyConferencesQueryHandler> logger)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<List<MyConferenceResponse>> Handle(GetMyConferencesQuery query, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Getting conferences for profile {ProfileId}", query.ProfileId);
+        using var activity = ActivitySources.Presence.StartActivity("GetMyConferences", ActivityKind.Internal);
+        activity?.SetTag("presence.profile_id", query.ProfileId);
 
-        var allPresences = await _repository.GetByProfileIdAsync(query.ProfileId, cancellationToken);
-        var now = DateTime.UtcNow;
+        var stopwatch = Stopwatch.StartNew();
 
-        var currentAndFuture = allPresences
-            .Where(p => p.EndDate >= DateOnly.FromDateTime(now))
-            .OrderBy(p => p.StartDate)
-            .Select(p => new MyConferenceResponse(
-                p.ConferenceId,
-                p.ConferenceName,
-                p.Location,
-                p.StartDate.ToDateTime(TimeOnly.MinValue),
-                p.EndDate.ToDateTime(TimeOnly.MaxValue),
-                p.IsAttending))
-            .ToList();
+        try
+        {
+            _logger.LogInformation("Getting conferences for profile {ProfileId}", query.ProfileId);
 
-        _logger.LogInformation(
-            "Found {Count} current/future conferences for profile {ProfileId}",
-            currentAndFuture.Count,
-            query.ProfileId);
+            var allPresences = await _repository.GetByProfileIdAsync(query.ProfileId, cancellationToken);
+            var now = DateTime.UtcNow;
 
-        return currentAndFuture;
+            var currentAndFuture = allPresences
+                .Where(p => p.EndDate >= DateOnly.FromDateTime(now))
+                .OrderBy(p => p.StartDate)
+                .Select(p => new MyConferenceResponse(
+                    p.ConferenceId,
+                    p.ConferenceName,
+                    p.Location,
+                    p.StartDate.ToDateTime(TimeOnly.MinValue),
+                    p.EndDate.ToDateTime(TimeOnly.MaxValue),
+                    p.IsAttending))
+                .ToList();
+
+            activity?.SetTag("presence.result_count", currentAndFuture.Count);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+
+            _logger.LogInformation(
+                "Found {Count} current/future conferences for profile {ProfileId}",
+                currentAndFuture.Count,
+                query.ProfileId);
+
+            _metrics.RecordConferencesQueried(currentAndFuture.Count);
+            _metrics.RecordOperationDuration("GetMyConferences", stopwatch.Elapsed.TotalMilliseconds, true);
+
+            return currentAndFuture;
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            _metrics.RecordOperationFailed("GetMyConferences", ex.GetType().Name);
+            _metrics.RecordOperationDuration("GetMyConferences", stopwatch.Elapsed.TotalMilliseconds, false);
+            throw;
+        }
     }
 }

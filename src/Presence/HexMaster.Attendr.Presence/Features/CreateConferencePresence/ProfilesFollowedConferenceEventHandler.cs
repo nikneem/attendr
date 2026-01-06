@@ -28,9 +28,10 @@ public static class ProfilesFollowedConferenceEventHandler
     private static async Task<IResult> HandleAsync(
         ProfilesFollowedConferenceEvent @event,
         ICommandHandler<CreateConferencePresenceCommand> handler,
-        [FromServices] ILogger logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("ProfilesFollowedConferenceEventHandler");
         try
         {
             await handler.Handle(
