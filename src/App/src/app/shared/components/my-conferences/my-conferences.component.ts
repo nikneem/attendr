@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
@@ -26,23 +26,23 @@ interface ConferenceRow {
 export class MyConferencesComponent implements OnInit {
     private readonly presenceService = inject(PresenceService);
 
-    conferences: ConferenceRow[] = [];
-    loading = false;
-    error: string | null = null;
+    conferences = signal<ConferenceRow[]>([]);
+    loading = signal(true);
+    error = signal<string | null>(null);
 
     ngOnInit(): void {
         this.loadConferences();
     }
 
     loadConferences(): void {
-        this.loading = true;
-        this.error = null;
+        this.loading.set(true);
+        this.error.set(null);
 
         this.presenceService.getMyConferences().subscribe({
             next: (presences: ConferencePresenceDto[]) => {
                 // Filter to current/future conferences
                 const now = new Date();
-                this.conferences = presences
+                this.conferences.set(presences
                     .filter(p => new Date(p.endDate) >= now)
                     .map(p => ({
                         conferenceId: p.conferenceId,
@@ -53,14 +53,14 @@ export class MyConferencesComponent implements OnInit {
                         isAttending: p.isAttending,
                         ratingRequired: false, // Will be computed from presentations via API if needed
                     }))
-                    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+                    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()));
 
-                this.loading = false;
+                this.loading.set(false);
             },
             error: (err) => {
                 console.error('Error loading conferences:', err);
-                this.error = 'Failed to load your conferences. Please try again.';
-                this.loading = false;
+                this.error.set('Failed to load your conferences. Please try again.');
+                this.loading.set(false);
             },
         });
     }

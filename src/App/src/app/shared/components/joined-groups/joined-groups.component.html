@@ -29,7 +29,11 @@
         </ng-template>
         <ng-template pTemplate="body" let-group>
             <tr>
-                <td>{{ group.name }}</td>
+                <td>
+                    <a class="group-link" (click)="navigateToGroup(group.id)">
+                        {{ group.name }}
+                    </a>
+                </td>
                 <td>{{ group.memberCount }}</td>
             </tr>
         </ng-template>

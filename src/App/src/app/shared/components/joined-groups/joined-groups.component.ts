@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
@@ -16,11 +17,16 @@ import { CreateGroupComponent } from '@components/create-group/create-group.comp
 })
 export class JoinedGroupsComponent implements OnInit {
     readonly store = inject(JoinedGroupsStore);
+    private readonly router = inject(Router);
     showJoinGroupDialog = false;
     showCreateGroupDialog = false;
 
     ngOnInit(): void {
         this.store.loadGroups();
+    }
+
+    navigateToGroup(groupId: string): void {
+        this.router.navigate(['/app/groups', groupId]);
     }
 
     onCreateGroup(): void {

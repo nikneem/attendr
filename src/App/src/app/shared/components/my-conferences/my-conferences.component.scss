@@ -21,10 +21,29 @@
     color: var(--text-color-secondary);
 }
 
-.empty-message {
+.empty-state {
     text-align: center;
-    padding: 2rem;
+    padding: 3rem 2rem;
     color: var(--text-color-secondary);
+
+    .empty-state-icon {
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+        opacity: 0.6;
+    }
+
+    .empty-state-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .empty-state-text {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--text-color-secondary);
+    }
 }
 
 .error-message {

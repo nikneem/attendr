@@ -47,6 +47,19 @@
     text-align: center;
 }
 
+.group-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: var(--primary-color-text);
+        text-decoration: underline;
+    }
+}
+
 ::ng-deep .join-group-dialog {
     width: 90vw;
     max-width: 1200px;

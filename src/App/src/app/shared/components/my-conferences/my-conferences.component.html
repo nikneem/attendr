@@ -5,19 +5,23 @@
         </div>
     </ng-template>
 
-    <div *ngIf="error" class="error-message">
-        {{ error }}
+    <div *ngIf="error()" class="error-message">
+        {{ error() }}
     </div>
 
-    <div *ngIf="loading" class="loading-spinner">
+    <div *ngIf="loading()" class="loading-spinner">
         <p>Loading conferences...</p>
     </div>
 
-    <div *ngIf="!loading && conferences.length === 0" class="empty-state">
-        <p>No upcoming conferences found.</p>
+    <div *ngIf="!loading() && !error() && conferences().length === 0" class="empty-state">
+        <div class="empty-state-icon">
+            <i class="pi pi-calendar" style="font-size: 3rem;"></i>
+        </div>
+        <h4 class="empty-state-title">No Upcoming Conferences</h4>
+        <p class="empty-state-text">You don't have any upcoming conferences at the moment. Start exploring conferences to attend!</p>
     </div>
 
-    <div *ngIf="!loading && conferences.length > 0" class="table-wrapper">
+    <div *ngIf="!loading() && conferences().length > 0" class="table-wrapper">
         <table class="conferences-table">
             <thead>
                 <tr>
@@ -30,7 +34,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let row of conferences">
+                <tr *ngFor="let row of conferences()">
                     <td>{{ row.conferenceName }}</td>
                     <td>{{ row.location }}</td>
                     <td>{{ row.startDate | date: 'short' }}</td>
