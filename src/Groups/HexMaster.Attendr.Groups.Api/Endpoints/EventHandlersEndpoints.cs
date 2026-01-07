@@ -1,6 +1,7 @@
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.Groups.ProcessProfileCheckedIn;
+using HexMaster.Attendr.Groups.ProcessProfileConferenceAttendanceChanged;
 using HexMaster.Attendr.IntegrationEvents.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
 
@@ -24,6 +25,15 @@ public static class EventHandlersEndpoints
             .WithName("HandleProfileCheckedIn")
             .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.ProfileCheckedIn)
             .Accepts<ProfileCheckedInEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
+
+        group.MapPost("/ProfileConferenceAttendanceChangedHandler", HandleProfileConferenceAttendanceChanged)
+            .WithName("HandleProfileConferenceAttendanceChanged")
+            .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.ProfileConferenceAttendanceChanged)
+            .Accepts<ProfileConferenceAttendanceChangedEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError)
@@ -63,6 +73,41 @@ public static class EventHandlersEndpoints
                 "Error handling ProfileCheckedIn for profile {ProfileId}, presentation {PresentationId}",
                 @event.ProfileId,
                 @event.PresentationId);
+            return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> HandleProfileConferenceAttendanceChanged(
+        ProfileConferenceAttendanceChangedEvent @event,
+        ICommandHandler<ProcessProfileConferenceAttendanceChangedCommand> handler,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("ProfileConferenceAttendanceChangedEventHandler");
+        try
+        {
+            logger.LogInformation(
+                "Processing ProfileConferenceAttendanceChanged event for profile {ProfileId}, conference {ConferenceId}, isAttending: {IsAttending}",
+                @event.ProfileId,
+                @event.ConferenceId,
+                @event.IsAttending);
+
+            await handler.Handle(new ProcessProfileConferenceAttendanceChangedCommand(@event), cancellationToken);
+
+            return Results.Ok(new
+            {
+                message = "Conference attendance processed and group activities updated",
+                profileId = @event.ProfileId,
+                conferenceId = @event.ConferenceId,
+                isAttending = @event.IsAttending
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex,
+                "Error handling ProfileConferenceAttendanceChanged for profile {ProfileId}, conference {ConferenceId}",
+                @event.ProfileId,
+                @event.ConferenceId);
             return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
         }
     }

@@ -12,6 +12,7 @@ using HexMaster.Attendr.Groups.Features.RemoveMember;
 using HexMaster.Attendr.Groups.Features.UnfollowConference;
 using HexMaster.Attendr.Groups.Observability;
 using HexMaster.Attendr.Groups.ProcessProfileCheckedIn;
+using HexMaster.Attendr.Groups.ProcessProfileConferenceAttendanceChanged;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Groups.Extensions;
@@ -20,16 +21,13 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddAttendrGroupsServices(this IServiceCollection services)
     {
-        // Register metrics
         services.AddSingleton<GroupMetrics>();
 
-        // Register query handlers
         services.AddScoped<IQueryHandler<GetMyGroupsQuery, IReadOnlyCollection<MyGroupDto>>, GetMyGroupsQueryHandler>();
         services.AddScoped<IQueryHandler<ListGroupsQuery, ListGroupsResult>, ListGroupsQueryHandler>();
         services.AddScoped<IQueryHandler<GetGroupDetailsQuery, GroupDetailsDto?>, GetGroupDetailsQueryHandler>();
         services.AddScoped<IQueryHandler<GetGroupFollowedConferencesQuery, IReadOnlyCollection<FollowedConferenceDto>>, GetGroupFollowedConferencesQueryHandler>();
 
-        // Register command handlers
         services.AddScoped<ICommandHandler<JoinGroupCommand>, JoinGroupCommandHandler>();
         services.AddScoped<ICommandHandler<RemoveMemberCommand>, RemoveMemberCommandHandler>();
         services.AddScoped<ICommandHandler<ApproveJoinRequestCommand>, ApproveJoinRequestCommandHandler>();
@@ -37,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICommandHandler<FollowConferenceCommand>, FollowConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<UnfollowConferenceCommand>, UnfollowConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<ProcessProfileCheckedInCommand>, ProcessProfileCheckedInCommandHandler>();
+        services.AddScoped<ICommandHandler<ProcessProfileConferenceAttendanceChangedCommand>, ProcessProfileConferenceAttendanceChangedCommandHandler>();
 
         return services;
     }
