@@ -49,6 +49,13 @@ internal static class GroupMapper
                 SessionsCount = fc.SessionsCount,
                 StartDate = fc.StartDate,
                 EndDate = fc.EndDate
+            }).ToList(),
+            Activities = group.Activities.Select(a => new GroupActivityDocument
+            {
+                Id = a.Id,
+                ProfileId = a.ProfileId,
+                CreatedAt = a.CreatedAt,
+                Description = a.Description
             }).ToList()
         };
     }
@@ -63,12 +70,18 @@ internal static class GroupMapper
         var ownerMember = document.Members.FirstOrDefault(m => m.Role == (int)GroupRole.Owner)
             ?? throw new InvalidOperationException("Group must have an owner.");
 
+        // Map activities from document
+        var activities = document.Activities
+            .Select(a => new GroupActivity(a.Id, a.ProfileId, a.CreatedAt, a.Description))
+            .ToList();
+
         var group = Group.FromPersisted(
             document.Id,
             document.Name,
             ownerMember.Id,
             ownerMember.Name,
-            settings);
+            settings,
+            activities);
 
         // Add other members (excluding owner as it's already added)
         foreach (var memberDoc in document.Members.Where(m => m.Role != (int)GroupRole.Owner))

@@ -7,6 +7,8 @@ namespace HexMaster.Attendr.Groups.DomainModels;
 /// </summary>
 public sealed class Group
 {
+    private const int MaxActivities = 100;
+
     /// <summary>
     /// Gets the unique identifier for the group.
     /// </summary>
@@ -26,6 +28,7 @@ public sealed class Group
     private readonly List<GroupInvitation> _invitations = new();
     private readonly List<GroupJoinRequest> _joinRequests = new();
     private readonly List<FollowedConference> _followedConferences = new();
+    private readonly List<GroupActivity> _activities = new();
 
     /// <summary>
     /// Gets the collection of members in the group.
@@ -46,6 +49,12 @@ public sealed class Group
     /// Gets the collection of conferences followed by the group.
     /// </summary>
     public IReadOnlyCollection<FollowedConference> FollowedConferences => _followedConferences.AsReadOnly();
+
+    /// <summary>
+    /// Gets the collection of group activities.
+    /// Maximum of 100 activities are kept in a round-robin fashion.
+    /// </summary>
+    public IReadOnlyCollection<GroupActivity> Activities => _activities.AsReadOnly();
 
     private Group(Guid id, string name, Guid ownerId, string ownerName, GroupSettings? settings = null)
     {
@@ -108,15 +117,27 @@ public sealed class Group
     /// <param name="ownerId">The ID of the group owner.</param>
     /// <param name="ownerName">The name of the group owner.</param>
     /// <param name="settings">The group settings.</param>
+    /// <param name="activities">The collection of group activities.</param>
     /// <returns>A new instance of <see cref="Group"/>.</returns>
     public static Group FromPersisted(
         Guid id,
         string name,
         Guid ownerId,
         string ownerName,
-        GroupSettings? settings = null)
+        GroupSettings? settings = null,
+        IEnumerable<GroupActivity>? activities = null)
     {
-        return new Group(id, name, ownerId, ownerName, settings);
+        var group = new Group(id, name, ownerId, ownerName, settings);
+        
+        if (activities != null)
+        {
+            foreach (var activity in activities)
+            {
+                group._activities.Add(activity);
+            }
+        }
+        
+        return group;
     }
 
     /// <summary>
@@ -450,5 +471,29 @@ public sealed class Group
     public IEnumerable<FollowedConference> GetCurrentAndFutureFollowedConferences()
     {
         return _followedConferences.Where(fc => fc.IsCurrentOrFuture()).OrderBy(fc => fc.StartDate);
+    }
+
+    /// <summary>
+    /// Adds an activity to the group's activity log.
+    /// If the group already has 100 activities, the oldest activity is removed.
+    /// </summary>
+    /// <param name="profileId">The unique identifier of the profile that triggered this activity.</param>
+    /// <param name="description">The description of the activity.</param>
+    public void AddActivity(Guid profileId, string description)
+    {
+        if (profileId == Guid.Empty)
+        {
+            throw new ArgumentException("Profile ID cannot be empty.", nameof(profileId));
+        }
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(description, nameof(description));
+
+        if (_activities.Count >= MaxActivities)
+        {
+            _activities.RemoveAt(0);
+        }
+
+        var activity = new GroupActivity(Guid.NewGuid(), profileId, DateTimeOffset.UtcNow, description);
+        _activities.Add(activity);
     }
 }

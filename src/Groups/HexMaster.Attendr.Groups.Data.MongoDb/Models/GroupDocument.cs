@@ -29,6 +29,9 @@ internal sealed class GroupDocument
 
     [BsonElement("followedConferences")]
     public List<FollowedConferenceDocument> FollowedConferences { get; set; } = new();
+
+    [BsonElement("activities")]
+    public List<GroupActivityDocument> Activities { get; set; } = new();
 }
 
 internal sealed class GroupSettingsDocument
@@ -112,4 +115,21 @@ internal sealed class FollowedConferenceDocument
 
     [BsonElement("endDate")]
     public DateOnly EndDate { get; set; }
+}
+
+internal sealed class GroupActivityDocument
+{
+    [BsonElement("id")]
+    [BsonRepresentation(BsonType.String)]
+    public Guid Id { get; set; }
+
+    [BsonElement("profileId")]
+    [BsonRepresentation(BsonType.String)]
+    public Guid ProfileId { get; set; }
+
+    [BsonElement("createdAt")]
+    public DateTimeOffset CreatedAt { get; set; }
+
+    [BsonElement("description")]
+    public string Description { get; set; } = string.Empty;
 }
