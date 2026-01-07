@@ -2,7 +2,7 @@ using '../bicep/main.bicep'
 
 param environmentName = 'prod'
 param location = 'northeurope'
-param baseName = 'attendr-presence'
+param baseName = 'attendr-pres'
 param tags = {
   Environment: 'Production'
   Application: 'Attendr'
