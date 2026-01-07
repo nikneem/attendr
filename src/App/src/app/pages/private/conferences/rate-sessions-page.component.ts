@@ -67,7 +67,7 @@ export class RateSessionsPageComponent implements OnInit {
 
         Promise.all(loadPromises).then((cards) => {
             const validCards = cards.filter((c) => c !== null) as CardInStack[];
-            
+
             // If no cards loaded, show empty state card
             if (validCards.length === 0) {
                 this.cards.set([{
@@ -78,7 +78,7 @@ export class RateSessionsPageComponent implements OnInit {
             } else {
                 this.cards.set(validCards);
             }
-            
+
             this.loading.set(false);
         });
     }
@@ -248,7 +248,7 @@ export class RateSessionsPageComponent implements OnInit {
                             }
                             this.submitting.set(false);
                             this.swipeOffset.set(0);
-                            
+
                             // Reset animation state after cards have repositioned
                             setTimeout(() => {
                                 this.isAnimating.set(false);
