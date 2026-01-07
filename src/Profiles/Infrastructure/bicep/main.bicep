@@ -1,0 +1,89 @@
+targetScope = 'subscription'
+
+@description('The environment name (e.g., dev, staging, prod)')
+param environmentName string
+
+@description('The location for all resources')
+param location string = 'northeurope'
+
+@description('The base name for all resources')
+param baseName string = 'attendr'
+
+@description('Tags to apply to all resources')
+param tags object = {}
+
+@description('Landing zone resource names')
+param landingzone object = {
+  resourceGroupName: ''
+  containerAppsEnvironmentName: ''
+  appConfigurationName: ''
+  keyVaultName: ''
+  applicationInsightsName: ''
+}
+
+@description('The container image to deploy')
+param containerImage string
+
+@description('The container image tag')
+param containerImageTag string = 'latest'
+
+var resourceGroupName = 'rg-${baseName}-profiles-${environmentName}'
+
+// Deploy Resource Group for Profiles service
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
+  name: resourceGroupName
+  location: location
+  tags: tags
+}
+
+// Reference to landing zone resource group
+resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
+  name: landingzone.resourceGroupName
+}
+
+// Deploy the Profiles container app
+module profilesApp './modules/container-app.bicep' = {
+  scope: resourceGroup
+  params: {
+    name: 'ca-${baseName}-profiles-${environmentName}'
+    location: location
+    tags: tags
+    landingZoneResourceGroupName: landingzone.resourceGroupName
+    containerAppsEnvironmentName: landingzone.containerAppsEnvironmentName
+    containerImage: containerImage
+    containerImageTag: containerImageTag
+    appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
+    applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
+  }
+}
+
+// Get App Configuration endpoint
+module appConfigurationEndpoint './modules/get-app-configuration.bicep' = {
+  scope: landingZoneResourceGroup
+  params: {
+    appConfigurationName: landingzone.appConfigurationName
+  }
+}
+
+// Get Application Insights connection string
+module appInsightsConnectionString './modules/get-app-insights.bicep' = {
+  scope: landingZoneResourceGroup
+  params: {
+    applicationInsightsName: landingzone.applicationInsightsName
+  }
+}
+
+// Assign permissions to the container app managed identity
+module permissions './modules/role-assignments.bicep' = {
+  scope: landingZoneResourceGroup
+  params: {
+    principalId: profilesApp.outputs.managedIdentityPrincipalId
+    appConfigurationName: landingzone.appConfigurationName
+    keyVaultName: landingzone.keyVaultName
+  }
+}
+
+output resourceGroupName string = resourceGroup.name
+output containerAppName string = profilesApp.outputs.name
+output containerAppFqdn string = profilesApp.outputs.fqdn
+output managedIdentityPrincipalId string = profilesApp.outputs.managedIdentityPrincipalId
