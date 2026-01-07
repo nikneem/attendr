@@ -92,7 +92,6 @@ jobs:
             /t:PublishContainer \
             /p:ContainerRegistry=${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
             /p:ContainerImageTag=${{ steps.gitversion.outputs.semVer }} \
-            /p:ContainerImageTags='"${{ steps.gitversion.outputs.semVer }};latest"' \
             /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} \
             /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
             /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
