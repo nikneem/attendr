@@ -59,4 +59,10 @@ public static class IntegrationEventTopics
     /// Published when a profile checks in or out of a presentation.
     /// </summary>
     public const string ProfileCheckedIn = "profile.checked-in";
+
+    /// <summary>
+    /// Topic for profile conference attendance changed events.
+    /// Published when a profile changes their attendance status for a conference.
+    /// </summary>
+    public const string ProfileConferenceAttendanceChanged = "profile.conference-attendance-changed";
 }

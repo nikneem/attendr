@@ -49,7 +49,7 @@
                             (click)="updateAttendance(conference.conferenceId, true)"
                             class="attendance-btn attend-btn"></button>
                         } @else {
-                        <button pButton type="button" label="Changed my mind" icon="pi pi-times" severity="secondary"
+                        <button pButton type="button" label="Changed my mind" icon="pi pi-times" severity="danger"
                             [outlined]="true" [disabled]="updatingConference() === conference.conferenceId"
                             [loading]="updatingConference() === conference.conferenceId"
                             (click)="updateAttendance(conference.conferenceId, false)"
@@ -57,7 +57,7 @@
                         }
                     </div>
                     <div class="rate-row">
-                        <button pButton type="button" label="Rate Sessions" icon="pi pi-star" severity="secondary"
+                        <button pButton type="button" label="Rate Sessions" icon="pi pi-star"
                             [disabled]="!(conference.isFollowing && conference.isAttending)"
                             (click)="navigateToRate(conference.conferenceId)" class="rate-btn"></button>
                     </div>
