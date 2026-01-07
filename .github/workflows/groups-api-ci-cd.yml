@@ -92,7 +92,6 @@ jobs:
             /t:PublishContainer \
             /p:ContainerRegistry=${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
             /p:ContainerImageTag=${{ steps.gitversion.outputs.semVer }} \
-            /p:ContainerImageTags='"${{ steps.gitversion.outputs.semVer }};latest"' \
             /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} \
             /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
             /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
@@ -103,5 +102,5 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Registry:** ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** attendr/attendr-groups-api" >> $GITHUB_STEP_SUMMARY
-          echo "**Tags:** ${{ steps.gitversion.outputs.semVer }}, latest" >> $GITHUB_STEP_SUMMARY
+          echo "**Tag:** ${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY

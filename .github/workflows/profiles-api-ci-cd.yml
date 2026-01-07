@@ -41,6 +41,13 @@ jobs:
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
 
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_PROD_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_PROD_TENANDID }}
+          subscription-id: ${{ secrets.AZURE_PROD_SUBSCRIPTION }}
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -72,16 +79,12 @@ jobs:
       #   uses: dorny/test-reporter@v1
       #   if: always()
       #   with:
-      #     name: Test Results - Profiles API
-      #     path: '**/test-results.trx'
-      #     reporter: dotnet-trx
+      #   az acr login --name ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}-trx
       #     fail-on-error: true
 
-      - name: Log in to Container Registry
+      - name: Log in to Azure Container Registry
         run: |
-          echo "${{ secrets.CONTAINER_REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
-            --username ${{ secrets.CONTAINER_REGISTRY_USERNAME }} \
-            --password-stdin
+          az acr login --name ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
 
       - name: Publish container
         run: |
@@ -92,7 +95,6 @@ jobs:
             /t:PublishContainer \
             /p:ContainerRegistry=${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
             /p:ContainerImageTag=${{ steps.gitversion.outputs.semVer }} \
-            /p:ContainerImageTags='"${{ steps.gitversion.outputs.semVer }};latest"' \
             /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} \
             /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
             /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
@@ -103,5 +105,37 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Registry:** ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** attendr/attendr-profiles-api" >> $GITHUB_STEP_SUMMARY
-          echo "**Tags:** ${{ steps.gitversion.outputs.semVer }}, latest" >> $GITHUB_STEP_SUMMARY
+          echo "**Tag:** ${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          DEPLOYMENT_NAME="profiles-service-$(date +%Y%m%d-%H%M%S)"
+          CONTAINER_IMAGE="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-profiles-api"
+          CONTAINER_TAG="${{ steps.gitversion.outputs.semVer }}"
+          
+          az deployment sub create \
+            --name "$DEPLOYMENT_NAME" \
+            --location northeurope \
+            --template-file bicep/main.bicep \
+            --parameters parameters/main.prod.bicepparam \
+            --parameters containerImage="$CONTAINER_IMAGE" \
+            --parameters containerImageTag="$CONTAINER_TAG" \
+            --verbose
+
+      - name: Get deployment outputs
+        working-directory: src/Profiles/Infrastructure
+        run: |
+          DEPLOYMENT_NAME=$(az deployment sub list --query "[?contains(name, 'profiles-service')].name" -o tsv | head -n 1)
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Infrastructure Deployed :cloud:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment:** $DEPLOYMENT_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          az deployment sub show \
+            --name "$DEPLOYMENT_NAME" \
+            --query properties.outputs
+
