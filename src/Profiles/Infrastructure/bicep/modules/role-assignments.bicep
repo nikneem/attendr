@@ -28,7 +28,10 @@ resource appConfigRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-0
   name: guid(appConfiguration.id, principalId, appConfigurationDataReaderRoleId)
   scope: appConfiguration
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', appConfigurationDataReaderRoleId)
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      appConfigurationDataReaderRoleId
+    )
     principalId: principalId
     principalType: 'ServicePrincipal'
   }
