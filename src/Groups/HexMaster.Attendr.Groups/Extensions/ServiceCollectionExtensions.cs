@@ -11,6 +11,7 @@ using HexMaster.Attendr.Groups.Features.ListGroups;
 using HexMaster.Attendr.Groups.Features.RemoveMember;
 using HexMaster.Attendr.Groups.Features.UnfollowConference;
 using HexMaster.Attendr.Groups.Observability;
+using HexMaster.Attendr.Groups.ProcessProfileCheckedIn;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Groups.Extensions;
@@ -35,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICommandHandler<DenyJoinRequestCommand>, DenyJoinRequestCommandHandler>();
         services.AddScoped<ICommandHandler<FollowConferenceCommand>, FollowConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<UnfollowConferenceCommand>, UnfollowConferenceCommandHandler>();
+        services.AddScoped<ICommandHandler<ProcessProfileCheckedInCommand>, ProcessProfileCheckedInCommandHandler>();
 
         return services;
     }

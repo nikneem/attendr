@@ -35,9 +35,8 @@ builder.Services.AddOpenTelemetry()
 
 builder.Logging.AddOpenTelemetry(logging =>
 {
-    logging
-        .AddOtlpExporter()
-        .IncludeFormattedMessage = true;
+    logging.AddOtlpExporter();
+    logging.IncludeFormattedMessage = true;
 });
 
 // Add services to the container.
@@ -83,5 +82,8 @@ app.UseAuthorization();
 
 // Map endpoints
 app.MapGroupsEndpoints();
+app.MapEventHandlersEndpoints();
+app.UseCloudEvents();
+app.MapSubscribeHandler();
 
 app.Run();
