@@ -1,3 +1,5 @@
+import { GroupActivityDto } from './group-activity-dto';
+
 export interface GroupMemberDto {
     id: string;
     name: string;
@@ -38,4 +40,5 @@ export interface GroupDetailsDto {
     invitations: GroupInvitationDto[];
     joinRequests: GroupJoinRequestDto[];
     followedConferences: FollowedConferenceDto[];
+    activities: GroupActivityDto[];
 }

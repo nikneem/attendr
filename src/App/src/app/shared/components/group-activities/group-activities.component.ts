@@ -1,17 +1,13 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TimelineModule } from 'primeng/timeline';
 import { TagModule } from 'primeng/tag';
 import { GroupDetailsStore } from '@stores/group-details.store';
+import { GroupActivityDto } from '@models/group-activity-dto';
 
-interface GroupActivity {
-    id: string;
-    type: 'member_joined' | 'check_in' | 'conference_followed' | 'member_left';
-    timestamp: Date;
+interface EnrichedGroupActivity extends GroupActivityDto {
     memberName: string;
-    memberProfilePicture?: string;
-    details?: string; // e.g., presentation name, conference name
 }
 
 @Component({
@@ -21,85 +17,59 @@ interface GroupActivity {
     templateUrl: './group-activities.component.html',
     styleUrl: './group-activities.component.scss',
 })
-export class GroupActivitiesComponent implements OnInit {
+export class GroupActivitiesComponent {
     private readonly store = inject(GroupDetailsStore);
 
     groupId = input.required<string>();
 
     group = this.store.groupDetails;
 
-    // Mock activities for now - in production, this would come from an API/store
-    activities = computed<GroupActivity[]>(() => {
-        // This is mock data - replace with actual API call
-        return [
-            {
-                id: '1',
-                type: 'member_joined',
-                timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-                memberName: 'John Doe',
-                memberProfilePicture: undefined,
-            },
-            {
-                id: '2',
-                type: 'check_in',
-                timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
-                memberName: 'Jane Smith',
-                memberProfilePicture: undefined,
-                details: 'Building Scalable Microservices',
-            },
-            {
-                id: '3',
-                type: 'conference_followed',
-                timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-                memberName: 'Mike Johnson',
-                memberProfilePicture: undefined,
-                details: 'TechConf 2026',
-            },
-        ];
+    activities = computed<EnrichedGroupActivity[]>(() => {
+        const groupData = this.group();
+        if (!groupData) return [];
+
+        const activities = groupData.activities || [];
+        const members = groupData.members || [];
+
+        // Create a map of profileId to member name for quick lookup
+        const memberMap = new Map(members.map(m => [m.id, m.name]));
+
+        // Enrich activities with member names
+        return activities.map(activity => ({
+            ...activity,
+            memberName: memberMap.get(activity.profileId) || 'Unknown Member'
+        }));
     });
 
-    ngOnInit() {
-        // TODO: Load activities from API
-    }
-
-    getActivityIcon(type: string): string {
-        switch (type) {
-            case 'member_joined': return 'pi pi-user-plus';
-            case 'check_in': return 'pi pi-map-marker';
-            case 'conference_followed': return 'pi pi-calendar-plus';
-            case 'member_left': return 'pi pi-user-minus';
+    getActivityIcon(activityTypeId: number): string {
+        switch (activityTypeId) {
+            case 1: return 'pi pi-user-plus'; // ProfileJoinedGroup
+            case 2: return 'pi pi-user-minus'; // ProfileLeftGroup
+            case 3: return 'pi pi-map-marker'; // ProfilePresentationCheckedIn
+            case 4: return 'pi pi-map-marker'; // ProfilePresentationCheckedOut
+            case 5: return 'pi pi-calendar-plus'; // ProfileAttendingConference
+            case 6: return 'pi pi-calendar-minus'; // ProfileLeavingConference
             default: return 'pi pi-info-circle';
         }
     }
 
-    getActivityColor(type: string): string {
-        switch (type) {
-            case 'member_joined': return '#10b981';
-            case 'check_in': return '#4A90E2';
-            case 'conference_followed': return '#06b6d4';
-            case 'member_left': return '#888';
+    getActivityColor(activitySeverity: number): string {
+        switch (activitySeverity) {
+            case 0: return '#888'; // Low
+            case 1: return '#10b981'; // Medium (green)
+            case 2: return '#4A90E2'; // High (blue)
             default: return '#888';
         }
     }
 
-    getActivityMessage(activity: GroupActivity): string {
-        switch (activity.type) {
-            case 'member_joined':
-                return `${activity.memberName} joined the group`;
-            case 'check_in':
-                return `${activity.memberName} checked in at ${activity.details}`;
-            case 'conference_followed':
-                return `${activity.memberName} followed ${activity.details}`;
-            case 'member_left':
-                return `${activity.memberName} left the group`;
-            default:
-                return 'Unknown activity';
-        }
+    getActivityMessage(activity: GroupActivityDto): string {
+        return activity.description;
     }
 
-    getRelativeTime(timestamp: Date): string {
+    getRelativeTime(timestamp: string): string {
         const now = new Date();
-        const diff = now.getTime() - timestamp.getTime();
+        const date = new Date(timestamp);
+        const diff = now.getTime() - date.getTime();
         const minutes = Math.floor(diff / (1000 * 60));
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -108,6 +78,6 @@ export class GroupActivitiesComponent implements OnInit {
         if (minutes < 60) return `${minutes}m ago`;
         if (hours < 24) return `${hours}h ago`;
         if (days < 7) return `${days}d ago`;
-        return timestamp.toLocaleDateString();
+        return date.toLocaleDateString();
     }
 }

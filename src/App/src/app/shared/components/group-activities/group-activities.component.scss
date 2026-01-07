@@ -23,15 +23,25 @@
     color: var(--text-color-secondary);
     text-align: center;
 
-    i {
-        font-size: 3rem;
+    .empty-state-icon {
         margin-bottom: 1rem;
-        opacity: 0.5;
+        
+        i {
+            opacity: 0.5;
+        }
     }
 
-    p {
+    .empty-state-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .empty-state-text {
         margin: 0;
-        font-size: 1rem;
+        font-size: 0.95rem;
+        max-width: 400px;
     }
 }
 
