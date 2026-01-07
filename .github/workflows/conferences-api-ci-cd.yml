@@ -68,14 +68,14 @@ jobs:
             -- \
             RunConfiguration.CollectSourceInformation=true
 
-      - name: Publish test results
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: Test Results - Conferences API
-          path: '**/test-results.trx'
-          reporter: dotnet-trx
-          fail-on-error: true
+    #   - name: Publish test results
+    #     uses: dorny/test-reporter@v1
+    #     if: always()
+    #     with:
+    #       name: Test Results - Conferences API
+    #       path: '**/test-results.trx'
+    #       reporter: dotnet-trx
+    #       fail-on-error: true
 
       - name: Log in to Container Registry
         run: |
