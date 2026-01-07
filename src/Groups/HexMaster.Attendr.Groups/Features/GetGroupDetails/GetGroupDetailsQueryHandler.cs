@@ -71,6 +71,7 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
             activity?.SetTag("group.found", true);
             activity?.SetTag("group.name", group.Name);
             activity?.SetTag("group.member_count", group.Members.Count);
+            activity?.SetTag("group.activities_count", group.Activities.Count);
 
             // Get current member role
             var currentMember = group.Members.FirstOrDefault(m => m.Id == query.ProfileId);
@@ -104,12 +105,25 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
                     fc.SessionsCount))
                 .ToList();
 
+            // Map activities to DTOs (ordered by most recent first)
+            var activities = group.Activities
+                .OrderByDescending(a => a.CreatedAt)
+                .Select(a => new GroupActivityDto(
+                    a.Id,
+                    a.ProfileId,
+                    a.CreatedAt,
+                    a.Description,
+                    a.ActivityType.ActivityTypeId,
+                    (int)a.ActivityType.Severity,
+                    a.ActivityType.TranslationKey))
+                .ToList();
+
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordGroupQueried(found: true);
             _metrics.RecordOperationDuration("GetGroupDetails", stopwatch.Elapsed.TotalMilliseconds, success: true);
 
-            _logger.LogInformation("Retrieved group {GroupId}: {Name} with {MemberCount} members",
-                group.Id, group.Name, members.Count);
+            _logger.LogInformation("Retrieved group {GroupId}: {Name} with {MemberCount} members and {ActivityCount} activities",
+                group.Id, group.Name, members.Count, activities.Count);
 
             // Map to DTO with membership information
             return new GroupDetailsDto(
@@ -122,7 +136,8 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
                 members,
                 invitations,
                 joinRequests,
-                followedConferences);
+                followedConferences,
+                activities);
         }
         catch (Exception ex)
         {

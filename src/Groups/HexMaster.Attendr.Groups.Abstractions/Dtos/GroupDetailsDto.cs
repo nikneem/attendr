@@ -13,6 +13,7 @@ namespace HexMaster.Attendr.Groups.Abstractions.Dtos;
 /// <param name="Invitations">The list of pending invitations.</param>
 /// <param name="JoinRequests">The list of pending join requests.</param>
 /// <param name="FollowedConferences">The list of current and future conferences followed by the group.</param>
+/// <param name="Activities">The list of recent group activities (max 100, ordered by most recent).</param>
 public sealed record GroupDetailsDto(
     Guid Id,
     string Name,
@@ -23,4 +24,5 @@ public sealed record GroupDetailsDto(
     List<GetGroupDetailsMemberDto> Members,
     List<GroupInvitationDto> Invitations,
     List<GroupJoinRequestDto> JoinRequests,
-    List<FollowedConferenceDto> FollowedConferences);
+    List<FollowedConferenceDto> FollowedConferences,
+    List<GroupActivityDto> Activities);
