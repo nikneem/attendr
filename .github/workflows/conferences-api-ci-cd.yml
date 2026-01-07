@@ -1,0 +1,107 @@
+name: Conferences API - CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/Conferences/**'
+      - 'src/Shared/**'
+      - '.github/workflows/conferences-api-ci-cd.yml'
+  workflow_dispatch:
+
+env:
+  PROJECT_PATH: 'src/Conferences/HexMaster.Attendr.Conferences.Api/HexMaster.Attendr.Conferences.Api.csproj'
+  TEST_PROJECT_PATH: 'src/Conferences/HexMaster.Attendr.Conferences.Tests/HexMaster.Attendr.Conferences.Tests.csproj'
+  DOTNET_VERSION: '10.0.x'
+
+jobs:
+  build-test-publish:
+    name: Build, Test and Publish
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for GitVersion
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.2.0
+        with:
+          versionSpec: '6.4.x'
+          
+      - name: Execute GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v4.2.0
+
+      - name: Display GitVersion outputs
+        run: |
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build
+        run: |
+          dotnet build ${{ env.PROJECT_PATH }} \
+            --configuration Release \
+            --no-restore \
+            /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} \
+            /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
+            /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+
+      - name: Run unit tests
+        run: |
+          dotnet test ${{ env.TEST_PROJECT_PATH }} \
+            --configuration Release \
+            --no-build \
+            --verbosity normal \
+            --logger "trx;LogFileName=test-results.trx" \
+            -- \
+            RunConfiguration.CollectSourceInformation=true
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results - Conferences API
+          path: '**/test-results.trx'
+          reporter: dotnet-trx
+          fail-on-error: true
+
+      - name: Log in to Container Registry
+        run: |
+          echo "${{ secrets.CONTAINER_REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
+            --username ${{ secrets.CONTAINER_REGISTRY_USERNAME }} \
+            --password-stdin
+
+      - name: Publish container
+        run: |
+          dotnet publish ${{ env.PROJECT_PATH }} \
+            --configuration Release \
+            --os linux \
+            --arch x64 \
+            /t:PublishContainer \
+            /p:ContainerRegistry=${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
+            /p:ContainerImageTag=${{ steps.gitversion.outputs.semVer }} \
+            /p:ContainerImageTags='"${{ steps.gitversion.outputs.semVer }};latest"' \
+            /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} \
+            /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
+            /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+
+      - name: Image details
+        run: |
+          echo "### Container Image Published :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** attendr/attendr-conferences-api" >> $GITHUB_STEP_SUMMARY
+          echo "**Tags:** ${{ steps.gitversion.outputs.semVer }}, latest" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY
