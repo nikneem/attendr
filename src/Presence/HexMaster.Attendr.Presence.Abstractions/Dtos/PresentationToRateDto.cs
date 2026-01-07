@@ -9,11 +9,13 @@ namespace HexMaster.Attendr.Presence.Abstractions.Dtos;
 /// <param name="Room">The name of the room where the presentation is held.</param>
 /// <param name="StartDateTime">The start date and time of the presentation.</param>
 /// <param name="EndDateTime">The end date and time of the presentation.</param>
+/// <param name="Speakers">The collection of speakers for the presentation.</param>
 public record PresentationToRateDto(
     Guid PresentationId,
     string Title,
     string Abstract,
     string Room,
     DateTime StartDateTime,
-    DateTime EndDateTime
+    DateTime EndDateTime,
+    IReadOnlyCollection<PresentationSpeakerDto> Speakers
 );

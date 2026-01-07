@@ -73,13 +73,19 @@ public sealed class GetRandomPresentationToRateQueryHandler : IQueryHandler<GetR
             _metrics.RecordPresentationQueried(found: true, unratedCount: unratedPresentations.Count);
             _metrics.RecordOperationDuration("GetRandomPresentationToRate", stopwatch.Elapsed.TotalMilliseconds, true);
 
+            var speakers = randomPresentation.Speakers
+                .Select(s => new PresentationSpeakerDto(s.SpeakerId, s.Name, s.ProfilePictureUrl))
+                .ToList()
+                .AsReadOnly();
+
             return new PresentationToRateDto(
                 randomPresentation.PresentationId,
                 randomPresentation.Title,
                 randomPresentation.Abstract,
                 randomPresentation.Room,
                 randomPresentation.StartDateTime,
-                randomPresentation.EndDateTime);
+                randomPresentation.EndDateTime,
+                speakers);
         }
         catch (Exception ex)
         {
