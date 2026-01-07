@@ -242,6 +242,68 @@
         }
     }
 
+    .speakers-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        flex-shrink: 0;
+        padding: 1rem;
+        background: var(--surface-50);
+        border-radius: 8px;
+
+        h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .speakers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .speaker-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            .speaker-avatar,
+            .speaker-avatar-placeholder {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                flex-shrink: 0;
+            }
+
+            .speaker-avatar {
+                object-fit: cover;
+                border: 2px solid var(--primary-100);
+            }
+
+            .speaker-avatar-placeholder {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--primary-100);
+                color: var(--primary-500);
+
+                i {
+                    font-size: 1.25rem;
+                }
+            }
+
+            .speaker-name {
+                font-size: 0.95rem;
+                font-weight: 500;
+                color: var(--text-color);
+            }
+        }
+    }
+
     .abstract {
         flex: 1;
         overflow-y: auto;

@@ -1,3 +1,5 @@
+import { SpeakerDto } from './speaker-dto';
+
 export interface PresentationToRateDto {
     presentationId: string;
     title: string;
@@ -5,4 +7,5 @@ export interface PresentationToRateDto {
     room: string;
     startDateTime: string;
     endDateTime: string;
+    speakers: SpeakerDto[];
 }

@@ -81,6 +81,27 @@
                                 </div>
                             </div>
 
+                            @if (card.presentation.speakers && card.presentation.speakers.length > 0) {
+                            <div class="speakers-section">
+                                <h4>Speakers</h4>
+                                <div class="speakers-list">
+                                    @for (speaker of card.presentation.speakers; track speaker.id) {
+                                    <div class="speaker-item">
+                                        @if (speaker.profilePictureUrl) {
+                                        <img [src]="speaker.profilePictureUrl" [alt]="speaker.name"
+                                            class="speaker-avatar" />
+                                        } @else {
+                                        <div class="speaker-avatar-placeholder">
+                                            <i class="pi pi-user"></i>
+                                        </div>
+                                        }
+                                        <span class="speaker-name">{{ speaker.name }}</span>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                            }
+
                             <div class="abstract">
                                 <p>{{ card.presentation.abstract }}</p>
                             </div>
