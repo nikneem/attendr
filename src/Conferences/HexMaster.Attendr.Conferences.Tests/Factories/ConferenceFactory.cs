@@ -67,22 +67,22 @@ public static class ConferenceFactory
     /// <summary>
     /// Creates a Room for testing.
     /// </summary>
-    public static Room CreateRoom(Guid? id = null, string? name = null)
+    public static Room CreateRoom(string? name = null, int? capacity = null)
     {
         return Room.Create(
-            id ?? Guid.NewGuid(),
-            name ?? Faker.Commerce.Department() + " Room"
+            name ?? Faker.Commerce.Department() + " Room",
+            capacity ?? Faker.Random.Int(50, 500)
         );
     }
 
     /// <summary>
     /// Creates a Speaker for testing.
     /// </summary>
-    public static Speaker CreateSpeaker(Guid? id = null, string? name = null)
+    public static Speaker CreateSpeaker(string? name = null, string? company = null)
     {
         return Speaker.Create(
-            id ?? Guid.NewGuid(),
-            name ?? Faker.Name.FullName()
+            name ?? Faker.Name.FullName(),
+            company ?? Faker.Company.CompanyName()
         );
     }
 
@@ -90,22 +90,22 @@ public static class ConferenceFactory
     /// Creates a Presentation for testing.
     /// </summary>
     public static Presentation CreatePresentation(
-        Guid? id = null,
-        Guid? roomId = null,
         string? title = null,
+        string? abstractText = null,
         DateTime? startDateTime = null,
         DateTime? endDateTime = null,
+        Guid? roomId = null,
         IEnumerable<Guid>? speakerIds = null)
     {
         var start = startDateTime ?? Faker.Date.Future();
         var end = endDateTime ?? start.AddHours(1);
 
         return Presentation.Create(
-            id ?? Guid.NewGuid(),
-            roomId ?? Guid.NewGuid(),
             title ?? Faker.Lorem.Sentence(),
+            abstractText ?? Faker.Lorem.Paragraph(),
             start,
             end,
+            roomId ?? Guid.NewGuid(),
             speakerIds ?? new[] { Guid.NewGuid() }
         );
     }
