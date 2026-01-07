@@ -5,17 +5,17 @@ namespace HexMaster.Attendr.Core.Exceptions;
 /// </summary>
 public class ProfileNotFoundException : Exception
 {
-    public ProfileNotFoundException() 
+    public ProfileNotFoundException()
         : base("User profile not found. Please create a profile first.")
     {
     }
 
-    public ProfileNotFoundException(string message) 
+    public ProfileNotFoundException(string message)
         : base(message)
     {
     }
 
-    public ProfileNotFoundException(string message, Exception innerException) 
+    public ProfileNotFoundException(string message, Exception innerException)
         : base(message, innerException)
     {
     }

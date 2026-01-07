@@ -5,17 +5,17 @@ namespace HexMaster.Attendr.Core.Exceptions;
 /// </summary>
 public class UnauthorizedException : Exception
 {
-    public UnauthorizedException() 
+    public UnauthorizedException()
         : base("User is not authenticated or authentication token is invalid.")
     {
     }
 
-    public UnauthorizedException(string message) 
+    public UnauthorizedException(string message)
         : base(message)
     {
     }
 
-    public UnauthorizedException(string message, Exception innerException) 
+    public UnauthorizedException(string message, Exception innerException)
         : base(message, innerException)
     {
     }
