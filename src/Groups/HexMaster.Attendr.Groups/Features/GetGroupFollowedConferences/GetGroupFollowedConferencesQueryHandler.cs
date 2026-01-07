@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
-using HexMaster.Attendr.Groups.GetGroupDetails;
+using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.Observability;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;

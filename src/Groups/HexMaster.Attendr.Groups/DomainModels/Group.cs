@@ -128,7 +128,7 @@ public sealed class Group
         IEnumerable<GroupActivity>? activities = null)
     {
         var group = new Group(id, name, ownerId, ownerName, settings);
-        
+
         if (activities != null)
         {
             foreach (var activity in activities)
@@ -136,7 +136,7 @@ public sealed class Group
                 group._activities.Add(activity);
             }
         }
-        
+
         return group;
     }
 
@@ -479,7 +479,8 @@ public sealed class Group
     /// </summary>
     /// <param name="profileId">The unique identifier of the profile that triggered this activity.</param>
     /// <param name="description">The description of the activity.</param>
-    public void AddActivity(Guid profileId, string description)
+    /// <param name="activityType">The type of the activity.</param>
+    public void AddActivity(Guid profileId, string description, GroupActivityType activityType)
     {
         if (profileId == Guid.Empty)
         {
@@ -487,13 +488,14 @@ public sealed class Group
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(description, nameof(description));
+        ArgumentNullException.ThrowIfNull(activityType, nameof(activityType));
 
         if (_activities.Count >= MaxActivities)
         {
             _activities.RemoveAt(0);
         }
 
-        var activity = new GroupActivity(Guid.NewGuid(), profileId, DateTimeOffset.UtcNow, description);
+        var activity = new GroupActivity(Guid.NewGuid(), profileId, DateTimeOffset.UtcNow, description, activityType);
         _activities.Add(activity);
     }
 }

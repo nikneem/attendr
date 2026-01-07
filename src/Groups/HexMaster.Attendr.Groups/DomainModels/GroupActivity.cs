@@ -27,14 +27,21 @@ public sealed class GroupActivity
     public string Description { get; }
 
     /// <summary>
+    /// Gets the type of the activity.
+    /// </summary>
+    public GroupActivityType ActivityType { get; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="GroupActivity"/> class.
     /// </summary>
     /// <param name="id">The unique identifier for the activity.</param>
     /// <param name="profileId">The unique identifier of the profile that triggered this activity.</param>
     /// <param name="createdAt">The timestamp when this activity was created.</param>
     /// <param name="description">The description of the activity.</param>
+    /// <param name="activityType">The type of the activity.</param>
     /// <exception cref="ArgumentException">Thrown when id or profileId is empty, or description is null or whitespace.</exception>
-    public GroupActivity(Guid id, Guid profileId, DateTimeOffset createdAt, string description)
+    /// <exception cref="ArgumentNullException">Thrown when activityType is null.</exception>
+    public GroupActivity(Guid id, Guid profileId, DateTimeOffset createdAt, string description, GroupActivityType activityType)
     {
         if (id == Guid.Empty)
         {
@@ -47,10 +54,12 @@ public sealed class GroupActivity
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(description, nameof(description));
+        ArgumentNullException.ThrowIfNull(activityType, nameof(activityType));
 
         Id = id;
         ProfileId = profileId;
         CreatedAt = createdAt;
         Description = description.Trim();
+        ActivityType = activityType;
     }
 }

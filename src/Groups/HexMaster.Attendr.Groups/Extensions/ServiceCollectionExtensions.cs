@@ -1,15 +1,16 @@
 using HexMaster.Attendr.Core.CommandHandlers;
-using HexMaster.Attendr.Groups.ApproveJoinRequest;
-using HexMaster.Attendr.Groups.DenyJoinRequest;
-using HexMaster.Attendr.Groups.FollowConference;
-using HexMaster.Attendr.Groups.GetGroupDetails;
-using HexMaster.Attendr.Groups.GetGroupFollowedConferences;
-using HexMaster.Attendr.Groups.GetMyGroups;
-using HexMaster.Attendr.Groups.JoinGroup;
-using HexMaster.Attendr.Groups.ListGroups;
+using HexMaster.Attendr.Groups.Abstractions.Dtos;
+using HexMaster.Attendr.Groups.Features.ApproveJoinRequest;
+using HexMaster.Attendr.Groups.Features.DenyJoinRequest;
+using HexMaster.Attendr.Groups.Features.FollowConference;
+using HexMaster.Attendr.Groups.Features.GetGroupDetails;
+using HexMaster.Attendr.Groups.Features.GetGroupFollowedConferences;
+using HexMaster.Attendr.Groups.Features.GetMyGroups;
+using HexMaster.Attendr.Groups.Features.JoinGroup;
+using HexMaster.Attendr.Groups.Features.ListGroups;
+using HexMaster.Attendr.Groups.Features.RemoveMember;
+using HexMaster.Attendr.Groups.Features.UnfollowConference;
 using HexMaster.Attendr.Groups.Observability;
-using HexMaster.Attendr.Groups.RemoveMember;
-using HexMaster.Attendr.Groups.UnfollowConference;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Groups.Extensions;

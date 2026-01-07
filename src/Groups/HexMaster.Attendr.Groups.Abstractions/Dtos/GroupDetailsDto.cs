@@ -1,7 +1,5 @@
 namespace HexMaster.Attendr.Groups.Abstractions.Dtos;
 
-using HexMaster.Attendr.Groups.DomainModels;
-
 /// <summary>
 /// DTO representing detailed information about a group.
 /// </summary>

@@ -55,7 +55,8 @@ internal static class GroupMapper
                 Id = a.Id,
                 ProfileId = a.ProfileId,
                 CreatedAt = a.CreatedAt,
-                Description = a.Description
+                Description = a.Description,
+                ActivityTypeId = a.ActivityType.ActivityTypeId
             }).ToList()
         };
     }
@@ -72,7 +73,12 @@ internal static class GroupMapper
 
         // Map activities from document
         var activities = document.Activities
-            .Select(a => new GroupActivity(a.Id, a.ProfileId, a.CreatedAt, a.Description))
+            .Select(a => new GroupActivity(
+                a.Id,
+                a.ProfileId,
+                a.CreatedAt,
+                a.Description,
+                GroupActivityType.FromId(a.ActivityTypeId)))
             .ToList();
 
         var group = Group.FromPersisted(

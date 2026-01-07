@@ -78,7 +78,7 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
 
             // Map members to DTOs
             var members = group.Members
-                .Select(m => new GetGroupDetailsMemberDto(m.Id, m.Name, m.Role))
+                .Select(m => new GetGroupDetailsMemberDto(m.Id, m.Name, (Abstractions.Dtos.GroupRole)m.Role))
                 .ToList();
 
             // Map invitations to DTOs
@@ -118,7 +118,7 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
                 group.Members.Count,
                 currentMember != null,
                 group.Settings.IsPublic,
-                currentMemberRole,
+                currentMemberRole.HasValue ? (Abstractions.Dtos.GroupRole?)currentMemberRole.Value : null,
                 members,
                 invitations,
                 joinRequests,

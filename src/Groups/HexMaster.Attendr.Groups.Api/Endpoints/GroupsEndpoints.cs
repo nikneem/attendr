@@ -86,7 +86,7 @@ public static class GroupsEndpoints
 
         await repository.AddAsync(group, cancellationToken);
 
-        var memberDtos = group.Members.Select(m => new GroupMemberDto(m.Id, m.Name, m.Role)).ToList();
+        var memberDtos = group.Members.Select(m => new GroupMemberDto(m.Id, m.Name, (Abstractions.Dtos.GroupRole)m.Role)).ToList();
         var result = new CreateGroupResult(group.Id, group.Name, memberDtos);
 
         return Results.Created($"/api/groups/{result.Id}", result);

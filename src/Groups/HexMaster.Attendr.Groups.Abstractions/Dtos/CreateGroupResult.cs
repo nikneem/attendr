@@ -1,5 +1,3 @@
-using HexMaster.Attendr.Groups.DomainModels;
-
 namespace HexMaster.Attendr.Groups.Abstractions.Dtos;
 
 /// <summary>

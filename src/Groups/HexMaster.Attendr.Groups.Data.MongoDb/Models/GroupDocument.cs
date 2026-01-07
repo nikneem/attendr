@@ -132,4 +132,7 @@ internal sealed class GroupActivityDocument
 
     [BsonElement("description")]
     public string Description { get; set; } = string.Empty;
+
+    [BsonElement("activityTypeId")]
+    public int ActivityTypeId { get; set; }
 }
