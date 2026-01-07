@@ -25,7 +25,7 @@ export class GroupActivitiesComponent implements OnInit {
     private readonly store = inject(GroupDetailsStore);
 
     groupId = input.required<string>();
-    
+
     group = this.store.groupDetails;
 
     // Mock activities for now - in production, this would come from an API/store

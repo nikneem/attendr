@@ -34,7 +34,7 @@ export class MemberLocationsComponent implements OnInit {
     private readonly store = inject(GroupDetailsStore);
 
     groupId = input.required<string>();
-    
+
     group = this.store.groupDetails;
 
     // Mock locations for now - in production, this would come from an API/store

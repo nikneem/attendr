@@ -36,7 +36,8 @@
             <div class="members-section">
                 <span class="members-label">
                     <i class="pi pi-users"></i>
-                    {{ location.checkedInMembers.length }} {{ location.checkedInMembers.length === 1 ? 'member' : 'members' }} checked in
+                    {{ location.checkedInMembers.length }} {{ location.checkedInMembers.length === 1 ? 'member' :
+                    'members' }} checked in
                 </span>
                 <div class="members-avatars">
                     @for (member of location.checkedInMembers; track member.id) {
