@@ -5,6 +5,7 @@ using HexMaster.Attendr.Profiles.CreateProfile;
 using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Observability;
 using HexMaster.Attendr.Profiles.Repositories;
+using HexMaster.Attendr.Profiles.Tests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -14,7 +15,7 @@ public class CreateProfileCommandHandlerTests
 {
     private readonly Mock<IProfileRepository> _mockRepository;
     private readonly Mock<IAttendrCacheClient> _mockCache;
-    private readonly Mock<ProfileMetrics> _mockMetrics;
+    private readonly ProfileMetrics _metrics;
     private readonly Mock<ILogger<CreateProfileCommandHandler>> _mockLogger;
     private readonly CreateProfileCommandHandler _handler;
     private readonly Faker _faker;
@@ -23,9 +24,9 @@ public class CreateProfileCommandHandlerTests
     {
         _mockRepository = new Mock<IProfileRepository>();
         _mockCache = new Mock<IAttendrCacheClient>();
-        _mockMetrics = new Mock<ProfileMetrics>(MockBehavior.Loose, null!);
+        _metrics = TestMetricsFactory.CreateProfileMetrics();
         _mockLogger = new Mock<ILogger<CreateProfileCommandHandler>>();
-        _handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object, _mockMetrics.Object, _mockLogger.Object);
+        _handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object, _metrics, _mockLogger.Object);
         _faker = new Faker();
     }
 
@@ -183,14 +184,28 @@ public class CreateProfileCommandHandlerTests
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenRepositoryIsNull()
     {
+        // Arrange
+        var metrics = TestMetricsFactory.CreateProfileMetrics();
+
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(null!, new Mock<IAttendrCacheClient>().Object, new Mock<ProfileMetrics>(MockBehavior.Loose, null!).Object, new Mock<ILogger<CreateProfileCommandHandler>>().Object));
+        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(
+            null!,
+            new Mock<IAttendrCacheClient>().Object,
+            metrics,
+            new Mock<ILogger<CreateProfileCommandHandler>>().Object));
     }
 
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenCacheIsNull()
     {
+        // Arrange
+        var metrics = TestMetricsFactory.CreateProfileMetrics();
+
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(new Mock<IProfileRepository>().Object, null!, new Mock<ProfileMetrics>(MockBehavior.Loose, null!).Object, new Mock<ILogger<CreateProfileCommandHandler>>().Object));
+        Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(
+            new Mock<IProfileRepository>().Object,
+            null!,
+            metrics,
+            new Mock<ILogger<CreateProfileCommandHandler>>().Object));
     }
 }

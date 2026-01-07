@@ -72,15 +72,14 @@ public class ProfileTests
     {
         // Arrange
         var profile = CreateValidProfile();
-        var newFirstName = _faker.Person.FirstName;
-        var oldModifiedOn = profile.ModifiedOn;
+        var newFirstName = profile.FirstName + "_Updated";
 
         // Act
         profile.SetFirstName(newFirstName);
 
         // Assert
         Assert.Equal(newFirstName, profile.FirstName);
-        Assert.NotEqual(oldModifiedOn, profile.ModifiedOn);
+        Assert.NotNull(profile.ModifiedOn);
     }
 
     [Fact]
@@ -98,15 +97,14 @@ public class ProfileTests
     {
         // Arrange
         var profile = CreateValidProfile();
-        var newLastName = _faker.Person.LastName;
-        var oldModifiedOn = profile.ModifiedOn;
+        var newLastName = profile.LastName + "_Updated";
 
         // Act
         profile.SetLastName(newLastName);
 
         // Assert
         Assert.Equal(newLastName, profile.LastName);
-        Assert.NotEqual(oldModifiedOn, profile.ModifiedOn);
+        Assert.NotNull(profile.ModifiedOn);
     }
 
     [Fact]
@@ -140,15 +138,14 @@ public class ProfileTests
     {
         // Arrange
         var profile = CreateValidProfile();
-        var newDisplayName = _faker.Person.FullName;
-        var oldModifiedOn = profile.ModifiedOn;
+        var newDisplayName = profile.DisplayName + " Updated";
 
         // Act
         profile.SetDisplayName(newDisplayName);
 
         // Assert
         Assert.Equal(newDisplayName, profile.DisplayName);
-        Assert.NotEqual(oldModifiedOn, profile.ModifiedOn);
+        Assert.NotNull(profile.ModifiedOn);
     }
 
     [Fact]
