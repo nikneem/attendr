@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
@@ -48,24 +50,22 @@ public static class GroupsConferenceEndpoints
             return Results.BadRequest(new { error = "Conference ID is required" });
         }
 
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var command = new Features.FollowConference.FollowConferenceCommand(id, Guid.Parse(profile.ProfileId), request.ConferenceId);
+            await handler.Handle(command, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return Results.NoContent();
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var command = new Features.FollowConference.FollowConferenceCommand(id, Guid.Parse(profile.ProfileId), request.ConferenceId);
-        await handler.Handle(command, cancellationToken);
-
-        return Results.NoContent();
     }
 
     private static async Task<IResult> UnfollowConference(
@@ -76,24 +76,22 @@ public static class GroupsConferenceEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var command = new Features.UnfollowConference.UnfollowConferenceCommand(id, Guid.Parse(profile.ProfileId), conferenceId);
+            await handler.Handle(command, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return Results.NoContent();
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var command = new Features.UnfollowConference.UnfollowConferenceCommand(id, Guid.Parse(profile.ProfileId), conferenceId);
-        await handler.Handle(command, cancellationToken);
-
-        return Results.NoContent();
     }
 
     private static async Task<IResult> GetFollowedConferences(
@@ -103,23 +101,21 @@ public static class GroupsConferenceEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var query = new Features.GetGroupFollowedConferences.GetGroupFollowedConferencesQuery(id, Guid.Parse(profile.ProfileId));
+            var conferences = await handler.Handle(query, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return Results.Ok(conferences);
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var query = new Features.GetGroupFollowedConferences.GetGroupFollowedConferencesQuery(id, Guid.Parse(profile.ProfileId));
-        var conferences = await handler.Handle(query, cancellationToken);
-
-        return Results.Ok(conferences);
     }
 }
