@@ -1,9 +1,11 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.Features.GetGroupDetails;
 using HexMaster.Attendr.Groups.Features.GetMyGroups;
 using HexMaster.Attendr.Groups.Features.ListGroups;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
@@ -42,24 +44,22 @@ public static class GroupsQueryEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var query = new GetMyGroupsQuery(Guid.Parse(profile.ProfileId));
+            var groups = await handler.Handle(query, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return Results.Ok(groups);
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var query = new GetMyGroupsQuery(Guid.Parse(profile.ProfileId));
-        var groups = await handler.Handle(query, cancellationToken);
-
-        return Results.Ok(groups);
     }
 
     private static async Task<IResult> ListGroups(
@@ -71,31 +71,29 @@ public static class GroupsQueryEndpoints
         int? pageNumber,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var normalizedPageSize = Math.Max(1, Math.Min(100, pageSize ?? 20));
+            var normalizedPageNumber = Math.Max(1, pageNumber ?? 1);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            var query = new ListGroupsQuery(
+                Guid.Parse(profile.ProfileId),
+                searchQuery ?? string.Empty,
+                normalizedPageSize,
+                normalizedPageNumber);
+
+            var result = await handler.Handle(query, cancellationToken);
+            return Results.Ok(result);
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var normalizedPageSize = Math.Max(1, Math.Min(100, pageSize ?? 20));
-        var normalizedPageNumber = Math.Max(1, pageNumber ?? 1);
-
-        var query = new ListGroupsQuery(
-            Guid.Parse(profile.ProfileId),
-            searchQuery ?? string.Empty,
-            normalizedPageSize,
-            normalizedPageNumber);
-
-        var result = await handler.Handle(query, cancellationToken);
-        return Results.Ok(result);
     }
 
     private static async Task<IResult> GetGroupDetails(
@@ -105,23 +103,21 @@ public static class GroupsQueryEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var query = new GetGroupDetailsQuery(id, Guid.Parse(profile.ProfileId));
+            var group = await handler.Handle(query, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return group is null ? Results.NotFound() : Results.Ok(group);
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var query = new GetGroupDetailsQuery(id, Guid.Parse(profile.ProfileId));
-        var group = await handler.Handle(query, cancellationToken);
-
-        return group is null ? Results.NotFound() : Results.Ok(group);
     }
 }

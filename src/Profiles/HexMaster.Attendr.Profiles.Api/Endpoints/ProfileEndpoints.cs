@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
 using HexMaster.Attendr.Profiles.Repositories;
@@ -55,18 +56,18 @@ public static class ProfileEndpoints
         if (string.IsNullOrWhiteSpace(request.Email))
             return Results.BadRequest(new { error = "Email is required" });
 
-        // Extract SubjectId from JWT token
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-            return Results.Unauthorized();
-
-        // Create display name from first and last name
-        var displayName = $"{request.FirstName.Trim()} {request.LastName.Trim()}";
-
         try
         {
+            // Extract SubjectId from JWT token - throws UnauthorizedException if not found
+            var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? user.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrWhiteSpace(subjectId))
+                throw new UnauthorizedException();
+
+            // Create display name from first and last name
+            var displayName = $"{request.FirstName.Trim()} {request.LastName.Trim()}";
+
             // Create and handle the command
             var command = new CreateProfileCommand(
                 subjectId,
@@ -79,6 +80,10 @@ public static class ProfileEndpoints
             var result = await handler.Handle(command, cancellationToken);
 
             return Results.Created($"/api/profiles/{result.ProfileId}", result);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
         }
         catch (ArgumentException ex)
         {

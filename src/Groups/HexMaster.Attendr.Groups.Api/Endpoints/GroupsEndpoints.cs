@@ -1,6 +1,8 @@
 using System.Security.Claims;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.DomainModels;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
@@ -65,30 +67,28 @@ public static class GroupsEndpoints
             return Results.BadRequest(new { error = "Name must not exceed 100 characters" });
         }
 
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var group = Group.Create(
+                request.Name.Trim(),
+                Guid.Parse(profile.ProfileId),
+                profile.DisplayName);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            await repository.AddAsync(group, cancellationToken);
+
+            var memberDtos = group.Members.Select(m => new GroupMemberDto(m.Id, m.Name, (Abstractions.Dtos.GroupRole)m.Role)).ToList();
+            var result = new CreateGroupResult(group.Id, group.Name, memberDtos);
+
+            return Results.Created($"/api/groups/{result.Id}", result);
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var group = Group.Create(
-            request.Name.Trim(),
-            Guid.Parse(profile.ProfileId),
-            profile.DisplayName);
-
-        await repository.AddAsync(group, cancellationToken);
-
-        var memberDtos = group.Members.Select(m => new GroupMemberDto(m.Id, m.Name, (Abstractions.Dtos.GroupRole)m.Role)).ToList();
-        var result = new CreateGroupResult(group.Id, group.Name, memberDtos);
-
-        return Results.Created($"/api/groups/{result.Id}", result);
     }
 }

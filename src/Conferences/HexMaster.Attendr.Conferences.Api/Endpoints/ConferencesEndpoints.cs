@@ -5,6 +5,8 @@ using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
 using HexMaster.Attendr.Conferences.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Exceptions;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 using System.Security.Claims;
 
@@ -182,22 +184,9 @@ public static class ConferencesEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
         try
         {
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
             var command = new FollowConferenceCommand(
                 id,
                 Guid.Parse(profile.ProfileId));
@@ -205,6 +194,14 @@ public static class ConferencesEndpoints
             await handler.Handle(command, cancellationToken);
 
             return Results.NoContent();
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
         }
         catch (KeyNotFoundException)
         {

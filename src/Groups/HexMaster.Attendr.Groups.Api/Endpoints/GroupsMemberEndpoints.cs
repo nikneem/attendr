@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.DomainModels;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
@@ -54,24 +56,22 @@ public static class GroupsMemberEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var command = new Features.JoinGroup.JoinGroupCommand(id, Guid.Parse(profile.ProfileId), profile.DisplayName);
+            await handler.Handle(command, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return Results.NoContent();
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var command = new Features.JoinGroup.JoinGroupCommand(id, Guid.Parse(profile.ProfileId), profile.DisplayName);
-        await handler.Handle(command, cancellationToken);
-
-        return Results.NoContent();
     }
 
     private static async Task<IResult> RemoveMember(
@@ -82,24 +82,22 @@ public static class GroupsMemberEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var command = new Features.RemoveMember.RemoveMemberCommand(id, Guid.Parse(profile.ProfileId), memberId);
+            await handler.Handle(command, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return Results.NoContent();
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var command = new Features.RemoveMember.RemoveMemberCommand(id, Guid.Parse(profile.ProfileId), memberId);
-        await handler.Handle(command, cancellationToken);
-
-        return Results.NoContent();
     }
 
     private static async Task<IResult> ApproveJoinRequest(
@@ -110,24 +108,22 @@ public static class GroupsMemberEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var command = new Features.ApproveJoinRequest.ApproveJoinRequestCommand(id, Guid.Parse(profile.ProfileId), profileId);
+            await handler.Handle(command, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return Results.NoContent();
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var command = new Features.ApproveJoinRequest.ApproveJoinRequestCommand(id, Guid.Parse(profile.ProfileId), profileId);
-        await handler.Handle(command, cancellationToken);
-
-        return Results.NoContent();
     }
 
     private static async Task<IResult> DenyJoinRequest(
@@ -138,23 +134,21 @@ public static class GroupsMemberEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var command = new Features.DenyJoinRequest.DenyJoinRequestCommand(id, Guid.Parse(profile.ProfileId), profileId);
+            await handler.Handle(command, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(subjectId))
+            return Results.NoContent();
+        }
+        catch (UnauthorizedException)
         {
             return Results.Unauthorized();
         }
-
-        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-        if (profile is null)
+        catch (ProfileNotFoundException ex)
         {
-            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            return Results.NotFound(new { error = ex.Message });
         }
-
-        var command = new Features.DenyJoinRequest.DenyJoinRequestCommand(id, Guid.Parse(profile.ProfileId), profileId);
-        await handler.Handle(command, cancellationToken);
-
-        return Results.NoContent();
     }
 }

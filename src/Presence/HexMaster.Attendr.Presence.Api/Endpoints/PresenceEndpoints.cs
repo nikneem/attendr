@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Features.CheckIn;
 using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
@@ -7,6 +8,7 @@ using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
 using HexMaster.Attendr.Presence.Features.UpdateAttendance;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
@@ -83,23 +85,10 @@ public static class PresenceEndpoints
         CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("GetMyConferencesEndpoint");
-        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? context.User.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
 
         try
         {
-            // Resolve the Auth0 subject ID to a profile GUID
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
             if (!Guid.TryParse(profile.ProfileId, out var profileId))
             {
                 logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
@@ -109,9 +98,17 @@ public static class PresenceEndpoints
             var result = await handler.Handle(new GetMyConferencesQuery(profileId), cancellationToken);
             return Results.Ok(result);
         }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
+        }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error retrieving conferences for user {SubjectId}", subjectId);
+            logger.LogError(ex, "Error retrieving conferences for user");
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -126,13 +123,6 @@ public static class PresenceEndpoints
         CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("GetPresentationToRateEndpoint");
-        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? context.User.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
 
         // Validate index parameter
         if (index < 0 || index > 2)
@@ -142,13 +132,7 @@ public static class PresenceEndpoints
 
         try
         {
-            // Resolve the Auth0 subject ID to a profile GUID
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
             if (!Guid.TryParse(profile.ProfileId, out var profileId))
             {
                 logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
@@ -165,6 +149,14 @@ public static class PresenceEndpoints
             }
 
             return Results.Ok(result);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
         }
         catch (Exception ex)
         {
@@ -184,13 +176,6 @@ public static class PresenceEndpoints
         CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("RatePresentationEndpoint");
-        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? context.User.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
 
         try
         {
@@ -200,13 +185,7 @@ public static class PresenceEndpoints
                 return Results.BadRequest(new { error = "Rating must be between 0 and 5." });
             }
 
-            // Resolve the Auth0 subject ID to a profile GUID
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
             if (!Guid.TryParse(profile.ProfileId, out var profileId))
             {
                 logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
@@ -218,6 +197,14 @@ public static class PresenceEndpoints
                 cancellationToken);
 
             return Results.Accepted();
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
         }
         catch (InvalidOperationException ex)
         {
@@ -241,23 +228,10 @@ public static class PresenceEndpoints
         CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("UpdateAttendanceEndpoint");
-        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? context.User.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
 
         try
         {
-            // Resolve the Auth0 subject ID to a profile GUID
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
             if (!Guid.TryParse(profile.ProfileId, out var profileId))
             {
                 logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
@@ -269,6 +243,14 @@ public static class PresenceEndpoints
                 cancellationToken);
 
             return Results.Accepted();
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
         }
         catch (InvalidOperationException ex)
         {
@@ -291,23 +273,10 @@ public static class PresenceEndpoints
         CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("UnfollowConferenceEndpoint");
-        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? context.User.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
 
         try
         {
-            // Resolve the Auth0 subject ID to a profile GUID
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
             if (!Guid.TryParse(profile.ProfileId, out var profileId))
             {
                 logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
@@ -319,6 +288,14 @@ public static class PresenceEndpoints
                 cancellationToken);
 
             return Results.NoContent();
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
         }
         catch (InvalidOperationException ex)
         {
@@ -341,23 +318,10 @@ public static class PresenceEndpoints
         CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("GetConferenceAttendanceEndpoint");
-        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? context.User.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
 
         try
         {
-            // Resolve the Auth0 subject ID to a profile GUID
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
             if (!Guid.TryParse(profile.ProfileId, out var profileId))
             {
                 logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
@@ -369,6 +333,14 @@ public static class PresenceEndpoints
                 cancellationToken);
 
             return Results.Ok(result);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
         }
         catch (Exception ex)
         {
@@ -388,22 +360,10 @@ public static class PresenceEndpoints
         CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("CheckInEndpoint");
-        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? context.User.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
 
         try
         {
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
             if (!Guid.TryParse(profile.ProfileId, out var profileId))
             {
                 logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
@@ -415,6 +375,14 @@ public static class PresenceEndpoints
                 cancellationToken);
 
             return Results.Accepted();
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
         }
         catch (KeyNotFoundException ex)
         {
