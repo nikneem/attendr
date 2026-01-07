@@ -14,6 +14,27 @@
         <div class="conference-header">
             <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" (click)="openEditDialog()"
                 pTooltip="Edit conference" class="edit-button" />
+
+            @if (attendanceStore.isAttending()) {
+            <div class="attending-ribbon">
+                <i class="pi pi-check-circle"></i>
+                <span>Attending</span>
+            </div>
+            }
+
+            <div class="header-actions">
+                @if (!attendanceStore.isFollowing()) {
+                <p-button label="Follow Conference" icon="pi pi-plus" (click)="followConference()"
+                    [loading]="followingConference" />
+                } @else {
+                <p-button label="Following" icon="pi pi-check" [outlined]="true" severity="secondary" disabled />
+                }
+
+                @if (attendanceStore.isFollowing()) {
+                <p-button label="Rate Sessions" icon="pi pi-star" (click)="navigateToRate()" />
+                }
+            </div>
+
             <div class="header-panel details-panel">
                 <div class="panel-overlay"></div>
                 <div class="panel-content">
@@ -59,7 +80,8 @@
                     </div>
                 </ng-template>
                 <attn-conference-schedule [presentations]="conference.presentations" [startDate]="conference.startDate"
-                    [endDate]="conference.endDate" />
+                    [endDate]="conference.endDate"
+                    [favoritePresentationIds]="attendanceStore.favoritePresentationIds()" />
             </p-card>
 
             <p-card styleClass="section-card">

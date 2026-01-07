@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
+using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
@@ -43,6 +44,11 @@ public static class PresenceEndpoints
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapGet("/{conferenceId:guid}/attendance", GetConferenceAttendance)
+            .WithName("GetConferenceAttendance")
+            .Produces<ConferenceAttendanceDto>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapGet("/{conferenceId:guid}/rate", GetPresentationToRate)
             .WithName("GetPresentationToRate")
@@ -314,6 +320,51 @@ public static class PresenceEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Error unfollowing conference {ConferenceId}", conferenceId);
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> GetConferenceAttendance(
+        Guid conferenceId,
+        HttpContext context,
+        IQueryHandler<GetConferenceAttendanceQuery, ConferenceAttendanceDto> handler,
+        IProfilesIntegrationService profilesIntegration,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("GetConferenceAttendanceEndpoint");
+        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? context.User.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            // Resolve the Auth0 subject ID to a profile GUID
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            var result = await handler.Handle(
+                new GetConferenceAttendanceQuery(profileId, conferenceId),
+                cancellationToken);
+
+            return Results.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting conference attendance for conference {ConferenceId}", conferenceId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

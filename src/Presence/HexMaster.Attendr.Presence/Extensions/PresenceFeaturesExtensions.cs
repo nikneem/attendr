@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Features.CreateConferencePresence;
+using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
@@ -36,6 +37,7 @@ public static class PresenceFeaturesExtensions
         // Register query handlers
         services.AddScoped<IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>>, GetMyConferencesQueryHandler>();
         services.AddScoped<IQueryHandler<GetRandomPresentationToRateQuery, PresentationToRateDto?>, GetRandomPresentationToRateQueryHandler>();
+        services.AddScoped<IQueryHandler<GetConferenceAttendanceQuery, ConferenceAttendanceDto>, GetConferenceAttendanceQueryHandler>();
 
         return services;
     }

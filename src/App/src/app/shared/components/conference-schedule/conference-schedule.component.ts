@@ -32,6 +32,7 @@ export class ConferenceScheduleComponent {
     presentations = input.required<PresentationDto[]>();
     startDate = input.required<string>();
     endDate = input.required<string>();
+    favoritePresentationIds = input<string[]>([]);
 
     selectedPresentation = signal<PresentationDto | null>(null);
     showDialog = signal<boolean>(false);
@@ -152,6 +153,10 @@ export class ConferenceScheduleComponent {
 
     getSpeakerImages(presentation: PresentationDto): SpeakerDto[] {
         return presentation.speakers.filter(s => s.profilePictureUrl);
+    }
+
+    isFavorite(presentationId: string): boolean {
+        return this.favoritePresentationIds().includes(presentationId);
     }
 
     openPresentationDetails(presentation: PresentationDto): void {

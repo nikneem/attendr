@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -8,6 +8,8 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConferencesService } from '@services/conferences.service';
+import { PresenceService } from '@services/presence.service';
+import { ConferenceAttendanceStore } from '@services/conference-attendance.store';
 import { ConferenceDetailsDto } from '@models/conference-details-dto';
 import { EditConferenceComponent } from '@components/edit-conference/edit-conference.component';
 import { ConferenceScheduleComponent } from '@components/conference-schedule/conference-schedule.component';
@@ -33,7 +35,10 @@ import { MessageService } from 'primeng/api';
 })
 export class ConferenceDetailsPageComponent implements OnInit {
     private readonly route = inject(ActivatedRoute);
+    private readonly router = inject(Router);
     private readonly conferencesService = inject(ConferencesService);
+    private readonly presenceService = inject(PresenceService);
+    readonly attendanceStore = inject(ConferenceAttendanceStore);
     private readonly messageService = inject(MessageService);
     private readonly cdr = inject(ChangeDetectorRef);
 
@@ -41,12 +46,16 @@ export class ConferenceDetailsPageComponent implements OnInit {
     loading = true;
     error: string | null = null;
     showEditDialog = false;
+    followingConference = false;
 
     ngOnInit(): void {
         const conferenceId = this.route.snapshot.paramMap.get('id');
         if (conferenceId) {
             // Defer loading to avoid ExpressionChangedAfterItHasBeenCheckedError
-            setTimeout(() => this.loadConference(conferenceId), 0);
+            setTimeout(() => {
+                this.loadConference(conferenceId);
+                this.attendanceStore.loadAttendance(conferenceId);
+            }, 0);
         } else {
             this.error = 'Conference ID not found';
             this.loading = false;
@@ -101,5 +110,38 @@ export class ConferenceDetailsPageComponent implements OnInit {
             summary: 'Success',
             detail: 'Conference updated successfully',
         });
+    }
+
+    followConference(): void {
+        if (!this.conference || this.followingConference) return;
+
+        this.followingConference = true;
+        this.presenceService.updateAttendance(this.conference.id, false).subscribe({
+            next: () => {
+                this.attendanceStore.setFollowing(true);
+                this.attendanceStore.setAttending(false);
+                this.followingConference = false;
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'You are now following this conference',
+                });
+            },
+            error: (err) => {
+                console.error('Error following conference:', err);
+                this.followingConference = false;
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to follow conference',
+                });
+            },
+        });
+    }
+
+    navigateToRate(): void {
+        if (this.conference) {
+            this.router.navigate(['/app/conferences', this.conference.id, 'rate']);
+        }
     }
 }

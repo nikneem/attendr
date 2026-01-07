@@ -101,6 +101,17 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         z-index: 10;
     }
+
+    &.favorite-session {
+        background: var(--primary-color);
+        border: 2px solid var(--yellow-400);
+        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+
+        &:hover {
+            background: var(--primary-500);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.5);
+        }
+    }
 }
 
 .session-content {
