@@ -15,7 +15,7 @@ param tags object = {}
 @description('Enable free tier')
 param enableFreeTier bool = true
 
-resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
+resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' = {
   name: accountName
   location: location
   tags: tags
@@ -52,14 +52,12 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
     publicNetworkAccess: 'Enabled'
     networkAclBypass: 'AzureServices'
   }
-}
-
-resource mongoDatabase 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabases@2024-05-15' = {
-  parent: cosmosAccount
-  name: databaseName
-  properties: {
-    resource: {
-      id: databaseName
+  resource mongoDatabase 'mongodbDatabases@2025-11-01-preview' = {
+    name: databaseName
+    properties: {
+      resource: {
+        id: databaseName
+      }
     }
   }
 }

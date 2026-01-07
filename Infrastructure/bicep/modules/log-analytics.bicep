@@ -25,7 +25,7 @@ param skuName string = 'PerGB2018'
 @maxValue(730)
 param retentionInDays int = 30
 
-resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2025-07-01' = {
   name: name
   location: location
   tags: tags

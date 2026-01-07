@@ -20,12 +20,12 @@ param redisCachePort int
 @secure()
 param redisCachePrimaryKey string
 
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' existing = {
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-10-02-preview' existing = {
   name: containerAppsEnvironmentName
 }
 
 // Dapr PubSub component using Azure Service Bus
-resource daprPubSub 'Microsoft.App/managedEnvironments/daprComponents@2024-03-01' = {
+resource daprPubSub 'Microsoft.App/managedEnvironments/daprComponents@2025-10-02-preview' = {
   parent: containerAppsEnvironment
   name: 'pubsub'
   properties: {
@@ -52,7 +52,7 @@ resource daprPubSub 'Microsoft.App/managedEnvironments/daprComponents@2024-03-01
 }
 
 // Dapr State Store component using Redis Cache
-resource daprStateStore 'Microsoft.App/managedEnvironments/daprComponents@2024-03-01' = {
+resource daprStateStore 'Microsoft.App/managedEnvironments/daprComponents@2025-10-02-preview' = {
   parent: containerAppsEnvironment
   name: 'statestore'
   properties: {

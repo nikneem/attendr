@@ -29,7 +29,7 @@ param skuFamily string = 'C'
 @maxValue(6)
 param skuCapacity int = 0
 
-resource redisCache 'Microsoft.Cache/redis@2023-08-01' = {
+resource redisCache 'Microsoft.Cache/redis@2024-11-01' = {
   name: name
   location: location
   tags: tags

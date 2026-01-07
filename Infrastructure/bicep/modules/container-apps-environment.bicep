@@ -16,7 +16,7 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' exis
   name: last(split(logAnalyticsWorkspaceId, '/'))
 }
 
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' = {
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-10-02-preview' = {
   name: name
   location: location
   tags: tags

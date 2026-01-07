@@ -85,8 +85,6 @@ module mongoDbSecrets './keyvault-secrets.bicep' = {
   }
   dependsOn: [
     keyVault
-    serviceBus
-    redisCache
   ]
 }
 
@@ -135,8 +133,6 @@ module daprComponents './dapr-components.bicep' = {
   }
   dependsOn: [
     containerAppsEnvironment
-    serviceBus
-    redisCache
   ]
 }
 

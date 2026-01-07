@@ -15,11 +15,11 @@ param serviceBusConnectionString string
 @description('Redis Cache connection string')
 param redisCacheConnectionString string
 
-resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
   name: keyVaultName
 }
 
-resource mongoDbSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
+resource mongoDbSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
   parent: keyVault
   name: 'MongoDbConnectionString'
   properties: {
@@ -28,7 +28,7 @@ resource mongoDbSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
   }
 }
 
-resource serviceBusSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
+resource serviceBusSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
   parent: keyVault
   name: 'ServiceBusConnectionString'
   properties: {
@@ -37,7 +37,7 @@ resource serviceBusSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
   }
 }
 
-resource redisCacheSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
+resource redisCacheSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
   parent: keyVault
   name: 'RedisCacheConnectionString'
   properties: {

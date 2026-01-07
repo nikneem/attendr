@@ -20,7 +20,7 @@ param skuName string = 'Standard'
 @description('List of topic names to create')
 param topics array = []
 
-resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' = {
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2025-05-01-preview' = {
   name: namespaceName
   location: location
   tags: tags
@@ -33,36 +33,19 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2022-10-01-preview
     publicNetworkAccess: 'Enabled'
     disableLocalAuth: false
   }
+  resource serviceBusTopics 'topics@2025-05-01-preview' = [
+    for topic in topics: {
+      name: topic
+      properties: {
+        enableBatchedOperations: true
+        enablePartitioning: false
+        maxSizeInMegabytes: 1024
+        requiresDuplicateDetection: false
+        supportOrdering: true
+      }
+    }
+  ]
 }
-
-resource serviceBusTopics 'Microsoft.ServiceBus/namespaces/topics@2022-10-01-preview' = [
-  for topic in topics: {
-    parent: serviceBusNamespace
-    name: topic
-    properties: {
-      enableBatchedOperations: true
-      enablePartitioning: false
-      maxSizeInMegabytes: 1024
-      requiresDuplicateDetection: false
-      supportOrdering: true
-    }
-  }
-]
-
-// Create default subscription for each topic
-resource serviceBusSubscriptions 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2022-10-01-preview' = [
-  for topic in topics: {
-    parent: serviceBusTopics[indexOf(topics, topic)]
-    name: 'default'
-    properties: {
-      enableBatchedOperations: true
-      maxDeliveryCount: 10
-      requiresSession: false
-      deadLetteringOnMessageExpiration: true
-      lockDuration: 'PT5M'
-    }
-  }
-]
 
 output id string = serviceBusNamespace.id
 output name string = serviceBusNamespace.name

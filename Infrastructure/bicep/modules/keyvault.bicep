@@ -12,7 +12,7 @@ param tags object = {}
 @description('Enable RBAC authorization')
 param enableRbacAuthorization bool = true
 
-resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
+resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' = {
   name: name
   location: location
   tags: tags

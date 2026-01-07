@@ -21,7 +21,7 @@ param keyVaultServiceBusSecretUri string
 @description('The URI of the Redis Cache secret in Key Vault')
 param keyVaultRedisCacheSecretUri string
 
-resource appConfig 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+resource appConfig 'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview' = {
   name: name
   location: location
   tags: tags
@@ -37,7 +37,7 @@ resource appConfig 'Microsoft.AppConfiguration/configurationStores@2024-05-01' =
   }
 }
 
-resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
   name: keyVaultName
 }
 
@@ -56,7 +56,7 @@ resource appConfigKeyVaultAccess 'Microsoft.Authorization/roleAssignments@2022-0
 }
 
 // Add Key Vault reference for MongoDB connection string
-resource mongoDbConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource mongoDbConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
   parent: appConfig
   name: 'ConnectionStrings:MongoDb'
   properties: {
@@ -69,7 +69,7 @@ resource mongoDbConnectionStringKeyValue 'Microsoft.AppConfiguration/configurati
 }
 
 // Add Key Vault reference for Service Bus connection string
-resource serviceBusConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource serviceBusConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
   parent: appConfig
   name: 'ConnectionStrings:ServiceBus'
   properties: {
@@ -82,7 +82,7 @@ resource serviceBusConnectionStringKeyValue 'Microsoft.AppConfiguration/configur
 }
 
 // Add Key Vault reference for Redis Cache connection string
-resource redisCacheConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource redisCacheConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
   parent: appConfig
   name: 'ConnectionStrings:RedisCache'
   properties: {
