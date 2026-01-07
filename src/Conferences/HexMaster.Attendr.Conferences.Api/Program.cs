@@ -7,6 +7,8 @@ using HexMaster.Attendr.Conferences.Api.Endpoints;
 using HexMaster.Attendr.Conferences.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Conferences.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
+using HexMaster.Attendr.Core.Cache.Extensions;
 using Sessionize.Api.Client.DependencyInjection;
 using Scalar.AspNetCore;
 
@@ -33,9 +35,8 @@ builder.Services.AddOpenTelemetry()
 
 builder.Logging.AddOpenTelemetry(logging =>
 {
-    logging
-        .AddOtlpExporter()
-        .IncludeFormattedMessage = true;
+    logging.AddOtlpExporter();
+    logging.IncludeFormattedMessage = true;
 });
 
 // Add services to the container.
@@ -56,6 +57,8 @@ builder.Services.AddMongoDbConferenceRepository(builder.Configuration);
 builder.Services.AddAttendrConferencesServices();
 builder.Services.AddSessionizeApiClient();
 builder.Services.AddIntegrationEvents(builder.Configuration);
+builder.Services.AddProfilesIntegration(builder.Configuration);
+builder.Services.AddAttendrCache(builder.Configuration);
 builder.Services.AddDaprSidekick();
 builder.Services.AddDaprClient();
 

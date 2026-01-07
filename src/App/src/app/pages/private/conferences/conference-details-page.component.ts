@@ -116,7 +116,7 @@ export class ConferenceDetailsPageComponent implements OnInit {
         if (!this.conference || this.followingConference) return;
 
         this.followingConference = true;
-        this.presenceService.updateAttendance(this.conference.id, false).subscribe({
+        this.conferencesService.followConference(this.conference.id).subscribe({
             next: () => {
                 this.attendanceStore.setFollowing(true);
                 this.attendanceStore.setAttending(false);

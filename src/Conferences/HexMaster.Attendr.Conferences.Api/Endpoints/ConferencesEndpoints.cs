@@ -1,9 +1,12 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.CreateConference;
+using HexMaster.Attendr.Conferences.FollowConference;
 using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
 using HexMaster.Attendr.Conferences.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Profiles.Integrations.Services;
+using System.Security.Claims;
 
 namespace HexMaster.Attendr.Conferences.Api.Endpoints;
 
@@ -38,6 +41,13 @@ public static class ConferencesEndpoints
             .WithName("UpdateConference")
             .Produces<ConferenceDetailsDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization();
+
+        group.MapPost("/{id:guid}/follow", FollowConference)
+            .WithName("FollowConference")
+            .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization();
@@ -158,6 +168,47 @@ public static class ConferencesEndpoints
         catch (ArgumentException ex)
         {
             return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> FollowConference(
+        Guid id,
+        IProfilesIntegrationService profilesIntegration,
+        ICommandHandler<FollowConferenceCommand> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            var command = new FollowConferenceCommand(
+                id,
+                Guid.Parse(profile.ProfileId));
+
+            await handler.Handle(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return Results.NotFound(new { error = "Conference not found" });
         }
         catch (Exception)
         {

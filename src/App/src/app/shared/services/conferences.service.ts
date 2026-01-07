@@ -41,4 +41,8 @@ export class ConferencesService {
     updateConference(id: string, request: CreateConferenceRequest): Observable<ConferenceDetailsDto> {
         return this.http.put<ConferenceDetailsDto>(`${this.apiUrl}/${id}`, request);
     }
+
+    followConference(id: string): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/${id}/follow`, {});
+    }
 }

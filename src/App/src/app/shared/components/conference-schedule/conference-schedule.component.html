@@ -23,8 +23,8 @@
                         <div class="room-timeline">
                             @for (session of getTimelineSessions(day); track session.presentation.id) {
                             @if (session.roomIndex === i) {
-                            <div class="timeline-session" [style.left.px]="session.startPixels"
-                                [style.width.px]="session.widthPixels"
+                            <div class="timeline-session" [class.favorite-session]="isFavorite(session.presentation.id)"
+                                [style.left.px]="session.startPixels" [style.width.px]="session.widthPixels"
                                 (click)="openPresentationDetails(session.presentation)">
                                 <div class="session-content">
                                     <div class="session-title" [attr.title]="session.presentation.title">{{

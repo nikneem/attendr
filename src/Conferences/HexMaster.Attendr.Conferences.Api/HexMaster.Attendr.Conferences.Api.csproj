@@ -11,6 +11,7 @@
     <ProjectReference Include="../HexMaster.Attendr.Conferences/HexMaster.Attendr.Conferences.csproj" />
     <ProjectReference Include="../HexMaster.Attendr.Conferences.Data.MongoDb/HexMaster.Attendr.Conferences.Data.MongoDb.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
   </ItemGroup>
 
   <ItemGroup>

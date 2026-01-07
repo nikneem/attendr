@@ -103,12 +103,12 @@
     }
 
     &.favorite-session {
-        background: var(--primary-color);
+        background: vars.$secondary-color;
         border: 2px solid var(--yellow-400);
         box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
 
         &:hover {
-            background: var(--primary-500);
+            background: vars.$secondary-dark;
             box-shadow: 0 4px 12px rgba(255, 193, 7, 0.5);
         }
     }

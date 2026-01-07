@@ -1,3 +1,5 @@
+@use '../../../../styles/variables' as vars;
+
 .conference-details-page {
     padding: 1rem 0;
 
@@ -63,22 +65,25 @@
 
         .attending-ribbon {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 25px;
+            left: -35px;
             z-index: 10;
-            background: var(--green-500);
+            background: vars.$primary-color;
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            padding: 0.5rem 2.5rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: rotate(-45deg);
+            transform-origin: center center;
+            min-width: 150px;
+            justify-content: center;
 
             i {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
         }
 
