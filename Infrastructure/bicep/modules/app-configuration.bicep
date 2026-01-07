@@ -25,6 +25,9 @@ resource appConfig 'Microsoft.AppConfiguration/configurationStores@2024-05-01' =
   name: name
   location: location
   tags: tags
+  identity: {
+    type: 'SystemAssigned'
+  }
   sku: {
     name: 'free'
   }
