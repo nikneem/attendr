@@ -11,7 +11,8 @@
             <i class="pi pi-inbox" style="font-size: 3rem;"></i>
         </div>
         <h4 class="empty-state-title">No Activity Yet</h4>
-        <p class="empty-state-text">When members join, check in to presentations, or follow conferences, you'll see their activity here.</p>
+        <p class="empty-state-text">When members join, check in to presentations, or follow conferences, you'll see
+            their activity here.</p>
     </div>
     } @else {
     <div class="activities-list">
@@ -21,7 +22,9 @@
                 <i [class]="getActivityIcon(activity.activityTypeId)"></i>
             </div>
             <div class="activity-content">
-                <p class="activity-message">{{ getActivityMessage(activity) }}</p>
+                <p class="activity-message">
+                    <strong>{{ getMemberName(activity) }}</strong> - {{ getActivityMessage(activity) }}
+                </p>
                 <span class="activity-time">{{ getRelativeTime(activity.createdAt) }}</span>
             </div>
         </div>

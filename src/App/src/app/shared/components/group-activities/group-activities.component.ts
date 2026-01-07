@@ -62,8 +62,12 @@ export class GroupActivitiesComponent {
         }
     }
 
-    getActivityMessage(activity: GroupActivityDto): string {
+    getActivityMessage(activity: EnrichedGroupActivity): string {
         return activity.description;
+    }
+
+    getMemberName(activity: EnrichedGroupActivity): string {
+        return activity.memberName;
     }
 
     getRelativeTime(timestamp: string): string {
