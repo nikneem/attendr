@@ -31,14 +31,19 @@
 
             <div class="card-wrapper" [class.no-transition]="isAnimating()">
                 @for (card of cards(); track $index) {
-                <div class="presentation-card" [class.top-card]="$index === 0" [class.middle-card]="$index === 1"
-                    [class.bottom-card]="$index === 2" [class.empty-card]="card.isEmpty"
+                <div class="presentation-card" 
+                    [class.top-card]="$index === 0" 
+                    [class.middle-card]="$index === 1"
+                    [class.bottom-card]="$index === 2" 
+                    [class.empty-card]="card.isEmpty"
+                    [class.error-card]="card.isError"
+                    [class.new-card]="$index === 2 && fetchingNewCard()"
                     [style.transform]="$index === 0 ? 'translateX(' + swipeOffset() + 'px) rotate(' + (swipeOffset() / 20) + 'deg)' : ''"
-                    [style.z-index]="cards().length - $index"
-                    (mousedown)="$index === 0 && !card.isEmpty ? onMouseDown($event) : null"
-                    (touchstart)="$index === 0 && !card.isEmpty ? onTouchStart($event) : null"
-                    (touchmove)="$index === 0 && !card.isEmpty ? onTouchMove($event) : null"
-                    (touchend)="$index === 0 && !card.isEmpty ? onTouchEnd() : null">
+                    [style.z-index]="3 - $index"
+                    (mousedown)="$index === 0 && !card.isEmpty && !card.isError ? onMouseDown($event) : null"
+                    (touchstart)="$index === 0 && !card.isEmpty && !card.isError ? onTouchStart($event) : null"
+                    (touchmove)="$index === 0 && !card.isEmpty && !card.isError ? onTouchMove($event) : null"
+                    (touchend)="$index === 0 && !card.isEmpty && !card.isError ? onTouchEnd() : null">
 
                     @if (card.isEmpty) {
                     <p-card>
@@ -48,6 +53,16 @@
                             <p>You've rated all available sessions for this conference.</p>
                             <button pButton label="Back to My Conferences" icon="pi pi-arrow-left" (click)="goBack()"
                                 class="back-to-conferences-btn"></button>
+                        </div>
+                    </p-card>
+                    } @else if (card.isError) {
+                    <p-card>
+                        <div class="error-card-content">
+                            <i class="pi pi-exclamation-triangle"></i>
+                            <h3>Error Loading Session</h3>
+                            <p>{{ card.errorMessage || 'Failed to load presentation' }}</p>
+                            <button pButton label="Try Again" icon="pi pi-refresh" (click)="loadInitialCards()"
+                                class="retry-btn"></button>
                         </div>
                     </p-card>
                     } @else if (card.presentation) {
@@ -99,7 +114,7 @@
                 }
             </div>
 
-            @if (activeCard() && !activeCard()!.isEmpty) {
+            @if (activeCard() && !activeCard()!.isEmpty && !activeCard()!.isError) {
             <div class="instructions">
                 <p><i class="pi pi-hand-pointer"></i> Swipe or drag the card left/right, or use the buttons below</p>
             </div>
