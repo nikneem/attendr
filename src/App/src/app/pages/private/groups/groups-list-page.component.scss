@@ -5,19 +5,7 @@
         padding: 2rem 0;
     }
 
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 0.75rem;
-
-        @media (min-width: 768px) {
-            padding: 0 1.5rem;
-        }
-
-        @media (min-width: 1024px) {
-            padding: 0 2rem;
-        }
-    }
+    // Container now uses global styles with responsive padding
 
     .header-section {
         margin-bottom: 2rem;
@@ -111,16 +99,24 @@
     .groups-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1rem;
         margin-bottom: 2rem;
 
         @media (min-width: 640px) {
             grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
         }
 
         @media (min-width: 1024px) {
             grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
         }
+
+        @media (min-width: 1440px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        // Keep at 4 columns max for better tile sizing on ultra-wide screens
 
         .group-card-wrapper {
             height: 100%;

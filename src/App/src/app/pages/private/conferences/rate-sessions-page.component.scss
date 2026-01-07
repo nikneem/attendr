@@ -1,9 +1,14 @@
 .rate-sessions-page {
     min-height: 100vh;
-    padding: 2rem 1rem;
+    padding: 1rem 0;
 
+    @media (min-width: 768px) {
+        padding: 2rem 0;
+    }
+
+    // Container now uses global styles with responsive padding
     .container {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
     }
 

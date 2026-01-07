@@ -66,16 +66,54 @@ button {
     font-family: inherit;
 }
 
+// Container classes with responsive breakpoints
 .container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 $spacing-lg;
+    padding: 0 $spacing-md;
+
+    @media (min-width: 768px) {
+        padding: 0 $spacing-lg;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 0 $spacing-xl;
+    }
 }
 
+// Wide container for larger screens - better for schedules, tables, etc.
+.container-wide {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+
+    @media (min-width: 768px) {
+        padding: 0 $spacing-lg;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 0 $spacing-xl;
+    }
+
+    @media (min-width: 1440px) {
+        max-width: 1800px;
+    }
+}
+
+// Fluid container for full-width content
 .container-fluid {
     width: 100%;
-    padding: 0 $spacing-lg;
+    padding: 0 $spacing-md;
+
+    @media (min-width: 768px) {
+        padding: 0 $spacing-lg;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 0 $spacing-xl;
+    }
 }
 
 // Fix z-index for PrimeNG datepicker overlay to appear above dialogs

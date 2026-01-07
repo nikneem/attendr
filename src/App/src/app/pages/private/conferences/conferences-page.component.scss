@@ -1,21 +1,32 @@
 .conferences-page {
-    padding: 2rem;
+    padding: 1rem 0;
 
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
+    @media (min-width: 768px) {
+        padding: 2rem 0;
     }
+
+    // Container now uses global styles with responsive padding
 
     .header-section {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        @media (min-width: 768px) {
+            margin-bottom: 2rem;
+        }
 
         h1 {
             margin: 0;
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 600;
+
+            @media (min-width: 768px) {
+                font-size: 2rem;
+            }
         }
     }
 
@@ -41,8 +52,18 @@
 
     .conferences-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+
+        @media (min-width: 768px) {
+            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        }
+
+        @media (min-width: 1440px) {
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
 
         ::ng-deep .conference-card {
             height: 100%;
@@ -96,13 +117,6 @@
         .conference-content {
             padding: 1.25rem;
 
-            .conference-title {
-                margin: 0 0 1rem 0;
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: var(--p-surface-900);
-            }
-
             .conference-details {
                 display: flex;
                 flex-direction: column;
@@ -112,12 +126,12 @@
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
-                    color: var(--p-surface-600);
+                    color: var(--text-color);
                     font-size: 0.9rem;
 
                     i {
                         font-size: 0.875rem;
-                        color: var(--p-primary-500);
+                        color: var(--primary-color);
                     }
                 }
             }

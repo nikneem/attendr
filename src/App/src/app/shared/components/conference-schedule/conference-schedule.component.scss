@@ -4,10 +4,32 @@
     width: 100%;
     overflow-x: auto;
     overflow-y: visible;
+
+    // Add subtle scrollbar styling
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--surface-ground);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--surface-border);
+        border-radius: 4px;
+
+        &:hover {
+            background: var(--text-color-secondary);
+        }
+    }
 }
 
 .schedule-day {
-    min-width: 1200px;
+    min-width: 1000px;
+
+    @media (min-width: 1440px) {
+        min-width: 1200px;
+    }
 }
 
 .timeline-container {

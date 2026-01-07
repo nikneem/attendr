@@ -1,16 +1,20 @@
 <div class="conference-details-page">
+    @if (loading) {
     <div class="container">
-        @if (loading) {
         <div class="loading-container">
             <p-progressSpinner />
             <p>Loading conference details...</p>
         </div>
-        } @else if (error) {
+    </div>
+    } @else if (error) {
+    <div class="container">
         <div class="error-container">
             <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
             <p>{{ error }}</p>
         </div>
-        } @else if (conference) {
+    </div>
+    } @else if (conference) {
+    <div class="container">
         <div class="conference-header">
             <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" (click)="openEditDialog()"
                 pTooltip="Edit conference" class="edit-button" />
@@ -71,7 +75,9 @@
                 }
             </div>
         </div>
+    </div>
 
+    <div class="container-wide">
         <div class="conference-sections">
             <p-card styleClass="section-card">
                 <ng-template pTemplate="header">
@@ -93,11 +99,11 @@
                 <attn-speaker-tiles [speakers]="conference.speakers" />
             </p-card>
         </div>
-
-        <p-dialog header="Edit Conference" [(visible)]="showEditDialog" [modal]="true"
-            [style]="{ width: '90vw', 'max-width': '600px' }" [draggable]="false" [resizable]="false">
-            <attn-edit-conference [conference]="conference" (conferenceUpdated)="onConferenceUpdated()" />
-        </p-dialog>
-        }
     </div>
+
+    <p-dialog header="Edit Conference" [(visible)]="showEditDialog" [modal]="true"
+        [style]="{ width: '90vw', 'max-width': '600px' }" [draggable]="false" [resizable]="false">
+        <attn-edit-conference [conference]="conference" (conferenceUpdated)="onConferenceUpdated()" />
+    </p-dialog>
+    }
 </div>

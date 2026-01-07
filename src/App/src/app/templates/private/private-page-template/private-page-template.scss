@@ -15,10 +15,18 @@
         background-color: #1a1a1a;
         border: 1px solid $border-dark;
         border-radius: 0;
-        padding: 0 $spacing-lg;
+        padding: 0 $spacing-md;
         min-height: 64px;
         display: flex;
         align-items: center;
+
+        @media (min-width: 768px) {
+            padding: 0 $spacing-lg;
+        }
+
+        @media (min-width: 1024px) {
+            padding: 0 $spacing-xl;
+        }
 
         .brand {
             display: inline-flex;
@@ -131,6 +139,9 @@
     }
 
     .content {
-        padding: $spacing-xl;
+        padding: 0;
+
+        // Remove extra padding since containers now handle their own responsive padding
+        // This allows content to flow naturally to the edges
     }
 }

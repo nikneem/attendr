@@ -93,6 +93,12 @@
 .unfollow-btn {
     margin-top: 0.5rem;
     width: 100%;
+    color: vars.$accent-error !important;
+    border-color: vars.$accent-error !important;
+
+    &:hover {
+        background-color: rgba(vars.$accent-error, 0.1) !important;
+    }
 }
 
 .meta-row {
