@@ -18,9 +18,6 @@ param containerAppsEnvironmentName string
 @description('The container image to deploy')
 param containerImage string
 
-@description('The container image tag')
-param containerImageTag string = 'latest'
-
 @description('App Configuration endpoint')
 param appConfigurationEndpoint string
 
@@ -68,7 +65,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       containers: [
         {
           name: 'profiles-api'
-          image: '${containerImage}:${containerImageTag}'
+          image: containerImage
           resources: {
             cpu: json('0.25')
             memory: '0.5Gi'

@@ -24,9 +24,6 @@ param landingzone object = {
 @description('The container image to deploy')
 param containerImage string
 
-@description('The container image tag')
-param containerImageTag string = 'latest'
-
 var resourceGroupName = 'rg-${baseName}-profiles-${environmentName}'
 
 // Deploy Resource Group for Profiles service
@@ -51,7 +48,6 @@ module profilesApp './modules/container-app.bicep' = {
     landingZoneResourceGroupName: landingzone.resourceGroupName
     containerAppsEnvironmentName: landingzone.containerAppsEnvironmentName
     containerImage: containerImage
-    containerImageTag: containerImageTag
     appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
     applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
   }

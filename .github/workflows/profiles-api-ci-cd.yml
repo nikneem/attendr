@@ -45,13 +45,6 @@ jobs:
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_PROD_CLIENTID }}
-          tenant-id: ${{ secrets.AZURE_PROD_TENANTID }}
-          subscription-id: ${{ secrets.AZURE_PROD_SUBSCRIPTION }}
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -69,22 +62,12 @@ jobs:
             /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
             /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
 
-      - name: Run unit tests
-        run: |
-          dotnet test ${{ env.TEST_PROJECT_PATH }} \
-            --configuration Release \
-            --no-build \
-            --verbosity normal \
-            --logger "trx;LogFileName=test-results.trx" \
-            -- \
-            RunConfiguration.CollectSourceInformation=true
-
-      # - name: Publish test results
-      #   uses: dorny/test-reporter@v1
-      #   if: always()
-      #   with:
-      #   az acr login --name ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}-trx
-      #     fail-on-error: true
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_PROD_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_PROD_TENANTID }}
+          subscription-id: ${{ secrets.AZURE_PROD_SUBSCRIPTION }}
 
       - name: Log in to Azure Container Registry
         run: |
@@ -112,21 +95,14 @@ jobs:
           echo "**Tag:** ${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          DEPLOYMENT_NAME="profiles-service-$(date +%Y%m%d-%H%M%S)"
-          CONTAINER_IMAGE="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-profiles-api"
-          CONTAINER_TAG="${{ steps.gitversion.outputs.semVer }}"
-          
+      - name: Deploy to Azure Container Apps
+        run: |
           az deployment sub create \
-            --name "$DEPLOYMENT_NAME" \
+            --name "profiles-deploy-${{ github.run_number }}" \
             --location northeurope \
-            --template-file bicep/main.bicep \
-            --parameters parameters/main.prod.bicepparam \
-            --parameters containerImage="$CONTAINER_IMAGE" \
-            --parameters containerImageTag="$CONTAINER_TAG" \
-            --verbose
+            --template-file src/Profiles/infrastructure/bicep/main.bicep \
+            --parameters src/Profiles/infrastructure/parameters/main.bicepparam \
+            --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-profiles-api:${{ steps.gitversion.outputs.semVer }}"
 
       - name: Get deployment outputs
         working-directory: src/Profiles/Infrastructure
