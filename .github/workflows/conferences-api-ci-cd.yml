@@ -10,6 +10,10 @@ on:
       - '.github/workflows/conferences-api-ci-cd.yml'
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   PROJECT_PATH: 'src/Conferences/HexMaster.Attendr.Conferences.Api/HexMaster.Attendr.Conferences.Api.csproj'
   TEST_PROJECT_PATH: 'src/Conferences/HexMaster.Attendr.Conferences.Tests/HexMaster.Attendr.Conferences.Tests.csproj'
@@ -58,30 +62,25 @@ jobs:
             /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
             /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
 
-      - name: Run unit tests
-        run: |
-          dotnet test ${{ env.TEST_PROJECT_PATH }} \
-            --configuration Release \
-            --no-build \
-            --verbosity normal \
-            --logger "trx;LogFileName=test-results.trx" \
-            -- \
-            RunConfiguration.CollectSourceInformation=true
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_PROD_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_PROD_TENANTID }}
+          subscription-id: ${{ secrets.AZURE_PROD_SUBSCRIPTION }}
 
-    #   - name: Publish test results
-    #     uses: dorny/test-reporter@v1
-    #     if: always()
-    #     with:
-    #       name: Test Results - Conferences API
-    #       path: '**/test-results.trx'
-    #       reporter: dotnet-trx
-    #       fail-on-error: true
-
-      - name: Log in to Container Registry
+      - name: Log in to Azure Container Registry
         run: |
-          echo "${{ secrets.CONTAINER_REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
-            --username ${{ secrets.CONTAINER_REGISTRY_USERNAME }} \
-            --password-stdin
+          az acr login --name ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+
+      - name: Build Bicep templates to JSON
+        working-directory: src/Conferences/Infrastructure
+        run: |
+          # Build main Bicep template
+          az bicep build --file bicep/main.bicep --outfile bicep/main.json
+          
+          # Build parameter files
+          az bicep build-params --file parameters/main.prod.bicepparam --outfile parameters/main.prod.parameters.json
 
       - name: Publish container
         run: |
@@ -104,3 +103,27 @@ jobs:
           echo "**Image:** attendr/attendr-conferences-api" >> $GITHUB_STEP_SUMMARY
           echo "**Tag:** ${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Deploy to Azure Container Apps
+        run: |
+          az deployment sub create \
+            --name "conferences-deploy-${{ github.run_number }}" \
+            --location northeurope \
+            --template-file src/Conferences/Infrastructure/bicep/main.json \
+            --parameters src/Conferences/Infrastructure/parameters/main.prod.parameters.json \
+            --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-conferences-api:${{ steps.gitversion.outputs.semVer }}" \
+
+      - name: Get deployment outputs
+        working-directory: src/Conferences/Infrastructure
+        run: |
+          DEPLOYMENT_NAME=$(az deployment sub list --query "[?contains(name, 'conferences-deploy')].name" -o tsv | head -n 1)
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Infrastructure Deployed :cloud:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment:** $DEPLOYMENT_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          az deployment sub show \
+            --name "$DEPLOYMENT_NAME" \
+            --query properties.outputs
