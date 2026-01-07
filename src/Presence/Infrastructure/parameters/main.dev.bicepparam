@@ -2,11 +2,11 @@ using '../bicep/main.bicep'
 
 param environmentName = 'dev'
 param location = 'northeurope'
-param baseName = 'attendr-profiles'
+param baseName = 'attendr-presence'
 param tags = {
   Environment: 'Development'
   Application: 'Attendr'
-  Service: 'Profiles'
+  Service: 'Presence'
   ManagedBy: 'Bicep'
 }
 
@@ -20,4 +20,4 @@ param landingzone = {
 }
 
 // Container image details
-param containerImage = 'your-registry.azurecr.io/attendr/attendr-profiles-api'
+param containerImage = 'your-registry.azurecr.io/attendr/attendr-presence-api'

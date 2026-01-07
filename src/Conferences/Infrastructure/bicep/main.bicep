@@ -26,7 +26,7 @@ param containerImage string
 
 var resourceGroupName = 'rg-${baseName}-${environmentName}'
 
-// Deploy Resource Group for Profiles service
+// Deploy Resource Group for Conferences service
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: resourceGroupName
   location: location
@@ -38,11 +38,11 @@ resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01
   name: landingzone.resourceGroupName
 }
 
-// Deploy the Profiles container app
-module profilesApp './modules/container-app.bicep' = {
+// Deploy the Conferences container app
+module conferencesApp './modules/container-app.bicep' = {
   scope: resourceGroup
   params: {
-    name: 'ca-${baseName}-profiles-${environmentName}'
+    name: 'ca-${baseName}-conferences-${environmentName}'
     location: location
     tags: tags
     landingZoneResourceGroupName: landingzone.resourceGroupName
@@ -73,13 +73,13 @@ module appInsightsConnectionString './modules/get-app-insights.bicep' = {
 module permissions './modules/role-assignments.bicep' = {
   scope: landingZoneResourceGroup
   params: {
-    principalId: profilesApp.outputs.managedIdentityPrincipalId
+    principalId: conferencesApp.outputs.managedIdentityPrincipalId
     appConfigurationName: landingzone.appConfigurationName
     keyVaultName: landingzone.keyVaultName
   }
 }
 
 output resourceGroupName string = resourceGroup.name
-output containerAppName string = profilesApp.outputs.name
-output containerAppFqdn string = profilesApp.outputs.fqdn
-output managedIdentityPrincipalId string = profilesApp.outputs.managedIdentityPrincipalId
+output containerAppName string = conferencesApp.outputs.name
+output containerAppFqdn string = conferencesApp.outputs.fqdn
+output managedIdentityPrincipalId string = conferencesApp.outputs.managedIdentityPrincipalId
