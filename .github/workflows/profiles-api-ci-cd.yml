@@ -101,7 +101,7 @@ jobs:
             --name "profiles-deploy-${{ github.run_number }}" \
             --location northeurope \
             --template-file src/Profiles/infrastructure/bicep/main.bicep \
-            --parameters src/Profiles/infrastructure/parameters/main.bicepparam \
+            --parameters src/Profiles/infrastructure/parameters/main.prod.bicepparam \
             --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-profiles-api:${{ steps.gitversion.outputs.semVer }}"
 
       - name: Get deployment outputs
