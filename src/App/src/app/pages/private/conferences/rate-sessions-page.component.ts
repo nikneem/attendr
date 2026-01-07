@@ -81,11 +81,21 @@ export class RateSessionsPageComponent implements OnInit {
                     const hasError = cards.some(c => c.isError);
                     const allEmpty = cards.every(c => c.isEmpty);
 
+                    console.log('Initial cards loaded:', {
+                        total: cards.length,
+                        hasValidCard,
+                        hasError,
+                        allEmpty,
+                        cards: cards.map(c => ({ isEmpty: c.isEmpty, isError: c.isError, hasPresentation: !!c.presentation }))
+                    });
+
                     if (!hasValidCard && (hasError || allEmpty)) {
                         // Show only the first error or empty card as the top card
                         const topCard = cards.find(c => c.isError) || cards.find(c => c.isEmpty)!;
+                        console.log('Showing single card (error or empty)');
                         this.cards.set([topCard]);
                     } else {
+                        console.log('Showing all cards');
                         this.cards.set(cards);
                     }
 
@@ -99,16 +109,29 @@ export class RateSessionsPageComponent implements OnInit {
         return new Promise((resolve) => {
             this.presenceService.getPresentationToRate(this.conferenceId()).subscribe({
                 next: (presentation) => {
-                    resolve({
-                        presentation,
-                        rating: null,
-                        isEmpty: false,
-                        isError: false,
-                    });
+                    // Check if presentation is null or undefined (204 response)
+                    if (!presentation) {
+                        console.log('Empty response received (204) - creating empty state card');
+                        resolve({
+                            presentation: null,
+                            rating: null,
+                            isEmpty: true,
+                            isError: false,
+                        });
+                    } else {
+                        console.log('Valid presentation received:', presentation.title);
+                        resolve({
+                            presentation,
+                            rating: null,
+                            isEmpty: false,
+                            isError: false,
+                        });
+                    }
                 },
                 error: (err) => {
                     if (err.status === 204) {
                         // No more presentations - return empty state card
+                        console.log('204 error received - creating empty state card');
                         resolve({
                             presentation: null,
                             rating: null,
@@ -133,7 +156,16 @@ export class RateSessionsPageComponent implements OnInit {
 
     private addCardToBottom(card: CardInStack): void {
         const currentCards = this.cards();
-        this.cards.set([...currentCards, card]);
+
+        // If we already have 3 cards, replace the bottom one (index 2)
+        if (currentCards.length >= 3) {
+            const newCards = [...currentCards];
+            newCards[2] = card;
+            this.cards.set(newCards);
+        } else {
+            // Otherwise, just add to the bottom
+            this.cards.set([...currentCards, card]);
+        }
     }
 
     updateRating(index: number, rating: number | null): void {
