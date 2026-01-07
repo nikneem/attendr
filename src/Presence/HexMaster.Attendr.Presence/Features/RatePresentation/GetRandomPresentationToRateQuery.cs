@@ -1,8 +1,9 @@
 namespace HexMaster.Attendr.Presence.Features.RatePresentation;
 
 /// <summary>
-/// Query to retrieve a random unrated presentation for a profile at a specific conference.
+/// Query to retrieve an unrated presentation at a specific index.
 /// </summary>
 /// <param name="ProfileId">The unique identifier of the profile.</param>
 /// <param name="ConferenceId">The unique identifier of the conference.</param>
-public sealed record GetRandomPresentationToRateQuery(Guid ProfileId, Guid ConferenceId);
+/// <param name="Index">The index (0, 1, or 2) indicating which unrated presentation to retrieve.</param>
+public sealed record GetRandomPresentationToRateQuery(Guid ProfileId, Guid ConferenceId, int Index);

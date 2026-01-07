@@ -9,8 +9,8 @@ using OpenTelemetry.Trace;
 namespace HexMaster.Attendr.Presence.Features.RatePresentation;
 
 /// <summary>
-/// Query handler to retrieve a random unrated presentation for rating.
-/// Helps users discover presentations they haven't rated yet.
+/// Query handler to retrieve an unrated presentation at a specific index.
+/// Uses deterministic ordering by presentation ID to prevent duplicates.
 /// </summary>
 public sealed class GetRandomPresentationToRateQueryHandler : IQueryHandler<GetRandomPresentationToRateQuery, PresentationToRateDto?>
 {
@@ -30,16 +30,18 @@ public sealed class GetRandomPresentationToRateQueryHandler : IQueryHandler<GetR
 
     public async Task<PresentationToRateDto?> Handle(GetRandomPresentationToRateQuery query, CancellationToken cancellationToken = default)
     {
-        using var activity = ActivitySources.Presence.StartActivity("GetRandomPresentationToRate", ActivityKind.Internal);
+        using var activity = ActivitySources.Presence.StartActivity("GetPresentationToRate", ActivityKind.Internal);
         activity?.SetTag("presence.profile_id", query.ProfileId);
         activity?.SetTag("presence.conference_id", query.ConferenceId);
+        activity?.SetTag("presence.index", query.Index);
 
         var stopwatch = Stopwatch.StartNew();
 
         try
         {
             _logger.LogInformation(
-                "Getting random unrated presentation for profile {ProfileId} and conference {ConferenceId}",
+                "Getting unrated presentation at index {Index} for profile {ProfileId} and conference {ConferenceId}",
+                query.Index,
                 query.ProfileId,
                 query.ConferenceId);
 
@@ -59,40 +61,60 @@ public sealed class GetRandomPresentationToRateQueryHandler : IQueryHandler<GetR
                     query.ConferenceId);
 
                 _metrics.RecordPresentationQueried(found: false, unratedCount: 0);
-                _metrics.RecordOperationDuration("GetRandomPresentationToRate", stopwatch.Elapsed.TotalMilliseconds, true);
+                _metrics.RecordOperationDuration("GetPresentationToRate", stopwatch.Elapsed.TotalMilliseconds, true);
                 return null;
             }
 
-            // Select random presentation
-            var random = new Random();
-            var randomPresentation = unratedPresentations.ElementAt(random.Next(unratedPresentations.Count));
+            // Order presentations by PresentationId for predictable ordering
+            var orderedPresentations = unratedPresentations
+                .OrderBy(p => p.PresentationId)
+                .ToList();
 
-            activity?.SetTag("presence.selected_presentation_id", randomPresentation.PresentationId);
+            // Check if the requested index exists
+            if (query.Index >= orderedPresentations.Count)
+            {
+                activity?.SetStatus(ActivityStatusCode.Ok);
+                _logger.LogInformation(
+                    "Index {Index} is out of range. Only {Count} unrated presentations available for profile {ProfileId} and conference {ConferenceId}",
+                    query.Index,
+                    orderedPresentations.Count,
+                    query.ProfileId,
+                    query.ConferenceId);
+
+                _metrics.RecordPresentationQueried(found: false, unratedCount: orderedPresentations.Count);
+                _metrics.RecordOperationDuration("GetPresentationToRate", stopwatch.Elapsed.TotalMilliseconds, true);
+                return null;
+            }
+
+            // Select presentation at the specified index
+            var selectedPresentation = orderedPresentations[query.Index];
+
+            activity?.SetTag("presence.selected_presentation_id", selectedPresentation.PresentationId);
             activity?.SetStatus(ActivityStatusCode.Ok);
 
             _metrics.RecordPresentationQueried(found: true, unratedCount: unratedPresentations.Count);
-            _metrics.RecordOperationDuration("GetRandomPresentationToRate", stopwatch.Elapsed.TotalMilliseconds, true);
+            _metrics.RecordOperationDuration("GetPresentationToRate", stopwatch.Elapsed.TotalMilliseconds, true);
 
-            var speakers = randomPresentation.Speakers
+            var speakers = selectedPresentation.Speakers
                 .Select(s => new PresentationSpeakerDto(s.SpeakerId, s.Name, s.ProfilePictureUrl))
                 .ToList()
                 .AsReadOnly();
 
             return new PresentationToRateDto(
-                randomPresentation.PresentationId,
-                randomPresentation.Title,
-                randomPresentation.Abstract,
-                randomPresentation.Room,
-                randomPresentation.StartDateTime,
-                randomPresentation.EndDateTime,
+                selectedPresentation.PresentationId,
+                selectedPresentation.Title,
+                selectedPresentation.Abstract,
+                selectedPresentation.Room,
+                selectedPresentation.StartDateTime,
+                selectedPresentation.EndDateTime,
                 speakers);
         }
         catch (Exception ex)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             activity?.AddException(ex);
-            _metrics.RecordOperationFailed("GetRandomPresentationToRate", ex.GetType().Name);
-            _metrics.RecordOperationDuration("GetRandomPresentationToRate", stopwatch.Elapsed.TotalMilliseconds, false);
+            _metrics.RecordOperationFailed("GetPresentationToRate", ex.GetType().Name);
+            _metrics.RecordOperationDuration("GetPresentationToRate", stopwatch.Elapsed.TotalMilliseconds, false);
             throw;
         }
     }

@@ -44,10 +44,9 @@ public static class PresenceEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        group.MapGet("/{conferenceId:guid}/rate", GetRandomPresentationToRate)
-            .WithName("GetRandomPresentationToRate")
+        group.MapGet("/{conferenceId:guid}/rate", GetPresentationToRate)
+            .WithName("GetPresentationToRate")
             .Produces<PresentationToRateDto>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
@@ -103,21 +102,28 @@ public static class PresenceEndpoints
         }
     }
 
-    private static async Task<IResult> GetRandomPresentationToRate(
+    private static async Task<IResult> GetPresentationToRate(
         Guid conferenceId,
+        int index,
         HttpContext context,
         IQueryHandler<GetRandomPresentationToRateQuery, PresentationToRateDto?> handler,
         IProfilesIntegrationService profilesIntegration,
         ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
-        var logger = loggerFactory.CreateLogger("GetRandomPresentationToRateEndpoint");
+        var logger = loggerFactory.CreateLogger("GetPresentationToRateEndpoint");
         var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                      ?? context.User.FindFirst("sub")?.Value;
 
         if (string.IsNullOrWhiteSpace(subjectId))
         {
             return Results.Unauthorized();
+        }
+
+        // Validate index parameter
+        if (index < 0 || index > 2)
+        {
+            return Results.BadRequest(new { error = "Index must be between 0 and 2" });
         }
 
         try
@@ -136,19 +142,19 @@ public static class PresenceEndpoints
             }
 
             var result = await handler.Handle(
-                new GetRandomPresentationToRateQuery(profileId, conferenceId),
+                new GetRandomPresentationToRateQuery(profileId, conferenceId, index),
                 cancellationToken);
 
             if (result == null)
             {
-                return Results.NoContent();
+                return Results.NotFound(new { error = "No presentation found at the requested index" });
             }
 
             return Results.Ok(result);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error getting random presentation to rate for conference {ConferenceId}", conferenceId);
+            logger.LogError(ex, "Error getting presentation to rate for conference {ConferenceId} at index {Index}", conferenceId, index);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

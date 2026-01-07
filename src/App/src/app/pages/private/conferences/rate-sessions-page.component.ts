@@ -65,15 +65,15 @@ export class RateSessionsPageComponent implements OnInit {
         this.loading.set(true);
         this.error.set(null);
 
-        // Load 3 cards initially - make sequential requests to server
-        this.fetchCardWithHandling().then((card1) => {
+        // Load 3 cards initially with indices 0, 1, 2 to prevent duplicates
+        this.fetchCardWithHandling(0).then((card1) => {
             const cards = [card1];
 
             // If first card is error or empty, still try to load more
-            this.fetchCardWithHandling().then((card2) => {
+            this.fetchCardWithHandling(1).then((card2) => {
                 cards.push(card2);
 
-                this.fetchCardWithHandling().then((card3) => {
+                this.fetchCardWithHandling(2).then((card3) => {
                     cards.push(card3);
 
                     // Check if we have at least one valid card or if we should show error/empty
@@ -105,13 +105,13 @@ export class RateSessionsPageComponent implements OnInit {
         });
     }
 
-    private fetchCardWithHandling(): Promise<CardInStack> {
+    private fetchCardWithHandling(index: number): Promise<CardInStack> {
         return new Promise((resolve) => {
-            this.presenceService.getPresentationToRate(this.conferenceId()).subscribe({
+            this.presenceService.getPresentationToRate(this.conferenceId(), index).subscribe({
                 next: (presentation) => {
-                    // Check if presentation is null or undefined (204 response)
+                    // Check if presentation is null or undefined (empty response)
                     if (!presentation) {
-                        console.log('Empty response received (204) - creating empty state card');
+                        console.log(`Empty response received at index ${index} - creating empty state card`);
                         resolve({
                             presentation: null,
                             rating: null,
@@ -119,7 +119,7 @@ export class RateSessionsPageComponent implements OnInit {
                             isError: false,
                         });
                     } else {
-                        console.log('Valid presentation received:', presentation.title);
+                        console.log(`Valid presentation received at index ${index}:`, presentation.title);
                         resolve({
                             presentation,
                             rating: null,
@@ -129,9 +129,9 @@ export class RateSessionsPageComponent implements OnInit {
                     }
                 },
                 error: (err) => {
-                    if (err.status === 204) {
-                        // No more presentations - return empty state card
-                        console.log('204 error received - creating empty state card');
+                    if (err.status === 404) {
+                        // No presentation found at this index - return empty state card
+                        console.log(`404 received at index ${index} - creating empty state card`);
                         resolve({
                             presentation: null,
                             rating: null,
@@ -140,7 +140,7 @@ export class RateSessionsPageComponent implements OnInit {
                         });
                     } else {
                         // Error occurred - return error card
-                        console.error('Error loading presentation:', err);
+                        console.error(`Error loading presentation at index ${index}:`, err);
                         resolve({
                             presentation: null,
                             rating: null,
@@ -286,8 +286,8 @@ export class RateSessionsPageComponent implements OnInit {
                             this.isAnimating.set(false);
                             this.fetchingNewCard.set(true);
 
-                            // Fetch a new card for the bottom
-                            this.fetchCardWithHandling().then((newCard) => {
+                            // Fetch a new card for the bottom position (index 2)
+                            this.fetchCardWithHandling(2).then((newCard) => {
                                 this.addCardToBottom(newCard);
                                 this.fetchingNewCard.set(false);
                             });

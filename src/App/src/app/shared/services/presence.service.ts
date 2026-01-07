@@ -24,8 +24,8 @@ export class PresenceService {
         return this.http.delete<void>(`${this.apiUrl}/${conferenceId}`);
     }
 
-    getPresentationToRate(conferenceId: string): Observable<PresentationToRateDto> {
-        return this.http.get<PresentationToRateDto>(`${this.apiUrl}/${conferenceId}/rate`);
+    getPresentationToRate(conferenceId: string, index: number): Observable<PresentationToRateDto> {
+        return this.http.get<PresentationToRateDto>(`${this.apiUrl}/${conferenceId}/rate?index=${index}`);
     }
 
     ratePresentation(conferenceId: string, presentationId: string, rating: number | null, isFavorite: boolean): Observable<void> {
