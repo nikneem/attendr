@@ -1,0 +1,98 @@
+name: Deploy Azure Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Infrastructure/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: Build and Transpile Bicep
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Azure CLI
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_PROD_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_PROD_TENANTID }}
+          subscription-id: ${{ secrets.AZURE_PROD_SUBSCRIPTION }}
+
+      - name: Build Bicep files
+        working-directory: Infrastructure
+        run: |
+          # Build main template
+          az bicep build --file bicep/main.bicep --outfile compiled/main.json
+          
+          # Build parameter files
+          az bicep build-params --file parameters/main.prod.bicepparam --outfile compiled/main.prod.parameters.json
+          az bicep build-params --file parameters/main.dev.bicepparam --outfile compiled/main.dev.parameters.json
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bicep-compiled
+          path: Infrastructure/compiled/
+          retention-days: 30
+
+  deploy:
+    name: Deploy to Azure
+    needs: build
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'prod' }}
+    
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: bicep-compiled
+          path: compiled
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_PROD_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_PROD_TENANDID }}
+          subscription-id: ${{ secrets.AZURE_PROD_SUBSCRIPTION }}
+
+      - name: Deploy to Azure
+        id: deploy
+        run: |
+          ENVIRONMENT="${{ github.event.inputs.environment || 'prod' }}"
+          DEPLOYMENT_NAME="attendr-infra-${ENVIRONMENT}-$(date +%Y%m%d-%H%M%S)"
+          
+          az deployment sub create \
+            --name "$DEPLOYMENT_NAME" \
+            --location westeurope \
+            --template-file compiled/main.json \
+            --parameters compiled/main.${ENVIRONMENT}.parameters.json \
+            --verbose
+
+      - name: Get deployment outputs
+        run: |
+          ENVIRONMENT="${{ github.event.inputs.environment || 'prod' }}"
+          DEPLOYMENT_NAME=$(az deployment sub list --query "[?contains(name, 'attendr-infra-${ENVIRONMENT}')].name" -o tsv | head -n 1)
+          
+          echo "Getting outputs from deployment: $DEPLOYMENT_NAME"
+          az deployment sub show \
+            --name "$DEPLOYMENT_NAME" \
+            --query properties.outputs

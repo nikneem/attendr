@@ -1,0 +1,6 @@
+# Ignore compiled ARM templates (generated during build)
+compiled/
+*.json
+
+# Ignore Azure CLI cache
+.azure/
