@@ -1,22 +1,13 @@
 using System.Security.Claims;
-using HexMaster.Attendr.Core.CommandHandlers;
-using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
-using HexMaster.Attendr.Groups.ApproveJoinRequest;
-using HexMaster.Attendr.Groups.DenyJoinRequest;
 using HexMaster.Attendr.Groups.DomainModels;
-using HexMaster.Attendr.Groups.FollowConference;
-using HexMaster.Attendr.Groups.GetGroupDetails;
-using HexMaster.Attendr.Groups.GetGroupFollowedConferences;
-using HexMaster.Attendr.Groups.GetMyGroups;
-using HexMaster.Attendr.Groups.JoinGroup;
-using HexMaster.Attendr.Groups.ListGroups;
-using HexMaster.Attendr.Groups.RemoveMember;
-using HexMaster.Attendr.Groups.UnfollowConference;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
 
+/// <summary>
+/// Maps all group-related endpoints using a feature-sliced architecture.
+/// </summary>
 public static class GroupsEndpoints
 {
     public static IEndpointRouteBuilder MapGroupsEndpoints(this IEndpointRouteBuilder app)
@@ -25,6 +16,7 @@ public static class GroupsEndpoints
             .WithName("Groups")
             .RequireAuthorization();
 
+        // Map group creation endpoint
         group.MapPost("/", CreateGroup)
             .WithName("CreateGroup")
             .Produces<CreateGroupResult>(StatusCodes.Status201Created)
@@ -32,80 +24,16 @@ public static class GroupsEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        group.MapGet("/my-groups", GetMyGroups)
-            .WithName("GetMyGroups")
-            .Produces<IReadOnlyCollection<MyGroupDto>>(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound);
+        // Map query endpoints (list, get details, my groups)
+        group.MapGroupsQueryEndpoints();
 
-        group.MapGet("/", ListGroups)
-            .WithName("ListGroups")
-            .Produces<ListGroupsResult>(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound);
+        // Map member management endpoints (join, remove, approve, deny)
+        group.MapGroupsMemberEndpoints();
 
-        group.MapGet("/{id:guid}", GetGroupDetails)
-            .WithName("GetGroupDetails")
-            .Produces<GroupDetailsDto>(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status401Unauthorized);
-
-        group.MapPost("/{id:guid}/members", JoinGroup)
-            .WithName("JoinGroup")
-            .Produces(StatusCodes.Status204NoContent)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
-        group.MapDelete("/{id:guid}/members/{memberId:guid}", RemoveMember)
-            .WithName("RemoveMember")
-            .Produces(StatusCodes.Status204NoContent)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
-        group.MapPost("/{id:guid}/join-requests/{profileId:guid}/approve", ApproveJoinRequest)
-            .WithName("ApproveJoinRequest")
-            .Produces(StatusCodes.Status204NoContent)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
-        group.MapPost("/{id:guid}/join-requests/{profileId:guid}/deny", DenyJoinRequest)
-            .WithName("DenyJoinRequest")
-            .Produces(StatusCodes.Status204NoContent)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
+        // Map conference-related endpoints
         var conferencesGroup = group.MapGroup("/{id:guid}/conferences")
             .WithName("GroupConferences");
-
-        conferencesGroup.MapPost("/", FollowConference)
-            .WithName("FollowConference")
-            .Produces(StatusCodes.Status204NoContent)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
-
-        conferencesGroup.MapDelete("/{conferenceId:guid}", UnfollowConference)
-            .WithName("UnfollowConference")
-            .Produces(StatusCodes.Status204NoContent)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
-
-        conferencesGroup.MapGet("/", GetFollowedConferences)
-            .WithName("GetFollowedConferences")
-            .Produces<IReadOnlyCollection<GetGroupDetails.FollowedConferenceDto>>(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+        conferencesGroup.MapGroupsConferenceEndpoints();
 
         return app;
     }
@@ -117,19 +45,16 @@ public static class GroupsEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        // Validate input
         if (string.IsNullOrWhiteSpace(request.Name))
         {
             return Results.BadRequest(new { error = "Name is required" });
         }
 
-        // Validate name contains only alphanumeric characters and spaces
         if (!System.Text.RegularExpressions.Regex.IsMatch(request.Name, @"^[a-zA-Z0-9\s]+$"))
         {
             return Results.BadRequest(new { error = "Name can only contain alphanumeric characters and spaces" });
         }
 
-        // Validate name length
         if (request.Name.Trim().Length < 3)
         {
             return Results.BadRequest(new { error = "Name must be at least 3 characters long" });
@@ -140,7 +65,6 @@ public static class GroupsEndpoints
             return Results.BadRequest(new { error = "Name must not exceed 100 characters" });
         }
 
-        // Extract SubjectId from JWT token
         var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
                      ?? user.FindFirst("sub")?.Value;
 
@@ -149,500 +73,22 @@ public static class GroupsEndpoints
             return Results.Unauthorized();
         }
 
-        try
+        var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+        if (profile is null)
         {
-            // Resolve the current user's profile
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            // Create the group with the current user as owner
-            var group = Group.Create(
-                request.Name.Trim(),
-                Guid.Parse(profile.ProfileId),
-                profile.DisplayName);
-
-            // Persist the group
-            await repository.AddAsync(group, cancellationToken);
-
-            // Return created group details
-            var memberDtos = group.Members.Select(m => new GroupMemberDto(m.Id, m.Name, m.Role)).ToList();
-            var result = new CreateGroupResult(group.Id, group.Name, memberDtos);
-
-            return Results.Created($"/api/groups/{result.Id}", result);
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> GetMyGroups(
-        IProfilesIntegrationService profilesIntegration,
-        IQueryHandler<GetMyGroupsQuery, IReadOnlyCollection<MyGroupDto>> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        // Extract SubjectId from JWT token
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
+            return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
         }
 
-        try
-        {
-            // Resolve the current user's profile
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
+        var group = Group.Create(
+            request.Name.Trim(),
+            Guid.Parse(profile.ProfileId),
+            profile.DisplayName);
 
-            // Get user's groups
-            var query = new GetMyGroupsQuery(Guid.Parse(profile.ProfileId));
-            var groups = await handler.Handle(query, cancellationToken);
+        await repository.AddAsync(group, cancellationToken);
 
-            return Results.Ok(groups);
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
+        var memberDtos = group.Members.Select(m => new GroupMemberDto(m.Id, m.Name, m.Role)).ToList();
+        var result = new CreateGroupResult(group.Id, group.Name, memberDtos);
 
-    private static async Task<IResult> ListGroups(
-        IProfilesIntegrationService profilesIntegration,
-        IQueryHandler<ListGroupsQuery, ListGroupsResult> handler,
-        ClaimsPrincipal user,
-        string? searchQuery,
-        int? pageSize,
-        int? pageNumber,
-        CancellationToken cancellationToken)
-    {
-        // Extract SubjectId from JWT token
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            // Resolve the current user's profile
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            // Normalize pagination parameters
-            var normalizedPageSize = PaginationConstants.NormalizePageSize(pageSize);
-            var normalizedPageNumber = Math.Max(1, pageNumber ?? 1);
-
-            // Create and execute query
-            var query = new ListGroupsQuery(
-                Guid.Parse(profile.ProfileId),
-                searchQuery,
-                normalizedPageSize,
-                normalizedPageNumber);
-
-            var result = await handler.Handle(query, cancellationToken);
-
-            return Results.Ok(result);
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> GetGroupDetails(
-        Guid id,
-        IProfilesIntegrationService profilesIntegration,
-        IQueryHandler<GetGroupDetailsQuery, GroupDetailsDto?> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        // Extract SubjectId from JWT token
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            // Resolve the current user's profile
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            // Create and execute query
-            var query = new GetGroupDetailsQuery(id, Guid.Parse(profile.ProfileId));
-            var result = await handler.Handle(query, cancellationToken);
-
-            if (result is null)
-            {
-                return Results.NotFound(new { error = "Group not found." });
-            }
-
-            return Results.Ok(result);
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> JoinGroup(
-        Guid id,
-        IProfilesIntegrationService profilesIntegration,
-        ICommandHandler<JoinGroupCommand> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        // Extract SubjectId from JWT token
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            // Resolve the current user's profile
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            // Create and execute command
-            var command = new JoinGroupCommand(
-                id,
-                Guid.Parse(profile.ProfileId),
-                profile.DisplayName);
-
-            await handler.Handle(command, cancellationToken);
-
-            return Results.NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Results.BadRequest(new { error = ex.Message });
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> RemoveMember(
-        Guid id,
-        Guid memberId,
-        IProfilesIntegrationService profilesIntegration,
-        ICommandHandler<RemoveMemberCommand> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        // Extract SubjectId from JWT token
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            // Resolve the current user's profile
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            // Create and execute command
-            var command = new RemoveMemberCommand(
-                id,
-                memberId,
-                Guid.Parse(profile.ProfileId));
-
-            await handler.Handle(command, cancellationToken);
-
-            return Results.NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            // Check if it's a permission error
-            if (ex.Message.Contains("permission") || ex.Message.Contains("not a member"))
-            {
-                return Results.Problem(
-                    statusCode: StatusCodes.Status403Forbidden,
-                    detail: ex.Message);
-            }
-
-            return Results.BadRequest(new { error = ex.Message });
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> ApproveJoinRequest(
-        Guid id,
-        Guid profileId,
-        IProfilesIntegrationService profilesIntegration,
-        ICommandHandler<ApproveJoinRequestCommand> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        // Extract SubjectId from JWT token
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            // Resolve the current user's profile
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            // Create and execute command
-            var command = new ApproveJoinRequestCommand(
-                id,
-                profileId,
-                Guid.Parse(profile.ProfileId));
-
-            await handler.Handle(command, cancellationToken);
-
-            return Results.NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            // Check if it's a permission error
-            if (ex.Message.Contains("permission") || ex.Message.Contains("not a member"))
-            {
-                return Results.Problem(
-                    statusCode: StatusCodes.Status403Forbidden,
-                    detail: ex.Message);
-            }
-
-            return Results.BadRequest(new { error = ex.Message });
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> DenyJoinRequest(
-        Guid id,
-        Guid profileId,
-        IProfilesIntegrationService profilesIntegration,
-        ICommandHandler<DenyJoinRequestCommand> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        // Extract SubjectId from JWT token
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            // Resolve the current user's profile
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            // Create and execute command
-            var command = new DenyJoinRequestCommand(
-                id,
-                profileId,
-                Guid.Parse(profile.ProfileId));
-
-            await handler.Handle(command, cancellationToken);
-
-            return Results.NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            // Check if it's a permission error
-            if (ex.Message.Contains("permission") || ex.Message.Contains("not a member"))
-            {
-                return Results.Problem(
-                    statusCode: StatusCodes.Status403Forbidden,
-                    detail: ex.Message);
-            }
-
-            return Results.BadRequest(new { error = ex.Message });
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> FollowConference(
-        Guid id,
-        FollowConferenceRequest request,
-        IProfilesIntegrationService profilesIntegration,
-        ICommandHandler<FollowConferenceCommand> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            var command = new FollowConferenceCommand(
-                id,
-                request.ConferenceId,
-                Guid.Parse(profile.ProfileId));
-
-            await handler.Handle(command, cancellationToken);
-
-            return Results.NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            if (ex.Message.Contains("not a member"))
-            {
-                return Results.Problem(
-                    statusCode: StatusCodes.Status403Forbidden,
-                    detail: ex.Message);
-            }
-
-            return Results.BadRequest(new { error = ex.Message });
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> UnfollowConference(
-        Guid id,
-        Guid conferenceId,
-        IProfilesIntegrationService profilesIntegration,
-        ICommandHandler<UnfollowConferenceCommand> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            var command = new UnfollowConferenceCommand(
-                id,
-                conferenceId,
-                Guid.Parse(profile.ProfileId));
-
-            await handler.Handle(command, cancellationToken);
-
-            return Results.NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            if (ex.Message.Contains("not a member"))
-            {
-                return Results.Problem(
-                    statusCode: StatusCodes.Status403Forbidden,
-                    detail: ex.Message);
-            }
-
-            return Results.BadRequest(new { error = ex.Message });
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    private static async Task<IResult> GetFollowedConferences(
-        Guid id,
-        IProfilesIntegrationService profilesIntegration,
-        IQueryHandler<GetGroupFollowedConferencesQuery, IReadOnlyCollection<GetGroupDetails.FollowedConferenceDto>> handler,
-        ClaimsPrincipal user,
-        CancellationToken cancellationToken)
-    {
-        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? user.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(subjectId))
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
-            if (profile is null)
-            {
-                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
-            }
-
-            var query = new GetGroupFollowedConferencesQuery(id, Guid.Parse(profile.ProfileId));
-            var result = await handler.Handle(query, cancellationToken);
-
-            return Results.Ok(result);
-        }
-        catch (Exception)
-        {
-            return Results.StatusCode(StatusCodes.Status500InternalServerError);
-        }
+        return Results.Created($"/api/groups/{result.Id}", result);
     }
 }
