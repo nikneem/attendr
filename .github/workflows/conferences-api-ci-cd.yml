@@ -102,5 +102,5 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Registry:** ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** attendr/attendr-conferences-api" >> $GITHUB_STEP_SUMMARY
-          echo "**Tags:** ${{ steps.gitversion.outputs.semVer }}, latest" >> $GITHUB_STEP_SUMMARY
+          echo "**Tag:** ${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY
