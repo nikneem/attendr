@@ -13,7 +13,7 @@ param baseName string
 param tags object = {}
 
 var uniqueSuffix = uniqueString(resourceGroup().id)
-var keyVaultName = 'kv-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
+var keyVaultName = 'kv-${baseName}-${environmentName}'
 var appConfigName = 'appconfig-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
 var logAnalyticsName = 'log-${baseName}-${environmentName}'
 var appInsightsName = 'appi-${baseName}-${environmentName}'
