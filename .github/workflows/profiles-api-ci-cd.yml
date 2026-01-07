@@ -116,7 +116,7 @@ jobs:
       - name: Get deployment outputs
         working-directory: src/Profiles/Infrastructure
         run: |
-          DEPLOYMENT_NAME=$(az deployment sub list --query "[?contains(name, 'profiles-service')].name" -o tsv | head -n 1)
+          DEPLOYMENT_NAME=$(az deployment sub list --query "[?contains(name, 'profiles-deploy')].name" -o tsv | head -n 1)
           
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Infrastructure Deployed :cloud:" >> $GITHUB_STEP_SUMMARY
