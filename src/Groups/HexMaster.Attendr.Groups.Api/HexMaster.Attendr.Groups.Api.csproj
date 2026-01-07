@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ContainerImageName>attendr/attendr-groups-api</ContainerImageName>
+    <ContainerUser>app</ContainerUser>
   </PropertyGroup>
 
   <ItemGroup>
