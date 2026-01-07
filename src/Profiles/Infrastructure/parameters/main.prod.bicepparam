@@ -21,4 +21,3 @@ param landingzone = {
 
 // Container image details
 param containerImage = 'your-registry.azurecr.io/attendr/attendr-profiles-api'
-param containerImageTag = 'latest'

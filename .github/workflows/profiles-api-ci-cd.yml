@@ -73,6 +73,15 @@ jobs:
         run: |
           az acr login --name ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
 
+      - name: Build Bicep templates to JSON
+        working-directory: src/Profiles/infrastructure
+        run: |
+          # Build main Bicep template
+          az bicep build --file bicep/main.bicep --outfile bicep/main.json
+          
+          # Build parameter files
+          az bicep build-params --file parameters/main.prod.bicepparam --outfile parameters/main.prod.parameters.json
+
       - name: Publish container
         run: |
           dotnet publish ${{ env.PROJECT_PATH }} \
@@ -100,9 +109,9 @@ jobs:
           az deployment sub create \
             --name "profiles-deploy-${{ github.run_number }}" \
             --location northeurope \
-            --template-file src/Profiles/infrastructure/bicep/main.bicep \
-            --parameters src/Profiles/infrastructure/parameters/main.prod.bicepparam \
-            --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-profiles-api:${{ steps.gitversion.outputs.semVer }}"
+            --template-file src/Profiles/infrastructure/bicep/main.json \
+            --parameters src/Profiles/infrastructure/parameters/main.prod.parameters.json \
+            --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-profiles-api:${{ steps.gitversion.outputs.semVer }}" \
 
       - name: Get deployment outputs
         working-directory: src/Profiles/Infrastructure
