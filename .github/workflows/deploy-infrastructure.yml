@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'Infrastructure/**'
+      - '.github/workflows/deploy-infrastructure.yml'
   workflow_dispatch:
     inputs:
       environment:
@@ -82,7 +83,7 @@ jobs:
           
           az deployment sub create \
             --name "$DEPLOYMENT_NAME" \
-            --location westeurope \
+            --location northeurope \
             --template-file compiled/main.json \
             --parameters compiled/main.${ENVIRONMENT}.parameters.json \
             --verbose

@@ -15,7 +15,10 @@ Infrastructure/
 │       ├── log-analytics.bicep             # Log Analytics workspace
 │       ├── app-insights.bicep              # Application Insights
 │       ├── cosmosdb.bicep                  # Cosmos DB (MongoDB API)
+│       ├── servicebus.bicep                # Azure Service Bus with topics
+│       ├── redis.bicep                     # Azure Redis Cache
 │       ├── container-apps-environment.bicep # Container Apps environment
+│       ├── dapr-components.bicep           # Dapr components (pubsub & statestore)
 │       └── app-configuration.bicep         # App Configuration
 ├── parameters/
 │   ├── main.prod.bicepparam                # Production parameters
@@ -28,21 +31,41 @@ Infrastructure/
 1. **Resource Group** - Container for all resources
 2. **Azure Key Vault** - Secure secrets storage (Standard tier)
 3. **Azure Cosmos DB** - MongoDB API (Free tier eligible)
-4. **Azure Monitor**:
+4. **Azure Service Bus** - Message broker with topics for integration events (Standard tier)
+5. **Azure Redis Cache** - In-memory cache for state storage (Basic tier, C0)
+6. **Azure Monitor**:
    - Log Analytics Workspace (PerGB2018 pricing)
    - Application Insights
-5. **Azure Container Apps Environment** - For hosting containerized applications
-6. **Azure App Configuration** - Centralized configuration (Free tier)
+7. **Azure Container Apps Environment** - For hosting containerized applications
+   - **Dapr PubSub Component** - Uses Service Bus for pub/sub messaging
+   - **Dapr State Store Component** - Uses Redis Cache for state management
+8. **Azure App Configuration** - Centralized configuration (Free tier)
 
 ### Key Features
 
-- **MongoDB secrets** are stored in Key Vault
+- **MongoDB, Service Bus, and Redis secrets** are stored in Key Vault
 - **App Configuration** uses Key Vault references for secure secret access
+- **Dapr components** configured automatically in Container Apps environment:
+  - `pubsub` - Azure Service Bus Topics integration
+  - `statestore` - Redis Cache integration
+- **Service Bus Topics** automatically created from integration events:
+  - `conference.created`
+  - `conference.updated`
+  - `profile.created`
+  - `profile.updated`
+  - `profile.followed.conference`
+  - `profiles.followed.conference`
+  - `presentation.updated`
+  - `presentation.schedule-changed`
+  - `profile.checked-in`
+  - `profile.conference-attendance-changed`
 - **Free/cheap tier** selections where available:
   - Cosmos DB: Free tier enabled (first 1000 RU/s and 25 GB free)
   - App Configuration: Free tier
   - Key Vault: Standard tier (most cost-effective)
   - Log Analytics: PerGB2018 with 30-day retention
+  - Service Bus: Standard tier (supports topics)
+  - Redis Cache: Basic tier, C0 (250 MB, cheapest option)
 
 ## Deployment
 
@@ -73,7 +96,10 @@ The infrastructure is deployed via GitHub Actions workflow: `.github/workflows/d
 # Login to Azure
 az login
 
-# Build Bicep to JSON
+# BserviceBusNamespace` - Name of the Service Bus namespace
+- `redisCacheName` - Name of the Redis Cache
+- `daprPubSubComponentName` - Name of the Dapr PubSub component (pubsub)
+- `daprStateStoreComponentName` - Name of the Dapr State Store component (statestor
 cd Infrastructure
 az bicep build --file bicep/main.bicep --outfile compiled/main.json
 az bicep build-params --file parameters/main.prod.bicepparam --outfile compiled/main.prod.parameters.json
@@ -97,15 +123,18 @@ The deployment provides the following outputs:
 
 ## Security
 
-- Key Vault uses RBAC authorization
-- Soft delete enabled with 7-day retention
+- Key Vau, Service Bus, and Redis connection strings stored securely in Key Vault
+- App Configuration references Key Vault for secrets (not stored directly)
+- Dapr components use secrets securely stored in Container Apps environment
 - App Configuration has managed identity access to Key Vault
 - MongoDB connection strings stored securely in Key Vault
 - App Configuration references Key Vault for secrets (not stored directly)
 
 ## Cost Optimization
 
-Resources are configured for minimal cost:
+ReService Bus Standard tier (cheapest tier that supports topics)
+- Redis Cache Basic C0 (250 MB, ~$16/month)
+- sources are configured for minimal cost:
 - Cosmos DB Free tier (first account per subscription)
 - App Configuration Free tier
 - Log Analytics with minimal retention (30 days)

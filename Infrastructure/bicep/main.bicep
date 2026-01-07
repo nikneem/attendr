@@ -4,7 +4,7 @@ targetScope = 'subscription'
 param environmentName string
 
 @description('The location for all resources')
-param location string = 'westeurope'
+param location string = deployment().location
 
 @description('The base name for all resources')
 param baseName string = 'attendr'
@@ -36,4 +36,7 @@ output resourceGroupName string = resourceGroup.name
 output keyVaultName string = resourceDeployment.outputs.keyVaultName
 output appConfigName string = resourceDeployment.outputs.appConfigName
 output containerAppsEnvironmentName string = resourceDeployment.outputs.containerAppsEnvironmentName
-output mongoDbConnectionString string = resourceDeployment.outputs.mongoDbConnectionString
+output serviceBusNamespace string = resourceDeployment.outputs.serviceBusNamespace
+output redisCacheName string = resourceDeployment.outputs.redisCacheName
+output daprPubSubComponentName string = resourceDeployment.outputs.daprPubSubComponentName
+output daprStateStoreComponentName string = resourceDeployment.outputs.daprStateStoreComponentName
