@@ -53,6 +53,7 @@ public sealed class UpdateAttendanceCommandHandler : ICommandHandler<UpdateAtten
             {
                 ProfileId = command.ProfileId,
                 ConferenceId = command.ConferenceId,
+                ConferenceName = presence.ConferenceName,
                 IsAttending = command.IsAttending
             };
 

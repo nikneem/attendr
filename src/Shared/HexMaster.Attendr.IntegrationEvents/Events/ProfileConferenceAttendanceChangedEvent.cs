@@ -11,5 +11,6 @@ public sealed class ProfileConferenceAttendanceChangedEvent : IntegrationEvent
 
     public Guid ProfileId { get; init; }
     public Guid ConferenceId { get; init; }
+    public string ConferenceName { get; init; } = string.Empty;
     public bool IsAttending { get; init; }
 }

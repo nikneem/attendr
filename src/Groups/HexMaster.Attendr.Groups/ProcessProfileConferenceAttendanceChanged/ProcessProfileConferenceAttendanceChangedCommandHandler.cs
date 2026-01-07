@@ -52,8 +52,8 @@ public sealed class ProcessProfileConferenceAttendanceChangedCommandHandler : IC
                 : GroupActivityType.ProfileLeavingConference;
 
             var activityDescription = command.Event.IsAttending
-                ? $"is attending conference"
-                : $"is no longer attending conference";
+                ? $"is attending {command.Event.ConferenceName}"
+                : $"is no longer attending {command.Event.ConferenceName}";
 
             // Add activity to each group
             foreach (var group in groups)
