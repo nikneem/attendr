@@ -68,19 +68,19 @@ export class RateSessionsPageComponent implements OnInit {
         // Load 3 cards initially - make sequential requests to server
         this.fetchCardWithHandling().then((card1) => {
             const cards = [card1];
-            
+
             // If first card is error or empty, still try to load more
             this.fetchCardWithHandling().then((card2) => {
                 cards.push(card2);
-                
+
                 this.fetchCardWithHandling().then((card3) => {
                     cards.push(card3);
-                    
+
                     // Check if we have at least one valid card or if we should show error/empty
                     const hasValidCard = cards.some(c => c.presentation !== null);
                     const hasError = cards.some(c => c.isError);
                     const allEmpty = cards.every(c => c.isEmpty);
-                    
+
                     if (!hasValidCard && (hasError || allEmpty)) {
                         // Show only the first error or empty card as the top card
                         const topCard = cards.find(c => c.isError) || cards.find(c => c.isEmpty)!;
@@ -88,7 +88,7 @@ export class RateSessionsPageComponent implements OnInit {
                     } else {
                         this.cards.set(cards);
                     }
-                    
+
                     this.loading.set(false);
                 });
             });
@@ -244,22 +244,22 @@ export class RateSessionsPageComponent implements OnInit {
                     next: () => {
                         // Remove the top card
                         const remainingCards = this.cards().slice(1);
-                        
+
                         // Update card positions immediately
                         this.cards.set(remainingCards);
                         this.swipeOffset.set(0);
-                        
+
                         // Small delay before starting to fetch new card
                         setTimeout(() => {
                             this.isAnimating.set(false);
                             this.fetchingNewCard.set(true);
-                            
+
                             // Fetch a new card for the bottom
                             this.fetchCardWithHandling().then((newCard) => {
                                 this.addCardToBottom(newCard);
                                 this.fetchingNewCard.set(false);
                             });
-                            
+
                             this.submitting.set(false);
                         }, 300);
                     },

@@ -31,13 +31,9 @@
 
             <div class="card-wrapper" [class.no-transition]="isAnimating()">
                 @for (card of cards(); track $index) {
-                <div class="presentation-card" 
-                    [class.top-card]="$index === 0" 
-                    [class.middle-card]="$index === 1"
-                    [class.bottom-card]="$index === 2" 
-                    [class.empty-card]="card.isEmpty"
-                    [class.error-card]="card.isError"
-                    [class.new-card]="$index === 2 && fetchingNewCard()"
+                <div class="presentation-card" [class.top-card]="$index === 0" [class.middle-card]="$index === 1"
+                    [class.bottom-card]="$index === 2" [class.empty-card]="card.isEmpty"
+                    [class.error-card]="card.isError" [class.new-card]="$index === 2 && fetchingNewCard()"
                     [style.transform]="$index === 0 ? 'translateX(' + swipeOffset() + 'px) rotate(' + (swipeOffset() / 20) + 'deg)' : ''"
                     [style.z-index]="3 - $index"
                     (mousedown)="$index === 0 && !card.isEmpty && !card.isError ? onMouseDown($event) : null"
