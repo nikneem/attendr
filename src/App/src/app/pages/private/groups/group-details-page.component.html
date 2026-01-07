@@ -36,6 +36,10 @@
         </div>
 
         <div class="group-sections">
+            <attn-member-locations [groupId]="groupId()" />
+
+            <attn-group-activities [groupId]="groupId()" />
+
             <attn-group-conferences />
 
             <attn-group-members [groupId]="groupId()" />

@@ -1,0 +1,58 @@
+<p-card styleClass="member-locations-card">
+    <ng-template pTemplate="header">
+        <div class="section-header">
+            <h2>Member Locations</h2>
+        </div>
+    </ng-template>
+
+    @if (locations().length === 0) {
+    <div class="empty-state">
+        <i class="pi pi-map-marker"></i>
+        <p>No active sessions at the moment</p>
+        <span class="empty-hint">Members will appear here when they check in to presentations</span>
+    </div>
+    } @else {
+    <div class="locations-list">
+        @for (location of locations(); track location.presentationId) {
+        <div class="location-item">
+            <div class="location-header">
+                <div class="presentation-info">
+                    <h3 class="presentation-title">{{ location.presentationTitle }}</h3>
+                    <div class="presentation-meta">
+                        <span class="room-info">
+                            <i class="pi pi-building"></i>
+                            {{ location.room }}
+                        </span>
+                        <span class="time-info">
+                            <i class="pi pi-clock"></i>
+                            {{ formatTime(location.startTime) }} - {{ formatTime(location.endTime) }}
+                        </span>
+                    </div>
+                </div>
+                <p-tag [value]="getStatusLabel(location.status)" [severity]="getStatusColor(location.status)"
+                    [icon]="getStatusIcon(location.status)" />
+            </div>
+
+            <div class="members-section">
+                <span class="members-label">
+                    <i class="pi pi-users"></i>
+                    {{ location.checkedInMembers.length }} {{ location.checkedInMembers.length === 1 ? 'member' : 'members' }} checked in
+                </span>
+                <div class="members-avatars">
+                    @for (member of location.checkedInMembers; track member.id) {
+                    @if (member.profilePictureUrl) {
+                    <img [src]="member.profilePictureUrl" [alt]="member.name" class="member-avatar"
+                        [pTooltip]="member.name" tooltipPosition="top" />
+                    } @else {
+                    <div class="member-avatar initials-avatar" [pTooltip]="member.name" tooltipPosition="top">
+                        {{ getMemberInitials(member.name) }}
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</p-card>

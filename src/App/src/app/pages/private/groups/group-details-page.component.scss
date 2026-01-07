@@ -126,10 +126,11 @@
     .group-sections {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 2rem;
 
-        @media (min-width: 768px) {
-            gap: 2rem;
+        // All child components have equal spacing
+        > * {
+            margin-bottom: 0;
         }
 
         ::ng-deep .section-card {
@@ -147,11 +148,10 @@
         .pending-section {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 2rem;
 
             @media (min-width: 768px) {
                 grid-template-columns: 1fr 1fr;
-                gap: 2rem;
             }
 
             .pending-column {

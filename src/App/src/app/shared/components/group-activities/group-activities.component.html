@@ -1,0 +1,28 @@
+<p-card styleClass="group-activities-card">
+    <ng-template pTemplate="header">
+        <div class="section-header">
+            <h2>Recent Activity</h2>
+        </div>
+    </ng-template>
+
+    @if (activities().length === 0) {
+    <div class="empty-state">
+        <i class="pi pi-inbox"></i>
+        <p>No recent activity</p>
+    </div>
+    } @else {
+    <div class="activities-list">
+        @for (activity of activities(); track activity.id) {
+        <div class="activity-item">
+            <div class="activity-icon" [style.background-color]="getActivityColor(activity.type)">
+                <i [class]="getActivityIcon(activity.type)"></i>
+            </div>
+            <div class="activity-content">
+                <p class="activity-message">{{ getActivityMessage(activity) }}</p>
+                <span class="activity-time">{{ getRelativeTime(activity.timestamp) }}</span>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</p-card>

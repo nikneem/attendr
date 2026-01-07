@@ -10,6 +10,8 @@ import { GroupMembersComponent } from '@components/group-members/group-members.c
 import { GroupConferencesComponent } from '@components/group-conferences/group-conferences.component';
 import { GroupJoinRequestsComponent } from '@components/group-join-requests/group-join-requests.component';
 import { GroupInvitationsComponent } from '@components/group-invitations/group-invitations.component';
+import { GroupActivitiesComponent } from '@components/group-activities/group-activities.component';
+import { MemberLocationsComponent } from '@components/member-locations/member-locations.component';
 
 @Component({
     selector: 'attn-group-details-page',
@@ -22,6 +24,8 @@ import { GroupInvitationsComponent } from '@components/group-invitations/group-i
         GroupConferencesComponent,
         GroupJoinRequestsComponent,
         GroupInvitationsComponent,
+        GroupActivitiesComponent,
+        MemberLocationsComponent,
     ],
     templateUrl: './group-details-page.component.html',
     styleUrls: ['./group-details-page.component.scss'],
