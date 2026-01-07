@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
+using HexMaster.Attendr.Presence.Features.CheckIn;
 using HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
@@ -33,6 +34,7 @@ public static class PresenceFeaturesExtensions
         services.AddScoped<ICommandHandler<UpdatePresentationCommand>, UpdatePresentationCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateAttendanceCommand>, UpdateAttendanceCommandHandler>();
         services.AddScoped<ICommandHandler<UnfollowConferenceCommand>, UnfollowConferenceCommandHandler>();
+        services.AddScoped<ICommandHandler<CheckInCommand>, CheckInCommandHandler>();
 
         // Register query handlers
         services.AddScoped<IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>>, GetMyConferencesQueryHandler>();

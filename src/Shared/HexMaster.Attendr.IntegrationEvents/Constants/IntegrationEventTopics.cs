@@ -53,4 +53,10 @@ public static class IntegrationEventTopics
     /// Published when a presentation schedule changes and a profile has favorited it.
     /// </summary>
     public const string PresentationScheduleChanged = "presentation.schedule-changed";
+
+    /// <summary>
+    /// Topic for profile checked in events.
+    /// Published when a profile checks in or out of a presentation.
+    /// </summary>
+    public const string ProfileCheckedIn = "profile.checked-in";
 }

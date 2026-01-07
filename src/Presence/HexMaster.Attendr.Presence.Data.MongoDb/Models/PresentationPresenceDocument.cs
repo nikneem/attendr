@@ -44,6 +44,10 @@ public sealed class PresentationPresenceDocument
     [BsonElement("isCheckedIn")]
     public bool IsCheckedIn { get; set; }
 
+    [BsonElement("checkedInAt")]
+    [BsonIgnoreIfNull]
+    public DateTimeOffset? CheckedInAt { get; set; }
+
     [BsonElement("rating")]
     public byte? Rating { get; set; }
 

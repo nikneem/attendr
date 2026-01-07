@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
+using HexMaster.Attendr.Presence.Features.CheckIn;
 using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
@@ -61,6 +62,13 @@ public static class PresenceEndpoints
             .Accepts<RatePresentationDto>("application/json")
             .Produces(StatusCodes.Status202Accepted)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapPut("/{conferenceId:guid}/checkin/{presentationId:guid}", CheckIn)
+            .WithName("CheckIn")
+            .Accepts<CheckInRequest>("application/json")
+            .Produces(StatusCodes.Status202Accepted)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
@@ -365,6 +373,58 @@ public static class PresenceEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Error getting conference attendance for conference {ConferenceId}", conferenceId);
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> CheckIn(
+        Guid conferenceId,
+        Guid presentationId,
+        CheckInRequest request,
+        HttpContext context,
+        ICommandHandler<CheckInCommand> handler,
+        IProfilesIntegrationService profilesIntegration,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("CheckInEndpoint");
+        var subjectId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? context.User.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            var profile = await profilesIntegration.ResolveProfile(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound(new { error = "User profile not found. Please create a profile first." });
+            }
+
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            await handler.Handle(
+                new CheckInCommand(profileId, conferenceId, presentationId, request.IsCheckedIn),
+                cancellationToken);
+
+            return Results.Accepted();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            logger.LogWarning(ex, "Failed to check in to presentation {PresentationId}", presentationId);
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error checking in to presentation {PresentationId} for conference {ConferenceId}",
+                presentationId, conferenceId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

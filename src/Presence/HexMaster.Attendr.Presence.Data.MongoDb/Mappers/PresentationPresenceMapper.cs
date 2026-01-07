@@ -21,6 +21,7 @@ public static class PresentationPresenceMapper
             IsRated = domain.IsRated,
             IsFavorite = domain.IsFavorite,
             IsCheckedIn = domain.IsCheckedIn,
+            CheckedInAt = domain.CheckedInAt,
             Rating = domain.Rating,
             Speakers = domain.Speakers.Select(s => new PresentationSpeakerDocument
             {
@@ -48,6 +49,7 @@ public static class PresentationPresenceMapper
             doc.IsRated,
             doc.IsFavorite,
             doc.IsCheckedIn,
+            doc.CheckedInAt,
             doc.Rating);
     }
 

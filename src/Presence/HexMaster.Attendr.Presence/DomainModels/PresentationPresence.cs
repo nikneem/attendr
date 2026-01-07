@@ -13,6 +13,7 @@ public sealed class PresentationPresence
     public bool IsRated { get; private set; }
     public bool IsFavorite { get; private set; }
     public bool IsCheckedIn { get; private set; }
+    public DateTimeOffset? CheckedInAt { get; private set; }
     public byte? Rating { get; private set; }
 
     private readonly List<PresentationSpeaker> _speakers = new();
@@ -31,6 +32,7 @@ public sealed class PresentationPresence
         bool isRated = false,
         bool isFavorite = false,
         bool isCheckedIn = false,
+        DateTimeOffset? checkedInAt = null,
         byte? rating = null)
     {
         if (profileId == Guid.Empty)
@@ -68,6 +70,7 @@ public sealed class PresentationPresence
         IsRated = isRated;
         IsFavorite = isFavorite;
         IsCheckedIn = isCheckedIn;
+        CheckedInAt = checkedInAt;
         Rating = rating;
 
         if (speakers != null)
@@ -128,5 +131,17 @@ public sealed class PresentationPresence
         IsRated = true;
         Rating = rating;
         IsFavorite = isFavorite;
+    }
+
+    public void CheckIn()
+    {
+        IsCheckedIn = true;
+        CheckedInAt = DateTimeOffset.UtcNow;
+    }
+
+    public void CheckOut()
+    {
+        IsCheckedIn = false;
+        CheckedInAt = null;
     }
 }
