@@ -141,7 +141,7 @@ jobs:
             --location northeurope \
             --template-file src/Groups/Infrastructure/bicep/main.json \
             --parameters src/Groups/Infrastructure/parameters/main.prod.parameters.json \
-            --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-groups-api:${{ needs.version.outputs.semVer }}" \
+            --parameters containerImage="attendr/attendr-groups-api:${{ needs.version.outputs.semVer }}" \
             --parameters containerRegistryServer="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" \
             --parameters containerRegistryUsername="${{ secrets.CONTAINER_REGISTRY_USERNAME }}" \
             --parameters containerRegistryPassword="${{ secrets.CONTAINER_REGISTRY_PASSWORD }}" \
