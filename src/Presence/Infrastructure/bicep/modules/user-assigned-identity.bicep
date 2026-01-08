@@ -31,7 +31,7 @@ resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 // Reference to container registry in its resource group
 resource containerRegistryResource 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
   name: containerRegistry.name
-  scope: resourceGroup(containerRegistry.resourceGroupName)
+  scope: resourceGroup(containerRegistry.subscriptionId, containerRegistry.resourceGroupName)
 }
 
 // Reference to App Configuration in landing zone
@@ -54,7 +54,7 @@ var keyVaultSecretsUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6' // Key Va
 // Assign AcrPull role to the user assigned identity
 module acrPullRoleAssignment '../../../../../Infrastructure/bicep/modules/role-assignment.bicep' = {
   name: '${name}-acr-pull-role'
-  scope: resourceGroup(containerRegistry.resourceGroupName)
+  scope: resourceGroup(containerRegistry.subscriptionId, containerRegistry.resourceGroupName)
   params: {
     principalId: userAssignedIdentity.properties.principalId
     roleDefinitionId: acrPullRoleId

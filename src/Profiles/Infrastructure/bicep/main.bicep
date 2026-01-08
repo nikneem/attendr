@@ -23,6 +23,7 @@ param landingzone object = {
 
 @description('Container registry information')
 param containerRegistry object = {
+  subscriptionId: ''
   resourceGroupName: ''
   name: ''
 }
