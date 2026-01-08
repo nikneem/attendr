@@ -45,37 +45,6 @@ resource groupsCollection 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabase
             unique: false
           }
         }
-        {
-          key: {
-            keys: [
-              'settings.isSearchable'
-            ]
-          }
-          options: {
-            unique: false
-          }
-        }
-        {
-          key: {
-            keys: [
-              'settings.isSearchable'
-              'name'
-            ]
-          }
-          options: {
-            unique: false
-          }
-        }
-        {
-          key: {
-            keys: [
-              'members.id'
-            ]
-          }
-          options: {
-            unique: false
-          }
-        }
       ]
     }
     options: {
