@@ -107,3 +107,4 @@ output resourceGroupName string = resourceGroup.name
 output containerAppName string = profilesApp.outputs.name
 output containerAppFqdn string = profilesApp.outputs.fqdn
 output managedIdentityPrincipalId string = profilesApp.outputs.managedIdentityPrincipalId
+output containerImageName string = profilesApp.outputs.containerImageName
