@@ -30,6 +30,85 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-10-02-
     }
     zoneRedundant: false
   }
+  resource httpRouteConfig 'httpRouteConfigs@2025-10-02-preview' = {
+    name: 'gateway'
+    properties: {
+      rules: [
+        {
+          description: 'Route /profiles to Profiles API'
+          routes: [
+            {
+              match: {
+                pathSeparatedPrefix: '/profiles'
+              }
+              action: {
+                prefixRewrite: '/api/profiles'
+              }
+            }
+          ]
+          targets: [
+            {
+              containerApp: 'ca-attendr-profiles-prod'
+            }
+          ]
+        }
+        {
+          description: 'Route /conferences to SignalR'
+          routes: [
+            {
+              match: {
+                pathSeparatedPrefix: '/conferences'
+              }
+              action: {
+                prefixRewrite: '/api/conferences'
+              }
+            }
+          ]
+          targets: [
+            {
+              containerApp: 'ca-attendr-conf-prod'
+            }
+          ]
+        }
+        {
+          description: 'Route /groups to Groups API'
+          routes: [
+            {
+              match: {
+                pathSeparatedPrefix: '/groups'
+              }
+              action: {
+                prefixRewrite: '/api/groups'
+              }
+            }
+          ]
+          targets: [
+            {
+              containerApp: 'ca-attendr-groups-prod'
+            }
+          ]
+        }
+        {
+          description: 'Route /presence to Presence API'
+          routes: [
+            {
+              match: {
+                pathSeparatedPrefix: '/presence'
+              }
+              action: {
+                prefixRewrite: '/api/presence'
+              }
+            }
+          ]
+          targets: [
+            {
+              containerApp: 'ca-attendr-pres-prod'
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
 
 output id string = containerAppsEnvironment.id
