@@ -33,12 +33,15 @@ public static class AzureAppConfigurationExtensions
                     var credential = new DefaultAzureCredential();
                     
                     options.Connect(new Uri(appConfigEndpoint), credential)
+                        // Select all keys with no label filter (loads keys with any label or no label)
+                        .Select("*", LabelFilter.Null)  // Keys with no label
+                        .Select("*", environment)        // Keys with environment-specific label
                         .ConfigureKeyVault(kv =>
                         {
                             kv.SetCredential(credential);
                         });
                     
-                    Console.WriteLine($"Azure App Configuration - Loading keys with label: '{environment}'");
+                    Console.WriteLine($"Azure App Configuration - Loading keys with no label and label: '{environment}'");
                 });
                 Console.WriteLine($"Configuration from {appConfigEndpoint} succeeded.");
             }
