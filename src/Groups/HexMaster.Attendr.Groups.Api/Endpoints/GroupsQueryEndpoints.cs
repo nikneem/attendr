@@ -27,7 +27,8 @@ public static class GroupsQueryEndpoints
             .WithName("ListGroups")
             .Produces<ListGroupsResult>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status404NotFound);
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .AllowAnonymous();
 
         group.MapGet("/{id:guid}", GetGroupDetails)
             .WithName("GetGroupDetails")
