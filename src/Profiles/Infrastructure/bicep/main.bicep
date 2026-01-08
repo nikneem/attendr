@@ -19,15 +19,18 @@ param landingzone object = {
   appConfigurationName: ''
   keyVaultName: ''
   applicationInsightsName: ''
-  userAssignedIdentityId: ''
 }
 
-@description('Container registry information')
-param containerRegistry object = {
-  subscriptionId: ''
-  resourceGroupName: ''
-  name: ''
-}
+@description('Container registry server')
+param containerRegistryServer string
+
+@description('Container registry username')
+@secure()
+param containerRegistryUsername string
+
+@description('Container registry password')
+@secure()
+param containerRegistryPassword string
 
 @description('The container image to deploy')
 param containerImage string
@@ -58,8 +61,9 @@ module profilesApp './modules/container-app.bicep' = {
     containerImage: containerImage
     appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
     applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
-    userAssignedIdentityId: landingzone.userAssignedIdentityId
-    containerRegistryServer: '${containerRegistry.name}.azurecr.io'
+    containerRegistryServer: containerRegistryServer
+    containerRegistryUsername: containerRegistryUsername
+    containerRegistryPassword: containerRegistryPassword
   }
 }
 

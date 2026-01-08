@@ -25,11 +25,16 @@ param appConfigurationEndpoint string
 @secure()
 param applicationInsightsConnectionString string
 
-@description('User assigned identity resource ID')
-param userAssignedIdentityId string
-
 @description('Container registry server')
 param containerRegistryServer string
+
+@description('Container registry username')
+@secure()
+param containerRegistryUsername string
+
+@description('Container registry password')
+@secure()
+param containerRegistryPassword string
 
 // Reference to Container Apps environment in landing zone
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' existing = {
@@ -50,7 +55,8 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       registries: [
         {
           server: containerRegistryServer
-          identity: userAssignedIdentityId
+          username: containerRegistryUsername
+          passwordSecretRef: 'registry-password'
         }
       ]
       ingress: {
@@ -70,6 +76,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'appinsights-connection-string'
           value: applicationInsightsConnectionString
+        }
+        {
+          name: 'registry-password'
+          value: containerRegistryPassword
         }
       ]
     }
