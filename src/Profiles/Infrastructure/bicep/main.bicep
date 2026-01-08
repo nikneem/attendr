@@ -72,6 +72,7 @@ module profilesApp './modules/container-app.bicep' = {
     appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
     applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
     userAssignedIdentityId: userIdentity.outputs.id
+    containerRegistryServer: '${containerRegistry.name}.azurecr.io'
   }
 }
 

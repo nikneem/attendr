@@ -28,6 +28,9 @@ param applicationInsightsConnectionString string
 @description('User assigned identity resource ID')
 param userAssignedIdentityId string
 
+@description('Container registry server')
+param containerRegistryServer string
+
 // Reference to Container Apps environment in landing zone
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' existing = {
   name: containerAppsEnvironmentName
@@ -47,6 +50,12 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
     configuration: {
+      registries: [
+        {
+          server: containerRegistryServer
+          identity: userAssignedIdentityId
+        }
+      ]
       ingress: {
         external: true
         targetPort: 8080
