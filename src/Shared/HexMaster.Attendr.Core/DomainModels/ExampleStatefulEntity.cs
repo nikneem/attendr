@@ -34,6 +34,7 @@ public sealed class ExampleStatefulEntity : StatefulDomainModel<Guid>
     /// </summary>
     private ExampleStatefulEntity() : base()
     {
+        _name = string.Empty;
     }
 
     /// <summary>

@@ -25,6 +25,9 @@ param appConfigurationEndpoint string
 @secure()
 param applicationInsightsConnectionString string
 
+@description('User assigned identity resource ID')
+param userAssignedIdentityId string
+
 // Reference to Container Apps environment in landing zone
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' existing = {
   name: containerAppsEnvironmentName
@@ -36,7 +39,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   location: location
   tags: tags
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userAssignedIdentityId}': {}
+    }
   }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
@@ -146,4 +152,4 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
 output id string = containerApp.id
 output name string = containerApp.name
 output fqdn string = containerApp.properties.configuration.ingress.fqdn
-output managedIdentityPrincipalId string = containerApp.identity.principalId
+output managedIdentityPrincipalId string = containerApp.identity.userAssignedIdentities[userAssignedIdentityId].principalId

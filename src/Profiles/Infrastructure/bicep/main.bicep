@@ -21,6 +21,12 @@ param landingzone object = {
   applicationInsightsName: ''
 }
 
+@description('Container registry information')
+param containerRegistry object = {
+  resourceGroupName: ''
+  name: ''
+}
+
 @description('The container image to deploy')
 param containerImage string
 
@@ -38,11 +44,25 @@ resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01
   name: landingzone.resourceGroupName
 }
 
+// Create user assigned identity with all required permissions
+module userIdentity './modules/user-assigned-identity.bicep' = {
+  scope: resourceGroup
+  params: {
+    name: 'id-${baseName}-${environmentName}'
+    location: location
+    tags: tags
+    containerRegistry: containerRegistry
+    appConfigurationName: landingzone.appConfigurationName
+    keyVaultName: landingzone.keyVaultName
+    landingZoneResourceGroupName: landingzone.resourceGroupName
+  }
+}
+
 // Deploy the Profiles container app
 module profilesApp './modules/container-app.bicep' = {
   scope: resourceGroup
   params: {
-    name: 'ca-${baseName}-${environmentName}'
+    name: 'ca-${baseName}-profiles-${environmentName}'
     location: location
     tags: tags
     landingZoneResourceGroupName: landingzone.resourceGroupName
@@ -50,7 +70,11 @@ module profilesApp './modules/container-app.bicep' = {
     containerImage: containerImage
     appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
     applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
+    userAssignedIdentityId: userIdentity.outputs.id
   }
+  dependsOn: [
+    userIdentity
+  ]
 }
 
 // Get App Configuration endpoint
@@ -69,15 +93,6 @@ module appInsightsConnectionString './modules/get-app-insights.bicep' = {
   }
 }
 
-// Assign permissions to the container app managed identity
-module permissions './modules/role-assignments.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    principalId: profilesApp.outputs.managedIdentityPrincipalId
-    appConfigurationName: landingzone.appConfigurationName
-    keyVaultName: landingzone.keyVaultName
-  }
-}
 // Configure service integration endpoints in App Configuration
 module serviceIntegration '../../../../Infrastructure/bicep/modules/app-configuration-service-integration.bicep' = {
   scope: landingZoneResourceGroup

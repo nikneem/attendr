@@ -142,6 +142,7 @@ jobs:
             --template-file src/Groups/Infrastructure/bicep/main.json \
             --parameters src/Groups/Infrastructure/parameters/main.prod.parameters.json \
             --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-groups-api:${{ needs.version.outputs.semVer }}" \
+            --parameters containerRegistry='{"resourceGroupName":"mvp-int-env","name":"${{ secrets.CONTAINER_REGISTRY_USERNAME }}"}' \
 
       - name: Get deployment outputs
         working-directory: src/Groups/Infrastructure

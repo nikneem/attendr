@@ -65,5 +65,5 @@ public sealed class PresentationSpeakerDocument
     public string Name { get; set; } = string.Empty;
 
     [BsonElement("profilePictureUrl")]
-    public string ProfilePictureUrl { get; set; } = string.Empty;
+    public string? ProfilePictureUrl { get; set; } = string.Empty;
 }
