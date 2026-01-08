@@ -49,6 +49,22 @@ resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01
   name: landingzone.resourceGroupName
 }
 
+// Get App Configuration endpoint
+module appConfigurationEndpoint './modules/get-app-configuration.bicep' = {
+  scope: landingZoneResourceGroup
+  params: {
+    appConfigurationName: landingzone.appConfigurationName
+  }
+}
+
+// Get Application Insights connection string
+module appInsightsConnectionString './modules/get-app-insights.bicep' = {
+  scope: landingZoneResourceGroup
+  params: {
+    applicationInsightsName: landingzone.applicationInsightsName
+  }
+}
+
 // Deploy the Conferences container app
 module conferencesApp './modules/container-app.bicep' = {
   scope: resourceGroup
@@ -64,22 +80,6 @@ module conferencesApp './modules/container-app.bicep' = {
     containerRegistryServer: containerRegistryServer
     containerRegistryUsername: containerRegistryUsername
     containerRegistryPassword: containerRegistryPassword
-  }
-}
-
-// Get App Configuration endpoint
-module appConfigurationEndpoint './modules/get-app-configuration.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    appConfigurationName: landingzone.appConfigurationName
-  }
-}
-
-// Get Application Insights connection string
-module appInsightsConnectionString './modules/get-app-insights.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    applicationInsightsName: landingzone.applicationInsightsName
   }
 }
 
