@@ -9,7 +9,7 @@ param tags = {
   ManagedBy: 'Bicep'
 }
 param containerRegistry = {
-  subscriptionId: subscription().subscriptionId
-  resourceGroupName: 'rg-acr-shared'
-  name: 'acrattendr'
+  subscriptionId: 'c2a162ec-4baf-44f5-a66e-0fb3b8618424'
+  resourceGroupName: 'mvp-int-env'
+  name: 'nvv54gsk4pteu'
 }
