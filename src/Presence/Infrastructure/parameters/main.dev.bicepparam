@@ -21,3 +21,8 @@ param landingzone = {
 
 // Container image details
 param containerImage = 'your-registry.azurecr.io/attendr/attendr-presence-api'
+
+// Container registry credentials
+param containerRegistryServer = ''
+param containerRegistryUsername = ''
+param containerRegistryPassword = ''
