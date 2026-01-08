@@ -74,12 +74,13 @@ public static class GroupsQueryEndpoints
     {
         try
         {
-            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            //var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
             var normalizedPageSize = Math.Max(1, Math.Min(100, pageSize ?? 20));
             var normalizedPageNumber = Math.Max(1, pageNumber ?? 1);
 
             var query = new ListGroupsQuery(
-                Guid.Parse(profile.ProfileId),
+                Guid.NewGuid(),
+                //Guid.Parse(profile.ProfileId),
                 searchQuery ?? string.Empty,
                 normalizedPageSize,
                 normalizedPageNumber);
