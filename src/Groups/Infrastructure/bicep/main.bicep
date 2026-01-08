@@ -35,6 +35,9 @@ param containerRegistryPassword string
 @description('The container image to deploy')
 param containerImage string
 
+@description('CORS allowed origins')
+param corsOrigins array = []
+
 var resourceGroupName = 'rg-${baseName}-${environmentName}'
 
 // Deploy Resource Group for Groups service
@@ -64,6 +67,7 @@ module groupsApp './modules/container-app.bicep' = {
     containerRegistryServer: containerRegistryServer
     containerRegistryUsername: containerRegistryUsername
     containerRegistryPassword: containerRegistryPassword
+    corsOrigins: corsOrigins
   }
 }
 

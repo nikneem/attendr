@@ -36,6 +36,9 @@ param containerRegistryUsername string
 @secure()
 param containerRegistryPassword string
 
+@description('CORS allowed origins')
+param corsOrigins array = []
+
 // Reference to Container Apps environment in landing zone
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' existing = {
   name: containerAppsEnvironmentName
@@ -64,6 +67,20 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
         targetPort: 8080
         transport: 'http'
         allowInsecure: false
+        corsPolicy: {
+          allowedOrigins: corsOrigins
+          allowedMethods: [
+            'GET'
+            'POST'
+            'PUT'
+            'DELETE'
+            'OPTIONS'
+          ]
+          allowedHeaders: [
+            '*'
+          ]
+          allowCredentials: true
+        }
       }
       dapr: {
         enabled: true

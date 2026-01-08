@@ -26,3 +26,8 @@ param containerImage = 'your-registry.azurecr.io/attendr/attendr-presence-api'
 param containerRegistryServer = ''
 param containerRegistryUsername = ''
 param containerRegistryPassword = ''
+
+// CORS allowed origins
+param corsOrigins = [
+  'https://attendr.live'
+]
