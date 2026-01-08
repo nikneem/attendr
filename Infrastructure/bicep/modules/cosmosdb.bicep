@@ -62,6 +62,26 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview
   }
 }
 
+// Deploy Conferences collection with composite indexes
+module conferencesCollection './cosmosdb-conferences-collection.bicep' = {
+  name: '${deployment().name}-conferences-collection'
+  params: {
+    accountName: cosmosAccount.name
+    databaseName: cosmosAccount::mongoDatabase.name
+    tags: tags
+  }
+}
+
+// Deploy Groups collection with indexes
+module groupsCollection './cosmosdb-groups-collection.bicep' = {
+  name: '${deployment().name}-groups-collection'
+  params: {
+    accountName: cosmosAccount.name
+    databaseName: cosmosAccount::mongoDatabase.name
+    tags: tags
+  }
+}
+
 var connectionStringValue = 'mongodb://${cosmosAccount.name}:${cosmosAccount.listKeys().primaryMasterKey}@${cosmosAccount.name}.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000'
 
 output id string = cosmosAccount.id
