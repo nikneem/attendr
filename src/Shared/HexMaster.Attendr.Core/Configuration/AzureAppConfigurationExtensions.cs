@@ -21,7 +21,9 @@ public static class AzureAppConfigurationExtensions
     {
 #if RELEASE
         var tempConfig = builder.Build();
-        var appConfigEndpoint = tempConfig["AppConfiguration__Endpoint"];
+        var appConfigEndpoint = tempConfig["AppConfiguration:Endpoint"] 
+                             ?? tempConfig["AppConfiguration__Endpoint"]
+                             ?? Environment.GetEnvironmentVariable("AppConfiguration__Endpoint");
         Console.WriteLine($"Azure App Configuration Endpoint: {appConfigEndpoint}");
         if (!string.IsNullOrWhiteSpace(appConfigEndpoint))
         {
