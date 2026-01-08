@@ -184,3 +184,4 @@ output daprStateStoreComponentName string = daprComponents.outputs.stateStoreCom
 output userAssignedIdentityId string = userIdentity.outputs.id
 output userAssignedIdentityPrincipalId string = userIdentity.outputs.principalId
 output userAssignedIdentityClientId string = userIdentity.outputs.clientId
+output containerAppsDefaultDomainName string = containerAppsEnvironment.outputs.defaultDomain

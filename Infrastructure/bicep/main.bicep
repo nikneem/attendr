@@ -51,3 +51,4 @@ output daprStateStoreComponentName string = resourceDeployment.outputs.daprState
 output userAssignedIdentityId string = resourceDeployment.outputs.userAssignedIdentityId
 output userAssignedIdentityPrincipalId string = resourceDeployment.outputs.userAssignedIdentityPrincipalId
 output userAssignedIdentityClientId string = resourceDeployment.outputs.userAssignedIdentityClientId
+output containerAppsDefaultDomainName string = resourceDeployment.outputs.containerAppsDefaultDomainName
