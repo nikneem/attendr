@@ -33,7 +33,6 @@ public static class AzureAppConfigurationExtensions
                     var credential = new DefaultAzureCredential();
                     
                     options.Connect(new Uri(appConfigEndpoint), credential)
-                        .Select("*", environment)
                         .ConfigureKeyVault(kv =>
                         {
                             kv.SetCredential(credential);
