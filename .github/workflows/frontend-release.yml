@@ -1,0 +1,95 @@
+name: Azure Static Web Apps CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/App/**'
+
+env:
+  APP_LOCATION: "./src/App/"
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+      - uses: actions/setup-node@v4
+        name: Set up Node.js 24
+        with:
+          # Version Spec of the version to use in SemVer notation.
+          # It also emits such aliases as lts, latest, nightly and canary builds
+          # Examples: 12.x, 10.15.1, >=10.15.0, lts/Hydrogen, 16-nightly, latest, node
+          node-version: "24.x"
+      - run: npm i --legacy-peer-deps
+        working-directory: ${{env.APP_LOCATION}}
+        name: Install packages
+      - run: npm run build
+        working-directory: ${{env.APP_LOCATION}}
+        name: Build Angular App
+
+      - name: Upload Published Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: production
+          path: ${{env.APP_LOCATION}}/dist/attendr/browser
+
+  deploy_to_prod:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [compile]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    name: Deploy Production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+
+      - name: Download SWA Content
+        uses: actions/download-artifact@v4
+        with:
+          name: production
+          path: dist
+
+      - name: Az CLI login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_PROD_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_PROD_TENANTID }}
+          subscription-id: ${{ secrets.AZURE_PROD_SUBSCRIPTION }}
+
+      - uses: azure/arm-deploy@v2
+        id: deploy
+        with:
+          scope: subscription
+          deploymentName: spreaview-swa-dev
+          region: northeurope
+          template: ${{env.APP_LOCATION}}/infrastructure/main.bicep
+          parameters: ${{env.APP_LOCATION}}/infrastructure/prd.parameters.bicepparam
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+
+      - name: Install SWA CLI
+        run: npm install -g @azure/static-web-apps-cli
+
+      - name: Get SWA deployment token
+        id: get-secret-from-cli
+        uses: azure/CLI@v2
+        with:
+          azcliversion: 2.72.0
+          inlineScript: |
+            SWA_SECRETS=$(az staticwebapp secrets list -n memeit-frontend-prd-westeurope-swa -g rg-memeit-frontend-prd-westeurope --query 'properties.apiKey' -o tsv )
+            echo "::add-mask::$SWA_SECRETS"
+            echo SWA_SECRETS=$SWA_SECRETS >> $GITHUB_OUTPUT
+
+      - name: Deploy Artifacts to SWA
+        run: swa deploy ./dist --deployment-token ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }} --env production -V silly
