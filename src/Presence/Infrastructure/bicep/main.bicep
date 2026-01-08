@@ -63,7 +63,7 @@ module userIdentity './modules/user-assigned-identity.bicep' = {
 module presenceApp './modules/container-app.bicep' = {
   scope: resourceGroup
   params: {
-    name: 'ca-${baseName}-presence-${environmentName}'
+    name: 'ca-${baseName}-${environmentName}'
     location: location
     tags: tags
     landingZoneResourceGroupName: landingzone.resourceGroupName

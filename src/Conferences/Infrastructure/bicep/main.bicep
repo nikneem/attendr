@@ -63,7 +63,7 @@ module userIdentity './modules/user-assigned-identity.bicep' = {
 module conferencesApp './modules/container-app.bicep' = {
   scope: resourceGroup
   params: {
-    name: 'ca-${baseName}-conferences-${environmentName}'
+    name: 'ca-${baseName}-${environmentName}'
     location: location
     tags: tags
     landingZoneResourceGroupName: landingzone.resourceGroupName
@@ -73,9 +73,6 @@ module conferencesApp './modules/container-app.bicep' = {
     applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
     userAssignedIdentityId: userIdentity.outputs.id
   }
-  dependsOn: [
-    userIdentity
-  ]
 }
 
 // Get App Configuration endpoint
