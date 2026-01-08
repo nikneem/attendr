@@ -39,6 +39,7 @@ public static class AzureAppConfigurationExtensions
                             kv.SetCredential(credential);
                         });
                 });
+                Console.WriteLine($"Configuration from {appConfigEndpoint} succeeded.");
             }
             catch(Exception ex)
             {
