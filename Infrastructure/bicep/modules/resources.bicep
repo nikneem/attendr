@@ -165,6 +165,7 @@ module appConfiguration './app-configuration.bicep' = {
     keyVaultMongoDbSecretUri: mongoDbSecrets.outputs.mongoDbSecretUri
     keyVaultServiceBusSecretUri: mongoDbSecrets.outputs.serviceBusSecretUri
     keyVaultRedisCacheSecretUri: mongoDbSecrets.outputs.redisCacheSecretUri
+    mongoDbDatabaseName: cosmosDb.outputs.mongoDbDatabaseName
   }
   dependsOn: [
     keyVault

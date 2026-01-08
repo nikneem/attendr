@@ -21,6 +21,8 @@ param keyVaultServiceBusSecretUri string
 @description('The URI of the Redis Cache secret in Key Vault')
 param keyVaultRedisCacheSecretUri string
 
+param mongoDbDatabaseName string
+
 resource appConfig 'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview' = {
   name: name
   location: location
@@ -62,6 +64,30 @@ resource mongoDbConnectionStringKeyValue 'Microsoft.AppConfiguration/configurati
   properties: {
     contentType: 'application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8'
     value: '{"uri":"${keyVaultMongoDbSecretUri}"}'
+  }
+  dependsOn: [
+    appConfigKeyVaultAccess
+  ]
+}
+
+// Add Key Vault reference for MongoDB connection string
+resource mongoDbConnectionStringKeyValueUsed 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
+  parent: appConfig
+  name: 'MongoDb:ConnectionString'
+  properties: {
+    contentType: 'application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8'
+    value: '{"uri":"${keyVaultMongoDbSecretUri}"}'
+  }
+  dependsOn: [
+    appConfigKeyVaultAccess
+  ]
+}
+
+resource mongoDbDatabaseNameValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
+  parent: appConfig
+  name: 'MongoDb:DatabaseName'
+  properties: {
+    value: mongoDbDatabaseName
   }
   dependsOn: [
     appConfigKeyVaultAccess

@@ -67,3 +67,4 @@ var connectionStringValue = 'mongodb://${cosmosAccount.name}:${cosmosAccount.lis
 output id string = cosmosAccount.id
 output endpoint string = cosmosAccount.properties.documentEndpoint
 output connectionString string = connectionStringValue
+output mongoDbDatabaseName string = cosmosAccount::mongoDatabase.name
