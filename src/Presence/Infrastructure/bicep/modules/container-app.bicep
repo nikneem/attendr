@@ -42,10 +42,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   location: location
   tags: tags
   identity: {
-    type: 'SystemAssigned,UserAssigned'
-    userAssignedIdentities: {
-      '${userAssignedIdentityId}': {}
-    }
+    type: 'SystemAssigned'
   }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
