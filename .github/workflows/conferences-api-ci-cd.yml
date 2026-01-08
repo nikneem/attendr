@@ -20,9 +20,13 @@ env:
   DOTNET_VERSION: '10.0.x'
 
 jobs:
-  build-test-publish:
-    name: Build, Test and Publish
+  version:
+    name: Calculate Version
     runs-on: ubuntu-latest
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+      assemblySemVer: ${{ steps.gitversion.outputs.assemblySemVer }}
+      informationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}
     
     steps:
       - name: Checkout code
@@ -45,6 +49,14 @@ jobs:
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
 
+  build-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -57,10 +69,28 @@ jobs:
         run: |
           dotnet build ${{ env.PROJECT_PATH }} \
             --configuration Release \
-            --no-restore \
-            /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} \
-            /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
-            /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+            --no-restore
+
+      - name: Test
+        run: |
+          dotnet test ${{ env.TEST_PROJECT_PATH }} \
+            --configuration Release \
+            --no-build \
+            --verbosity normal
+
+  publish-deploy:
+    name: Publish and Deploy
+    runs-on: ubuntu-latest
+    needs: [version, build-test]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Azure Login
         uses: azure/login@v2
@@ -90,10 +120,10 @@ jobs:
             --arch x64 \
             /t:PublishContainer \
             /p:ContainerRegistry=${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
-            /p:ContainerImageTag=${{ steps.gitversion.outputs.semVer }} \
-            /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} \
-            /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
-            /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+            /p:ContainerImageTag=${{ needs.version.outputs.semVer }} \
+            /p:Version=${{ needs.version.outputs.assemblySemVer }} \
+            /p:AssemblyVersion=${{ needs.version.outputs.assemblySemVer }} \
+            /p:InformationalVersion=${{ needs.version.outputs.informationalVersion }}
 
       - name: Image details
         run: |
@@ -101,8 +131,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Registry:** ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** attendr/attendr-conferences-api" >> $GITHUB_STEP_SUMMARY
-          echo "**Tag:** ${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Version:** ${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Tag:** ${{ needs.version.outputs.semVer }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.version.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Deploy to Azure Container Apps
         run: |
@@ -111,7 +141,7 @@ jobs:
             --location northeurope \
             --template-file src/Conferences/Infrastructure/bicep/main.json \
             --parameters src/Conferences/Infrastructure/parameters/main.prod.parameters.json \
-            --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-conferences-api:${{ steps.gitversion.outputs.semVer }}" \
+            --parameters containerImage="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}/attendr/attendr-conferences-api:${{ needs.version.outputs.semVer }}" \
 
       - name: Get deployment outputs
         working-directory: src/Conferences/Infrastructure
