@@ -58,7 +58,9 @@ builder.Services
     .AddAttendrProfilesServices(builder.Configuration)
     .AddMongoDbProfileRepository(builder.Configuration);
 
+#if DEBUG
 builder.Services.AddDaprSidekick();
+#endif
 builder.Services.AddDaprClient();
 
 var app = builder.Build();
