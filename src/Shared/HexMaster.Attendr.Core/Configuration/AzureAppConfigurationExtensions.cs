@@ -38,6 +38,8 @@ public static class AzureAppConfigurationExtensions
                         {
                             kv.SetCredential(credential);
                         });
+                    
+                    Console.WriteLine($"Azure App Configuration - Loading keys with label: '{environment}'");
                 });
                 Console.WriteLine($"Configuration from {appConfigEndpoint} succeeded.");
             }

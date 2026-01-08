@@ -24,8 +24,15 @@ public static class ServiceCollectionExtensions
         // Configure options
         services.AddOptions<MongoDbOptions>()
             .BindConfiguration(MongoDbOptions.SectionName)
+            .ValidateOnStart()
             .Validate(o => !string.IsNullOrWhiteSpace(o.ConnectionString), "ConnectionString is required")
-            .Validate(o => !string.IsNullOrWhiteSpace(o.DatabaseName), "DatabaseName is required");
+            .Validate(o => !string.IsNullOrWhiteSpace(o.DatabaseName), "DatabaseName is required")
+            .PostConfigure<IConfiguration>((options, config) =>
+            {
+                // Log configuration for debugging
+                Console.WriteLine($"MongoDb Configuration - ConnectionString: {(string.IsNullOrEmpty(options.ConnectionString) ? "NOT SET" : "SET")}");
+                Console.WriteLine($"MongoDb Configuration - DatabaseName: {options.DatabaseName}");
+            });
 
         // Register MongoDB client
         services.AddSingleton<IMongoClient>(sp =>
