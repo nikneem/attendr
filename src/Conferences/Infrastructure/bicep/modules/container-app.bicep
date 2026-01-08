@@ -87,7 +87,7 @@ resource containerApp 'Microsoft.App/containerApps@2025-10-02-preview' = {
       containers: [
         {
           name: 'conferences-api'
-          image: containerImage
+          image: '${containerRegistryServer}/${containerImage}'
           resources: {
             cpu: json('0.25')
             memory: '0.5Gi'

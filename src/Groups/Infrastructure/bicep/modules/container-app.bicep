@@ -87,7 +87,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       containers: [
         {
           name: 'groups-api'
-          image: containerImage
+          image: '${containerRegistryServer}/${containerImage}'
           resources: {
             cpu: json('0.25')
             memory: '0.5Gi'
