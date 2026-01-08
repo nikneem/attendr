@@ -25,3 +25,6 @@ module resources './resources.bicep' = {
     hostnames: hostnames
   }
 }
+
+output staticWebAppName string = resources.outputs.staticWebAppName
+output resourceGroupName string = targetResourcegroup.name

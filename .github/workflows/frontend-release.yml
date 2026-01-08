@@ -75,6 +75,12 @@ jobs:
           template: ${{env.APP_LOCATION}}/infrastructure/main.bicep
           parameters: ${{env.APP_LOCATION}}/infrastructure/prd.parameters.bicepparam
 
+      - name: Capture deployment outputs
+        id: deployment-outputs
+        run: |
+          echo "resourceGroupName=${{ steps.deploy.outputs.resourceGroupName }}" >> $GITHUB_OUTPUT
+          echo "staticWebAppName=${{ steps.deploy.outputs.staticWebAppName }}" >> $GITHUB_OUTPUT
+
       - name: Install Node
         uses: actions/setup-node@v4
 
@@ -87,7 +93,7 @@ jobs:
         with:
           azcliversion: 2.72.0
           inlineScript: |
-            SWA_SECRETS=$(az staticwebapp secrets list -n memeit-frontend-prd-westeurope-swa -g rg-memeit-frontend-prd-westeurope --query 'properties.apiKey' -o tsv )
+            SWA_SECRETS=$(az staticwebapp secrets list -n ${{ steps.deployment-outputs.outputs.staticWebAppName }} -g ${{ steps.deployment-outputs.outputs.resourceGroupName }} --query 'properties.apiKey' -o tsv )
             echo "::add-mask::$SWA_SECRETS"
             echo SWA_SECRETS=$SWA_SECRETS >> $GITHUB_OUTPUT
 

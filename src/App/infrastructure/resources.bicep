@@ -22,3 +22,5 @@ resource staticWebApp 'Microsoft.Web/staticSites@2024-04-01' = {
     }
   ]
 }
+
+output staticWebAppName string = staticWebApp.name
