@@ -42,10 +42,6 @@ resource daprPubSub 'Microsoft.App/managedEnvironments/daprComponents@2025-10-02
         name: 'connectionString'
         secretRef: 'sb-connection-string'
       }
-      {
-        name: 'namespaceName'
-        value: serviceBusNamespace
-      }
     ]
     scopes: []
   }
