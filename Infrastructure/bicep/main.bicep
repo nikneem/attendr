@@ -12,6 +12,13 @@ param baseName string = 'attendr'
 @description('Tags to apply to all resources')
 param tags object = {}
 
+@description('Container registry information')
+param containerRegistry object = {
+  subscriptionId: ''
+  resourceGroupName: ''
+  name: ''
+}
+
 var resourceGroupName = 'rg-${baseName}-${environmentName}'
 
 // Deploy Resource Group
@@ -29,6 +36,7 @@ module resourceDeployment './modules/resources.bicep' = {
     location: location
     baseName: baseName
     tags: tags
+    containerRegistry: containerRegistry
   }
 }
 
@@ -40,3 +48,6 @@ output serviceBusNamespace string = resourceDeployment.outputs.serviceBusNamespa
 output redisCacheName string = resourceDeployment.outputs.redisCacheName
 output daprPubSubComponentName string = resourceDeployment.outputs.daprPubSubComponentName
 output daprStateStoreComponentName string = resourceDeployment.outputs.daprStateStoreComponentName
+output userAssignedIdentityId string = resourceDeployment.outputs.userAssignedIdentityId
+output userAssignedIdentityPrincipalId string = resourceDeployment.outputs.userAssignedIdentityPrincipalId
+output userAssignedIdentityClientId string = resourceDeployment.outputs.userAssignedIdentityClientId

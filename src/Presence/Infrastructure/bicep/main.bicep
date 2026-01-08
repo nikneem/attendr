@@ -19,6 +19,7 @@ param landingzone object = {
   appConfigurationName: ''
   keyVaultName: ''
   applicationInsightsName: ''
+  userAssignedIdentityId: ''
 }
 
 @description('Container registry information')
@@ -45,20 +46,6 @@ resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01
   name: landingzone.resourceGroupName
 }
 
-// Create user assigned identity with all required permissions
-module userIdentity './modules/user-assigned-identity.bicep' = {
-  scope: resourceGroup
-  params: {
-    name: 'id-${baseName}-${environmentName}'
-    location: location
-    tags: tags
-    containerRegistry: containerRegistry
-    appConfigurationName: landingzone.appConfigurationName
-    keyVaultName: landingzone.keyVaultName
-    landingZoneResourceGroupName: landingzone.resourceGroupName
-  }
-}
-
 // Deploy the Presence container app
 module presenceApp './modules/container-app.bicep' = {
   scope: resourceGroup
@@ -71,12 +58,9 @@ module presenceApp './modules/container-app.bicep' = {
     containerImage: containerImage
     appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
     applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
-    userAssignedIdentityId: userIdentity.outputs.id
+    userAssignedIdentityId: landingzone.userAssignedIdentityId
     containerRegistryServer: '${containerRegistry.name}.azurecr.io'
   }
-  dependsOn: [
-    userIdentity
-  ]
 }
 
 // Get App Configuration endpoint
@@ -94,6 +78,17 @@ module appInsightsConnectionString './modules/get-app-insights.bicep' = {
     applicationInsightsName: landingzone.applicationInsightsName
   }
 }
+
+// Assign permissions to the container app's system-assigned managed identity
+module roleAssignments './modules/role-assignments.bicep' = {
+  scope: landingZoneResourceGroup
+  params: {
+    principalId: presenceApp.outputs.managedIdentityPrincipalId
+    appConfigurationName: landingzone.appConfigurationName
+    keyVaultName: landingzone.keyVaultName
+  }
+}
+
 // Configure service integration endpoints in App Configuration
 module serviceIntegration '../../../../Infrastructure/bicep/modules/app-configuration-service-integration.bicep' = {
   scope: landingZoneResourceGroup

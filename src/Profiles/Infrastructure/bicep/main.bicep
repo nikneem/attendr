@@ -19,6 +19,7 @@ param landingzone object = {
   appConfigurationName: ''
   keyVaultName: ''
   applicationInsightsName: ''
+  userAssignedIdentityId: ''
 }
 
 @description('Container registry information')
@@ -45,20 +46,6 @@ resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01
   name: landingzone.resourceGroupName
 }
 
-// Create user assigned identity with all required permissions
-module userIdentity './modules/user-assigned-identity.bicep' = {
-  scope: resourceGroup
-  params: {
-    name: 'id-${baseName}-${environmentName}'
-    location: location
-    tags: tags
-    containerRegistry: containerRegistry
-    appConfigurationName: landingzone.appConfigurationName
-    keyVaultName: landingzone.keyVaultName
-    landingZoneResourceGroupName: landingzone.resourceGroupName
-  }
-}
-
 // Deploy the Profiles container app
 module profilesApp './modules/container-app.bicep' = {
   scope: resourceGroup
@@ -71,7 +58,7 @@ module profilesApp './modules/container-app.bicep' = {
     containerImage: containerImage
     appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
     applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
-    userAssignedIdentityId: userIdentity.outputs.id
+    userAssignedIdentityId: landingzone.userAssignedIdentityId
     containerRegistryServer: '${containerRegistry.name}.azurecr.io'
   }
 }
@@ -89,6 +76,16 @@ module appInsightsConnectionString './modules/get-app-insights.bicep' = {
   scope: landingZoneResourceGroup
   params: {
     applicationInsightsName: landingzone.applicationInsightsName
+  }
+}
+
+// Assign permissions to the container app's system-assigned managed identity
+module roleAssignments './modules/role-assignments.bicep' = {
+  scope: landingZoneResourceGroup
+  params: {
+    principalId: profilesApp.outputs.managedIdentityPrincipalId
+    appConfigurationName: landingzone.appConfigurationName
+    keyVaultName: landingzone.keyVaultName
   }
 }
 

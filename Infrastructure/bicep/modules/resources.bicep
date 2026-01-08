@@ -12,6 +12,9 @@ param baseName string
 @description('Tags to apply to all resources')
 param tags object = {}
 
+@description('Container registry information')
+param containerRegistry object
+
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var keyVaultName = 'kv-${baseName}-${environmentName}'
 var appConfigName = 'appconfig-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
@@ -22,6 +25,7 @@ var cosmosAccountName = 'cosmos-${baseName}-${environmentName}-${take(uniqueSuff
 var cosmosDatabaseName = 'attendr'
 var serviceBusNamespaceName = 'sb-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
 var redisCacheName = 'redis-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
+var userAssignedIdentityName = 'id-${baseName}-${environmentName}'
 
 // Integration event topics from the IntegrationEvents library
 var serviceBusTopics = [
@@ -44,6 +48,21 @@ module keyVault './keyvault.bicep' = {
     location: location
     tags: tags
   }
+}
+
+// Create central user assigned identity with ACR pull permissions
+module userIdentity './user-assigned-identity.bicep' = {
+  params: {
+    name: userAssignedIdentityName
+    location: location
+    tags: tags
+    containerRegistry: containerRegistry
+    appConfigurationName: appConfigName
+    keyVaultName: keyVaultName
+  }
+  dependsOn: [
+    keyVault
+  ]
 }
 
 // Log Analytics Workspace for Azure Monitor
@@ -162,3 +181,6 @@ output serviceBusNamespace string = serviceBusNamespaceName
 output redisCacheName string = redisCacheName
 output daprPubSubComponentName string = daprComponents.outputs.pubSubComponentName
 output daprStateStoreComponentName string = daprComponents.outputs.stateStoreComponentName
+output userAssignedIdentityId string = userIdentity.outputs.id
+output userAssignedIdentityPrincipalId string = userIdentity.outputs.principalId
+output userAssignedIdentityClientId string = userIdentity.outputs.clientId

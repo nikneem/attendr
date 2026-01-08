@@ -42,7 +42,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   location: location
   tags: tags
   identity: {
-    type: 'UserAssigned'
+    type: 'SystemAssigned,UserAssigned'
     userAssignedIdentities: {
       '${userAssignedIdentityId}': {}
     }
@@ -161,4 +161,4 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
 output id string = containerApp.id
 output name string = containerApp.name
 output fqdn string = containerApp.properties.configuration.ingress.fqdn
-output managedIdentityPrincipalId string = containerApp.identity.userAssignedIdentities[userAssignedIdentityId].principalId
+output managedIdentityPrincipalId string = containerApp.identity.principalId

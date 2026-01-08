@@ -8,3 +8,8 @@ param tags = {
   Application: 'Attendr'
   ManagedBy: 'Bicep'
 }
+param containerRegistry = {
+  subscriptionId: subscription().subscriptionId
+  resourceGroupName: 'rg-acr-shared'
+  name: 'acrattendr'
+}
