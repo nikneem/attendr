@@ -2,8 +2,12 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.Core.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Azure App Configuration (Release mode only)
+builder.Configuration.AddAttendrAzureAppConfiguration(builder.Environment.EnvironmentName);
 
 // Configure OpenTelemetry
 builder.Services.AddOpenTelemetry()

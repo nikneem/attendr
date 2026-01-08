@@ -3,6 +3,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.Core.Configuration;
 using HexMaster.Attendr.Conferences.Api.Endpoints;
 using HexMaster.Attendr.Conferences.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Conferences.Extensions;
@@ -13,6 +14,9 @@ using Sessionize.Api.Client.DependencyInjection;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Azure App Configuration (Release mode only)
+builder.Configuration.AddAttendrAzureAppConfiguration(builder.Environment.EnvironmentName);
 
 // Configure OpenTelemetry
 builder.Services.AddOpenTelemetry()
