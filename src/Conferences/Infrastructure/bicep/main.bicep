@@ -42,7 +42,7 @@ resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01
 module conferencesApp './modules/container-app.bicep' = {
   scope: resourceGroup
   params: {
-    name: 'ca-${baseName}-conferences-${environmentName}'
+    name: 'ca-${baseName}-${environmentName}'
     location: location
     tags: tags
     landingZoneResourceGroupName: landingzone.resourceGroupName
@@ -78,7 +78,16 @@ module permissions './modules/role-assignments.bicep' = {
     keyVaultName: landingzone.keyVaultName
   }
 }
-
+// Configure service integration endpoints in App Configuration
+module serviceIntegration '../../../../Infrastructure/bicep/modules/app-configuration-service-integration.bicep' = {
+  scope: landingZoneResourceGroup
+  params: {
+    appConfigurationName: landingzone.appConfigurationName
+    environmentName: environmentName
+    baseName: baseName
+    serviceName: 'Conferences'
+  }
+}
 output resourceGroupName string = resourceGroup.name
 output containerAppName string = conferencesApp.outputs.name
 output containerAppFqdn string = conferencesApp.outputs.fqdn
