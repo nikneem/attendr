@@ -29,7 +29,7 @@ jobs:
       - run: npm i --legacy-peer-deps
         working-directory: ${{env.APP_LOCATION}}
         name: Install packages
-      - run: npm run build
+      - run: npm run build -- --configuration production
         working-directory: ${{env.APP_LOCATION}}
         name: Build Angular App
 
