@@ -22,9 +22,10 @@ public static class AzureAppConfigurationExtensions
 #if RELEASE
         var tempConfig = builder.Build();
         var appConfigEndpoint = tempConfig["AppConfiguration__Endpoint"];
-
+        Console.WriteLine($"Azure App Configuration Endpoint: {appConfigEndpoint}");
         if (!string.IsNullOrWhiteSpace(appConfigEndpoint))
         {
+            try{
             builder.AddAzureAppConfiguration(options =>
             {
                 var credential = new DefaultAzureCredential();
@@ -36,6 +37,12 @@ public static class AzureAppConfigurationExtensions
                         kv.SetCredential(credential);
                     });
             });
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error connecting to Azure App Configuration: {ex.Message}");
+                throw;
+            }
         }
 #endif
         return builder;
