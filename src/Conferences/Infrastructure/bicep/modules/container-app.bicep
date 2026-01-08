@@ -42,7 +42,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01'
   scope: resourceGroup(landingZoneResourceGroupName)
 }
 
-resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
+resource containerApp 'Microsoft.App/containerApps@2025-10-02-preview' = {
   name: name
   location: location
   tags: tags
@@ -87,7 +87,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       containers: [
         {
           name: 'conferences-api'
-          image: containerImage
+          image: '${containerRegistryServer}/${containerImage}'
           resources: {
             cpu: json('0.25')
             memory: '0.5Gi'
