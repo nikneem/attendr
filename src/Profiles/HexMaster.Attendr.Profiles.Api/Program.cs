@@ -53,6 +53,9 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
+// Add health checks
+builder.Services.AddHealthChecks();
+
 // Register Profiles module services
 builder.Services
     .AddAttendrProfilesServices(builder.Configuration)
@@ -75,6 +78,14 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map health check endpoints
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = _ => false // Only returns the overall health status
+});
+app.MapHealthChecks("/health/ready");
+app.MapHealthChecks("/health/startup");
 
 // Map endpoints
 app.MapProfileEndpoints();

@@ -56,6 +56,9 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
+// Add health checks
+builder.Services.AddHealthChecks();
+
 // Register repositories and services
 builder.Services.AddMongoDbConferenceRepository(builder.Configuration);
 builder.Services.AddAttendrConferencesServices();
@@ -79,6 +82,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map health check endpoints
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = _ => false // Only returns the overall health status
+});
+app.MapHealthChecks("/health/ready");
+app.MapHealthChecks("/health/startup");
 
 // Map endpoints
 app.MapConferencesEndpoints();
