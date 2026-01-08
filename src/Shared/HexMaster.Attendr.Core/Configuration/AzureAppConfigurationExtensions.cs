@@ -28,17 +28,17 @@ public static class AzureAppConfigurationExtensions
         if (!string.IsNullOrWhiteSpace(appConfigEndpoint))
         {
             try{
-            builder.AddAzureAppConfiguration(options =>
-            {
-                var credential = new DefaultAzureCredential();
-                
-                options.Connect(new Uri(appConfigEndpoint), credential)
-                    .Select("*", environment)
-                    .ConfigureKeyVault(kv =>
-                    {
-                        kv.SetCredential(credential);
-                    });
-            });
+                builder.AddAzureAppConfiguration(options =>
+                {
+                    var credential = new DefaultAzureCredential();
+                    
+                    options.Connect(new Uri(appConfigEndpoint), credential)
+                        .Select("*", environment)
+                        .ConfigureKeyVault(kv =>
+                        {
+                            kv.SetCredential(credential);
+                        });
+                });
             }
             catch(Exception ex)
             {
