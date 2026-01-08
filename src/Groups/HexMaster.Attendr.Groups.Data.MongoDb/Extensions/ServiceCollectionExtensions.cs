@@ -21,6 +21,9 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
+
+        Console.WriteLine(Environment.GetEnvironmentVariable("MongoDb__ConnectionString"));
+
         // Configure options
         services.AddOptions<MongoDbOptions>()
             .BindConfiguration(MongoDbOptions.SectionName)
