@@ -67,7 +67,9 @@ builder.Services.AddConferencesIntegration(builder.Configuration);
 // Register Presence module services
 builder.Services.AddMongoDbPresenceRepository(builder.Configuration);
 builder.Services.AddIntegrationEvents(builder.Configuration);
+#if DEBUG
 builder.Services.AddDaprSidekick();
+#endif
 builder.Services.AddDaprClient();
 
 // Register feature slice services

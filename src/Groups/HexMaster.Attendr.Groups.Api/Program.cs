@@ -66,7 +66,9 @@ builder.Services.AddConferencesIntegration(builder.Configuration);
 // Register Groups module services
 builder.Services.AddAttendrGroupsServices();
 builder.Services.AddIntegrationEvents(builder.Configuration);
+#if DEBUG
 builder.Services.AddDaprSidekick();
+#endif
 builder.Services.AddDaprClient();
 
 // Register MongoDB repository

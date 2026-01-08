@@ -63,7 +63,9 @@ builder.Services.AddSessionizeApiClient();
 builder.Services.AddIntegrationEvents(builder.Configuration);
 builder.Services.AddProfilesIntegration(builder.Configuration);
 builder.Services.AddAttendrCache(builder.Configuration);
+#if DEBUG
 builder.Services.AddDaprSidekick();
+#endif
 builder.Services.AddDaprClient();
 
 var app = builder.Build();
