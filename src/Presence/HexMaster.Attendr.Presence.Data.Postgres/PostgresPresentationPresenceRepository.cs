@@ -122,7 +122,7 @@ public sealed class PostgresPresentationPresenceRepository : IPresentationPresen
         {
             var dataJson = reader.GetString(0);
             var entity = JsonSerializer.Deserialize<PresentationPresenceEntity>(dataJson, _jsonOptions);
-            
+
             if (entity != null)
             {
                 presentations.Add(PresentationPresenceMapper.ToDomain(entity));
@@ -191,7 +191,7 @@ public sealed class PostgresPresentationPresenceRepository : IPresentationPresen
         {
             var dataJson = reader.GetString(0);
             var entity = JsonSerializer.Deserialize<PresentationPresenceEntity>(dataJson, _jsonOptions);
-            
+
             if (entity != null)
             {
                 presentations.Add(PresentationPresenceMapper.ToDomain(entity));
@@ -226,7 +226,7 @@ public sealed class PostgresPresentationPresenceRepository : IPresentationPresen
         {
             var dataJson = reader.GetString(0);
             var entity = JsonSerializer.Deserialize<PresentationPresenceEntity>(dataJson, _jsonOptions);
-            
+
             if (entity != null)
             {
                 presentations.Add(PresentationPresenceMapper.ToDomain(entity));

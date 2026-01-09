@@ -92,7 +92,7 @@ public sealed class PostgresConferencePresenceRepository : IConferencePresenceRe
         {
             var dataJson = reader.GetString(0);
             var entity = JsonSerializer.Deserialize<ConferencePresenceEntity>(dataJson, _jsonOptions);
-            
+
             if (entity != null)
             {
                 presences.Add(ConferencePresenceMapper.ToDomain(entity));

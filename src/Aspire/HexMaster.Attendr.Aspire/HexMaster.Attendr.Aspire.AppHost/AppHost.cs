@@ -85,7 +85,6 @@ var presenceApi = builder.AddProject<HexMaster_Attendr_Presence_Api>(AspireConst
     .WaitFor(presenceDatabase);
 
 
-
 // Add YARP gateway
 var gateway = builder.AddYarp("gateway")
     .WithHostPort(5000)
