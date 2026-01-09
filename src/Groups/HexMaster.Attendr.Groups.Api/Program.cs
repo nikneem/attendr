@@ -3,6 +3,7 @@ using HexMaster.Attendr.Conferences.Integrations.Extensions;
 using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Core.Configuration;
 using HexMaster.Attendr.Groups.Api.Endpoints;
+using HexMaster.Attendr.Groups.Data.Postgress.Extensions;
 using HexMaster.Attendr.Groups.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
@@ -35,6 +36,7 @@ builder.Services.AddAttendrCache(builder.Configuration);
 builder.Services.AddProfilesIntegration(builder.Configuration);
 builder.Services.AddConferencesIntegration(builder.Configuration);
 builder.Services.AddAttendrGroupsServices();
+builder.Services.AddPostgresGroupRepository();
 builder.Services.AddIntegrationEvents(builder.Configuration);
 
 builder.Services.AddDaprClient();
@@ -50,6 +52,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 

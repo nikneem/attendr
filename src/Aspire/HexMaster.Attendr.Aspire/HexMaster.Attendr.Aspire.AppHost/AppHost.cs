@@ -62,7 +62,23 @@ var groupsApi = builder.AddProject<HexMaster_Attendr_Groups_Api>(AspireConstants
     .WithReference(groupsDatabase)
     .WaitFor(groupsDatabase);
 
+// ## The Conferences service ##
+var conferencesDatabase = postgres.AddDatabase(AspireConstants.Postgres.GroupsDatabase);
+var conferencesApi = builder.AddProject<HexMaster_Attendr_Conferences_Api>(AspireConstants.ConferencesApiName)
+    .WithDaprSidecar(opts =>
+    {
+        opts.WithReference(pubSub)
+            .WithReference(stateStore);
+    })
+    .WithReference(conferencesDatabase)
+    .WaitFor(conferencesDatabase);
 
+var presenceApi = builder.AddProject<HexMaster_Attendr_Presence_Api>(AspireConstants.PresenceApiName)
+    .WithDaprSidecar(opts =>
+    {
+        opts.WithReference(pubSub)
+            .WithReference(stateStore);
+    });
 
 
 
@@ -79,6 +95,14 @@ var gateway = builder.AddYarp("gateway")
         yarp.AddRoute("/groups/{**catch-all}", groupsApi)
             .WithTransformPathRemovePrefix("/groups")
             .WithTransformPathPrefix("/api/groups");
+
+        yarp.AddRoute("/conferences/{**catch-all}", conferencesApi)
+            .WithTransformPathRemovePrefix("/conferences")
+            .WithTransformPathPrefix("/api/conferences");
+
+        yarp.AddRoute("/presence/{**catch-all}", presenceApi)
+            .WithTransformPathRemovePrefix("/presence")
+            .WithTransformPathPrefix("/api/presence");
 
         // Route for SignalR hub - pass through without transformation
         // SignalR clients will connect to http://gateway:5000/hubs/games
@@ -97,9 +121,5 @@ if (Directory.Exists(frontEndSourceFolder))
         .WithEnvironment("ASPIRE_GATEWAY_URL", gateway.GetEndpoint("http"));
 
 }
-
-
-
-
 
 builder.Build().Run();

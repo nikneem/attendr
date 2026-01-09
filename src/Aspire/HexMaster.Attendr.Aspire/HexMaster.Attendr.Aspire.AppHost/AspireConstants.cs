@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HexMaster.Attendr.Aspire.AppHost;
+﻿namespace HexMaster.Attendr.Aspire.AppHost;
 
 public static class AspireConstants
 {
     public const string ProfilesApiName = "hexmaster-attendr-profiles-api";
     public const string GroupsApiName = "hexmaster-attendr-groups-api";
-
+    public const string ConferencesApiName = "hexmaster-attendr-conferences-api";
+    public const string PresenceApiName = "hexmaster-attendr-presence-api";
 
     public static class TableStorage
     {

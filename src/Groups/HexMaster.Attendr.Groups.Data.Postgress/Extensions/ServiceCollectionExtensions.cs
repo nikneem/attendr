@@ -15,17 +15,8 @@ public static class ServiceCollectionExtensions
     /// <param name="services">The service collection.</param>
     /// <param name="configuration">The configuration.</param>
     /// <returns>The service collection for chaining.</returns>
-    public static IServiceCollection AddPostgresGroupRepository(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPostgresGroupRepository(this IServiceCollection services)
     {
-        ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(configuration);
-
-        // Configure options
-        services.AddOptions<PostgresOptions>()
-            .BindConfiguration(PostgresOptions.SectionName)
-            .Validate(o => !string.IsNullOrWhiteSpace(o.SchemaName), "SchemaName is required")
-            .Validate(o => !string.IsNullOrWhiteSpace(o.TableName), "TableName is required");
-
         // Register repository (expects NpgsqlDataSource to be registered via Aspire)
         services.AddSingleton<IGroupRepository, PostgresGroupRepository>();
 

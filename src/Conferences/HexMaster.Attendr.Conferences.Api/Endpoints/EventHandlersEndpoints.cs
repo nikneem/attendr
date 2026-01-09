@@ -1,4 +1,5 @@
 using Dapr;
+using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.IntegrationEvents.Constants;
@@ -16,14 +17,14 @@ public static class EventHandlersEndpoints
         group.MapPost("/ConferenceCreatedHandler", ConferenceCreatedHandler)
             .WithName("ConferenceCreatedHandler")
             .AllowAnonymous()
-            .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.ConferenceCreated)
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ConferenceCreated)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
         group.MapPost("/ConferenceUpdatedHandler", ConferenceUpdatedHandler)
             .WithName("ConferenceUpdatedHandler")
             .AllowAnonymous()
-            .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.ConferenceUpdated)
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ConferenceUpdated)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
