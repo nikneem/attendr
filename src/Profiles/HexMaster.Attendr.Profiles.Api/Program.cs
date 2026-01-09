@@ -34,9 +34,6 @@ builder.Services
     .AddAttendrProfilesServices(builder.Configuration)
     .AddTableStorageProfileRepository();
 
-#if DEBUG
-builder.Services.AddDaprSidekick();
-#endif
 builder.Services.AddDaprClient();
 
 

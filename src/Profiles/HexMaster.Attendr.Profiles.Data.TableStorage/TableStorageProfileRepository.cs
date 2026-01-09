@@ -4,7 +4,6 @@ using HexMaster.Attendr.Profiles.Data.TableStorage.Mappers;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Models;
 using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Repositories;
-using System.Threading;
 using HexMaster.Attendr.Aspire.AppHost;
 
 namespace HexMaster.Attendr.Profiles.Data.TableStorage;
