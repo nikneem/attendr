@@ -8,12 +8,10 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-
 // Configure Azure App Configuration (Release mode only)
 builder.Configuration.AddAttendrAzureAppConfiguration(builder.Environment.EnvironmentName);
 
-
+builder.AddServiceDefaults();
 builder.AddAzureTableServiceClient(AspireConstants.TableStorage.Profiles);
 
 // Add services to the container.
