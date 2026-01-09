@@ -3,18 +3,20 @@ using HexMaster.Attendr.Aspire.AppHost;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+// Adding redis for caching and local pubsub
 var redis = builder.AddRedis("redis").WithRedisInsight();
+
+// Adding Azurite storage emulator for local development
 var storage = builder.AddAzureStorage("storage")
     .RunAsEmulator(azurite =>
     {
         azurite.WithLifetime(ContainerLifetime.Persistent);
     });
 
-var profilesTable = storage.AddTables(AspireConstants.TableStorage.Profiles);
-
+// ## Dapr Configuration - Adding a distributed state store with Redis as a storage backend ##
+// ## Adding Pubsub with Redis as a broker ##
 var redisHost = redis.Resource.PrimaryEndpoint.Property(EndpointProperty.Host);
 var redisPort = redis.Resource.PrimaryEndpoint.Property(EndpointProperty.Port);
-
 // # Dapr State Store and PubSub using Redis #
 var stateStore = builder.AddDaprStateStore(AspireConstants.Dapr.StateStoreName)
     .WithMetadata(
@@ -22,8 +24,6 @@ var stateStore = builder.AddDaprStateStore(AspireConstants.Dapr.StateStoreName)
         ReferenceExpression.Create($"{redisHost}:{redisPort}")
     )
     .WaitFor(redis);
-
-
 var pubSub = builder
     .AddDaprPubSub(AspireConstants.Dapr.PubSubName)
     .WithMetadata(
@@ -32,6 +32,9 @@ var pubSub = builder
     )
     .WaitFor(redis);
 
+
+// ## The profiles service ##
+var profilesTable = storage.AddTables(AspireConstants.TableStorage.Profiles);
 var profilesApi = builder.AddProject<Projects.HexMaster_Attendr_Profiles_Api>(AspireConstants.ProfilesApiName)
     .WithDaprSidecar(opts =>
     {
@@ -40,6 +43,8 @@ var profilesApi = builder.AddProject<Projects.HexMaster_Attendr_Profiles_Api>(As
     })
     .WaitFor(profilesTable)
     .WithReference(profilesTable);
+
+
 
 
 // Add YARP gateway
