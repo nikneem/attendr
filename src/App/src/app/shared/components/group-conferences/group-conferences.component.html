@@ -16,7 +16,7 @@
             @for (conference of conferences(); track conference.id) {
             <div class="conference-tile">
                 <div class="tile-visual"
-                    [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : null">
+                    [style.background-image]="'url(' + (conference.imageUrl || '/images/attendr-icon.png') + ')'">
                     @if (isOwnerOrManager()) {
                     <button type="button" class="tile-action" pButton icon="pi pi-trash"
                         (click)="confirmUnfollow(conference.id, conference.name)" [text]="true"></button>

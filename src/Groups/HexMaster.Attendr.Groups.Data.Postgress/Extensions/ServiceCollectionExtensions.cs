@@ -17,8 +17,9 @@ public static class ServiceCollectionExtensions
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddPostgresGroupRepository(this IServiceCollection services)
     {
-        // Register repository (expects NpgsqlDataSource to be registered via Aspire)
+        // Register repositories (expects NpgsqlDataSource to be registered via Aspire)
         services.AddSingleton<IGroupRepository, PostgresGroupRepository>();
+        services.AddSingleton<ICheckInRepository, PostgresCheckInRepository>();
 
         return services;
     }
