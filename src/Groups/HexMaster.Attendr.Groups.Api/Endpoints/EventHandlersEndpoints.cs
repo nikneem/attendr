@@ -1,7 +1,8 @@
+using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Constants;
-using HexMaster.Attendr.Groups.ProcessProfileCheckedIn;
-using HexMaster.Attendr.Groups.ProcessProfileConferenceAttendanceChanged;
+using HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
+using HexMaster.Attendr.Groups.Features.ProcessProfileConferenceAttendanceChanged;
 using HexMaster.Attendr.IntegrationEvents.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
 
@@ -23,7 +24,7 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/ProfileCheckedInHandler", HandleProfileCheckedIn)
             .WithName("HandleProfileCheckedIn")
-            .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.ProfileCheckedIn)
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ProfileCheckedIn)
             .Accepts<ProfileCheckedInEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -32,7 +33,7 @@ public static class EventHandlersEndpoints
 
         group.MapPost("/ProfileConferenceAttendanceChangedHandler", HandleProfileConferenceAttendanceChanged)
             .WithName("HandleProfileConferenceAttendanceChanged")
-            .WithTopic(DaprConstants.PubSub.Name, IntegrationEventTopics.ProfileConferenceAttendanceChanged)
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ProfileConferenceAttendanceChanged)
             .Accepts<ProfileConferenceAttendanceChangedEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)

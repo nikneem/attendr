@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -6,23 +6,26 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ContainerImageName>attendr/attendr-profiles-api</ContainerImageName>
     <ContainerUser>app</ContainerUser>
+    <UserSecretsId>6ce61f8a-ac4e-4717-8319-f30a50c1559a</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Azure.Data.Tables" Version="13.1.0" />
     <PackageReference Include="Dapr.AspNetCore" Version="1.16.1" />
-    <PackageReference Include="Man.Dapr.Sidekick.AspNetCore" Version="1.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.13.1" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.12.3" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.12.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Aspire\HexMaster.Attendr.Aspire\HexMaster.Attendr.Aspire.ServiceDefaults\HexMaster.Attendr.Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
-    <ProjectReference Include="..\HexMaster.Attendr.Profiles.Data.MongoDb\HexMaster.Attendr.Profiles.Data.MongoDb.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Profiles.Data.TableStorage\HexMaster.Attendr.Profiles.Data.TableStorage.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Profiles\HexMaster.Attendr.Profiles.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Profiles.Abstractions\HexMaster.Attendr.Profiles.Abstractions.csproj" />
   </ItemGroup>

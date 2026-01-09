@@ -1,12 +1,12 @@
 using Dapr.Client;
-using HexMaster.Attendr.Core.Constants;
+using HexMaster.Attendr.Aspire.AppHost;
 
 namespace HexMaster.Attendr.Core.Cache;
 
 public sealed class AttendrCacheClient(DaprClient daprClient) : IAttendrCacheClient
 {
     private readonly TimeSpan _defaultTtl = TimeSpan.FromMinutes(15);
-    private readonly string _storeName = DaprConstants.StateStore.SharedStateStoreName;
+    private readonly string _storeName = AspireConstants.Dapr.StateStoreName;
 
     public async Task<T?> GetOrSetAsync<T>(string key, Func<CancellationToken, Task<T?>> factory, TimeSpan? ttl = null, CancellationToken cancellationToken = default)
     {

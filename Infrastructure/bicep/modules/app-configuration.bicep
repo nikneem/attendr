@@ -12,16 +12,14 @@ param tags object = {}
 @description('The name of the Key Vault')
 param keyVaultName string
 
-@description('The URI of the MongoDB secret in Key Vault')
-param keyVaultMongoDbSecretUri string
-
 @description('The URI of the Service Bus secret in Key Vault')
 param keyVaultServiceBusSecretUri string
 
 @description('The URI of the Redis Cache secret in Key Vault')
 param keyVaultRedisCacheSecretUri string
 
-param mongoDbDatabaseName string
+@description('The URI of the Storage Account secret in Key Vault')
+param keyVaultStorageAccountSecretUri string
 
 resource appConfig 'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview' = {
   name: name
@@ -57,43 +55,6 @@ resource appConfigKeyVaultAccess 'Microsoft.Authorization/roleAssignments@2022-0
   }
 }
 
-// Add Key Vault reference for MongoDB connection string
-resource mongoDbConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
-  parent: appConfig
-  name: 'ConnectionStrings:MongoDb'
-  properties: {
-    contentType: 'application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8'
-    value: '{"uri":"${keyVaultMongoDbSecretUri}"}'
-  }
-  dependsOn: [
-    appConfigKeyVaultAccess
-  ]
-}
-
-// Add Key Vault reference for MongoDB connection string
-resource mongoDbConnectionStringKeyValueUsed 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
-  parent: appConfig
-  name: 'MongoDb:ConnectionString'
-  properties: {
-    contentType: 'application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8'
-    value: '{"uri":"${keyVaultMongoDbSecretUri}"}'
-  }
-  dependsOn: [
-    appConfigKeyVaultAccess
-  ]
-}
-
-resource mongoDbDatabaseNameValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
-  parent: appConfig
-  name: 'MongoDb:DatabaseName'
-  properties: {
-    value: mongoDbDatabaseName
-  }
-  dependsOn: [
-    appConfigKeyVaultAccess
-  ]
-}
-
 // Add Key Vault reference for Service Bus connection string
 resource serviceBusConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
   parent: appConfig
@@ -118,6 +79,25 @@ resource redisCacheConnectionStringKeyValue 'Microsoft.AppConfiguration/configur
   dependsOn: [
     appConfigKeyVaultAccess
   ]
+}
+
+// Add Key Vault reference for Storage Account connection string (for Profiles service)
+resource storageAccountConnectionStringKeyValue 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-06-01-preview' = {
+  parent: appConfig
+  name: 'ConnectionStrings:profiles'
+  properties: {
+    contentType: 'application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8'
+    value: '{"uri":"${keyVaultStorageAccountSecretUri}"}'
+  }
+  dependsOn: [
+    appConfigKeyVaultAccess
+  ]
+}
+
+// Add Key Vault reference for PostgreSQL Groups database
+dependsOn: [
+appConfigKeyVaultAccess
+]
 }
 
 output id string = appConfig.id

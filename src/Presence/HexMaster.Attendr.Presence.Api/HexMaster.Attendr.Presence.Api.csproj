@@ -11,23 +11,23 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
     <PackageReference Include="Dapr.AspNetCore" Version="1.16.1" />
-    <PackageReference Include="Man.Dapr.Sidekick.AspNetCore" Version="1.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.12.3" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.12.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Aspire\HexMaster.Attendr.Aspire\HexMaster.Attendr.Aspire.ServiceDefaults\HexMaster.Attendr.Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
     <ProjectReference Include="..\..\Conferences\HexMaster.Attendr.Conferences.Integrations\HexMaster.Attendr.Conferences.Integrations.csproj" />
     <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Presence.Abstractions\HexMaster.Attendr.Presence.Abstractions.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Presence.Data.Postgres\HexMaster.Attendr.Presence.Data.Postgres.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Presence\HexMaster.Attendr.Presence.csproj" />
-    <ProjectReference Include="..\HexMaster.Attendr.Presence.Data.MongoDb\HexMaster.Attendr.Presence.Data.MongoDb.csproj" />
   </ItemGroup>
 
 </Project>

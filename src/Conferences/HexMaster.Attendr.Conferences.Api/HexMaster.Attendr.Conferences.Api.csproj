@@ -11,21 +11,22 @@
   <ItemGroup>
     <ProjectReference Include="../../Shared/HexMaster.Attendr.Core/HexMaster.Attendr.Core.csproj" />
     <ProjectReference Include="../HexMaster.Attendr.Conferences/HexMaster.Attendr.Conferences.csproj" />
-    <ProjectReference Include="../HexMaster.Attendr.Conferences.Data.MongoDb/HexMaster.Attendr.Conferences.Data.MongoDb.csproj" />
+    <ProjectReference Include="..\..\Aspire\HexMaster.Attendr.Aspire\HexMaster.Attendr.Aspire.ServiceDefaults\HexMaster.Attendr.Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
     <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Conferences.Data.Postgres\HexMaster.Attendr.Conferences.Data.Postgres.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Azure.Npgsql" Version="13.1.0" />
     <PackageReference Include="Dapr.AspNetCore" Version="1.16.1" />
-    <PackageReference Include="Man.Dapr.Sidekick.AspNetCore" Version="1.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.12.3" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.12.4" />
     <PackageReference Include="Sessionize.Api.Client" Version="2.0.1" />
   </ItemGroup>
 

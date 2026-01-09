@@ -1,30 +1,34 @@
 <Solution>
+  <Folder Name="/Aspire/">
+    <Project Path="Aspire/HexMaster.Attendr.Aspire/HexMaster.Attendr.Aspire.AppHost/HexMaster.Attendr.Aspire.AppHost.csproj" Id="81deb485-409b-425c-9319-dd8211d34f1d" />
+    <Project Path="Aspire/HexMaster.Attendr.Aspire/HexMaster.Attendr.Aspire.ServiceDefaults/HexMaster.Attendr.Aspire.ServiceDefaults.csproj" />
+  </Folder>
   <Folder Name="/Conferences/">
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Abstractions/HexMaster.Attendr.Conferences.Abstractions.csproj" Id="fb5d3956-359a-478e-bfc1-0372a00fd3d8" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Api/HexMaster.Attendr.Conferences.Api.csproj" Id="d2a91684-e4de-4ca6-bef8-4e0324e68736" />
-    <Project Path="Conferences/HexMaster.Attendr.Conferences.Data.MongoDb/HexMaster.Attendr.Conferences.Data.MongoDb.csproj" Id="bbdf9c94-c097-488e-8610-0d8f3a1961a8" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Tests/HexMaster.Attendr.Conferences.Tests.csproj" Id="7ca73919-574d-4e77-81ec-1761ebb0060b" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences/HexMaster.Attendr.Conferences.csproj" Id="df34c04e-c395-49ac-ad23-97166063c478" />
+    <Project Path="Conferences/HexMaster.Attendr.Conferences.Data.Postgres/HexMaster.Attendr.Conferences.Data.Postgres.csproj" Id="c39c7e00-8cf3-429e-80ba-05f0458bfbba" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Integrations/HexMaster.Attendr.Conferences.Integrations.csproj" Id="c7af1d03-c3d7-4989-a4f9-c69b2526ef34" />
   </Folder>
   <Folder Name="/Groups/">
     <Project Path="Groups/HexMaster.Attendr.Groups.Api/HexMaster.Attendr.Groups.Api.csproj" Id="4d34767b-3f77-461f-b01a-56a4bbf72905" />
     <Project Path="Groups/HexMaster.Attendr.Groups.Abstractions/HexMaster.Attendr.Groups.Abstractions.csproj" Id="da885963-22a9-4ac1-9887-eeeeba70a350" />
-    <Project Path="Groups/HexMaster.Attendr.Groups.Data.MongoDb/HexMaster.Attendr.Groups.Data.MongoDb.csproj" Id="2f207c2c-a37a-4ec0-ade8-1d8879babe76" />
+    <Project Path="Groups/HexMaster.Attendr.Groups.Data.Postgress/HexMaster.Attendr.Groups.Data.Postgress.csproj" Id="e494afa1-2374-4d4b-a254-a20a4dc21095" />
     <Project Path="Groups/HexMaster.Attendr.Groups.Tests/HexMaster.Attendr.Groups.Tests.csproj" Id="0b1c4c4e-e824-4b94-91fe-d2775fb4be0d" />
     <Project Path="Groups/HexMaster.Attendr.Groups/HexMaster.Attendr.Groups.csproj" Id="480b7a96-dfbd-4f44-8e4a-7c08772164d1" />
   </Folder>
   <Folder Name="/Presence/">
-    <Project Path="Presence/HexMaster.Attendr.Presence.Data.MongoDb/HexMaster.Attendr.Presence.Data.MongoDb.csproj" Id="e3734ce8-052a-4dd8-898e-1f3c4679bc3b" />
     <Project Path="Presence/HexMaster.Attendr.Presence.Abstractions/HexMaster.Attendr.Presence.Abstractions.csproj" Id="cc3a1185-16c3-4062-bc4a-259f6630a1ea" />
     <Project Path="Presence/HexMaster.Attendr.Presence.Api/HexMaster.Attendr.Presence.Api.csproj" Id="01f8e61b-58b4-4e48-87d2-b6ba8c001d39" />
+    <Project Path="Presence/HexMaster.Attendr.Presence.Data.Postgres/HexMaster.Attendr.Presence.Data.Postgres.csproj" Id="51f9d5a3-9e5c-4443-9e07-be89565e3fa6" />
     <Project Path="Presence/HexMaster.Attendr.Presence.Tests/HexMaster.Attendr.Presence.Tests.csproj" Id="7bff3c80-9b2f-460a-b0ca-00392dcb8c67" />
     <Project Path="Presence/HexMaster.Attendr.Presence/HexMaster.Attendr.Presence.csproj" Id="c9987ca5-ef7c-4e48-a607-bd421612cba7" />
   </Folder>
   <Folder Name="/Profiles/">
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Abstractions/HexMaster.Attendr.Profiles.Abstractions.csproj" Id="f5b681e2-660a-4ad5-927d-873a03c38c03" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Api/HexMaster.Attendr.Profiles.Api.csproj" Id="c078012f-8731-4ba4-aa95-b7494b85c751" />
-    <Project Path="Profiles/HexMaster.Attendr.Profiles.Data.MongoDb/HexMaster.Attendr.Profiles.Data.MongoDb.csproj" Id="30b24758-10d0-4afe-b1a1-b212810e710a" />
+    <Project Path="Profiles/HexMaster.Attendr.Profiles.Data.TableStorage/HexMaster.Attendr.Profiles.Data.TableStorage.csproj" Id="f80d25de-ba03-4705-8f22-d14cc0e8a904" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Integrations/HexMaster.Attendr.Profiles.Integrations.csproj" Id="2108a46d-133c-41ae-be2b-8062ac40b81f" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Tests/HexMaster.Attendr.Profiles.Tests.csproj" Id="ce8e19b6-6967-41a4-b3b7-4b46fce3466b" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles/HexMaster.Attendr.Profiles.csproj" Id="da665b12-fcab-4a98-948a-971cdca2a076" />

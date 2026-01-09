@@ -1,6 +1,7 @@
 using Bogus;
 using HexMaster.Attendr.Groups.Features.ListGroups;
 using HexMaster.Attendr.Groups.Observability;
+using HexMaster.Attendr.Groups.Repositories;
 using HexMaster.Attendr.Groups.Tests.Factories;
 using HexMaster.Attendr.Groups.Tests.Helpers;
 using Microsoft.Extensions.Logging;

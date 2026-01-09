@@ -53,7 +53,7 @@ public static class GroupsConferenceEndpoints
         try
         {
             var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
-            var command = new Features.FollowConference.FollowConferenceCommand(id, Guid.Parse(profile.ProfileId), request.ConferenceId);
+            var command = new Features.FollowConference.FollowConferenceCommand(id, request.ConferenceId,Guid.Parse(profile.ProfileId));
             await handler.Handle(command, cancellationToken);
 
             return Results.NoContent();

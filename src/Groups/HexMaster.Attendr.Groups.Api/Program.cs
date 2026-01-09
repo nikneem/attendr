@@ -1,16 +1,13 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
-using HexMaster.Attendr.Core.Observability;
-using HexMaster.Attendr.Core.Configuration;
-using HexMaster.Attendr.Core.Cache.Extensions;
-using HexMaster.Attendr.Profiles.Integrations.Extensions;
+using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Conferences.Integrations.Extensions;
+using HexMaster.Attendr.Core.Cache.Extensions;
+using HexMaster.Attendr.Core.Configuration;
 using HexMaster.Attendr.Groups.Api.Endpoints;
+using HexMaster.Attendr.Groups.Data.Postgress.Extensions;
 using HexMaster.Attendr.Groups.Extensions;
-using HexMaster.Attendr.Groups.Data.MongoDb.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,32 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure Azure App Configuration (Release mode only)
 builder.Configuration.AddAttendrAzureAppConfiguration(builder.Environment.EnvironmentName);
 
-// Configure OpenTelemetry
-builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing =>
-    {
-        tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddSource(ActivitySources.Groups.Name)
-            .AddOtlpExporter();
-    })
-    .WithMetrics(metrics =>
-    {
-        metrics
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddMeter("HexMaster.Attendr.Groups")
-            .AddOtlpExporter();
-    });
-
-builder.Logging.AddOpenTelemetry(logging =>
-{
-    logging.AddOtlpExporter();
-    logging.IncludeFormattedMessage = true;
-});
-
-// Add services to the container.
+builder.AddServiceDefaults();
+builder.AddAzureNpgsqlDataSource(connectionName: AspireConstants.Postgres.GroupsDatabase);
 builder.Services.AddOpenApi();
 builder.Services.AddAuthentication(options =>
 {
@@ -56,28 +29,21 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
-// Add health checks
-builder.Services.AddHealthChecks();
-
 // Register shared cache client
 builder.Services.AddAttendrCache(builder.Configuration);
 
 // Register integration services
 builder.Services.AddProfilesIntegration(builder.Configuration);
 builder.Services.AddConferencesIntegration(builder.Configuration);
-
-// Register Groups module services
 builder.Services.AddAttendrGroupsServices();
+builder.Services.AddPostgresGroupRepository();
 builder.Services.AddIntegrationEvents(builder.Configuration);
-#if DEBUG
-builder.Services.AddDaprSidekick();
-#endif
+
 builder.Services.AddDaprClient();
 
-// Register MongoDB repository
-builder.Services.AddMongoDbGroupRepository(builder.Configuration);
-
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -86,16 +52,9 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Map health check endpoints
-app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-{
-    Predicate = _ => false // Only returns the overall health status
-});
-app.MapHealthChecks("/health/ready");
-app.MapHealthChecks("/health/startup");
 
 // Map endpoints
 app.MapGroupsEndpoints();
