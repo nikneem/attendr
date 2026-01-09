@@ -1,5 +1,6 @@
 using Aspire.Hosting.Yarp.Transforms;
 using HexMaster.Attendr.Aspire.AppHost;
+using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -32,17 +33,35 @@ var pubSub = builder
     )
     .WaitFor(redis);
 
+// Adding PostgreSQL
+// Add PostgreSQL for Memes service
+var postgres = builder.AddPostgres(AspireConstants.Postgres.Name)
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithPgAdmin();
+
 
 // ## The profiles service ##
 var profilesTable = storage.AddTables(AspireConstants.TableStorage.Profiles);
-var profilesApi = builder.AddProject<Projects.HexMaster_Attendr_Profiles_Api>(AspireConstants.ProfilesApiName)
+var profilesApi = builder.AddProject<HexMaster_Attendr_Profiles_Api>(AspireConstants.ProfilesApiName)
     .WithDaprSidecar(opts =>
     {
         opts.WithReference(pubSub)
             .WithReference(stateStore);
     })
-    .WaitFor(profilesTable)
-    .WithReference(profilesTable);
+    .WithReference(profilesTable)
+    .WaitFor(profilesTable);
+
+// ## The groups service ##
+var groupsDatabase = postgres.AddDatabase(AspireConstants.Postgres.GroupsDatabase);
+var groupsApi = builder.AddProject<HexMaster_Attendr_Groups_Api>(AspireConstants.GroupsApiName)
+    .WithDaprSidecar(opts =>
+    {
+        opts.WithReference(pubSub)
+            .WithReference(stateStore);
+    })
+    .WithReference(groupsDatabase)
+    .WaitFor(groupsDatabase);
+
 
 
 
@@ -57,13 +76,9 @@ var gateway = builder.AddYarp("gateway")
             .WithTransformPathRemovePrefix("/profiles")
             .WithTransformPathPrefix("/api/profiles");
 
-        //yarp.AddRoute("/users/{**catch-all}", usersApi)
-        //    .WithTransformPathRemovePrefix("/users")
-        //    .WithTransformPathPrefix("/api/users");
-
-        //yarp.AddRoute("/memes/{**catch-all}", memesApi)
-        //    .WithTransformPathRemovePrefix("/memes")
-        //    .WithTransformPathPrefix("/api/memes");
+        yarp.AddRoute("/groups/{**catch-all}", groupsApi)
+            .WithTransformPathRemovePrefix("/groups")
+            .WithTransformPathPrefix("/api/groups");
 
         // Route for SignalR hub - pass through without transformation
         // SignalR clients will connect to http://gateway:5000/hubs/games
@@ -82,6 +97,7 @@ if (Directory.Exists(frontEndSourceFolder))
         .WithEnvironment("ASPIRE_GATEWAY_URL", gateway.GetEndpoint("http"));
 
 }
+
 
 
 
