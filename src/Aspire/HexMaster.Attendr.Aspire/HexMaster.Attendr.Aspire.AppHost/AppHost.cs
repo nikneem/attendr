@@ -73,12 +73,16 @@ var conferencesApi = builder.AddProject<HexMaster_Attendr_Conferences_Api>(Aspir
     .WithReference(conferencesDatabase)
     .WaitFor(conferencesDatabase);
 
+// ## The Conferences service ##
+var presenceDatabase = postgres.AddDatabase(AspireConstants.Postgres.PresenceDatabase);
 var presenceApi = builder.AddProject<HexMaster_Attendr_Presence_Api>(AspireConstants.PresenceApiName)
     .WithDaprSidecar(opts =>
     {
         opts.WithReference(pubSub)
             .WithReference(stateStore);
-    });
+    })
+    .WithReference(presenceDatabase)
+    .WaitFor(presenceDatabase);
 
 
 
