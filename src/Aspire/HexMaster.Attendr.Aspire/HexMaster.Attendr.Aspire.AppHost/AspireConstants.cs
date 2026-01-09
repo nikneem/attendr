@@ -22,6 +22,7 @@ public static class AspireConstants
     {
         public const string Name = "attendr-postgress";
         public const string GroupsDatabase = "attendr-groups";
+        public const string ConferencesDatabase = "attendr-conferences";
     }
 
 }

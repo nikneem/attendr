@@ -63,7 +63,7 @@ var groupsApi = builder.AddProject<HexMaster_Attendr_Groups_Api>(AspireConstants
     .WaitFor(groupsDatabase);
 
 // ## The Conferences service ##
-var conferencesDatabase = postgres.AddDatabase(AspireConstants.Postgres.GroupsDatabase);
+var conferencesDatabase = postgres.AddDatabase(AspireConstants.Postgres.ConferencesDatabase);
 var conferencesApi = builder.AddProject<HexMaster_Attendr_Conferences_Api>(AspireConstants.ConferencesApiName)
     .WithDaprSidecar(opts =>
     {
