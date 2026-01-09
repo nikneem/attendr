@@ -208,25 +208,31 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         command.Parameters.AddWithValue("@pageSize", pageSize);
         command.Parameters.AddWithValue("@offset", (pageNumber - 1) * pageSize);
 
-        var conferences = new List<Conference>();
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-
-        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        // Read all conference entities first, then close the reader before loading related data
+        var conferenceEntities = new List<ConferenceEntity>();
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
         {
-            var conferenceEntity = new ConferenceEntity
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                Id = reader.GetGuid(0),
-                Title = reader.GetString(1),
-                City = reader.GetString(2),
-                Country = reader.GetString(3),
-                StartDate = reader.GetFieldValue<DateOnly>(4),
-                EndDate = reader.GetFieldValue<DateOnly>(5),
-                ImageUrl = reader.IsDBNull(6) ? null : reader.GetString(6),
-                SyncSourceType = reader.IsDBNull(7) ? null : reader.GetInt32(7),
-                SyncSourceLocationOrApiKey = reader.IsDBNull(8) ? null : reader.GetString(8)
-            };
+                conferenceEntities.Add(new ConferenceEntity
+                {
+                    Id = reader.GetGuid(0),
+                    Title = reader.GetString(1),
+                    City = reader.GetString(2),
+                    Country = reader.GetString(3),
+                    StartDate = reader.GetFieldValue<DateOnly>(4),
+                    EndDate = reader.GetFieldValue<DateOnly>(5),
+                    ImageUrl = reader.IsDBNull(6) ? null : reader.GetString(6),
+                    SyncSourceType = reader.IsDBNull(7) ? null : reader.GetInt32(7),
+                    SyncSourceLocationOrApiKey = reader.IsDBNull(8) ? null : reader.GetString(8)
+                });
+            }
+        }
 
-            // For list operations, we load full conference with related entities
+        // Now load related entities for each conference
+        var conferences = new List<Conference>();
+        foreach (var conferenceEntity in conferenceEntities)
+        {
             var rooms = await LoadRoomsAsync(connection, conferenceEntity.Id, cancellationToken).ConfigureAwait(false);
             var speakers = await LoadSpeakersAsync(connection, conferenceEntity.Id, cancellationToken).ConfigureAwait(false);
             var presentations = await LoadPresentationsAsync(connection, conferenceEntity.Id, cancellationToken).ConfigureAwait(false);

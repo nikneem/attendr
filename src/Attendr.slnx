@@ -19,7 +19,6 @@
     <Project Path="Groups/HexMaster.Attendr.Groups/HexMaster.Attendr.Groups.csproj" Id="480b7a96-dfbd-4f44-8e4a-7c08772164d1" />
   </Folder>
   <Folder Name="/Presence/">
-    <Project Path="Presence/HexMaster.Attendr.Presence.Data.MongoDb/HexMaster.Attendr.Presence.Data.MongoDb.csproj" Id="e3734ce8-052a-4dd8-898e-1f3c4679bc3b" />
     <Project Path="Presence/HexMaster.Attendr.Presence.Abstractions/HexMaster.Attendr.Presence.Abstractions.csproj" Id="cc3a1185-16c3-4062-bc4a-259f6630a1ea" />
     <Project Path="Presence/HexMaster.Attendr.Presence.Api/HexMaster.Attendr.Presence.Api.csproj" Id="01f8e61b-58b4-4e48-87d2-b6ba8c001d39" />
     <Project Path="Presence/HexMaster.Attendr.Presence.Data.Postgres/HexMaster.Attendr.Presence.Data.Postgres.csproj" Id="51f9d5a3-9e5c-4443-9e07-be89565e3fa6" />

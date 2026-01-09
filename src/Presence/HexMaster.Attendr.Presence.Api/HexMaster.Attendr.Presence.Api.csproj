@@ -27,8 +27,8 @@
     <ProjectReference Include="..\..\Conferences\HexMaster.Attendr.Conferences.Integrations\HexMaster.Attendr.Conferences.Integrations.csproj" />
     <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Presence.Abstractions\HexMaster.Attendr.Presence.Abstractions.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Presence.Data.Postgres\HexMaster.Attendr.Presence.Data.Postgres.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Presence\HexMaster.Attendr.Presence.csproj" />
-    <ProjectReference Include="..\HexMaster.Attendr.Presence.Data.MongoDb\HexMaster.Attendr.Presence.Data.MongoDb.csproj" />
   </ItemGroup>
 
 </Project>

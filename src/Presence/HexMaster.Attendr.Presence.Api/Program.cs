@@ -1,12 +1,13 @@
+using HexMaster.Attendr.Aspire.AppHost;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using HexMaster.Attendr.Core.Configuration;
 using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Conferences.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
-using HexMaster.Attendr.Presence.Data.MongoDb.Extensions;
 using HexMaster.Attendr.Presence.Extensions;
 using HexMaster.Attendr.Presence.Api.Endpoints;
+using HexMaster.Attendr.Presence.Data.Postgres.Extensions;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddAttendrAzureAppConfiguration(builder.Environment.EnvironmentName);
 
 builder.AddServiceDefaults();
+builder.AddAzureNpgsqlDataSource(connectionName: AspireConstants.Postgres.PresenceDatabase);
 builder.Services.AddOpenApi();
 builder.Services.AddAuthentication(options =>
 {
@@ -34,9 +36,8 @@ builder.Services.AddAttendrCache(builder.Configuration);
 // Register integration services
 builder.Services.AddProfilesIntegration(builder.Configuration);
 builder.Services.AddConferencesIntegration(builder.Configuration);
-
+builder.Services.AddPostgresPresenceRepositories();
 // Register Presence module services
-builder.Services.AddMongoDbPresenceRepository(builder.Configuration);
 builder.Services.AddIntegrationEvents(builder.Configuration);
 builder.Services.AddDaprClient();
 
