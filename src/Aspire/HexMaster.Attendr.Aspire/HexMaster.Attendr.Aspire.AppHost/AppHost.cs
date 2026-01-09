@@ -1,3 +1,4 @@
+using Aspire.Hosting.Yarp.Transforms;
 using Azure.Provisioning.Storage;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -11,8 +12,56 @@ var storage = builder.AddAzureStorage("storage")
 
 var profilesTable = storage.AddTables("profiles");
 
-builder.AddProject<Projects.HexMaster_Attendr_Profiles_Api>("hexmaster-attendr-profiles-api")
+var profilesApi = builder.AddProject<Projects.HexMaster_Attendr_Profiles_Api>("hexmaster-attendr-profiles-api")
     .WaitFor(profilesTable)
     .WithReference(profilesTable);
+
+
+
+
+
+
+
+
+
+
+// Add YARP gateway
+var gateway = builder.AddYarp("gateway")
+    .WithHostPort(5000)
+    .WithConfiguration(yarp =>
+    {
+        // Proxy /profielen routes to the Profielen API
+        yarp.AddRoute("/profiles/{**catch-all}", profilesApi)
+            .WithTransformPathRemovePrefix("/profiles")
+            .WithTransformPathPrefix("/api/profiles");
+
+        //yarp.AddRoute("/users/{**catch-all}", usersApi)
+        //    .WithTransformPathRemovePrefix("/users")
+        //    .WithTransformPathPrefix("/api/users");
+
+        //yarp.AddRoute("/memes/{**catch-all}", memesApi)
+        //    .WithTransformPathRemovePrefix("/memes")
+        //    .WithTransformPathPrefix("/api/memes");
+
+        // Route for SignalR hub - pass through without transformation
+        // SignalR clients will connect to http://gateway:5000/hubs/games
+        //yarp.AddRoute("/hubs/games/{**catch-all}", realtimeApi);
+    });
+
+
+var frontEndSourceFolder = Path.GetFullPath(builder.AppHostDirectory + "../../../../App");
+if (Directory.Exists(frontEndSourceFolder))
+{
+    var frontend = builder.AddJavaScriptApp("frontend", frontEndSourceFolder)
+        .WaitFor(gateway)
+        .WithNpm(false)
+        .WithRunScript("start")
+        .WithHttpEndpoint(port: 4200, isProxied: false)
+        .WithEnvironment("ASPIRE_GATEWAY_URL", gateway.GetEndpoint("http"));
+
+}
+
+
+
 
 builder.Build().Run();

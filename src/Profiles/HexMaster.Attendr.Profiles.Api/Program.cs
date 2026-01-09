@@ -4,7 +4,6 @@ using HexMaster.Attendr.Profiles.Api.Endpoints;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Extensions;
 using HexMaster.Attendr.Profiles.Extensions;
 using Scalar.AspNetCore;
-using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 

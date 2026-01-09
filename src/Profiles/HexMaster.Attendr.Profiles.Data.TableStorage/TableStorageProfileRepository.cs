@@ -18,7 +18,7 @@ public sealed class TableStorageProfileRepository : IProfileRepository
     {
         ArgumentNullException.ThrowIfNull(tableServiceClient);
         ArgumentNullException.ThrowIfNull(options);
-        
+
         _tableClient = tableServiceClient.GetTableClient(options.TableName);
         _tableClient.CreateIfNotExists();
     }
@@ -29,7 +29,7 @@ public sealed class TableStorageProfileRepository : IProfileRepository
         // We need to query across all partitions to find by ID (RowKey)
         // This is less efficient than GetBySubjectIdAsync
         var filter = $"RowKey eq '{id}'";
-        
+
         await foreach (var entity in _tableClient.QueryAsync<ProfileEntity>(filter, cancellationToken: cancellationToken))
         {
             return ProfileMapper.ToDomain(entity);
@@ -43,7 +43,7 @@ public sealed class TableStorageProfileRepository : IProfileRepository
     {
         // Query by PartitionKey for efficient lookup
         var filter = $"PartitionKey eq '{subjectId}'";
-        
+
         await foreach (var entity in _tableClient.QueryAsync<ProfileEntity>(filter, cancellationToken: cancellationToken))
         {
             return ProfileMapper.ToDomain(entity);
@@ -67,7 +67,7 @@ public sealed class TableStorageProfileRepository : IProfileRepository
         ArgumentNullException.ThrowIfNull(profile);
 
         var entity = ProfileMapper.ToEntity(profile);
-        
+
         try
         {
             await _tableClient.UpdateEntityAsync(entity, ETag.All, TableUpdateMode.Replace, cancellationToken).ConfigureAwait(false);
