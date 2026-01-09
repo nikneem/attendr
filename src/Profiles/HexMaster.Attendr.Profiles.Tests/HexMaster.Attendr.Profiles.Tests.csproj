@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HexMaster.Attendr.Profiles\HexMaster.Attendr.Profiles.csproj" />
-    <ProjectReference Include="..\HexMaster.Attendr.Profiles.Data.MongoDb\HexMaster.Attendr.Profiles.Data.MongoDb.csproj" />
   </ItemGroup>
 
 </Project>

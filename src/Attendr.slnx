@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Aspire/">
+    <Project Path="Aspire/HexMaster.Attendr.Aspire/HexMaster.Attendr.Aspire.AppHost/HexMaster.Attendr.Aspire.AppHost.csproj" Id="81deb485-409b-425c-9319-dd8211d34f1d" />
+    <Project Path="Aspire/HexMaster.Attendr.Aspire/HexMaster.Attendr.Aspire.ServiceDefaults/HexMaster.Attendr.Aspire.ServiceDefaults.csproj" />
+  </Folder>
   <Folder Name="/Conferences/">
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Abstractions/HexMaster.Attendr.Conferences.Abstractions.csproj" Id="fb5d3956-359a-478e-bfc1-0372a00fd3d8" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Api/HexMaster.Attendr.Conferences.Api.csproj" Id="d2a91684-e4de-4ca6-bef8-4e0324e68736" />
@@ -24,7 +28,7 @@
   <Folder Name="/Profiles/">
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Abstractions/HexMaster.Attendr.Profiles.Abstractions.csproj" Id="f5b681e2-660a-4ad5-927d-873a03c38c03" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Api/HexMaster.Attendr.Profiles.Api.csproj" Id="c078012f-8731-4ba4-aa95-b7494b85c751" />
-    <Project Path="Profiles/HexMaster.Attendr.Profiles.Data.MongoDb/HexMaster.Attendr.Profiles.Data.MongoDb.csproj" Id="30b24758-10d0-4afe-b1a1-b212810e710a" />
+    <Project Path="Profiles/HexMaster.Attendr.Profiles.Data.TableStorage/HexMaster.Attendr.Profiles.Data.TableStorage.csproj" Id="f80d25de-ba03-4705-8f22-d14cc0e8a904" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Integrations/HexMaster.Attendr.Profiles.Integrations.csproj" Id="2108a46d-133c-41ae-be2b-8062ac40b81f" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles.Tests/HexMaster.Attendr.Profiles.Tests.csproj" Id="ce8e19b6-6967-41a4-b3b7-4b46fce3466b" />
     <Project Path="Profiles/HexMaster.Attendr.Profiles/HexMaster.Attendr.Profiles.csproj" Id="da665b12-fcab-4a98-948a-971cdca2a076" />
