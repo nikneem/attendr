@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Core.Configuration;
 using HexMaster.Attendr.Profiles.Api.Endpoints;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Extensions;
 using HexMaster.Attendr.Profiles.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,7 @@ builder.AddServiceDefaults();
 builder.Configuration.AddAttendrAzureAppConfiguration(builder.Environment.EnvironmentName);
 
 
-builder.AddAzureTableServiceClient("profiles");
+builder.AddAzureTableServiceClient(AspireConstants.TableStorage.Profiles);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
@@ -31,7 +32,7 @@ builder.Services.AddAuthorization();
 // Register Profiles module services
 builder.Services
     .AddAttendrProfilesServices(builder.Configuration)
-    .AddTableStorageProfileRepository(builder.Configuration);
+    .AddTableStorageProfileRepository();
 
 #if DEBUG
 builder.Services.AddDaprSidekick();
@@ -49,6 +50,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 

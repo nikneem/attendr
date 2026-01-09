@@ -35,6 +35,9 @@ public static class Extensions
             http.AddServiceDiscovery();
         });
 
+        // Configure CORS with default allowed origins
+        builder.AddDefaultCors();
+
         // Uncomment the following to restrict the allowed schemes for service discovery.
         // builder.Services.Configure<ServiceDiscoveryOptions>(options =>
         // {
@@ -106,6 +109,22 @@ public static class Extensions
         return builder;
     }
 
+    public static TBuilder AddDefaultCors<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+    {
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins("http://localhost:4200", "https://attendr.live")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+            });
+        });
+
+        return builder;
+    }
+
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
             app.MapHealthChecks(HealthEndpointPath);
@@ -117,3 +136,4 @@ public static class Extensions
         return app;
     }
 }
+

@@ -4,24 +4,17 @@ using HexMaster.Attendr.Profiles.Data.TableStorage.Mappers;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Models;
 using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Repositories;
+using System.Threading;
+using HexMaster.Attendr.Aspire.AppHost;
 
 namespace HexMaster.Attendr.Profiles.Data.TableStorage;
 
 /// <summary>
 /// Azure Table Storage implementation of IProfileRepository.
 /// </summary>
-public sealed class TableStorageProfileRepository : IProfileRepository
+public sealed class TableStorageProfileRepository(TableServiceClient tableServiceClient) : IProfileRepository
 {
-    private readonly TableClient _tableClient;
 
-    public TableStorageProfileRepository(TableServiceClient tableServiceClient, TableStorageOptions options)
-    {
-        ArgumentNullException.ThrowIfNull(tableServiceClient);
-        ArgumentNullException.ThrowIfNull(options);
-
-        _tableClient = tableServiceClient.GetTableClient(options.TableName);
-        _tableClient.CreateIfNotExists();
-    }
 
     /// <inheritdoc />
     public async Task<Profile?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
@@ -30,7 +23,8 @@ public sealed class TableStorageProfileRepository : IProfileRepository
         // This is less efficient than GetBySubjectIdAsync
         var filter = $"RowKey eq '{id}'";
 
-        await foreach (var entity in _tableClient.QueryAsync<ProfileEntity>(filter, cancellationToken: cancellationToken))
+        var tableClient = await GetTableClient(cancellationToken);
+        await foreach (var entity in tableClient.QueryAsync<ProfileEntity>(filter, cancellationToken: cancellationToken))
         {
             return ProfileMapper.ToDomain(entity);
         }
@@ -44,7 +38,8 @@ public sealed class TableStorageProfileRepository : IProfileRepository
         // Query by PartitionKey for efficient lookup
         var filter = $"PartitionKey eq '{subjectId}'";
 
-        await foreach (var entity in _tableClient.QueryAsync<ProfileEntity>(filter, cancellationToken: cancellationToken))
+        var tableClient = await GetTableClient(cancellationToken);
+        await foreach (var entity in tableClient.QueryAsync<ProfileEntity>(filter, cancellationToken: cancellationToken))
         {
             return ProfileMapper.ToDomain(entity);
         }
@@ -58,7 +53,8 @@ public sealed class TableStorageProfileRepository : IProfileRepository
         ArgumentNullException.ThrowIfNull(profile);
 
         var entity = ProfileMapper.ToEntity(profile);
-        await _tableClient.AddEntityAsync(entity, cancellationToken).ConfigureAwait(false);
+        var tableClient = await GetTableClient(cancellationToken);
+        await tableClient.AddEntityAsync(entity, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -70,11 +66,20 @@ public sealed class TableStorageProfileRepository : IProfileRepository
 
         try
         {
-            await _tableClient.UpdateEntityAsync(entity, ETag.All, TableUpdateMode.Replace, cancellationToken).ConfigureAwait(false);
+            var tableClient = await GetTableClient(cancellationToken);
+            await tableClient.UpdateEntityAsync(entity, ETag.All, TableUpdateMode.Replace, cancellationToken).ConfigureAwait(false);
         }
         catch (RequestFailedException ex) when (ex.Status == 404)
         {
             throw new InvalidOperationException($"Profile with ID '{profile.Id}' was not found.", ex);
         }
+    }
+
+    private async Task<TableClient> GetTableClient(CancellationToken cancellationToken)
+    {
+        var tableClient = tableServiceClient.GetTableClient(AspireConstants.TableStorage.Profiles);
+        await tableClient.CreateIfNotExistsAsync(cancellationToken);
+
+        return tableClient;
     }
 }

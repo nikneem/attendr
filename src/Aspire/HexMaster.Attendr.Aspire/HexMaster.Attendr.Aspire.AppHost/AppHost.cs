@@ -1,5 +1,5 @@
 using Aspire.Hosting.Yarp.Transforms;
-using Azure.Provisioning.Storage;
+using HexMaster.Attendr.Aspire.AppHost;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -10,9 +10,9 @@ var storage = builder.AddAzureStorage("storage")
         azurite.WithLifetime(ContainerLifetime.Persistent);
     });
 
-var profilesTable = storage.AddTables("profiles");
+var profilesTable = storage.AddTables(AspireConstants.TableStorage.Profiles);
 
-var profilesApi = builder.AddProject<Projects.HexMaster_Attendr_Profiles_Api>("hexmaster-attendr-profiles-api")
+var profilesApi = builder.AddProject<Projects.HexMaster_Attendr_Profiles_Api>(AspireConstants.ProfilesApiName)
     .WaitFor(profilesTable)
     .WithReference(profilesTable);
 
