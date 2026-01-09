@@ -1,11 +1,10 @@
 using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Constants;
-using HexMaster.Attendr.Groups.ProcessProfileCheckedIn;
-using HexMaster.Attendr.Groups.ProcessProfileConferenceAttendanceChanged;
+using HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
+using HexMaster.Attendr.Groups.Features.ProcessProfileConferenceAttendanceChanged;
 using HexMaster.Attendr.IntegrationEvents.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
-using Man.Dapr.Sidekick;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
 

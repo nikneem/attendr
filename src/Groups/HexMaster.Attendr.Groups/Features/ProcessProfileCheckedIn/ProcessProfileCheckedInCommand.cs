@@ -1,6 +1,6 @@
 using HexMaster.Attendr.IntegrationEvents.Events;
 
-namespace HexMaster.Attendr.Groups.ProcessProfileCheckedIn;
+namespace HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
 
 /// <summary>
 /// Command to process a ProfileCheckedIn event and update group activities.

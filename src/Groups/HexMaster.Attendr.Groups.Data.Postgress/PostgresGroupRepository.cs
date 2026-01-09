@@ -1,4 +1,5 @@
 using System.Text.Json;
+using HexMaster.Attendr.Groups.Repositories;
 using HexMaster.Attendr.Groups.Data.Postgress.Entities;
 using HexMaster.Attendr.Groups.Data.Postgress.Mappers;
 using HexMaster.Attendr.Groups.DomainModels;

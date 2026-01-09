@@ -1,11 +1,12 @@
 using System.Diagnostics;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.Groups.Repositories;
 using HexMaster.Attendr.Groups.DomainModels;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
 
-namespace HexMaster.Attendr.Groups.ProcessProfileCheckedIn;
+namespace HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
 
 /// <summary>
 /// Command handler to process ProfileCheckedIn events and add activities to groups.

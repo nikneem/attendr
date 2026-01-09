@@ -1,6 +1,6 @@
 using HexMaster.Attendr.IntegrationEvents.Events;
 
-namespace HexMaster.Attendr.Groups.ProcessProfileConferenceAttendanceChanged;
+namespace HexMaster.Attendr.Groups.Features.ProcessProfileConferenceAttendanceChanged;
 
 /// <summary>
 /// Command to process a ProfileConferenceAttendanceChanged event and update group activities.

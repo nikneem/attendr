@@ -1,6 +1,6 @@
 using HexMaster.Attendr.Groups.DomainModels;
 
-namespace HexMaster.Attendr.Groups;
+namespace HexMaster.Attendr.Groups.Repositories;
 
 /// <summary>
 /// Repository interface for group check-in operations.

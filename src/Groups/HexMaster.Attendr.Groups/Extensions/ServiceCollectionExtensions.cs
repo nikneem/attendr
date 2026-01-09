@@ -11,8 +11,8 @@ using HexMaster.Attendr.Groups.Features.ListGroups;
 using HexMaster.Attendr.Groups.Features.RemoveMember;
 using HexMaster.Attendr.Groups.Features.UnfollowConference;
 using HexMaster.Attendr.Groups.Observability;
-using HexMaster.Attendr.Groups.ProcessProfileCheckedIn;
-using HexMaster.Attendr.Groups.ProcessProfileConferenceAttendanceChanged;
+using HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
+using HexMaster.Attendr.Groups.Features.ProcessProfileConferenceAttendanceChanged;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Groups.Extensions;

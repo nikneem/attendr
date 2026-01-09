@@ -20,7 +20,6 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Azure.Npgsql" Version="13.1.0" />
     <PackageReference Include="Dapr.AspNetCore" Version="1.16.1" />
-    <PackageReference Include="Man.Dapr.Sidekick.AspNetCore" Version="1.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
