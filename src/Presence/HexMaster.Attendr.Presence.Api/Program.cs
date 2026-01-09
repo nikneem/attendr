@@ -1,8 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
-using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Core.Configuration;
 using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Conferences.Integrations.Extensions;
@@ -15,38 +11,10 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-
 // Configure Azure App Configuration (Release mode only)
 builder.Configuration.AddAttendrAzureAppConfiguration(builder.Environment.EnvironmentName);
 
-// Configure OpenTelemetry
-builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing =>
-    {
-        tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddSource(ActivitySources.Presence.Name)
-            .AddOtlpExporter();
-    })
-    .WithMetrics(metrics =>
-    {
-        metrics
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddMeter("HexMaster.Attendr.Presence")
-            .AddOtlpExporter();
-    });
-
-builder.Logging.AddOpenTelemetry(logging =>
-{
-    logging
-        .AddOtlpExporter()
-        .IncludeFormattedMessage = true;
-});
-
-// Add services to the container.
+builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthentication(options =>
 {
@@ -59,8 +27,6 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
-// Add health checks
-builder.Services.AddHealthChecks();
 
 // Register shared cache client
 builder.Services.AddAttendrCache(builder.Configuration);
@@ -72,9 +38,6 @@ builder.Services.AddConferencesIntegration(builder.Configuration);
 // Register Presence module services
 builder.Services.AddMongoDbPresenceRepository(builder.Configuration);
 builder.Services.AddIntegrationEvents(builder.Configuration);
-#if DEBUG
-builder.Services.AddDaprSidekick();
-#endif
 builder.Services.AddDaprClient();
 
 // Register feature slice services
@@ -94,15 +57,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map health check endpoints
-app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-{
-    Predicate = _ => false // Only returns the overall health status
-});
-app.MapHealthChecks("/health/ready");
-app.MapHealthChecks("/health/startup");
-
-// Map endpoints
+app.UseCors();
 app.MapPresenceEndpoints();
 app.MapEventHandlersEndpoints();
 

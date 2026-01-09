@@ -24,8 +24,8 @@ internal static class ConferenceMapper
             StartDate = conference.StartDate,
             EndDate = conference.EndDate,
             ImageUrl = conference.ImageUrl,
-            SyncSourceType = conference.SynchronizationSource?.SourceType != null 
-                ? (int)conference.SynchronizationSource.SourceType 
+            SyncSourceType = conference.SynchronizationSource?.SourceType != null
+                ? (int)conference.SynchronizationSource.SourceType
                 : null,
             SyncSourceLocationOrApiKey = conference.SynchronizationSource?.SourceLocationOrApiKey
         };

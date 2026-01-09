@@ -6,7 +6,6 @@
   <Folder Name="/Conferences/">
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Abstractions/HexMaster.Attendr.Conferences.Abstractions.csproj" Id="fb5d3956-359a-478e-bfc1-0372a00fd3d8" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Api/HexMaster.Attendr.Conferences.Api.csproj" Id="d2a91684-e4de-4ca6-bef8-4e0324e68736" />
-    <Project Path="Conferences/HexMaster.Attendr.Conferences.Data.MongoDb/HexMaster.Attendr.Conferences.Data.MongoDb.csproj" Id="bbdf9c94-c097-488e-8610-0d8f3a1961a8" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Tests/HexMaster.Attendr.Conferences.Tests.csproj" Id="7ca73919-574d-4e77-81ec-1761ebb0060b" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences/HexMaster.Attendr.Conferences.csproj" Id="df34c04e-c395-49ac-ad23-97166063c478" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Data.Postgres/HexMaster.Attendr.Conferences.Data.Postgres.csproj" Id="c39c7e00-8cf3-429e-80ba-05f0458bfbba" />
