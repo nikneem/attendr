@@ -4,10 +4,6 @@ targetScope = 'resourceGroup'
 param keyVaultName string
 
 @secure()
-@description('MongoDB connection string')
-param mongoDbConnectionString string
-
-@secure()
 @description('Service Bus connection string')
 param serviceBusConnectionString string
 
@@ -15,17 +11,12 @@ param serviceBusConnectionString string
 @description('Redis Cache connection string')
 param redisCacheConnectionString string
 
+@secure()
+@description('Storage Account connection string')
+param storageAccountConnectionString string
+
 resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
   name: keyVaultName
-}
-
-resource mongoDbSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
-  parent: keyVault
-  name: 'MongoDbConnectionString'
-  properties: {
-    value: mongoDbConnectionString
-    contentType: 'text/plain'
-  }
 }
 
 resource serviceBusSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
@@ -46,9 +37,43 @@ resource redisCacheSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
   }
 }
 
-output mongoDbSecretUri string = mongoDbSecret.properties.secretUri
-output mongoDbSecretUriWithVersion string = mongoDbSecret.properties.secretUriWithVersion
+resource storageAccountSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
+  parent: keyVault
+  name: 'StorageAccountConnectionString'
+  properties: {
+    value: storageAccountConnectionString
+    contentType: 'text/plain'
+  }
+}
+
+// Outputs - secrets URIs for Key Vault references
+output serviceBusSecretUri string = serviceBusSecret.properties.secretUri
+output redisCacheSecretUri string = redisCacheSecret.properties.secretUri
+output storageAccountSecretUri string = storageAccountSecret.properties.secretUri
+
+parent: keyVault
+name: 'PostgresConferencesConnectionString'
+properties: {
+value: postgresConferencesConnectionString
+contentType: 'text/plain'
+}
+}
+
+resource postgresPresenceSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
+  parent: keyVault
+  name: 'PostgresPresenceConnectionString'
+  properties: {
+    value: postgresPresenceConnectionString
+    contentType: 'text/plain'
+  }
+}
+
 output serviceBusSecretUri string = serviceBusSecret.properties.secretUri
 output serviceBusSecretUriWithVersion string = serviceBusSecret.properties.secretUriWithVersion
 output redisCacheSecretUri string = redisCacheSecret.properties.secretUri
 output redisCacheSecretUriWithVersion string = redisCacheSecret.properties.secretUriWithVersion
+output storageAccountSecretUri string = storageAccountSecret.properties.secretUri
+output storageAccountSecretUriWithVersion string = storageAccountSecret.properties.secretUriWithVersion
+output postgresGroupsSecretUri string = postgresGroupsSecret.properties.secretUri
+output postgresConferencesSecretUri string = postgresConferencesSecret.properties.secretUri
+output postgresPresenceSecretUri string = postgresPresenceSecret.properties.secretUri
