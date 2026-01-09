@@ -1,18 +1,25 @@
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
 namespace HexMaster.Attendr.Groups.DomainModels;
 
 /// <summary>
 /// Domain model representing a group check-in to a presentation.
 /// </summary>
-public sealed class CheckIn
+public sealed class CheckIn : ICheckIn
 {
     public Guid Id { get; private set; }
     public Guid ConferenceId { get; private set; }
     public Guid PresentationId { get; private set; }
     public PresentationData PresentationData { get; private set; }
+
+    IPresentationData ICheckIn.PresentationData => PresentationData;
+
     public DateTimeOffset Expiration { get; private set; }
 
     private readonly List<CheckedInMember> _members = new();
     public IReadOnlyCollection<CheckedInMember> Members => _members.AsReadOnly();
+
+    IReadOnlyCollection<ICheckedInMember> ICheckIn.Members => _members.AsReadOnly();
 
     private CheckIn(
         Guid id,
@@ -83,6 +90,18 @@ public sealed class CheckIn
         _members.Add(member);
     }
 
+    void ICheckIn.AddMember(ICheckedInMember member)
+    {
+        if (member is CheckedInMember checkedInMember)
+        {
+            AddMember(checkedInMember);
+        }
+        else
+        {
+            throw new ArgumentException("Member must be of type CheckedInMember", nameof(member));
+        }
+    }
+
     public void RemoveMember(Guid memberId)
     {
         var member = _members.FirstOrDefault(m => m.Id == memberId);
@@ -98,7 +117,7 @@ public sealed class CheckIn
     }
 }
 
-public sealed class PresentationData
+public sealed class PresentationData : IPresentationData
 {
     public Guid Id { get; }
     public string Title { get; }
@@ -107,6 +126,8 @@ public sealed class PresentationData
     public DateTime StartDateTime { get; }
     public DateTime EndDateTime { get; }
     public IReadOnlyCollection<PresentationSpeaker> Speakers { get; }
+
+    IReadOnlyCollection<IPresentationSpeaker> IPresentationData.Speakers => Speakers;
 
     public PresentationData(
         Guid id,
@@ -136,7 +157,7 @@ public sealed class PresentationData
     }
 }
 
-public sealed class PresentationSpeaker
+public sealed class PresentationSpeaker : IPresentationSpeaker
 {
     public Guid Id { get; }
     public string Name { get; }
@@ -157,7 +178,7 @@ public sealed class PresentationSpeaker
     }
 }
 
-public sealed class CheckedInMember
+public sealed class CheckedInMember : ICheckedInMember
 {
     public Guid Id { get; }
     public string Name { get; }

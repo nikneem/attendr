@@ -1,4 +1,4 @@
-using HexMaster.Attendr.Groups.DomainModels;
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
 
 namespace HexMaster.Attendr.Groups.Abstractions.Repositories;
 
@@ -12,14 +12,14 @@ public interface IGroupRepository
     /// </summary>
     /// <param name="group">The group to add.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    Task AddAsync(Group group, CancellationToken cancellationToken = default);
+    Task AddAsync(IGroup group, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing group in the repository.
     /// </summary>
     /// <param name="group">The group to update.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    Task UpdateAsync(Group group, CancellationToken cancellationToken = default);
+    Task UpdateAsync(IGroup group, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a group by its ID.
@@ -27,7 +27,7 @@ public interface IGroupRepository
     /// <param name="id">The group ID.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The group if found; otherwise, null.</returns>
-    Task<Group?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IGroup?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves all groups where the specified member is a participant.
@@ -35,7 +35,7 @@ public interface IGroupRepository
     /// <param name="memberId">The member's profile ID.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A collection of groups where the member participates.</returns>
-    Task<IReadOnlyCollection<Group>> GetGroupsByMemberIdAsync(Guid memberId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyCollection<IGroup>> GetGroupsByMemberIdAsync(Guid memberId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a paginated list of all groups with optional search filtering.
@@ -45,7 +45,7 @@ public interface IGroupRepository
     /// <param name="pageNumber">The page number (1-based).</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A tuple containing the collection of groups and the total count of matching groups.</returns>
-    Task<(IReadOnlyCollection<Group> Groups, int TotalCount)> ListGroupsAsync(
+    Task<(IReadOnlyCollection<IGroup> Groups, int TotalCount)> ListGroupsAsync(
         string? searchQuery,
         int pageSize,
         int pageNumber,

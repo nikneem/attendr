@@ -1,10 +1,12 @@
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
 namespace HexMaster.Attendr.Groups.DomainModels;
 
 /// <summary>
 /// Represents an activity recorded in a group.
 /// Activities provide a log of group actions for members to see.
 /// </summary>
-public sealed class GroupActivity
+public sealed class GroupActivity : IGroupActivity
 {
     /// <summary>
     /// Gets the unique identifier for the activity.
@@ -20,6 +22,8 @@ public sealed class GroupActivity
     /// Gets the timestamp when this activity was created.
     /// </summary>
     public DateTimeOffset CreatedAt { get; }
+
+    DateTimeOffset IGroupActivity.ActivityDate => CreatedAt;
 
     /// <summary>
     /// Gets the description of the activity.

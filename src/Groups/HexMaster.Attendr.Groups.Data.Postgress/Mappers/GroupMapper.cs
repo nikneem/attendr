@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Groups.Data.Postgress.Entities;
 using HexMaster.Attendr.Groups.DomainModels;
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
 
 namespace HexMaster.Attendr.Groups.Data.Postgress.Mappers;
 

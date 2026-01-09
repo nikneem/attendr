@@ -1,5 +1,6 @@
 using Bogus;
 using HexMaster.Attendr.Groups.DomainModels;
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
 
 namespace HexMaster.Attendr.Groups.Tests.Factories;
 

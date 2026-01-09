@@ -1,8 +1,11 @@
-namespace HexMaster.Attendr.Groups.DomainModels;
+// This file is kept for backward compatibility during refactoring.
+// The actual GroupRole enum is now defined in HexMaster.Attendr.Groups.Abstractions.DomainModels.
+// This file simply re-exports it to avoid breaking existing usages.
 
-public enum GroupRole
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
+namespace HexMaster.Attendr.Groups.DomainModels
 {
-    Owner = 0,
-    Manager = 1,
-    Member = 2
+    // Type alias to maintain compatibility
+    using GroupRole = HexMaster.Attendr.Groups.Abstractions.DomainModels.GroupRole;
 }

@@ -1,6 +1,8 @@
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
 namespace HexMaster.Attendr.Groups.DomainModels;
 
-public sealed class GroupInvitation
+public sealed class GroupInvitation : IGroupInvitation
 {
     public Guid Id { get; private set; }
     public string Name { get; private set; }

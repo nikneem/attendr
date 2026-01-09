@@ -1,9 +1,11 @@
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
 namespace HexMaster.Attendr.Groups.DomainModels;
 
 /// <summary>
 /// Value object representing a conference followed by a group.
 /// </summary>
-public sealed class FollowedConference
+public sealed class FollowedConference : IFollowedConference
 {
     /// <summary>
     /// Gets the unique identifier of the conference.

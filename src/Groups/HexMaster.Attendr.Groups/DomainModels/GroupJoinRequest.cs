@@ -1,9 +1,11 @@
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
 namespace HexMaster.Attendr.Groups.DomainModels;
 
 /// <summary>
 /// Represents a request from a profile to join a group.
 /// </summary>
-public sealed class GroupJoinRequest
+public sealed class GroupJoinRequest : IGroupJoinRequest
 {
     /// <summary>
     /// Gets the unique identifier of the requester.
@@ -19,6 +21,8 @@ public sealed class GroupJoinRequest
     /// Gets the date and time when the request was made.
     /// </summary>
     public DateTimeOffset RequestedAt { get; private set; }
+
+    DateTimeOffset IGroupJoinRequest.RequestDate => RequestedAt;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GroupJoinRequest"/> class.

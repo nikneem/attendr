@@ -3,6 +3,7 @@ using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Groups.Repositories;
 using HexMaster.Attendr.Groups.DomainModels;
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
 

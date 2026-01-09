@@ -1,10 +1,12 @@
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
 namespace HexMaster.Attendr.Groups.DomainModels;
 
 /// <summary>
 /// Represents a member of a group.
 /// Follows Domain-Driven Design principles with encapsulated properties.
 /// </summary>
-public sealed class GroupMember
+public sealed class GroupMember : IGroupMember
 {
     /// <summary>
     /// Gets the unique identifier of the member.

@@ -1,3 +1,5 @@
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
 namespace HexMaster.Attendr.Groups.DomainModels;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace HexMaster.Attendr.Groups.DomainModels;
 /// Follows Domain-Driven Design principles with private constructor,
 /// encapsulated collections, and behavior-focused methods.
 /// </summary>
-public sealed class Group
+public sealed class Group : IGroup
 {
     private const int MaxActivities = 100;
 
@@ -24,6 +26,8 @@ public sealed class Group
     /// </summary>
     public GroupSettings Settings { get; private set; }
 
+    IGroupSettings IGroup.Settings => Settings;
+
     private readonly List<GroupMember> _members = new();
     private readonly List<GroupInvitation> _invitations = new();
     private readonly List<GroupJoinRequest> _joinRequests = new();
@@ -35,26 +39,36 @@ public sealed class Group
     /// </summary>
     public IReadOnlyCollection<GroupMember> Members => _members.AsReadOnly();
 
+    IReadOnlyCollection<IGroupMember> IGroup.Members => _members.AsReadOnly();
+
     /// <summary>
     /// Gets the collection of pending invitations for the group.
     /// </summary>
     public IReadOnlyCollection<GroupInvitation> Invitations => _invitations.AsReadOnly();
+
+    IReadOnlyCollection<IGroupInvitation> IGroup.Invitations => _invitations.AsReadOnly();
 
     /// <summary>
     /// Gets the collection of pending join requests for the group.
     /// </summary>
     public IReadOnlyCollection<GroupJoinRequest> JoinRequests => _joinRequests.AsReadOnly();
 
+    IReadOnlyCollection<IGroupJoinRequest> IGroup.JoinRequests => _joinRequests.AsReadOnly();
+
     /// <summary>
     /// Gets the collection of conferences followed by the group.
     /// </summary>
     public IReadOnlyCollection<FollowedConference> FollowedConferences => _followedConferences.AsReadOnly();
+
+    IReadOnlyCollection<IFollowedConference> IGroup.FollowedConferences => _followedConferences.AsReadOnly();
 
     /// <summary>
     /// Gets the collection of group activities.
     /// Maximum of 100 activities are kept in a round-robin fashion.
     /// </summary>
     public IReadOnlyCollection<GroupActivity> Activities => _activities.AsReadOnly();
+
+    IReadOnlyCollection<IGroupActivity> IGroup.Activities => _activities.AsReadOnly();
 
     private Group(Guid id, string name, Guid ownerId, string ownerName, GroupSettings? settings = null)
     {
@@ -163,6 +177,18 @@ public sealed class Group
     public void UpdateSettings(GroupSettings newSettings)
     {
         Settings = newSettings ?? throw new ArgumentNullException(nameof(newSettings));
+    }
+
+    void IGroup.UpdateSettings(IGroupSettings newSettings)
+    {
+        if (newSettings is GroupSettings groupSettings)
+        {
+            UpdateSettings(groupSettings);
+        }
+        else
+        {
+            throw new ArgumentException("Settings must be of type GroupSettings", nameof(newSettings));
+        }
     }
 
     /// <summary>
@@ -405,6 +431,11 @@ public sealed class Group
         return _members.First(m => m.Role == GroupRole.Owner);
     }
 
+    IGroupMember IGroup.GetOwner()
+    {
+        return GetOwner();
+    }
+
     /// <summary>
     /// Adds a conference to the group's followed conferences list.
     /// </summary>
@@ -471,6 +502,11 @@ public sealed class Group
     public IEnumerable<FollowedConference> GetCurrentAndFutureFollowedConferences()
     {
         return _followedConferences.Where(fc => fc.IsCurrentOrFuture()).OrderBy(fc => fc.StartDate);
+    }
+
+    IEnumerable<IFollowedConference> IGroup.GetCurrentAndFutureFollowedConferences()
+    {
+        return GetCurrentAndFutureFollowedConferences();
     }
 
     /// <summary>

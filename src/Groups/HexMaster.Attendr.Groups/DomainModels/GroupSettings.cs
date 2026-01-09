@@ -1,3 +1,5 @@
+using HexMaster.Attendr.Groups.Abstractions.DomainModels;
+
 namespace HexMaster.Attendr.Groups.DomainModels;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace HexMaster.Attendr.Groups.DomainModels;
 /// Follows Domain-Driven Design principles with immutable initialization
 /// and private setters to enforce invariants.
 /// </summary>
-public sealed class GroupSettings
+public sealed class GroupSettings : IGroupSettings
 {
     /// <summary>
     /// Gets a value indicating whether the group is public and visible to all users.
