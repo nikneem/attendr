@@ -9,6 +9,7 @@
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Data.MongoDb/HexMaster.Attendr.Conferences.Data.MongoDb.csproj" Id="bbdf9c94-c097-488e-8610-0d8f3a1961a8" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Tests/HexMaster.Attendr.Conferences.Tests.csproj" Id="7ca73919-574d-4e77-81ec-1761ebb0060b" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences/HexMaster.Attendr.Conferences.csproj" Id="df34c04e-c395-49ac-ad23-97166063c478" />
+    <Project Path="Conferences/HexMaster.Attendr.Conferences.Data.Postgres/HexMaster.Attendr.Conferences.Data.Postgres.csproj" Id="c39c7e00-8cf3-429e-80ba-05f0458bfbba" />
     <Project Path="Conferences/HexMaster.Attendr.Conferences.Integrations/HexMaster.Attendr.Conferences.Integrations.csproj" Id="c7af1d03-c3d7-4989-a4f9-c69b2526ef34" />
   </Folder>
   <Folder Name="/Groups/">
