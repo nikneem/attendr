@@ -12,11 +12,11 @@ using Sessionize.Api.Client.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-builder.AddAzureNpgsqlDataSource(connectionName: AspireConstants.Postgres.ConferencesDatabase);
-
 // Configure Azure App Configuration (Release mode only)
 builder.Configuration.AddAttendrAzureAppConfiguration(builder.Environment.EnvironmentName);
+
+builder.AddServiceDefaults();
+builder.AddAzureNpgsqlDataSource(connectionName: AspireConstants.Postgres.ConferencesDatabase);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
