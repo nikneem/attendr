@@ -140,6 +140,35 @@
 
         }
 
+        .admin-actions {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            z-index: 2;
+            display: flex;
+            gap: 0.5rem;
+
+            @media (min-width: 768px) {
+                top: 1.5rem;
+                left: 1.5rem;
+            }
+
+            @media (min-width: 1024px) {
+                top: 2rem;
+                left: 2rem;
+            }
+
+            ::ng-deep .p-button {
+                color: white;
+                background-color: rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(8px);
+
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.5);
+                }
+            }
+        }
+
         .edit-button {
             position: absolute;
             right: 1rem;

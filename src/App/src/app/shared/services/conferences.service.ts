@@ -48,4 +48,8 @@ export class ConferencesService {
     followConference(id: string): Observable<void> {
         return this.http.post<void>(`${this.apiUrl}/${id}/follow`, {});
     }
+
+    deleteConference(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
 }

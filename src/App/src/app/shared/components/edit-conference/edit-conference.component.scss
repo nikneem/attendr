@@ -79,8 +79,24 @@
 
     .form-actions {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
         padding-top: 1rem;
         border-top: 1px solid var(--surface-border);
+        flex-wrap: wrap;
+
+        @media (max-width: 640px) {
+            flex-direction: column-reverse;
+            
+            ::ng-deep .p-button {
+                width: 100%;
+            }
+        }
+    }
+
+    .visibility-hint {
+        color: var(--text-color-secondary);
+        font-size: 0.875rem;
     }
 }

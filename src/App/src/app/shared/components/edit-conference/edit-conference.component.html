@@ -70,6 +70,10 @@
     </div>
 
     <div class="form-actions">
+        @if (isAdmin()) {
+        <p-button type="button" label="Delete Conference" icon="pi pi-trash" severity="danger" [outlined]="true"
+            (click)="onDelete()" [disabled]="isUpdating" />
+        }
         <p-button type="submit" label="Update Conference" icon="pi pi-check" [loading]="isUpdating"
             [disabled]="isUpdating" />
     </div>

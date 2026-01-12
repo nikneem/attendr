@@ -22,6 +22,7 @@ export class EditConferenceComponent {
     private readonly messageService = inject(MessageService);
 
     conference = input.required<ConferenceDetailsDto>();
+    isAdmin = input<boolean>(false);
 
     title = '';
     city = '';
@@ -40,6 +41,7 @@ export class EditConferenceComponent {
     validationError = '';
 
     conferenceUpdated = output<void>();
+    conferenceDeleted = output<void>();
 
     constructor() {
         effect(() => {
@@ -166,6 +168,10 @@ export class EditConferenceComponent {
                 });
             },
         });
+    }
+
+    onDelete(): void {
+        this.conferenceDeleted.emit();
     }
 
     private formatDate(date: Date): string {

@@ -7,6 +7,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConferencesService } from '@services/conferences.service';
 import { PresenceService } from '@services/presence.service';
 import { ConferenceAttendanceStore } from '@services/conference-attendance.store';
@@ -15,7 +16,7 @@ import { ConferenceDetailsDto } from '@models/conference-details-dto';
 import { EditConferenceComponent } from '@components/edit-conference/edit-conference.component';
 import { ConferenceScheduleComponent } from '@components/conference-schedule/conference-schedule.component';
 import { SpeakerTilesComponent } from '@components/speaker-tiles/speaker-tiles.component';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 
 @Component({
     selector: 'attn-conference-details-page',
@@ -27,10 +28,12 @@ import { MessageService } from 'primeng/api';
         ButtonModule,
         DialogModule,
         TooltipModule,
+        ConfirmDialogModule,
         EditConferenceComponent,
         ConferenceScheduleComponent,
         SpeakerTilesComponent,
     ],
+    providers: [ConfirmationService],
     templateUrl: './conference-details-page.component.html',
     styleUrl: './conference-details-page.component.scss',
 })
@@ -42,6 +45,7 @@ export class ConferenceDetailsPageComponent implements OnInit {
     readonly attendanceStore = inject(ConferenceAttendanceStore);
     readonly profileStore = inject(ProfileStore);
     private readonly messageService = inject(MessageService);
+    private readonly confirmationService = inject(ConfirmationService);
     private readonly cdr = inject(ChangeDetectorRef);
 
     conference: ConferenceDetailsDto | null = null;
@@ -145,5 +149,43 @@ export class ConferenceDetailsPageComponent implements OnInit {
         if (this.conference) {
             this.router.navigate(['/app/conferences', this.conference.id, 'rate']);
         }
+    }
+
+    confirmDeleteConference(): void {
+        if (!this.conference) return;
+
+        this.confirmationService.confirm({
+            message: `Are you sure you want to delete "${this.conference.title}"? This action cannot be undone.`,
+            header: 'Delete Conference',
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonStyleClass: 'p-button-danger',
+            accept: () => {
+                this.deleteConference();
+            },
+        });
+    }
+
+    private deleteConference(): void {
+        if (!this.conference) return;
+
+        const conferenceId = this.conference.id;
+        this.conferencesService.deleteConference(conferenceId).subscribe({
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Conference deleted successfully',
+                });
+                this.router.navigate(['/app/conferences']);
+            },
+            error: (err) => {
+                console.error('Error deleting conference:', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to delete conference',
+                });
+            },
+        });
     }
 }

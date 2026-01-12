@@ -17,8 +17,8 @@
     <div class="container">
         <div class="conference-header">
             @if (profileStore.isAdmin()) {
-            <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" (click)="openEditDialog()"
-                pTooltip="Edit conference" class="edit-button" />
+            <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" 
+                (click)="openEditDialog()" pTooltip="Edit conference" class="edit-button" />
             }
 
             @if (attendanceStore.isAttending()) {
@@ -105,7 +105,10 @@
 
     <p-dialog header="Edit Conference" [(visible)]="showEditDialog" [modal]="true"
         [style]="{ width: '90vw', 'max-width': '600px' }" [draggable]="false" [resizable]="false">
-        <attn-edit-conference [conference]="conference" (conferenceUpdated)="onConferenceUpdated()" />
+        <attn-edit-conference [conference]="conference" [isAdmin]="profileStore.isAdmin()" 
+            (conferenceUpdated)="onConferenceUpdated()" (conferenceDeleted)="confirmDeleteConference()" />
     </p-dialog>
+
+    <p-confirmDialog />
     }
 </div>
