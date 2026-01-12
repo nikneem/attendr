@@ -39,10 +39,6 @@ param containerImage string
 param corsOrigins array = []
 
 var resourceGroupName = 'rg-${baseName}-${environmentName}'
-var postgresServerName = 'psql-groups-${baseName}-${environmentName}-${uniqueString(subscription().subscriptionId, resourceGroupName)}'
-var postgresAdminLogin = 'attendradmin'
-var postgresAdminPassword = '${uniqueString(subscription().subscriptionId, resourceGroupName)}P@ssw0rd!'
-var postgresDatabaseName = 'attendr-groups'
 
 // Deploy Resource Group for Groups service
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
@@ -51,113 +47,25 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   tags: tags
 }
 
-// Reference to landing zone resource group
-resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
-  name: landingzone.resourceGroupName
-}
-
-// Deploy PostgreSQL server with database for Groups service
-module postgresServer './modules/postgresql.bicep' = {
+module appResources 'resources.bicep' = {
   scope: resourceGroup
   params: {
-    serverName: postgresServerName
+    defaultResourceName: '${baseName}-${environmentName}'
     location: location
     tags: tags
-    administratorLogin: postgresAdminLogin
-    administratorPassword: postgresAdminPassword
-    postgresVersion: '16'
-    skuName: 'Standard_B1ms'
-    skuTier: 'Burstable'
-    storageSizeGB: 32
-    databaseName: postgresDatabaseName
-  }
-}
-
-// Deploy the Groups container app
-module groupsApp './modules/container-app.bicep' = {
-  scope: resourceGroup
-  params: {
-    name: 'ca-${baseName}-${environmentName}'
-    location: location
-    tags: tags
-    landingZoneResourceGroupName: landingzone.resourceGroupName
-    containerAppsEnvironmentName: landingzone.containerAppsEnvironmentName
+    landingzone: landingzone
     containerImage: containerImage
-    appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
-    applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
     containerRegistryServer: containerRegistryServer
     containerRegistryUsername: containerRegistryUsername
     containerRegistryPassword: containerRegistryPassword
     corsOrigins: corsOrigins
-  }
-  dependsOn: [
-    postgresServer
-  ]
-}
-
-// Get App Configuration endpoint
-module appConfigurationEndpoint './modules/get-app-configuration.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    appConfigurationName: landingzone.appConfigurationName
+    postgresAdminPassword: '${uniqueString(subscription().subscriptionId, resourceGroupName)}P@ssw0rd!'
   }
 }
 
-// Get Application Insights connection string
-module appInsightsConnectionString './modules/get-app-insights.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    applicationInsightsName: landingzone.applicationInsightsName
-  }
-}
-
-// Assign permissions to the container app's system-assigned managed identity
-module roleAssignments './modules/role-assignments.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    principalId: groupsApp.outputs.managedIdentityPrincipalId
-    appConfigurationName: landingzone.appConfigurationName
-    keyVaultName: landingzone.keyVaultName
-  }
-}
-
-// Store PostgreSQL connection string in landing zone Key Vault
-module postgresSecret '../../../../Infrastructure/bicep/modules/keyvault-secret.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    keyVaultName: landingzone.keyVaultName
-    secretName: 'PostgresGroupsConnectionString'
-    secretValue: postgresServer.outputs.connectionString
-  }
-}
-
-// Add PostgreSQL connection string to App Configuration as Key Vault reference
-module postgresAppConfig '../../../../Infrastructure/bicep/modules/app-configuration-keyvault-reference.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    appConfigurationName: landingzone.appConfigurationName
-    keyName: 'ConnectionStrings:attendr-groups'
-    keyVaultName: landingzone.keyVaultName
-    secretName: 'PostgresGroupsConnectionString'
-  }
-  dependsOn: [
-    postgresSecret
-  ]
-}
-
-// Configure service integration endpoints in App Configuration
-module serviceIntegration '../../../../Infrastructure/bicep/modules/app-configuration-service-integration.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    appConfigurationName: landingzone.appConfigurationName
-    environmentName: environmentName
-    baseName: baseName
-    serviceName: 'Groups'
-  }
-}
 output resourceGroupName string = resourceGroup.name
-output containerAppName string = groupsApp.outputs.name
-output containerAppFqdn string = groupsApp.outputs.fqdn
-output managedIdentityPrincipalId string = groupsApp.outputs.managedIdentityPrincipalId
-output postgresServerName string = postgresServer.outputs.serverName
-output postgresDatabaseName string = postgresServer.outputs.databaseName
+output containerAppName string = appResources.outputs.containerAppName
+output containerAppFqdn string = appResources.outputs.containerAppFqdn
+output managedIdentityPrincipalId string = appResources.outputs.managedIdentityPrincipalId
+output postgresServerName string = appResources.outputs.postgresServerName
+output postgresDatabaseName string = appResources.outputs.postgresDatabaseName
