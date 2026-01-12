@@ -28,6 +28,12 @@
                 font-size: 2rem;
             }
         }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     }
 
     .loading-container,

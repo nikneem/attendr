@@ -7,13 +7,16 @@ import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { FormsModule } from '@angular/forms';
 import { ConferencesService } from '../../../shared/services/conferences.service';
 import { ConferenceListItemDto } from '../../../shared/models/conference-list-item-dto';
 import { CreateConferenceComponent } from '../../../shared/components/create-conference/create-conference.component';
+import { ProfileStore } from '@stores/profile.store';
 
 @Component({
     selector: 'attn-conferences-page',
-    imports: [CommonModule, ButtonModule, CardModule, DialogModule, ProgressSpinnerModule, TooltipModule, CreateConferenceComponent],
+    imports: [CommonModule, ButtonModule, CardModule, DialogModule, ProgressSpinnerModule, TooltipModule, ToggleButtonModule, FormsModule, CreateConferenceComponent],
     templateUrl: './conferences-page.component.html',
     styleUrl: './conferences-page.component.scss',
 })
@@ -21,11 +24,13 @@ export class ConferencesPageComponent implements OnInit {
     private readonly conferencesService = inject(ConferencesService);
     private readonly router = inject(Router);
     private readonly cdr = inject(ChangeDetectorRef);
+    protected readonly profileStore = inject(ProfileStore);
 
     conferences: ConferenceListItemDto[] = [];
     loading = true;
     error: string | null = null;
     showCreateDialog = false;
+    showHidden = false;
 
     ngOnInit(): void {
         // Defer loading to avoid ExpressionChangedAfterItHasBeenCheckedError
@@ -37,7 +42,7 @@ export class ConferencesPageComponent implements OnInit {
         this.error = null;
 
         this.conferencesService
-            .listConferences(undefined, 50, 1)
+            .listConferences(undefined, 50, 1, this.showHidden)
             .subscribe({
                 next: (result) => {
                     this.conferences = result.conferences;
@@ -50,6 +55,10 @@ export class ConferencesPageComponent implements OnInit {
                     this.cdr.markForCheck();
                 },
             });
+    }
+
+    onShowHiddenChange(): void {
+        this.loadConferences();
     }
 
     onAddConference(): void {

@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Conferences.Data.Postgres.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Conferences.Data.Postgres.Extensions;
@@ -17,6 +18,19 @@ public static class ServiceCollectionExtensions
     {
         // Register repository (expects NpgsqlDataSource to be registered via Aspire)
         services.AddSingleton<IConferenceRepository, PostgresConferenceRepository>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds database migration services that will run automatically on application startup.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddDatabaseMigrations(this IServiceCollection services)
+    {
+        services.AddSingleton<DatabaseMigrationRunner>();
+        services.AddHostedService<MigrationHostedService>();
 
         return services;
     }

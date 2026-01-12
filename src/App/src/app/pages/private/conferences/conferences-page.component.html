@@ -2,7 +2,13 @@
     <div class="container">
         <div class="header-section">
             <h1>Upcoming Conferences</h1>
-            <button pButton label="Add Conference" icon="pi pi-plus" (click)="onAddConference()"></button>
+            <div class="header-actions">
+                @if (profileStore.isAdmin()) {
+                <p-toggleButton [(ngModel)]="showHidden" (onChange)="onShowHiddenChange()" onLabel="Show Hidden"
+                    offLabel="Hide Hidden" onIcon="pi pi-eye" offIcon="pi pi-eye-slash" styleClass="mr-2" />
+                }
+                <button pButton label="Add Conference" icon="pi pi-plus" (click)="onAddConference()"></button>
+            </div>
         </div>
 
         @if (loading) {

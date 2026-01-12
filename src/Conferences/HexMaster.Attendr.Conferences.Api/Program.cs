@@ -38,6 +38,7 @@ builder.Services.AddHealthChecks();
 builder.Services.AddAttendrConferencesServices();
 builder.Services.AddSessionizeApiClient();
 builder.Services.AddPostgresConferenceRepository();
+builder.Services.AddDatabaseMigrations(); // Run migrations on startup
 builder.Services.AddIntegrationEvents(builder.Configuration);
 builder.Services.AddProfilesIntegration(builder.Configuration);
 builder.Services.AddAttendrCache(builder.Configuration);

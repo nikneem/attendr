@@ -14,7 +14,7 @@ export class ConferencesService {
     private readonly http = inject(HttpClient);
     private readonly apiUrl = `${environment.apiUrl}/conferences`;
 
-    listConferences(search?: string, pageSize?: number, pageNumber?: number): Observable<ListConferencesResult> {
+    listConferences(search?: string, pageSize?: number, pageNumber?: number, showHidden?: boolean): Observable<ListConferencesResult> {
         let params = new HttpParams();
 
         if (search) {
@@ -25,6 +25,9 @@ export class ConferencesService {
         }
         if (pageNumber !== undefined) {
             params = params.set('pageNumber', pageNumber.toString());
+        }
+        if (showHidden !== undefined) {
+            params = params.set('showHidden', showHidden.toString());
         }
 
         return this.http.get<ListConferencesResult>(this.apiUrl, { params });

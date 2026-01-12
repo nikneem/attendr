@@ -87,7 +87,6 @@ export class AuthCallbackHandler {
                 if (userData.permissions) {
                     let permissions = userData.permissions as string[];
                     // Check if user has admin permissions and update store
-                    debugger;
                     const isAdmin = permissions.includes('admin:attendr');
                     if (isAdmin) {
                         this.profileStore.setAdmin(true);

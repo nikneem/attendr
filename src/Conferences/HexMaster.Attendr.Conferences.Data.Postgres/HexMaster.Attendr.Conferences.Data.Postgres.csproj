@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\Scripts\*.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\HexMaster.Attendr.Conferences\HexMaster.Attendr.Conferences.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Conferences.Abstractions\HexMaster.Attendr.Conferences.Abstractions.csproj" />
   </ItemGroup>
