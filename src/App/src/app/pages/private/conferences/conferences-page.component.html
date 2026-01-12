@@ -65,3 +65,12 @@
     [draggable]="false" [resizable]="false">
     <attn-create-conference (conferenceCreated)="onConferenceCreated($event)"></attn-create-conference>
 </p-dialog>
+
+@if (createdConference) {
+<p-dialog header="Conference Created" [(visible)]="showReviewInfoDialog" [modal]="true" [style]="{ width: '600px' }"
+    [draggable]="false" [resizable]="false" [closable]="true" (onHide)="onReviewInfoDialogClosed()">
+    <attn-conference-review-info-dialog [conferenceTitle]="createdConference.title"
+        [conferenceId]="createdConference.id" (dialogClosed)="onReviewInfoDialogClosed()">
+    </attn-conference-review-info-dialog>
+</p-dialog>
+}

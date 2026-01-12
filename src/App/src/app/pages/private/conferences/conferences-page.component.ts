@@ -12,11 +12,12 @@ import { FormsModule } from '@angular/forms';
 import { ConferencesService } from '../../../shared/services/conferences.service';
 import { ConferenceListItemDto } from '../../../shared/models/conference-list-item-dto';
 import { CreateConferenceComponent } from '../../../shared/components/create-conference/create-conference.component';
+import { ConferenceReviewInfoDialogComponent } from '../../../shared/components/conference-review-info-dialog/conference-review-info-dialog.component';
 import { ProfileStore } from '@stores/profile.store';
 
 @Component({
     selector: 'attn-conferences-page',
-    imports: [CommonModule, ButtonModule, CardModule, DialogModule, ProgressSpinnerModule, TooltipModule, ToggleButtonModule, FormsModule, CreateConferenceComponent],
+    imports: [CommonModule, ButtonModule, CardModule, DialogModule, ProgressSpinnerModule, TooltipModule, ToggleButtonModule, FormsModule, CreateConferenceComponent, ConferenceReviewInfoDialogComponent],
     templateUrl: './conferences-page.component.html',
     styleUrl: './conferences-page.component.scss',
 })
@@ -30,6 +31,8 @@ export class ConferencesPageComponent implements OnInit {
     loading = true;
     error: string | null = null;
     showCreateDialog = false;
+    showReviewInfoDialog = false;
+    createdConference: { id: string; title: string } | null = null;
     showHidden = false;
 
     ngOnInit(): void {
@@ -67,7 +70,14 @@ export class ConferencesPageComponent implements OnInit {
 
     onConferenceCreated(conference: { id: string; title: string }): void {
         this.showCreateDialog = false;
+        this.createdConference = conference;
+        this.showReviewInfoDialog = true;
         this.loadConferences(); // Reload the list to show the new conference
+    }
+
+    onReviewInfoDialogClosed(): void {
+        this.showReviewInfoDialog = false;
+        this.createdConference = null;
     }
 
     viewConference(conferenceId: string): void {

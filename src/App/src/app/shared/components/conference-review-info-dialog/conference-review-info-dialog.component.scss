@@ -1,0 +1,87 @@
+.review-info-dialog {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
+
+    .info-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        i {
+            font-size: 4rem;
+            color: var(--primary-color);
+        }
+    }
+
+    .info-content {
+        text-align: center;
+
+        h3 {
+            font-size: 1.5rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+        }
+
+        .conference-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0 0 1.5rem 0;
+        }
+
+        .info-message {
+            text-align: left;
+
+            p {
+                line-height: 1.6;
+                color: var(--text-color-secondary);
+                margin: 0 0 1rem 0;
+            }
+
+            .notice-box {
+                display: flex;
+                gap: 1rem;
+                padding: 1rem;
+                background-color: var(--surface-100);
+                border-left: 4px solid var(--orange-500);
+                border-radius: 4px;
+                margin: 1rem 0;
+
+                i {
+                    font-size: 1.5rem;
+                    color: var(--orange-500);
+                    flex-shrink: 0;
+                }
+
+                div {
+                    flex: 1;
+
+                    strong {
+                        display: block;
+                        margin-bottom: 0.5rem;
+                        color: var(--text-color);
+                    }
+
+                    p {
+                        margin: 0;
+                        font-size: 0.9rem;
+                    }
+                }
+            }
+
+            .footer-note {
+                font-size: 0.9rem;
+                font-style: italic;
+                margin-top: 1rem;
+            }
+        }
+    }
+
+    .dialog-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}
