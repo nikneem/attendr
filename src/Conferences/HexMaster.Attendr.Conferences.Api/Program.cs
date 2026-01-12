@@ -48,6 +48,23 @@ builder.Services.AddAuthorizationBuilder()
 // Register custom authorization handler
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(
+            "http://localhost:4200",
+            "https://localhost:4200",
+            "https://attendr.com",
+            "https://www.attendr.com",
+            "https://*.attendr.com")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
 // Add health checks
 builder.Services.AddHealthChecks();
 
@@ -72,11 +89,11 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Map endpoints
-app.UseCors();
 app.MapConferencesEndpoints();
 app.MapConferencesIntegrationEndpoints();
 app.MapEventHandlersEndpoints();
