@@ -36,6 +36,9 @@
                     <div class="visual-header">
                         <h3 class="visual-title" [pTooltip]="conference.title" tooltipPosition="bottom">{{
                             conference.title }}</h3>
+                        @if (!conference.isVisible) {
+                        <i class="pi pi-eye-slash hidden-icon" pTooltip="Hidden Conference" tooltipPosition="bottom"></i>
+                        }
                     </div>
                 </div>
                 <div class="conference-content">

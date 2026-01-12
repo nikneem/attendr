@@ -78,9 +78,10 @@ public static class ConferencesEndpoints
         string? search = null,
         int? pageSize = null,
         int pageNumber = 1,
+        bool showHidden = false,
         CancellationToken cancellationToken = default)
     {
-        var query = new ListConferencesQuery(search, pageSize, pageNumber);
+        var query = new ListConferencesQuery(search, pageSize, pageNumber, showHidden);
         var result = await handler.Handle(query, cancellationToken);
         return Results.Ok(result);
     }

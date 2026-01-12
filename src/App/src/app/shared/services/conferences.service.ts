@@ -26,8 +26,8 @@ export class ConferencesService {
         if (pageNumber !== undefined) {
             params = params.set('pageNumber', pageNumber.toString());
         }
-        if (showHidden !== undefined) {
-            params = params.set('showHidden', showHidden.toString());
+        if (showHidden === true) {
+            params = params.set('showHidden', 'true');
         }
 
         return this.http.get<ListConferencesResult>(this.apiUrl, { params });
