@@ -39,6 +39,14 @@ public interface IConferenceRepository
     Task UpdateAsync(Conference conference, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Deletes a conference from the repository.
+    /// </summary>
+    /// <param name="id">The ID of the conference to delete.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>True if the conference was deleted; false if not found.</returns>
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Lists conferences with optional search and pagination.
     /// Only returns conferences that have not ended (EndDate >= today).
     /// </summary>

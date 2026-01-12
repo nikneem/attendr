@@ -159,6 +159,46 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     }
 
     /// <inheritdoc />
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        try
+        {
+            // Check if conference exists
+            var checkSql = "SELECT COUNT(*) FROM conferences WHERE id = @id";
+            await using var checkCommand = new NpgsqlCommand(checkSql, connection, transaction);
+            checkCommand.Parameters.AddWithValue("@id", id);
+            var exists = Convert.ToInt32(await checkCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false)) > 0;
+
+            if (!exists)
+            {
+                return false;
+            }
+
+            // Delete related data (cascade will handle most of this, but being explicit)
+            await DeletePresentationsAsync(connection, id, cancellationToken).ConfigureAwait(false);
+            await DeleteSpeakersAsync(connection, id, cancellationToken).ConfigureAwait(false);
+            await DeleteRoomsAsync(connection, id, cancellationToken).ConfigureAwait(false);
+
+            // Delete the conference itself
+            var deleteSql = "DELETE FROM conferences WHERE id = @id";
+            await using var deleteCommand = new NpgsqlCommand(deleteSql, connection, transaction);
+            deleteCommand.Parameters.AddWithValue("@id", id);
+            await deleteCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
     public async Task<(List<Conference> Conferences, int TotalCount)> ListConferencesAsync(
         string? searchQuery,
         int pageNumber,

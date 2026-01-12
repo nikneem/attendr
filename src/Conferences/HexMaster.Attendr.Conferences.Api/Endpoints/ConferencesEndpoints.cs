@@ -1,5 +1,7 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
+using HexMaster.Attendr.Conferences.Api.Authorization;
 using HexMaster.Attendr.Conferences.CreateConference;
+using HexMaster.Attendr.Conferences.DeleteConference;
 using HexMaster.Attendr.Conferences.FollowConference;
 using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
@@ -22,22 +24,19 @@ public static class ConferencesEndpoints
         group.MapGet("/", ListConferences)
             .WithName("ListConferences")
             .Produces<ListConferencesResult>(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapGet("/{id:guid}", GetConference)
             .WithName("GetConference")
             .Produces<ConferenceDetailsDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/", CreateConference)
             .WithName("CreateConference")
             .Produces<CreateConferenceResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPut("/{id:guid}", UpdateConference)
             .WithName("UpdateConference")
@@ -45,14 +44,22 @@ public static class ConferencesEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .RequireAuthorization(AuthorizationPolicies.Admin);
+
+        group.MapDelete("/{id:guid}", DeleteConference)
+            .WithName("DeleteConference")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .RequireAuthorization(AuthorizationPolicies.Admin);
 
         group.MapPost("/{id:guid}/follow", FollowConference)
             .WithName("FollowConference")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization();
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         return app;
     }
@@ -208,6 +215,29 @@ public static class ConferencesEndpoints
         catch (KeyNotFoundException)
         {
             return Results.NotFound(new { error = "Conference not found" });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> DeleteConference(
+        Guid id,
+        ICommandHandler<DeleteConferenceCommand, bool> handler,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = new DeleteConferenceCommand(id);
+            var deleted = await handler.Handle(command, cancellationToken);
+
+            if (!deleted)
+            {
+                return Results.NotFound(new { error = "Conference not found" });
+            }
+
+            return Results.NoContent();
         }
         catch (Exception)
         {

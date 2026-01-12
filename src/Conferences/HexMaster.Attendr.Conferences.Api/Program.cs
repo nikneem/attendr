@@ -1,4 +1,5 @@
 using HexMaster.Attendr.Aspire.AppHost;
+using HexMaster.Attendr.Conferences.Api.Authorization;
 using HexMaster.Attendr.Conferences.Api.Endpoints;
 using HexMaster.Attendr.Conferences.Data.Postgres.Extensions;
 using HexMaster.Attendr.Conferences.Extensions;
@@ -7,6 +8,7 @@ using HexMaster.Attendr.Core.Configuration;
 using HexMaster.Attendr.IntegrationEvents.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Scalar.AspNetCore;
 using Sessionize.Api.Client.DependencyInjection;
 
@@ -29,7 +31,22 @@ builder.Services.AddAuthentication(options =>
     options.Authority = "https://attendr.eu.auth0.com/";
     options.Audience = "https://api.attendr.com";
 });
-builder.Services.AddAuthorization();
+
+// Configure authorization with default policy and custom policies
+builder.Services.AddAuthorizationBuilder()
+    // Set default policy - require authentication for all endpoints
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build())
+    // Authenticated policy (explicit)
+    .AddPolicy(AuthorizationPolicies.Authenticated, policy =>
+        policy.RequireAuthenticatedUser())
+    // Admin policy - requires admin:attendr permission
+    .AddPolicy(AuthorizationPolicies.Admin, policy =>
+        policy.Requirements.Add(new PermissionRequirement(Permissions.AdminAttendr)));
+
+// Register custom authorization handler
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
 // Add health checks
 builder.Services.AddHealthChecks();

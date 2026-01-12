@@ -1,6 +1,7 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Conferences.CreateConference;
+using HexMaster.Attendr.Conferences.DeleteConference;
 using HexMaster.Attendr.Conferences.FollowConference;
 using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.ListConferences;
@@ -25,6 +26,7 @@ public static class ServiceCollectionExtensions
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateConferenceCommand, CreateConferenceResult>, CreateConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateConferenceCommand, ConferenceDetailsDto>, UpdateConferenceCommandHandler>();
+        services.AddScoped<ICommandHandler<DeleteConferenceCommand, bool>, DeleteConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<FollowConferenceCommand>, FollowConferenceCommandHandler>();
 
         // Register query handlers
