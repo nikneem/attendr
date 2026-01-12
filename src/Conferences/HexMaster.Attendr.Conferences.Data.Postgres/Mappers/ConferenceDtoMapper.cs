@@ -62,7 +62,7 @@ internal static class ConferenceDtoMapper
         }).ToList();
 
         SynchronizationSourceDto? syncSource = null;
-        if (conferenceEntity.SyncSourceType.HasValue && 
+        if (conferenceEntity.SyncSourceType.HasValue &&
             !string.IsNullOrWhiteSpace(conferenceEntity.SyncSourceLocationOrApiKey))
         {
             var sourceType = (SynchronizationSourceType)conferenceEntity.SyncSourceType.Value;
