@@ -45,6 +45,10 @@ export class RateSessionsPageComponent implements OnInit {
     private currentX = 0;
     private currentY = 0;
     private isDragging = false;
+    private lastMoveTime = 0;
+    private lastMoveX = 0;
+    private velocityX = 0;
+    private swipeDirection: 'horizontal' | 'vertical' | 'unknown' = 'unknown';
     swipeOffset = signal(0);
     swipeDirection = computed(() => {
         const offset = this.swipeOffset();
@@ -210,7 +214,15 @@ export class RateSessionsPageComponent implements OnInit {
         if (this.isDragging) {
             const touch = event.touches[0];
             this.updateDrag(touch.clientX, touch.clientY);
-            event.preventDefault();
+
+            // Only prevent default for horizontal swipes to allow vertical scrolling
+            if (this.swipeDirection === 'horizontal') {
+                event.preventDefault();
+            } else if (this.swipeDirection === 'vertical') {
+                // Cancel dragging if user is scrolling vertically
+                this.isDragging = false;
+                this.swipeOffset.set(0);
+            }
         }
     }
 
@@ -226,16 +238,35 @@ export class RateSessionsPageComponent implements OnInit {
         this.startY = y;
         this.currentX = x;
         this.currentY = y;
+        this.lastMoveX = x;
+        this.lastMoveTime = Date.now();
+        this.velocityX = 0;
+        this.swipeDirection = 'unknown';
     }
 
     private updateDrag(x: number, y: number): void {
+        const now = Date.now();
+        const timeDelta = now - this.lastMoveTime;
+
         this.currentX = x;
         this.currentY = y;
         const deltaX = this.currentX - this.startX;
-        const deltaY = Math.abs(this.currentY - this.startY);
+        const deltaY = this.currentY - this.startY;
+
+        // Determine swipe direction if still unknown
+        if (this.swipeDirection === 'unknown' && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
+            this.swipeDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+        }
+
+        // Calculate velocity for horizontal movement
+        if (timeDelta > 0) {
+            this.velocityX = (x - this.lastMoveX) / timeDelta;
+        }
+        this.lastMoveX = x;
+        this.lastMoveTime = now;
 
         // Only apply horizontal swipe if horizontal movement dominates
-        if (Math.abs(deltaX) > deltaY) {
+        if (this.swipeDirection === 'horizontal') {
             this.swipeOffset.set(deltaX);
         }
     }
@@ -244,16 +275,24 @@ export class RateSessionsPageComponent implements OnInit {
         this.isDragging = false;
         const offset = this.swipeOffset();
 
-        // Threshold for triggering swipe action (30% of screen width)
-        const threshold = window.innerWidth * 0.3;
+        // Threshold for triggering swipe action (25% of screen width)
+        const distanceThreshold = window.innerWidth * 0.25;
 
-        if (Math.abs(offset) >= threshold) {
+        // Velocity threshold for "throwing" the card (pixels per millisecond)
+        const velocityThreshold = 0.5;
+        const hasHighVelocity = Math.abs(this.velocityX) > velocityThreshold;
+
+        // Trigger swipe if either distance threshold is met OR card is thrown with velocity
+        if (Math.abs(offset) >= distanceThreshold || (hasHighVelocity && Math.abs(offset) > 30)) {
             const isFavorite = offset > 0;
             this.submitRating(isFavorite);
         } else {
-            // Reset if threshold not met
+            // Reset if thresholds not met
             this.swipeOffset.set(0);
         }
+
+        // Reset swipe direction
+        this.swipeDirection = 'unknown';
     }
 
     submitRating(isFavorite: boolean): void {

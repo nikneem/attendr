@@ -198,6 +198,8 @@
         :global(.p-card-content) {
             flex: 1;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch; // Enable momentum scrolling on iOS
+            overscroll-behavior-y: contain; // Prevent scroll chaining to parent
         }
     }
 
@@ -317,6 +319,7 @@
     .abstract {
         flex: 1;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch; // Enable momentum scrolling on iOS
         min-height: 100px;
         max-height: 200px;
 
