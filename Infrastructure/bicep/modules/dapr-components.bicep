@@ -27,7 +27,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-10-02-
 // Dapr PubSub component using Azure Service Bus
 resource daprPubSub 'Microsoft.App/managedEnvironments/daprComponents@2025-10-02-preview' = {
   parent: containerAppsEnvironment
-  name: 'pubsub'
+  name: 'attendr-pubsub'
   properties: {
     componentType: 'pubsub.azure.servicebus.topics'
     version: 'v1'
@@ -50,7 +50,7 @@ resource daprPubSub 'Microsoft.App/managedEnvironments/daprComponents@2025-10-02
 // Dapr State Store component using Redis Cache
 resource daprStateStore 'Microsoft.App/managedEnvironments/daprComponents@2025-10-02-preview' = {
   parent: containerAppsEnvironment
-  name: 'statestore'
+  name: 'attendr-statestore'
   properties: {
     componentType: 'state.redis'
     version: 'v1'
