@@ -1,10 +1,5 @@
-targetScope = 'resourceGroup'
-
-@description('The name of the container app')
-param name string
-
-@description('The location for the container app')
-param location string
+param defaultResourceName string
+param location string = resourceGroup().location
 
 @description('Tags to apply to the container app')
 param tags object = {}
@@ -39,6 +34,27 @@ param containerRegistryPassword string
 @description('CORS allowed origins')
 param corsOrigins array = []
 
+param tableNames array = [
+  'profiles'
+]
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' = {
+  name: uniqueString(defaultResourceName)
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+  resource tableService 'tableServices@2025-06-01' = {
+    name: 'default'
+    resource tables 'tables@2025-06-01' = [
+      for tableName in tableNames: {
+        name: tableName
+      }
+    ]
+  }
+}
+
 // Reference to Container Apps environment in landing zone
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' existing = {
   name: containerAppsEnvironmentName
@@ -46,7 +62,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01'
 }
 
 resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
-  name: name
+  name: 'aca-${defaultResourceName}'
   location: location
   tags: tags
   identity: {
@@ -182,8 +198,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   }
 }
 
-output id string = containerApp.id
-output name string = containerApp.name
-output containerImageName string = containerApp.properties.template.containers[0].image
-output fqdn string = containerApp.properties.configuration.ingress.fqdn
-output managedIdentityPrincipalId string = containerApp.identity.principalId
+module roleAssignments './modules/role-assignments.bicep' = {
+  name: 'roleAssignments'
+  params: {
+    principalId: containerApp.identity.principalId
+    landingZoneResourceGroupName: landingZoneResourceGroupName
+  }
+}

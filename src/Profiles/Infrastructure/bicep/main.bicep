@@ -52,25 +52,6 @@ resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01
   name: landingzone.resourceGroupName
 }
 
-// Deploy the Profiles container app
-module profilesApp './modules/container-app.bicep' = {
-  scope: resourceGroup
-  params: {
-    name: 'ca-${baseName}-${environmentName}'
-    location: location
-    tags: tags
-    landingZoneResourceGroupName: landingzone.resourceGroupName
-    containerAppsEnvironmentName: landingzone.containerAppsEnvironmentName
-    containerImage: containerImage
-    appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
-    applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
-    containerRegistryServer: containerRegistryServer
-    containerRegistryUsername: containerRegistryUsername
-    containerRegistryPassword: containerRegistryPassword
-    corsOrigins: corsOrigins
-  }
-}
-
 // Get App Configuration endpoint
 module appConfigurationEndpoint './modules/get-app-configuration.bicep' = {
   scope: landingZoneResourceGroup
@@ -87,28 +68,23 @@ module appInsightsConnectionString './modules/get-app-insights.bicep' = {
   }
 }
 
-// Assign permissions to the container app's system-assigned managed identity
-module roleAssignments './modules/role-assignments.bicep' = {
-  scope: landingZoneResourceGroup
+module appResources 'resources.bicep' = {
+  scope: resourceGroup
   params: {
-    principalId: profilesApp.outputs.managedIdentityPrincipalId
-    appConfigurationName: landingzone.appConfigurationName
-    keyVaultName: landingzone.keyVaultName
+    defaultResourceName: '${baseName}-${environmentName}'
+    location: location
+    tags: tags
+    landingZoneResourceGroupName: landingzone.resourceGroupName
+    containerAppsEnvironmentName: landingzone.containerAppsEnvironmentName
+    containerImage: containerImage
+    containerRegistryServer: containerRegistryServer
+    containerRegistryUsername: containerRegistryUsername
+    containerRegistryPassword: containerRegistryPassword
+    corsOrigins: corsOrigins
+    appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
+    applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
+    tableNames: [
+      'profiles'
+    ]
   }
 }
-
-// Configure service integration endpoints in App Configuration
-module serviceIntegration '../../../../Infrastructure/bicep/modules/app-configuration-service-integration.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    appConfigurationName: landingzone.appConfigurationName
-    environmentName: environmentName
-    baseName: baseName
-    serviceName: 'Profiles'
-  }
-}
-output resourceGroupName string = resourceGroup.name
-output containerAppName string = profilesApp.outputs.name
-output containerAppFqdn string = profilesApp.outputs.fqdn
-output managedIdentityPrincipalId string = profilesApp.outputs.managedIdentityPrincipalId
-output containerImageName string = profilesApp.outputs.containerImageName
