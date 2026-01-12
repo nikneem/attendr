@@ -16,6 +16,7 @@ export class GroupDetailsViewComponent {
 
     joinRequested = output<string>();
     requestAccessRequested = output<string>();
+    viewGroupRequested = output<string>();
 
     onJoin(): void {
         this.joinRequested.emit(this.group().id);
@@ -23,5 +24,9 @@ export class GroupDetailsViewComponent {
 
     onRequestAccess(): void {
         this.requestAccessRequested.emit(this.group().id);
+    }
+
+    onViewGroup(): void {
+        this.viewGroupRequested.emit(this.group().id);
     }
 }

@@ -62,16 +62,19 @@
         }
     </div>
 
-    @if (!group().isMember) {
     <p-divider />
 
     <div class="actions-section">
+        @if (group().isMember) {
+        <button pButton label="View Group" icon="pi pi-arrow-right" (click)="onViewGroup()"
+            class="view-button w-full"></button>
+        } @else {
         @if (group().isPublic) {
         <button pButton label="Join Group" icon="pi pi-sign-in" (click)="onJoin()" class="join-button w-full"></button>
         } @else {
-        <button pButton label="Request Access" icon="pi pi-send" (click)="onRequestAccess()" severity="secondary"
+        <button pButton label="Request Access" icon="pi pi-send" (click)="onRequestAccess()"
             class="request-button w-full"></button>
         }
+        }
     </div>
-    }
 </div>

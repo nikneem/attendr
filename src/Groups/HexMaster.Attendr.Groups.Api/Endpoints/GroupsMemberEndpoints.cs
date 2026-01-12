@@ -85,7 +85,7 @@ public static class GroupsMemberEndpoints
         try
         {
             var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
-            var command = new Features.RemoveMember.RemoveMemberCommand(id, Guid.Parse(profile.ProfileId), memberId);
+            var command = new Features.RemoveMember.RemoveMemberCommand(id, memberId, Guid.Parse(profile.ProfileId));
             await handler.Handle(command, cancellationToken);
 
             return Results.NoContent();
@@ -111,7 +111,7 @@ public static class GroupsMemberEndpoints
         try
         {
             var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
-            var command = new Features.ApproveJoinRequest.ApproveJoinRequestCommand(id, Guid.Parse(profile.ProfileId), profileId);
+            var command = new Features.ApproveJoinRequest.ApproveJoinRequestCommand(id, profileId, Guid.Parse(profile.ProfileId));
             await handler.Handle(command, cancellationToken);
 
             return Results.NoContent();
@@ -137,7 +137,7 @@ public static class GroupsMemberEndpoints
         try
         {
             var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
-            var command = new Features.DenyJoinRequest.DenyJoinRequestCommand(id, Guid.Parse(profile.ProfileId), profileId);
+            var command = new Features.DenyJoinRequest.DenyJoinRequestCommand(id, profileId, Guid.Parse(profile.ProfileId));
             await handler.Handle(command, cancellationToken);
 
             return Results.NoContent();
