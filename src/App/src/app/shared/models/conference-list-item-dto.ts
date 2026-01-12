@@ -6,6 +6,7 @@ export interface ConferenceListItemDto {
     startDate: string;
     endDate: string;
     imageUrl?: string;
+    isVisible: boolean;
     speakersCount: number;
     roomsCount: number;
     presentationsCount: number;

@@ -45,11 +45,13 @@ public interface IConferenceRepository
     /// <param name="searchQuery">Optional search query to filter by title, city, or country.</param>
     /// <param name="pageNumber">The page number (1-based).</param>
     /// <param name="pageSize">The number of items per page.</param>
+    /// <param name="showHidden">Whether to include hidden conferences (IsVisible = false). Defaults to false.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A tuple containing the list of conferences and the total count.</returns>
     Task<(List<Conference> Conferences, int TotalCount)> ListConferencesAsync(
         string? searchQuery,
         int pageNumber,
         int pageSize,
+        bool showHidden = false,
         CancellationToken cancellationToken = default);
 }

@@ -40,6 +40,12 @@ public sealed class Conference : StatefulDomainModel<Guid>
     public string? ImageUrl { get; private set; }
 
     /// <summary>
+    /// Gets a value indicating whether the conference is visible to users.
+    /// Defaults to false when created.
+    /// </summary>
+    public bool IsVisible { get; private set; }
+
+    /// <summary>
     /// Gets the synchronization source configuration for the conference.
     /// </summary>
     public SynchronizationSource? SynchronizationSource { get; private set; }
@@ -71,6 +77,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         DateOnly startDate,
         DateOnly endDate,
         string? imageUrl,
+        bool isVisible,
         DomainModelState initialState = DomainModelState.Pristine)
         : base(id, initialState)
     {
@@ -105,6 +112,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         StartDate = startDate;
         EndDate = endDate;
         ImageUrl = imageUrl;
+        IsVisible = isVisible;
     }
 
     /// <summary>
@@ -132,7 +140,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         ArgumentException.ThrowIfNullOrWhiteSpace(country, nameof(country));
 
         var id = Guid.NewGuid();
-        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl, DomainModelState.Created);
+        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl, false, DomainModelState.Created);
         conference.SynchronizationSource = synchronizationSource;
         return conference;
     }
@@ -147,6 +155,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
     /// <param name="startDate">The start date of the conference.</param>
     /// <param name="endDate">The end date of the conference.</param>
     /// <param name="imageUrl">Optional URL to an image representing the conference.</param>
+    /// <param name="isVisible">Whether the conference is visible to users.</param>
     /// <param name="synchronizationSource">Optional synchronization source configuration.</param>
     /// <returns>A new instance of <see cref="Conference"/>.</returns>
     public static Conference FromPersisted(
@@ -157,9 +166,10 @@ public sealed class Conference : StatefulDomainModel<Guid>
         DateOnly startDate,
         DateOnly endDate,
         string? imageUrl = null,
+        bool isVisible = false,
         SynchronizationSource? synchronizationSource = null)
     {
-        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl);
+        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl, isVisible);
         conference.SynchronizationSource = synchronizationSource;
         return conference;
     }

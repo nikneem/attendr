@@ -12,6 +12,7 @@ public sealed class ConferenceEntity
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
     public string? ImageUrl { get; set; }
+    public bool IsVisible { get; set; }
 
     // Synchronization source
     public int? SyncSourceType { get; set; }

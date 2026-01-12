@@ -24,6 +24,7 @@ internal static class ConferenceMapper
             StartDate = conference.StartDate,
             EndDate = conference.EndDate,
             ImageUrl = conference.ImageUrl,
+            IsVisible = conference.IsVisible,
             SyncSourceType = conference.SynchronizationSource?.SourceType != null
                 ? (int)conference.SynchronizationSource.SourceType
                 : null,
@@ -64,6 +65,7 @@ internal static class ConferenceMapper
             conferenceEntity.StartDate,
             conferenceEntity.EndDate,
             conferenceEntity.ImageUrl,
+            conferenceEntity.IsVisible,
             syncSource);
 
         // Add rooms

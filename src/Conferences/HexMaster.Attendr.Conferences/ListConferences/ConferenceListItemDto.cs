@@ -8,6 +8,7 @@ public sealed record ConferenceListItemDto(
     DateOnly StartDate,
     DateOnly EndDate,
     string? ImageUrl,
+    bool IsVisible,
     bool HasSynchronizationSource,
     int SpeakersCount,
     int RoomsCount,

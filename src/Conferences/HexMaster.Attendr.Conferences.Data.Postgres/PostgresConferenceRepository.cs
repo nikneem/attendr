@@ -163,6 +163,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         string? searchQuery,
         int pageNumber,
         int pageSize,
+        bool showHidden = false,
         CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -175,6 +176,12 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         {
             ("@today", today)
         };
+
+        // Filter out hidden conferences unless showHidden is true
+        if (!showHidden)
+        {
+            whereClause += " AND is_visible = true";
+        }
 
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
@@ -193,7 +200,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
 
         // Get paginated results
         var sql = $@"
-            SELECT id, title, city, country, start_date, end_date, image_url, 
+            SELECT id, title, city, country, start_date, end_date, image_url, is_visible,
                    sync_source_type, sync_source_location_or_api_key
             FROM conferences
             {whereClause}
@@ -223,8 +230,9 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
                     StartDate = reader.GetFieldValue<DateOnly>(4),
                     EndDate = reader.GetFieldValue<DateOnly>(5),
                     ImageUrl = reader.IsDBNull(6) ? null : reader.GetString(6),
-                    SyncSourceType = reader.IsDBNull(7) ? null : reader.GetInt32(7),
-                    SyncSourceLocationOrApiKey = reader.IsDBNull(8) ? null : reader.GetString(8)
+                    IsVisible = reader.GetBoolean(7),
+                    SyncSourceType = reader.IsDBNull(8) ? null : reader.GetInt32(8),
+                    SyncSourceLocationOrApiKey = reader.IsDBNull(9) ? null : reader.GetString(9)
                 });
             }
         }
@@ -250,8 +258,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     private static async Task InsertConferenceAsync(NpgsqlConnection connection, ConferenceEntity entity, CancellationToken cancellationToken)
     {
         var sql = @"
-            INSERT INTO conferences (id, title, city, country, start_date, end_date, image_url, sync_source_type, sync_source_location_or_api_key)
-            VALUES (@id, @title, @city, @country, @start_date, @end_date, @image_url, @sync_source_type, @sync_source_location_or_api_key)";
+            INSERT INTO conferences (id, title, city, country, start_date, end_date, image_url, is_visible, sync_source_type, sync_source_location_or_api_key)
+            VALUES (@id, @title, @city, @country, @start_date, @end_date, @image_url, @is_visible, @sync_source_type, @sync_source_location_or_api_key)";
 
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.AddWithValue("@id", entity.Id);
@@ -261,6 +269,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         command.Parameters.AddWithValue("@start_date", entity.StartDate);
         command.Parameters.AddWithValue("@end_date", entity.EndDate);
         command.Parameters.AddWithValue("@image_url", (object?)entity.ImageUrl ?? DBNull.Value);
+        command.Parameters.AddWithValue("@is_visible", entity.IsVisible);
         command.Parameters.AddWithValue("@sync_source_type", (object?)entity.SyncSourceType ?? DBNull.Value);
         command.Parameters.AddWithValue("@sync_source_location_or_api_key", (object?)entity.SyncSourceLocationOrApiKey ?? DBNull.Value);
 
@@ -339,7 +348,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     private static async Task<ConferenceEntity?> LoadConferenceAsync(NpgsqlConnection connection, Guid id, CancellationToken cancellationToken)
     {
         var sql = @"
-            SELECT id, title, city, country, start_date, end_date, image_url, 
+            SELECT id, title, city, country, start_date, end_date, image_url, is_visible,
                    sync_source_type, sync_source_location_or_api_key
             FROM conferences
             WHERE id = @id";
@@ -363,8 +372,9 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
             StartDate = reader.GetFieldValue<DateOnly>(4),
             EndDate = reader.GetFieldValue<DateOnly>(5),
             ImageUrl = reader.IsDBNull(6) ? null : reader.GetString(6),
-            SyncSourceType = reader.IsDBNull(7) ? null : reader.GetInt32(7),
-            SyncSourceLocationOrApiKey = reader.IsDBNull(8) ? null : reader.GetString(8)
+            IsVisible = reader.GetBoolean(7),
+            SyncSourceType = reader.IsDBNull(8) ? null : reader.GetInt32(8),
+            SyncSourceLocationOrApiKey = reader.IsDBNull(9) ? null : reader.GetString(9)
         };
     }
 
@@ -498,7 +508,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         var sql = @"
             UPDATE conferences
             SET title = @title, city = @city, country = @country, 
-                start_date = @start_date, end_date = @end_date, image_url = @image_url,
+                start_date = @start_date, end_date = @end_date, image_url = @image_url, is_visible = @is_visible,
                 sync_source_type = @sync_source_type, sync_source_location_or_api_key = @sync_source_location_or_api_key
             WHERE id = @id";
 
@@ -510,6 +520,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         command.Parameters.AddWithValue("@start_date", entity.StartDate);
         command.Parameters.AddWithValue("@end_date", entity.EndDate);
         command.Parameters.AddWithValue("@image_url", (object?)entity.ImageUrl ?? DBNull.Value);
+        command.Parameters.AddWithValue("@is_visible", entity.IsVisible);
         command.Parameters.AddWithValue("@sync_source_type", (object?)entity.SyncSourceType ?? DBNull.Value);
         command.Parameters.AddWithValue("@sync_source_location_or_api_key", (object?)entity.SyncSourceLocationOrApiKey ?? DBNull.Value);
 
