@@ -190,7 +190,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             {
               type: 'Liveness'
               httpGet: {
-                path: '/health/live'
+                path: '/alive'
                 port: 8080
                 scheme: 'HTTP'
               }
@@ -201,7 +201,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             {
               type: 'Readiness'
               httpGet: {
-                path: '/health/ready'
+                path: '/health'
                 port: 8080
                 scheme: 'HTTP'
               }
@@ -212,7 +212,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             {
               type: 'Startup'
               httpGet: {
-                path: '/health/startup'
+                path: '/health'
                 port: 8080
                 scheme: 'HTTP'
               }
