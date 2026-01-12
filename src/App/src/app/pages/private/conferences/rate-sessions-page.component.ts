@@ -48,7 +48,7 @@ export class RateSessionsPageComponent implements OnInit {
     private lastMoveTime = 0;
     private lastMoveX = 0;
     private velocityX = 0;
-    private swipeDirection: 'horizontal' | 'vertical' | 'unknown' = 'unknown';
+    private gestureDirection: 'horizontal' | 'vertical' | 'unknown' = 'unknown';
     swipeOffset = signal(0);
     swipeDirection = computed(() => {
         const offset = this.swipeOffset();
@@ -216,9 +216,9 @@ export class RateSessionsPageComponent implements OnInit {
             this.updateDrag(touch.clientX, touch.clientY);
 
             // Only prevent default for horizontal swipes to allow vertical scrolling
-            if (this.swipeDirection === 'horizontal') {
+            if (this.gestureDirection === 'horizontal') {
                 event.preventDefault();
-            } else if (this.swipeDirection === 'vertical') {
+            } else if (this.gestureDirection === 'vertical') {
                 // Cancel dragging if user is scrolling vertically
                 this.isDragging = false;
                 this.swipeOffset.set(0);
@@ -241,7 +241,7 @@ export class RateSessionsPageComponent implements OnInit {
         this.lastMoveX = x;
         this.lastMoveTime = Date.now();
         this.velocityX = 0;
-        this.swipeDirection = 'unknown';
+        this.gestureDirection = 'unknown';
     }
 
     private updateDrag(x: number, y: number): void {
@@ -254,8 +254,8 @@ export class RateSessionsPageComponent implements OnInit {
         const deltaY = this.currentY - this.startY;
 
         // Determine swipe direction if still unknown
-        if (this.swipeDirection === 'unknown' && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
-            this.swipeDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+        if (this.gestureDirection === 'unknown' && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
+            this.gestureDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
         }
 
         // Calculate velocity for horizontal movement
@@ -266,7 +266,7 @@ export class RateSessionsPageComponent implements OnInit {
         this.lastMoveTime = now;
 
         // Only apply horizontal swipe if horizontal movement dominates
-        if (this.swipeDirection === 'horizontal') {
+        if (this.gestureDirection === 'horizontal') {
             this.swipeOffset.set(deltaX);
         }
     }
@@ -291,8 +291,8 @@ export class RateSessionsPageComponent implements OnInit {
             this.swipeOffset.set(0);
         }
 
-        // Reset swipe direction
-        this.swipeDirection = 'unknown';
+        // Reset gesture direction
+        this.gestureDirection = 'unknown';
     }
 
     submitRating(isFavorite: boolean): void {
