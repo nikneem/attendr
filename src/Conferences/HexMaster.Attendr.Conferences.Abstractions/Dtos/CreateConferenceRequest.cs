@@ -9,6 +9,7 @@ namespace HexMaster.Attendr.Conferences.Abstractions.Dtos;
 /// <param name="ImageUrl">Optional URL to a conference image or logo.</param>
 /// <param name="StartDate">The start date of the conference.</param>
 /// <param name="EndDate">The end date of the conference.</param>
+/// <param name="IsVisible">Whether the conference should be visible to users (optional).</param>
 /// <param name="SynchronizationSource">Optional synchronization source configuration.</param>
 public sealed record CreateConferenceRequest(
     string Title,
@@ -17,4 +18,5 @@ public sealed record CreateConferenceRequest(
     string? ImageUrl,
     DateOnly StartDate,
     DateOnly EndDate,
+    bool? IsVisible,
     SynchronizationSourceDto? SynchronizationSource);

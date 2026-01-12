@@ -10,6 +10,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ConferencesService } from '@services/conferences.service';
 import { PresenceService } from '@services/presence.service';
 import { ConferenceAttendanceStore } from '@services/conference-attendance.store';
+import { ProfileStore } from '@stores/profile.store';
 import { ConferenceDetailsDto } from '@models/conference-details-dto';
 import { EditConferenceComponent } from '@components/edit-conference/edit-conference.component';
 import { ConferenceScheduleComponent } from '@components/conference-schedule/conference-schedule.component';
@@ -39,6 +40,7 @@ export class ConferenceDetailsPageComponent implements OnInit {
     private readonly conferencesService = inject(ConferencesService);
     private readonly presenceService = inject(PresenceService);
     readonly attendanceStore = inject(ConferenceAttendanceStore);
+    readonly profileStore = inject(ProfileStore);
     private readonly messageService = inject(MessageService);
     private readonly cdr = inject(ChangeDetectorRef);
 

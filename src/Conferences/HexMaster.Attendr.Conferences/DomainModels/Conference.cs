@@ -317,4 +317,17 @@ public sealed class Conference : StatefulDomainModel<Guid>
     {
         SynchronizationSource = synchronizationSource;
     }
+
+    /// <summary>
+    /// Updates the visibility of the conference.
+    /// </summary>
+    /// <param name="isVisible">Whether the conference should be visible to users.</param>
+    public void UpdateVisibility(bool isVisible)
+    {
+        if (IsVisible != isVisible)
+        {
+            IsVisible = isVisible;
+            UpdateModifiedOn();
+        }
+    }
 }

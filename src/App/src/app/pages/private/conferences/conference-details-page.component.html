@@ -16,8 +16,10 @@
     } @else if (conference) {
     <div class="container">
         <div class="conference-header">
+            @if (profileStore.isAdmin()) {
             <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" (click)="openEditDialog()"
                 pTooltip="Edit conference" class="edit-button" />
+            }
 
             @if (attendanceStore.isAttending()) {
             <div class="attending-ribbon">

@@ -14,6 +14,7 @@ export interface ConferenceDetailsDto {
     startDate: string;
     endDate: string;
     imageUrl?: string;
+    isVisible: boolean;
     synchronizationSource?: SynchronizationSource;
     speakers: SpeakerDto[];
     presentations: PresentationDto[];

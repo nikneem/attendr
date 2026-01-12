@@ -38,6 +38,12 @@
             [showIcon]="true" />
     </div>
 
+    <div class="form-field">
+        <label for="isVisible">Conference Visibility</label>
+        <p-toggleSwitch [(ngModel)]="isVisible" inputId="isVisible" name="isVisible" [disabled]="isUpdating" />
+        <small class="visibility-hint">Toggle to make this conference visible to all users</small>
+    </div>
+
     <div class="sync-source-section">
         <div class="checkbox-field">
             <p-checkbox [(ngModel)]="hasSyncSource" [binary]="true" inputId="hasSyncSource" name="hasSyncSource"

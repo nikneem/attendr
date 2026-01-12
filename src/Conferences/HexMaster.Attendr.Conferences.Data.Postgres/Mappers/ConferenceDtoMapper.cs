@@ -80,6 +80,7 @@ internal static class ConferenceDtoMapper
             conferenceEntity.StartDate,
             conferenceEntity.EndDate,
             conferenceEntity.ImageUrl,
+            conferenceEntity.IsVisible,
             syncSource,
             speakerDtos,
             presentationDtos

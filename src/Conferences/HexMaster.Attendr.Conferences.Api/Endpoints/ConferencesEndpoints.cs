@@ -157,6 +157,7 @@ public static class ConferencesEndpoints
                 request.ImageUrl?.Trim(),
                 request.StartDate,
                 request.EndDate,
+                request.IsVisible,
                 request.SynchronizationSource);
 
             // Execute command

@@ -13,6 +13,7 @@ namespace HexMaster.Attendr.Conferences.UpdateConference;
 /// <param name="ImageUrl">The updated URL of the conference image.</param>
 /// <param name="StartDate">The updated start date of the conference.</param>
 /// <param name="EndDate">The updated end date of the conference.</param>
+/// <param name="IsVisible">Whether the conference should be visible to users.</param>
 /// <param name="SynchronizationSource">Optional synchronization source information.</param>
 public sealed record UpdateConferenceCommand(
     Guid Id,
@@ -22,4 +23,5 @@ public sealed record UpdateConferenceCommand(
     string? ImageUrl,
     DateOnly StartDate,
     DateOnly EndDate,
+    bool? IsVisible,
     SynchronizationSourceDto? SynchronizationSource) : IAttendrCommand;

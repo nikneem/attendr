@@ -10,5 +10,6 @@ export interface CreateConferenceRequest {
     imageUrl?: string;
     startDate: string;
     endDate: string;
+    isVisible?: boolean;
     synchronizationSource?: SynchronizationSource;
 }

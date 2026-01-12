@@ -57,6 +57,11 @@ public sealed class UpdateConferenceCommandHandler : ICommandHandler<UpdateConfe
                 command.EndDate,
                 command.ImageUrl);
 
+            if (command.IsVisible.HasValue)
+            {
+                conference.UpdateVisibility(command.IsVisible.Value);
+            }
+
             if (command.SynchronizationSource != null)
             {
                 var sourceType = Enum.Parse<SynchronizationSourceType>(command.SynchronizationSource.SourceType);
@@ -96,6 +101,7 @@ public sealed class UpdateConferenceCommandHandler : ICommandHandler<UpdateConfe
                 conference.StartDate,
                 conference.EndDate,
                 conference.ImageUrl,
+                conference.IsVisible,
                 conference.SynchronizationSource != null
                     ? new SynchronizationSourceDto(
                         conference.SynchronizationSource.SourceType.ToString(),

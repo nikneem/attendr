@@ -5,6 +5,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ConferencesService } from '../../services/conferences.service';
 import { MessageService } from 'primeng/api';
 import { CreateConferenceRequest } from '../../models/create-conference-request.model';
@@ -12,7 +13,7 @@ import { ConferenceDetailsDto } from '../../models/conference-details-dto';
 
 @Component({
     selector: 'attn-edit-conference',
-    imports: [FormsModule, ButtonModule, InputTextModule, DatePickerModule, CheckboxModule, SelectModule],
+    imports: [FormsModule, ButtonModule, InputTextModule, DatePickerModule, CheckboxModule, SelectModule, ToggleSwitchModule],
     templateUrl: './edit-conference.component.html',
     styleUrl: './edit-conference.component.scss',
 })
@@ -27,6 +28,7 @@ export class EditConferenceComponent {
     country = '';
     imageUrl = '';
     dateRange: Date[] | null = null;
+    isVisible = false;
 
     hasSyncSource = false;
     syncSourceType = '';
@@ -54,6 +56,7 @@ export class EditConferenceComponent {
         this.country = conf.country || '';
         this.imageUrl = conf.imageUrl || '';
         this.dateRange = [new Date(conf.startDate), new Date(conf.endDate)];
+        this.isVisible = conf.isVisible;
 
         if (conf.synchronizationSource) {
             this.hasSyncSource = true;
@@ -137,6 +140,7 @@ export class EditConferenceComponent {
             imageUrl: this.imageUrl.trim() || undefined,
             startDate: this.formatDate(this.dateRange![0]),
             endDate: this.formatDate(this.dateRange![1]),
+            isVisible: this.isVisible,
         };
 
         if (this.hasSyncSource) {
