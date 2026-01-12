@@ -54,20 +54,31 @@
 
         ::ng-deep {
             .p-menubar-root-list {
-                display: flex;
-                align-items: center;
-                height: 64px;
+
+                // On mobile, PrimeNG hides the list and shows a hamburger menu
+                // Only apply desktop styles above mobile breakpoint
+                @media (min-width: 768px) {
+                    display: flex;
+                    align-items: center;
+                    height: 64px;
+                }
             }
 
             .p-menuitem {
-                height: 100%;
-                display: flex;
-                align-items: center;
+                @media (min-width: 768px) {
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                }
             }
 
             .p-menuitem-link {
                 color: $primary-color !important;
-                height: 100%;
+
+                @media (min-width: 768px) {
+                    height: 100%;
+                }
+
                 display: flex;
                 align-items: center;
                 padding: 0 $spacing-lg;
@@ -105,7 +116,39 @@
             .p-menubar-end {
                 display: flex;
                 align-items: center;
-                height: 64px;
+
+                @media (min-width: 768px) {
+                    height: 64px;
+                }
+            }
+
+            // Mobile hamburger button styling
+            .p-menubar-button {
+                color: $primary-color !important;
+                background: transparent !important;
+                border: 1px solid $border-color;
+
+                &:hover {
+                    color: $primary-light !important;
+                    border-color: $primary-color;
+                }
+
+                &:focus {
+                    box-shadow: 0 0 0 2px rgba($primary-color, 0.2) !important;
+                }
+            }
+
+            // Mobile menu panel
+            .p-menubar-mobile {
+                background-color: #1a1a1a !important;
+                border: 1px solid $border-dark !important;
+            }
+
+            // Mobile menu items
+            @media (max-width: 767px) {
+                .p-menuitem-link {
+                    padding: $spacing-md $spacing-lg;
+                }
             }
         }
     }
