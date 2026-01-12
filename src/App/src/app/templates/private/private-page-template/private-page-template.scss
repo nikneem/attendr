@@ -187,4 +187,27 @@
         // Remove extra padding since containers now handle their own responsive padding
         // This allows content to flow naturally to the edges
     }
+
+    .loading-container,
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 64px);
+        padding: $spacing-xl;
+        text-align: center;
+
+        p {
+            margin-top: $spacing-md;
+            color: $text-secondary;
+            font-size: 1.1rem;
+        }
+    }
+
+    .error-container {
+        p-message {
+            max-width: 600px;
+        }
+    }
 }

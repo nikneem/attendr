@@ -16,7 +16,18 @@
         </ng-template>
     </p-menubar>
 
+    @if (profileStore.loading()) {
+    <div class="loading-container">
+        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" animationDuration=".5s" />
+        <p>Loading your profile...</p>
+    </div>
+    } @else if (profileStore.error()) {
+    <div class="error-container">
+        <p-message severity="error" [text]="profileStore.error() ?? 'An error occurred'" />
+    </div>
+    } @else if (profileStore.isLoaded()) {
     <div class="content">
         <router-outlet></router-outlet>
     </div>
+    }
 </div>

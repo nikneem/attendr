@@ -81,7 +81,12 @@ public sealed class CreateProfileCommandHandler : ICommandHandler<CreateProfileC
                 _metrics.RecordProfileExisting();
                 _metrics.RecordOperationDuration("CreateProfile", stopwatch.Elapsed.TotalMilliseconds, success: true);
 
-                return new CreateProfileResult(existingProfile.Id);
+                return new CreateProfileResult(
+                    existingProfile.Id,
+                    existingProfile.FirstName ?? string.Empty,
+                    existingProfile.LastName ?? string.Empty,
+                    existingProfile.Email,
+                    existingProfile.DisplayName);
             }
 
             // Create a new profile using factory method (domain model enforces business rules)
@@ -110,7 +115,12 @@ public sealed class CreateProfileCommandHandler : ICommandHandler<CreateProfileC
             _metrics.RecordProfileCreated();
             _metrics.RecordOperationDuration("CreateProfile", stopwatch.Elapsed.TotalMilliseconds, success: true);
 
-            return new CreateProfileResult(profile.Id);
+            return new CreateProfileResult(
+                profile.Id,
+                profile.FirstName ?? string.Empty,
+                profile.LastName ?? string.Empty,
+                profile.Email,
+                profile.DisplayName);
         }
         catch (Exception ex)
         {
