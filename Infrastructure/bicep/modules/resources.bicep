@@ -93,20 +93,6 @@ module storageAccount './storage-account.bicep' = {
   }
 }
 
-// Store connection strings in Key Vault
-// Note: PostgreSQL connection strings will be added by service deployments
-module secrets './keyvault-secrets.bicep' = {
-  params: {
-    keyVaultName: keyVaultName
-    serviceBusConnectionString: serviceBus.outputs.primaryConnectionString
-    redisCacheConnectionString: redisCache.outputs.connectionString
-    storageAccountConnectionString: storageAccount.outputs.connectionString
-  }
-  dependsOn: [
-    keyVault
-  ]
-}
-
 // Service Bus with topics
 module serviceBus './servicebus.bicep' = {
   params: {
@@ -130,6 +116,70 @@ module redisCache './redis.bicep' = {
   }
 }
 
+// Reference to deployed Service Bus for connection string
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2025-05-01-preview' existing = {
+  name: serviceBusNamespaceName
+  dependsOn: [
+    serviceBus
+  ]
+}
+
+// Reference to deployed Redis Cache for connection string
+resource redisCacheResource 'Microsoft.Cache/redis@2024-11-01' existing = {
+  name: redisCacheName
+  dependsOn: [
+    redisCache
+  ]
+}
+
+// Store Service Bus connection string in Key Vault and App Configuration
+module serviceBusSecret './keyvault-secret-with-appconfig.bicep' = {
+  params: {
+    keyVaultName: keyVaultName
+    appConfigurationName: appConfigName
+    secretName: 'ServiceBusConnectionString'
+    secretValue: listKeys(
+      '${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey',
+      '2025-05-01-preview'
+    ).primaryConnectionString
+    appConfigKey: 'ConnectionStrings:ServiceBus'
+  }
+  dependsOn: [
+    keyVault
+    appConfiguration
+  ]
+}
+
+// Store Redis Cache connection string in Key Vault and App Configuration
+module redisCacheSecret './keyvault-secret-with-appconfig.bicep' = {
+  params: {
+    keyVaultName: keyVaultName
+    appConfigurationName: appConfigName
+    secretName: 'RedisCacheConnectionString'
+    secretValue: '${redisCacheResource.properties.hostName}:${redisCacheResource.properties.sslPort},password=${redisCacheResource.listKeys().primaryKey},ssl=True,abortConnect=False'
+    appConfigKey: 'ConnectionStrings:RedisCache'
+  }
+  dependsOn: [
+    keyVault
+    appConfiguration
+  ]
+}
+
+// Store Storage Account connection string in Key Vault and App Configuration
+module storageAccountSecret './keyvault-secret-with-appconfig.bicep' = {
+  params: {
+    keyVaultName: keyVaultName
+    appConfigurationName: appConfigName
+    secretName: 'StorageAccountConnectionString'
+    secretValue: storageAccount.outputs.connectionString
+    appConfigKey: 'ConnectionStrings:StorageAccount'
+  }
+  dependsOn: [
+    keyVault
+    appConfiguration
+  ]
+}
+
 // Container Apps Environment
 module containerAppsEnvironment './container-apps-environment.bicep' = {
   params: {
@@ -143,32 +193,26 @@ module containerAppsEnvironment './container-apps-environment.bicep' = {
 // DAPR Components for Container Apps
 module daprComponents './dapr-components.bicep' = {
   params: {
-    keyVaultServiceBusSecretUri: secrets.outputs.serviceBusSecretUri
-    keyVaultRedisCacheSecretUri: secrets.outputs.redisCacheSecretUri
-    keyVaultStorageAccountSecretUri: secrets.outputs.storageAccountSecretUri
     containerAppsEnvironmentName: containerAppsEnvName
-    serviceBusNamespace: serviceBusNamespaceName
-    serviceBusConnectionString: serviceBus.outputs.primaryConnectionString
-    redisCacheHostName: redisCache.outputs.hostName
-    redisCachePort: redisCache.outputs.sslPort
-    redisCachePrimaryKey: redisCache.outputs.primaryKey
+    serviceBusConnectionString: listKeys(
+      '${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey',
+      '2025-05-01-preview'
+    ).primaryConnectionString
+    redisCacheHostName: redisCacheResource.properties.hostName
+    redisCachePort: redisCacheResource.properties.sslPort
+    redisCachePrimaryKey: redisCacheResource.listKeys().primaryKey
   }
   dependsOn: [
     containerAppsEnvironment
   ]
 }
 
-// App Configuration with Key Vault references
-// Note: PostgreSQL connection strings will be added by service deployments
+// App Configuration
 module appConfiguration './app-configuration.bicep' = {
   params: {
     name: appConfigName
     location: location
     tags: tags
-    keyVaultName: keyVaultName
-    keyVaultServiceBusSecretUri: secrets.outputs.serviceBusSecretUri
-    keyVaultRedisCacheSecretUri: secrets.outputs.redisCacheSecretUri
-    keyVaultStorageAccountSecretUri: secrets.outputs.storageAccountSecretUri
   }
   dependsOn: [
     keyVault

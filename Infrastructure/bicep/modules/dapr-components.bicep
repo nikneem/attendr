@@ -3,9 +3,6 @@ targetScope = 'resourceGroup'
 @description('The name of the Container Apps environment')
 param containerAppsEnvironmentName string
 
-@description('The name of the Service Bus namespace')
-param serviceBusNamespace string
-
 @description('The Service Bus connection string')
 @secure()
 param serviceBusConnectionString string

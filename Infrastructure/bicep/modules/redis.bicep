@@ -52,5 +52,3 @@ output id string = redisCache.id
 output name string = redisCache.name
 output hostName string = redisCache.properties.hostName
 output sslPort int = redisCache.properties.sslPort
-output primaryKey string = redisCache.listKeys().primaryKey
-output connectionString string = '${redisCache.properties.hostName}:${redisCache.properties.sslPort},password=${redisCache.listKeys().primaryKey},ssl=True,abortConnect=False'

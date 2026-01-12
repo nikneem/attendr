@@ -49,7 +49,3 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2025-05-01-preview
 
 output id string = serviceBusNamespace.id
 output name string = serviceBusNamespace.name
-output primaryConnectionString string = listKeys(
-  '${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey',
-  serviceBusNamespace.apiVersion
-).primaryConnectionString
