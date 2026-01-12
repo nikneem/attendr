@@ -17,7 +17,7 @@ resource appConfig 'Microsoft.AppConfiguration/configurationStores@2024-05-01' =
     type: 'SystemAssigned'
   }
   sku: {
-    name: 'free'
+    name: 'standard'
   }
   properties: {
     enablePurgeProtection: false
