@@ -74,7 +74,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01'
 }
 
 resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
-  name: 'aca-${defaultResourceName}'
+  name: 'ca-${defaultResourceName}'
   location: location
   tags: tags
   identity: {
