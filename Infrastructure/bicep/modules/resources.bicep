@@ -24,7 +24,6 @@ var containerAppsEnvName = 'cae-${baseName}-${environmentName}'
 var serviceBusNamespaceName = 'sb-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
 var redisCacheName = 'redis-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
 var userAssignedIdentityName = 'id-${baseName}-${environmentName}'
-var storageAccountName = 'st${baseName}${environmentName}${take(uniqueSuffix, 6)}'
 
 // Integration event topics from the IntegrationEvents library
 var serviceBusTopics = [
@@ -80,16 +79,6 @@ module appInsights './app-insights.bicep' = {
     location: location
     tags: tags
     workspaceId: logAnalytics.outputs.id
-  }
-}
-
-// Storage Account for Profiles service (Table Storage)
-module storageAccount './storage-account.bicep' = {
-  params: {
-    name: storageAccountName
-    location: location
-    tags: tags
-    skuName: 'Standard_LRS'
   }
 }
 
@@ -165,21 +154,6 @@ module redisCacheSecret './keyvault-secret-with-appconfig.bicep' = {
   ]
 }
 
-// Store Storage Account connection string in Key Vault and App Configuration
-module storageAccountSecret './keyvault-secret-with-appconfig.bicep' = {
-  params: {
-    keyVaultName: keyVaultName
-    appConfigurationName: appConfigName
-    secretName: 'StorageAccountConnectionString'
-    secretValue: storageAccount.outputs.connectionString
-    appConfigKey: 'ConnectionStrings:StorageAccount'
-  }
-  dependsOn: [
-    keyVault
-    appConfiguration
-  ]
-}
-
 // Container Apps Environment
 module containerAppsEnvironment './container-apps-environment.bicep' = {
   params: {
@@ -226,7 +200,6 @@ output logAnalyticsWorkspaceId string = logAnalytics.outputs.id
 output appInsightsConnectionString string = appInsights.outputs.connectionString
 output serviceBusNamespace string = serviceBusNamespaceName
 output redisCacheName string = redisCacheName
-output storageAccountName string = storageAccount.outputs.name
 output daprPubSubComponentName string = daprComponents.outputs.pubSubComponentName
 output daprStateStoreComponentName string = daprComponents.outputs.stateStoreComponentName
 output userAssignedIdentityId string = userIdentity.outputs.id
