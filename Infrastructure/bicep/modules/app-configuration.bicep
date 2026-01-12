@@ -94,12 +94,6 @@ resource storageAccountConnectionStringKeyValue 'Microsoft.AppConfiguration/conf
   ]
 }
 
-// Add Key Vault reference for PostgreSQL Groups database
-dependsOn: [
-appConfigKeyVaultAccess
-]
-}
-
 output id string = appConfig.id
 output name string = appConfig.name
 output endpoint string = appConfig.properties.endpoint

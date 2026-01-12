@@ -47,42 +47,19 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   tags: tags
 }
 
-// Reference to landing zone resource group
-resource landingZoneResourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' existing = {
-  name: landingzone.resourceGroupName
-}
-
-// Get App Configuration endpoint
-module appConfigurationEndpoint './modules/get-app-configuration.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    appConfigurationName: landingzone.appConfigurationName
-  }
-}
-
-// Get Application Insights connection string
-module appInsightsConnectionString './modules/get-app-insights.bicep' = {
-  scope: landingZoneResourceGroup
-  params: {
-    applicationInsightsName: landingzone.applicationInsightsName
-  }
-}
-
 module appResources 'resources.bicep' = {
   scope: resourceGroup
   params: {
     defaultResourceName: '${baseName}-${environmentName}'
     location: location
     tags: tags
-    landingZoneResourceGroupName: landingzone.resourceGroupName
-    containerAppsEnvironmentName: landingzone.containerAppsEnvironmentName
+    landingzone: landingzone
     containerImage: containerImage
     containerRegistryServer: containerRegistryServer
     containerRegistryUsername: containerRegistryUsername
     containerRegistryPassword: containerRegistryPassword
     corsOrigins: corsOrigins
-    appConfigurationEndpoint: appConfigurationEndpoint.outputs.endpoint
-    applicationInsightsConnectionString: appInsightsConnectionString.outputs.connectionString
+
     tableNames: [
       'profiles'
     ]

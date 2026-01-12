@@ -4,21 +4,17 @@ param location string = resourceGroup().location
 @description('Tags to apply to the container app')
 param tags object = {}
 
-@description('The name of the landing zone resource group')
-param landingZoneResourceGroupName string
-
-@description('The name of the Container Apps environment')
-param containerAppsEnvironmentName string
+@description('Landing zone resource names')
+param landingzone object = {
+  resourceGroupName: ''
+  containerAppsEnvironmentName: ''
+  appConfigurationName: ''
+  keyVaultName: ''
+  applicationInsightsName: ''
+}
 
 @description('The container image to deploy')
 param containerImage string
-
-@description('App Configuration endpoint')
-param appConfigurationEndpoint string
-
-@description('Application Insights connection string')
-@secure()
-param applicationInsightsConnectionString string
 
 @description('Container registry server')
 param containerRegistryServer string
@@ -37,6 +33,22 @@ param corsOrigins array = []
 param tableNames array = [
   'profiles'
 ]
+
+// Get App Configuration endpoint
+module appConfigurationEndpoint './modules/get-app-configuration.bicep' = {
+  scope: resourceGroup(landingzone.resourceGroupName)
+  params: {
+    appConfigurationName: landingzone.appConfigurationName
+  }
+}
+
+// Get Application Insights connection string
+module appInsightsConnectionString './modules/get-app-insights.bicep' = {
+  scope: resourceGroup(landingzone.resourceGroupName)
+  params: {
+    applicationInsightsName: landingzone.applicationInsightsName
+  }
+}
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' = {
   name: uniqueString(defaultResourceName)
@@ -57,8 +69,8 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' = {
 
 // Reference to Container Apps environment in landing zone
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' existing = {
-  name: containerAppsEnvironmentName
-  scope: resourceGroup(landingZoneResourceGroupName)
+  scope: resourceGroup(landingzone.resourceGroupName)
+  name: landingzone.containerAppsEnvironmentName
 }
 
 resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
@@ -108,7 +120,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       secrets: [
         {
           name: 'appinsights-connection-string'
-          value: applicationInsightsConnectionString
+          value: appInsightsConnectionString.outputs.connectionString
         }
         {
           name: 'registry-password'
@@ -136,7 +148,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             }
             {
               name: 'AppConfiguration__Endpoint'
-              value: appConfigurationEndpoint
+              value: appConfigurationEndpoint.outputs.endpoint
             }
             {
               name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -202,6 +214,18 @@ module roleAssignments './modules/role-assignments.bicep' = {
   name: 'roleAssignments'
   params: {
     principalId: containerApp.identity.principalId
-    landingZoneResourceGroupName: landingZoneResourceGroupName
+    landingZoneResourceGroupName: landingzone.resourceGroupName
   }
 }
+
+module appConfigurationValues '../../../../Infrastructure/bicep/modules/azure-app-configuration-value.bicep' = [
+  for tableName in tableNames: {
+    name: 'appConfigurationValues${tableName}'
+    scope: resourceGroup(landingzone.resourceGroupName)
+    params: {
+      appConfigurationName: landingzone.appConfigurationName
+      name: 'Aspire:Azure:Data:Tables:${tableName}:ServiceUri'
+      value: 'https://${storageAccount.name}.table.${environment().suffixes.storage}'
+    }
+  }
+]
