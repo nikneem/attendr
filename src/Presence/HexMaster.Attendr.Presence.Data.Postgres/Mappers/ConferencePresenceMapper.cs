@@ -35,7 +35,9 @@ internal static class ConferencePresenceMapper
             p.IsFavorite,
             p.IsCheckedIn,
             p.CheckedInAt,
-            p.Rating
+            p.Rating,
+            p.IsRecommended,
+            p.IsPreferred
         )).ToList();
 
         return new ConferencePresenceEntity(
@@ -77,7 +79,9 @@ internal static class ConferencePresenceMapper
                 p.IsFavorite,
                 p.IsCheckedIn,
                 p.CheckedInAt,
-                p.Rating
+                p.Rating,
+                p.IsRecommended,
+                p.IsPreferred
             );
         }).ToList();
 
