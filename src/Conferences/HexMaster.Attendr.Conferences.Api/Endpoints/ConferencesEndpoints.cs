@@ -24,19 +24,20 @@ public static class ConferencesEndpoints
         group.MapGet("/", ListConferences)
             .WithName("ListConferences")
             .Produces<ListConferencesResult>(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status401Unauthorized);
+            .AllowAnonymous();
 
         group.MapGet("/{id:guid}", GetConference)
             .WithName("GetConference")
             .Produces<ConferenceDetailsDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status401Unauthorized);
+            .AllowAnonymous();
 
         group.MapPost("/", CreateConference)
             .WithName("CreateConference")
             .Produces<CreateConferenceResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized);
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization();
 
         group.MapPut("/{id:guid}", UpdateConference)
             .WithName("UpdateConference")
@@ -59,7 +60,8 @@ public static class ConferencesEndpoints
             .WithName("FollowConference")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status401Unauthorized);
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization();
 
         return app;
     }

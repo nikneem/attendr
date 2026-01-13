@@ -39,6 +39,10 @@
                 @if (attendanceStore.isFollowing()) {
                 <p-button label="Rate Sessions" icon="pi pi-star" (click)="navigateToRate()" />
                 }
+
+                @if (attendanceStore.isAttending()) {
+                <p-button label="My Schedule" icon="pi pi-calendar" (click)="navigateToSchedule()" />
+                }
             </div>
 
             <div class="header-panel details-panel">

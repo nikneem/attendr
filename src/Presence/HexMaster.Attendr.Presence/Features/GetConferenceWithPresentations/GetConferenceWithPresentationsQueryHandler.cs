@@ -13,15 +13,18 @@ namespace HexMaster.Attendr.Presence.Features.GetConferenceWithPresentations;
 public sealed class GetConferenceWithPresentationsQueryHandler : IQueryHandler<GetConferenceWithPresentationsQuery, ConferenceWithPresentationsResponse>
 {
     private readonly IConferencePresenceRepository _repository;
+    private readonly IPresentationPresenceRepository _presentationRepository;
     private readonly PresenceMetrics _metrics;
     private readonly ILogger<GetConferenceWithPresentationsQueryHandler> _logger;
 
     public GetConferenceWithPresentationsQueryHandler(
         IConferencePresenceRepository repository,
+        IPresentationPresenceRepository presentationRepository,
         PresenceMetrics metrics,
         ILogger<GetConferenceWithPresentationsQueryHandler> logger)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _presentationRepository = presentationRepository ?? throw new ArgumentNullException(nameof(presentationRepository));
         _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -57,8 +60,14 @@ public sealed class GetConferenceWithPresentationsQueryHandler : IQueryHandler<G
                 throw new InvalidOperationException($"Conference presence not found for conference {query.ConferenceId} and profile {query.ProfileId}");
             }
 
+            // Get all presentation presences for this profile and conference
+            var presentationPresences = await _presentationRepository.GetByProfileAndConferenceAsync(
+                query.ProfileId,
+                query.ConferenceId,
+                cancellationToken);
+
             // Map presentations
-            var presentations = conferencePresence.Presentations.Select(p => new PresentationPresenceResponse(
+            var presentations = presentationPresences.Select(p => new PresentationPresenceResponse(
                 p.PresentationId,
                 p.Title,
                 p.Abstract,

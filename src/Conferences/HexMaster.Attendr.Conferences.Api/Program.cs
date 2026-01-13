@@ -32,12 +32,8 @@ builder.Services.AddAuthentication(options =>
     options.Audience = "https://api.attendr.com";
 });
 
-// Configure authorization with default policy and custom policies
+// Configure authorization with custom policies
 builder.Services.AddAuthorizationBuilder()
-    // Set default policy - require authentication for all endpoints
-    .SetFallbackPolicy(new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build())
     // Authenticated policy (explicit)
     .AddPolicy(AuthorizationPolicies.Authenticated, policy =>
         policy.RequireAuthenticatedUser())
