@@ -12,4 +12,5 @@ public sealed class ConferenceUpdatedEvent : IntegrationEvent
     public string Country { get; init; } = string.Empty;
     public DateOnly StartDate { get; init; }
     public DateOnly EndDate { get; init; }
+    public string? ImageUrl { get; init; }
 }

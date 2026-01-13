@@ -83,7 +83,8 @@ public sealed class UpdateConferenceCommandHandler : ICommandHandler<UpdateConfe
                 City = conference.City,
                 Country = conference.Country,
                 StartDate = conference.StartDate,
-                EndDate = conference.EndDate
+                EndDate = conference.EndDate,
+                ImageUrl = conference.ImageUrl
             };
             await _eventPublisher.PublishAsync(conferenceUpdatedEvent, cancellationToken);
 

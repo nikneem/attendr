@@ -11,6 +11,7 @@ using HexMaster.Attendr.Presence.Features.RatePresentation;
 using HexMaster.Attendr.Presence.Features.SetPreferredPresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
 using HexMaster.Attendr.Presence.Features.UpdateAttendance;
+using HexMaster.Attendr.Presence.Features.UpdateConference;
 using HexMaster.Attendr.Presence.Features.UpdatePresentation;
 using HexMaster.Attendr.Presence.Observability;
 
@@ -35,6 +36,7 @@ public static class PresenceFeaturesExtensions
         services.AddScoped<ICommandHandler<CreateConferencePresenceCommand>, CreateConferencePresenceCommandHandler>();
         services.AddScoped<ICommandHandler<RatePresentationCommand>, RatePresentationCommandHandler>();
         services.AddScoped<ICommandHandler<UpdatePresentationCommand>, UpdatePresentationCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateConferenceCommand>, UpdateConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateAttendanceCommand>, UpdateAttendanceCommandHandler>();
         services.AddScoped<ICommandHandler<UnfollowConferenceCommand>, UnfollowConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<CheckInCommand>, CheckInCommandHandler>();

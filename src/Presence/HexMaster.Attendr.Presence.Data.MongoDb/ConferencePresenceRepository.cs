@@ -42,6 +42,14 @@ public sealed class ConferencePresenceRepository : IConferencePresenceRepository
         return presences.AsReadOnly();
     }
 
+    public async Task<IReadOnlyCollection<ConferencePresence>> GetByConferenceIdAsync(Guid conferenceId, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<ConferencePresenceDocument>.Filter.Eq(d => d.ConferenceId, conferenceId);
+        var docs = await _collection.Find(filter).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var presences = docs.Select(ConferencePresenceMapper.ToDomain).ToList();
+        return presences.AsReadOnly();
+    }
+
     public async Task<ConferencePresence?> GetAsync(Guid conferenceId, Guid profileId, CancellationToken cancellationToken = default)
     {
         var id = ConferencePresenceMapper.BuildId(profileId, conferenceId);

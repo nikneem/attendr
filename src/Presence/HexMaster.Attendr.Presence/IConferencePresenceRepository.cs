@@ -32,6 +32,14 @@ public interface IConferencePresenceRepository
     Task<IReadOnlyCollection<ConferencePresence>> GetByProfileIdAsync(Guid profileId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves all conference presences for a specific conference across all profiles.
+    /// </summary>
+    /// <param name="conferenceId">The unique identifier of the conference.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A read-only collection of conference presences.</returns>
+    Task<IReadOnlyCollection<ConferencePresence>> GetByConferenceIdAsync(Guid conferenceId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieves a specific conference presence by conference ID and profile ID.
     /// </summary>
     /// <param name="conferenceId">The unique identifier of the conference.</param>

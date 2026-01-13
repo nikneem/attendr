@@ -77,4 +77,34 @@ public sealed class ConferencePresence
     {
         IsAttending = isAttending;
     }
+
+    /// <summary>
+    /// Updates conference details when conference properties change.
+    /// </summary>
+    /// <param name="conferenceName">The updated conference name.</param>
+    /// <param name="location">The updated location.</param>
+    /// <param name="startDate">The updated start date.</param>
+    /// <param name="endDate">The updated end date.</param>
+    /// <param name="imageUrl">The updated image URL (optional).</param>
+    public void UpdateConferenceDetails(
+        string conferenceName,
+        string location,
+        DateOnly startDate,
+        DateOnly endDate,
+        string? imageUrl = null)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(conferenceName, nameof(conferenceName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(location, nameof(location));
+
+        if (endDate < startDate)
+        {
+            throw new ArgumentException("End date cannot be before start date.", nameof(endDate));
+        }
+
+        ConferenceName = conferenceName;
+        Location = location;
+        StartDate = startDate;
+        EndDate = endDate;
+        ImageUrl = imageUrl;
+    }
 }

@@ -4,6 +4,7 @@ using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.IntegrationEvents.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events;
 using HexMaster.Attendr.Presence.Features.CreateConferencePresence;
+using HexMaster.Attendr.Presence.Features.UpdateConference;
 using HexMaster.Attendr.Presence.Features.UpdatePresentation;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
@@ -44,6 +45,15 @@ public static class EventHandlersEndpoints
             .WithName("HandlePresentationUpdated")
             .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.PresentationUpdated)
             .Accepts<PresentationUpdatedEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
+
+        group.MapPost("/ConferenceUpdatedHandler", HandleConferenceUpdated)
+            .WithName("HandleConferenceUpdated")
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ConferenceUpdated)
+            .Accepts<ConferenceUpdatedEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError)
@@ -145,6 +155,37 @@ public static class EventHandlersEndpoints
         {
             logger.LogError(ex, "Error handling PresentationUpdated for conference {ConferenceId}, presentation {PresentationId}",
                 @event.ConferenceId, @event.PresentationId);
+            return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> HandleConferenceUpdated(
+        ConferenceUpdatedEvent @event,
+        ICommandHandler<UpdateConferenceCommand> handler,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("ConferenceUpdatedEventHandler");
+        try
+        {
+            logger.LogInformation(
+                "Processing ConferenceUpdated event for conference {ConferenceId}: {Title}",
+                @event.ConferenceId,
+                @event.Title);
+
+            await handler.Handle(new UpdateConferenceCommand(@event), cancellationToken);
+
+            return Results.Ok(new
+            {
+                message = "Conference presence records updated",
+                conferenceId = @event.ConferenceId,
+                title = @event.Title
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error handling ConferenceUpdated for conference {ConferenceId}",
+                @event.ConferenceId);
             return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
         }
     }
