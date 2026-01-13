@@ -7,10 +7,12 @@ using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
 using HexMaster.Attendr.Presence.Features.GetConferenceWithPresentations;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
+using HexMaster.Attendr.Presence.Features.SetPreferredPresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
 using HexMaster.Attendr.Presence.Features.UpdateAttendance;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
 
@@ -78,6 +80,13 @@ public static class PresenceEndpoints
             .WithName("CheckIn")
             .Accepts<CheckInRequest>("application/json")
             .Produces(StatusCodes.Status202Accepted)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapGet("/{conferenceId:guid}/prefer/{presentationId:guid}", SetPreferredPresentation)
+            .WithName("SetPreferredPresentation")
+            .Produces(StatusCodes.Status202Accepted)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
@@ -444,6 +453,58 @@ public static class PresenceEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Error checking in to presentation {PresentationId} for conference {ConferenceId}",
+                presentationId, conferenceId);
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> SetPreferredPresentation(
+        Guid conferenceId,
+        Guid presentationId,
+        HttpContext context,
+        ICommandHandler<SetPreferredPresentationCommand> handler,
+        IProfilesIntegrationService profilesIntegration,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("SetPreferredPresentationEndpoint");
+
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            await handler.Handle(
+                new SetPreferredPresentationCommand(profileId, conferenceId, presentationId),
+                cancellationToken);
+
+            return Results.Accepted();
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            logger.LogWarning(ex, "Failed to set preferred presentation {PresentationId}", presentationId);
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogWarning(ex, "Cannot set presentation {PresentationId} as preferred", presentationId);
+            return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error setting preferred presentation {PresentationId} for conference {ConferenceId}",
                 presentationId, conferenceId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }

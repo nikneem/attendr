@@ -150,4 +150,19 @@ public sealed class PresentationPresence
         IsCheckedIn = false;
         CheckedInAt = null;
     }
+
+    public void SetAsPreferred()
+    {
+        if (!IsFavorite)
+        {
+            throw new InvalidOperationException("Cannot set a non-favorite presentation as preferred.");
+        }
+
+        IsPreferred = true;
+    }
+
+    public void UnsetAsPreferred()
+    {
+        IsPreferred = false;
+    }
 }

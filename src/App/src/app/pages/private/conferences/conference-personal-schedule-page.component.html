@@ -48,13 +48,17 @@
                                     {{ formatHour(slot.hour) }}
                                 </div>
                                 <div class="presentations-container">
-                                    @if (slot.presentations.length === 0) {
+                                    @if (slot.rows.length === 0) {
                                     <div class="empty-slot"></div>
                                     } @else {
-                                    <div class="presentations-row">
-                                        @for (info of slot.presentations; track info.presentation.presentationId) {
+                                    @for (row of slot.rows; track row.startTime) {
+                                    <div class="presentations-row" [style.top.px]="row.topPixels">
+                                        @for (info of row.presentations; track info.presentation.presentationId) {
                                         <div class="presentation-card" [style.opacity]="info.opacity"
-                                            [style.height.px]="info.heightPixels" [class.preferred]="info.isPreferred">
+                                            [style.height.px]="info.heightPixels" [style.z-index]="info.zIndex"
+                                            [class.preferred]="info.isPreferred"
+                                            [class.non-preferred]="info.opacity < 1"
+                                            (click)="onPresentationClick($event, info.presentation, row)">
                                             <div class="presentation-header">
                                                 <span class="presentation-time">
                                                     {{ formatTime(info.presentation.startDateTime) }} -
@@ -66,24 +70,28 @@
                                                 }
                                                 <i class="pi pi-star-fill favorite-icon" title="Favorite"></i>
                                             </div>
-                                            <h3 class="presentation-title">
+                                            <h3 class="presentation-title" [pTooltip]="info.presentation.title"
+                                                tooltipPosition="top">
                                                 {{ info.presentation.title }}
                                             </h3>
                                             <div class="presentation-details">
-                                                <div class="detail-item">
-                                                    <i class="pi pi-map-marker"></i>
-                                                    <span>{{ info.presentation.room }}</span>
+                                                <div class="detail-row">
+                                                    <div class="detail-item room">
+                                                        <i class="pi pi-map-marker"></i>
+                                                        <span>{{ info.presentation.room }}</span>
+                                                    </div>
+                                                    @if (info.presentation.speakers.length > 0) {
+                                                    <div class="detail-item speakers">
+                                                        <i class="pi pi-user"></i>
+                                                        <span>{{ getSpeakerNames(info.presentation) }}</span>
+                                                    </div>
+                                                    }
                                                 </div>
-                                                @if (info.presentation.speakers.length > 0) {
-                                                <div class="detail-item">
-                                                    <i class="pi pi-user"></i>
-                                                    <span>{{ getSpeakerNames(info.presentation) }}</span>
-                                                </div>
-                                                }
                                             </div>
                                         </div>
                                         }
                                     </div>
+                                    }
                                     }
                                 </div>
                             </div>
@@ -96,4 +104,6 @@
         </p-tabs>
     </div>
     }
+
+    <p-contextmenu #cm [model]="contextMenuItems()" />
 </div>

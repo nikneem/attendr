@@ -44,4 +44,8 @@ export class PresenceService {
             isFavorite
         });
     }
+
+    setPreferredPresentation(conferenceId: string, presentationId: string): Observable<void> {
+        return this.http.get<void>(`${this.apiUrl}/${conferenceId}/prefer/${presentationId}`);
+    }
 }
