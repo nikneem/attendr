@@ -241,13 +241,13 @@ public sealed class Conference : StatefulDomainModel<Guid>
         }
 
         // Validate presentation dates are within conference dates
-        var presentationStartDate = DateOnly.FromDateTime(presentation.StartDateTime);
-        var presentationEndDate = DateOnly.FromDateTime(presentation.EndDateTime);
+        //var presentationStartDate = DateOnly.FromDateTime(presentation.StartDateTime);
+        //var presentationEndDate = DateOnly.FromDateTime(presentation.EndDateTime);
 
-        if (presentationStartDate < StartDate || presentationEndDate > EndDate)
-        {
-            throw new InvalidOperationException("Presentation dates must be within conference dates.");
-        }
+        //if (presentationStartDate < StartDate || presentationEndDate > EndDate)
+        //{
+        //    throw new InvalidOperationException("Presentation dates must be within conference dates.");
+        //}
 
         _presentations.Add(presentation);
     }
