@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { MyGroupDto } from '../models/my-group-dto';
 import { CreateGroupRequest } from '../models/create-group-request';
 import { CreateGroupResult } from '../models/create-group-result';
+import { CheckInDto } from '../models/check-in-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -19,5 +20,9 @@ export class JoinedGroupsService {
 
     createGroup(request: CreateGroupRequest): Observable<CreateGroupResult> {
         return this.http.post<CreateGroupResult>(this.apiUrl, request);
+    }
+
+    getGroupCheckIns(groupId: string): Observable<CheckInDto[]> {
+        return this.http.get<CheckInDto[]>(`${this.apiUrl}/${groupId}/checkins`);
     }
 }

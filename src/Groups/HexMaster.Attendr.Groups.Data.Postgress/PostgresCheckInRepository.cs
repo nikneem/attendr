@@ -321,8 +321,7 @@ public sealed class PostgresCheckInRepository : ICheckInRepository
             CREATE INDEX IF NOT EXISTS idx_{TableName}_conference_id ON {TableName}(conference_id);
             CREATE INDEX IF NOT EXISTS idx_{TableName}_presentation_id ON {TableName}(presentation_id);
             CREATE INDEX IF NOT EXISTS idx_{TableName}_expiration ON {TableName}(expiration);
-            CREATE INDEX IF NOT EXISTS idx_{TableName}_conference_active ON {TableName}(conference_id, expiration) WHERE expiration > NOW();
-            CREATE INDEX IF NOT EXISTS idx_{TableName}_group_conference_active ON {TableName}(group_id, conference_id, expiration) WHERE expiration > NOW();
+            CREATE INDEX IF NOT EXISTS idx_{TableName}_group_conference ON {TableName}(group_id, conference_id);
         ";
 
         await using (var command = new NpgsqlCommand(createIndexesSql, connection))

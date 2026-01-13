@@ -1,46 +1,53 @@
 <p-card styleClass="member-locations-card">
     <ng-template pTemplate="header">
         <div class="section-header">
-            <h2>Member Locations</h2>
+            <h2><i class="pi pi-map-marker"></i> Member Locations</h2>
         </div>
     </ng-template>
 
-    @if (locations().length === 0) {
+    @if (loading()) {
+    <div class="loading-state">
+        <i class="pi pi-spin pi-spinner"></i>
+        <p>Loading check-ins...</p>
+    </div>
+    } @else if (checkIns().length === 0) {
     <div class="empty-state">
-        <i class="pi pi-map-marker"></i>
-        <p>No active sessions at the moment</p>
+        <i class="pi pi-inbox"></i>
+        <p>No active check-ins</p>
         <span class="empty-hint">Members will appear here when they check in to presentations</span>
     </div>
     } @else {
-    <div class="locations-list">
-        @for (location of locations(); track location.presentationId) {
-        <div class="location-item">
-            <div class="location-header">
-                <div class="presentation-info">
-                    <h3 class="presentation-title">{{ location.presentationTitle }}</h3>
-                    <div class="presentation-meta">
-                        <span class="room-info">
-                            <i class="pi pi-building"></i>
-                            {{ location.room }}
-                        </span>
-                        <span class="time-info">
-                            <i class="pi pi-clock"></i>
-                            {{ formatTime(location.startTime) }} - {{ formatTime(location.endTime) }}
-                        </span>
-                    </div>
+    <div class="checkins-grid">
+        @for (checkIn of checkIns(); track checkIn.id) {
+        <div class="checkin-tile">
+            <div class="checkin-header">
+                <h3 class="presentation-title">{{ checkIn.presentationData.title }}</h3>
+                @if (checkIn.presentationData.speakers.length > 0) {
+                <div class="speakers">
+                    <i class="pi pi-users"></i>
+                    <span>{{ getSpeakerNames(checkIn) }}</span>
                 </div>
-                <p-tag [value]="getStatusLabel(location.status)" [severity]="getStatusColor(location.status)"
-                    [icon]="getStatusIcon(location.status)" />
+                }
             </div>
 
-            <div class="members-section">
-                <span class="members-label">
-                    <i class="pi pi-users"></i>
-                    {{ location.checkedInMembers.length }} {{ location.checkedInMembers.length === 1 ? 'member' :
-                    'members' }} checked in
+            <div class="checkin-meta">
+                <div class="meta-item">
+                    <i class="pi pi-building"></i>
+                    <span>{{ checkIn.presentationData.room }}</span>
+                </div>
+                <div class="meta-item">
+                    <i class="pi pi-clock"></i>
+                    <span>{{ formatTime(checkIn.presentationData.startDateTime) }} - {{
+                        formatTime(checkIn.presentationData.endDateTime) }}</span>
+                </div>
+            </div>
+
+            <div class="checkin-members">
+                <span class="members-count">
+                    {{ checkIn.members.length }} {{ checkIn.members.length === 1 ? 'member' : 'members' }} checked in
                 </span>
                 <div class="members-avatars">
-                    @for (member of location.checkedInMembers; track member.id) {
+                    @for (member of getVisibleMembers(checkIn); track member.id) {
                     @if (member.profilePictureUrl) {
                     <img [src]="member.profilePictureUrl" [alt]="member.name" class="member-avatar"
                         [pTooltip]="member.name" tooltipPosition="top" />
@@ -49,6 +56,12 @@
                         {{ getMemberInitials(member.name) }}
                     </div>
                     }
+                    }
+                    @if (getRemainingMembersCount(checkIn) > 0) {
+                    <div class="member-avatar more-avatar"
+                        [pTooltip]="'+' + getRemainingMembersCount(checkIn) + ' more members'" tooltipPosition="top">
+                        +{{ getRemainingMembersCount(checkIn) }}
+                    </div>
                     }
                 </div>
             </div>
