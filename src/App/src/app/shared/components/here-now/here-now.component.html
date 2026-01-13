@@ -33,34 +33,34 @@
                         Previous
                     </div>
                     @if (conference.schedule?.previous && conference.schedule!.previous.length > 0) {
-                        @for (presentation of getSortedPresentations(conference.schedule!.previous); track presentation.presentationId) {
-                        <div 
-                            class="session-card" 
-                            [style.opacity]="getSessionOpacity(presentation, conference.schedule!.previous)"
-                            (click)="onSessionClick($event, conference.conferenceId, presentation)">
-                            @if (presentation.isPreferred && conference.schedule!.previous.length > 1) {
-                            <div class="preferred-badge">
-                                <i class="pi pi-star-fill"></i>
-                            </div>
-                            }
-                            <div class="session-time">
-                                <i class="pi pi-clock"></i>
-                                {{ formatTime(presentation.startDateTime) }} - {{ formatTime(presentation.endDateTime) }}
-                            </div>
-                            <h4 class="session-title">{{ presentation.title }}</h4>
-                            <div class="session-room">
-                                <i class="pi pi-map-marker"></i>
-                                {{ presentation.room }}
-                            </div>
-                            @if (presentation.speakers && presentation.speakers.length > 0) {
-                            <div class="session-speakers">
-                                @for (speaker of presentation.speakers; track speaker.speakerId) {
-                                <span class="speaker-name">{{ speaker.name }}</span>
-                                }
-                            </div>
+                    @for (presentation of getSortedPresentations(conference.schedule!.previous); track
+                    presentation.presentationId) {
+                    <div class="session-card"
+                        [style.opacity]="getSessionOpacity(presentation, conference.schedule!.previous)"
+                        (click)="onSessionClick($event, conference.conferenceId, presentation)">
+                        @if (presentation.isPreferred && conference.schedule!.previous.length > 1) {
+                        <div class="preferred-badge">
+                            <i class="pi pi-star-fill"></i>
+                        </div>
+                        }
+                        <div class="session-time">
+                            <i class="pi pi-clock"></i>
+                            {{ formatTime(presentation.startDateTime) }} - {{ formatTime(presentation.endDateTime) }}
+                        </div>
+                        <h4 class="session-title">{{ presentation.title }}</h4>
+                        <div class="session-room">
+                            <i class="pi pi-map-marker"></i>
+                            {{ presentation.room }}
+                        </div>
+                        @if (presentation.speakers && presentation.speakers.length > 0) {
+                        <div class="session-speakers">
+                            @for (speaker of presentation.speakers; track speaker.speakerId) {
+                            <span class="speaker-name">{{ speaker.name }}</span>
                             }
                         </div>
                         }
+                    </div>
+                    }
                     } @else {
                     <div class="session-placeholder">
                         <i class="pi pi-clock"></i>
@@ -76,34 +76,34 @@
                         Now
                     </div>
                     @if (conference.schedule?.now && conference.schedule!.now.length > 0) {
-                        @for (presentation of getSortedPresentations(conference.schedule!.now); track presentation.presentationId) {
-                        <div 
-                            class="session-card current-session" 
-                            [style.opacity]="getSessionOpacity(presentation, conference.schedule!.now)"
-                            (click)="onSessionClick($event, conference.conferenceId, presentation)">
-                            @if (presentation.isPreferred && conference.schedule!.now.length > 1) {
-                            <div class="preferred-badge">
-                                <i class="pi pi-star-fill"></i>
-                            </div>
-                            }
-                            <div class="session-time">
-                                <i class="pi pi-clock"></i>
-                                {{ formatTime(presentation.startDateTime) }} - {{ formatTime(presentation.endDateTime) }}
-                            </div>
-                            <h4 class="session-title">{{ presentation.title }}</h4>
-                            <div class="session-room">
-                                <i class="pi pi-map-marker"></i>
-                                {{ presentation.room }}
-                            </div>
-                            @if (presentation.speakers && presentation.speakers.length > 0) {
-                            <div class="session-speakers">
-                                @for (speaker of presentation.speakers; track speaker.speakerId) {
-                                <span class="speaker-name">{{ speaker.name }}</span>
-                                }
-                            </div>
+                    @for (presentation of getSortedPresentations(conference.schedule!.now); track
+                    presentation.presentationId) {
+                    <div class="session-card current-session"
+                        [style.opacity]="getSessionOpacity(presentation, conference.schedule!.now)"
+                        (click)="onSessionClick($event, conference.conferenceId, presentation)">
+                        @if (presentation.isPreferred && conference.schedule!.now.length > 1) {
+                        <div class="preferred-badge">
+                            <i class="pi pi-star-fill"></i>
+                        </div>
+                        }
+                        <div class="session-time">
+                            <i class="pi pi-clock"></i>
+                            {{ formatTime(presentation.startDateTime) }} - {{ formatTime(presentation.endDateTime) }}
+                        </div>
+                        <h4 class="session-title">{{ presentation.title }}</h4>
+                        <div class="session-room">
+                            <i class="pi pi-map-marker"></i>
+                            {{ presentation.room }}
+                        </div>
+                        @if (presentation.speakers && presentation.speakers.length > 0) {
+                        <div class="session-speakers">
+                            @for (speaker of presentation.speakers; track speaker.speakerId) {
+                            <span class="speaker-name">{{ speaker.name }}</span>
                             }
                         </div>
                         }
+                    </div>
+                    }
                     } @else {
                     <div class="session-placeholder">
                         <i class="pi pi-calendar"></i>
@@ -119,34 +119,34 @@
                         Next
                     </div>
                     @if (conference.schedule?.next && conference.schedule!.next.length > 0) {
-                        @for (presentation of getSortedPresentations(conference.schedule!.next); track presentation.presentationId) {
-                        <div 
-                            class="session-card" 
-                            [style.opacity]="getSessionOpacity(presentation, conference.schedule!.next)"
-                            (click)="onSessionClick($event, conference.conferenceId, presentation)">
-                            @if (presentation.isPreferred && conference.schedule!.next.length > 1) {
-                            <div class="preferred-badge">
-                                <i class="pi pi-star-fill"></i>
-                            </div>
-                            }
-                            <div class="session-time">
-                                <i class="pi pi-clock"></i>
-                                {{ formatTime(presentation.startDateTime) }} - {{ formatTime(presentation.endDateTime) }}
-                            </div>
-                            <h4 class="session-title">{{ presentation.title }}</h4>
-                            <div class="session-room">
-                                <i class="pi pi-map-marker"></i>
-                                {{ presentation.room }}
-                            </div>
-                            @if (presentation.speakers && presentation.speakers.length > 0) {
-                            <div class="session-speakers">
-                                @for (speaker of presentation.speakers; track speaker.speakerId) {
-                                <span class="speaker-name">{{ speaker.name }}</span>
-                                }
-                            </div>
+                    @for (presentation of getSortedPresentations(conference.schedule!.next); track
+                    presentation.presentationId) {
+                    <div class="session-card"
+                        [style.opacity]="getSessionOpacity(presentation, conference.schedule!.next)"
+                        (click)="onSessionClick($event, conference.conferenceId, presentation)">
+                        @if (presentation.isPreferred && conference.schedule!.next.length > 1) {
+                        <div class="preferred-badge">
+                            <i class="pi pi-star-fill"></i>
+                        </div>
+                        }
+                        <div class="session-time">
+                            <i class="pi pi-clock"></i>
+                            {{ formatTime(presentation.startDateTime) }} - {{ formatTime(presentation.endDateTime) }}
+                        </div>
+                        <h4 class="session-title">{{ presentation.title }}</h4>
+                        <div class="session-room">
+                            <i class="pi pi-map-marker"></i>
+                            {{ presentation.room }}
+                        </div>
+                        @if (presentation.speakers && presentation.speakers.length > 0) {
+                        <div class="session-speakers">
+                            @for (speaker of presentation.speakers; track speaker.speakerId) {
+                            <span class="speaker-name">{{ speaker.name }}</span>
                             }
                         </div>
                         }
+                    </div>
+                    }
                     } @else {
                     <div class="session-placeholder">
                         <i class="pi pi-clock"></i>
