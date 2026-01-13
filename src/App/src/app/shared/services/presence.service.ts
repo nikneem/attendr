@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ConferencePresenceDto } from '../models/conference-presence-dto';
 import { ConferenceAttendanceDto } from '../models/conference-attendance-dto';
+import { ConferenceScheduleDto } from '../models/conference-schedule-dto';
 import { PresentationToRateDto } from '../models/presentation-to-rate-dto';
 
 @Injectable({
@@ -15,6 +16,10 @@ export class PresenceService {
 
     getMyConferences(): Observable<ConferencePresenceDto[]> {
         return this.http.get<ConferencePresenceDto[]>(`${this.apiUrl}/my-conferences`);
+    }
+
+    getConferenceSchedule(conferenceId: string): Observable<ConferenceScheduleDto> {
+        return this.http.get<ConferenceScheduleDto>(`${this.apiUrl}/${conferenceId}`);
     }
 
     updateAttendance(conferenceId: string, isAttending: boolean): Observable<void> {

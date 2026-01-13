@@ -60,6 +60,7 @@ public static class ConferenceFactory
             start,
             end,
             imageUrl ?? (Faker.Random.Bool() ? Faker.Internet.Url() : null),
+            false,
             synchronizationSource
         );
     }

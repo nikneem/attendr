@@ -4,6 +4,7 @@ using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Features.CheckIn;
 using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
+using HexMaster.Attendr.Presence.Features.GetConferenceWithPresentations;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
@@ -52,6 +53,12 @@ public static class PresenceEndpoints
             .WithName("GetConferenceAttendance")
             .Produces<ConferenceAttendanceDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
+
+        group.MapGet("/{conferenceId:guid}", GetConferenceWithPresentations)
+            .WithName("GetConferenceWithPresentations")
+            .Produces<ConferenceWithPresentationsResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         group.MapGet("/{conferenceId:guid}/rate", GetPresentationToRate)
             .WithName("GetPresentationToRate")
@@ -345,6 +352,51 @@ public static class PresenceEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Error getting conference attendance for conference {ConferenceId}", conferenceId);
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> GetConferenceWithPresentations(
+        Guid conferenceId,
+        HttpContext context,
+        IQueryHandler<GetConferenceWithPresentationsQuery, ConferenceWithPresentationsResponse> handler,
+        IProfilesIntegrationService profilesIntegration,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("GetConferenceWithPresentationsEndpoint");
+
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            var result = await handler.Handle(
+                new GetConferenceWithPresentationsQuery(profileId, conferenceId),
+                cancellationToken);
+
+            return Results.Ok(result);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogWarning(ex, "Conference presence not found for conference {ConferenceId}", conferenceId);
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting conference with presentations for conference {ConferenceId}", conferenceId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

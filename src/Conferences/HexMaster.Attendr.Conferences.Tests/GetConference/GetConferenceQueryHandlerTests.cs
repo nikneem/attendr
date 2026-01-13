@@ -38,6 +38,7 @@ public class GetConferenceQueryHandlerTests
             DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1)),
             DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1).AddDays(3)),
             "https://test.com/image.jpg",
+            false,
             null,
             new List<SpeakerDto>(),
             new List<PresentationDto>());

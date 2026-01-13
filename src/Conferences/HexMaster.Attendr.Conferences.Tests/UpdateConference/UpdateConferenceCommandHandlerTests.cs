@@ -50,6 +50,7 @@ public class UpdateConferenceCommandHandlerTests
             "https://updated.com/image.jpg",
             startDate,
             endDate,
+            null,
             null);
 
         _mockRepository.Setup(x => x.GetByIdAsync(conference.Id, It.IsAny<CancellationToken>()))
@@ -88,6 +89,7 @@ public class UpdateConferenceCommandHandlerTests
             null,
             DateOnly.FromDateTime(_faker.Date.Future()),
             DateOnly.FromDateTime(_faker.Date.Future().AddDays(3)),
+            null,
             null);
 
         _mockRepository.Setup(x => x.GetByIdAsync(conferenceId, It.IsAny<CancellationToken>()))
@@ -113,6 +115,7 @@ public class UpdateConferenceCommandHandlerTests
             "https://updated.com/image.jpg",
             startDate,
             endDate,
+            null,
             syncSourceDto);
 
         _mockRepository.Setup(x => x.GetByIdAsync(conference.Id, It.IsAny<CancellationToken>()))
@@ -149,6 +152,7 @@ public class UpdateConferenceCommandHandlerTests
             "https://updated.com/image.jpg",
             startDate,
             endDate,
+            null,
             null);
 
         _mockRepository.Setup(x => x.GetByIdAsync(conference.Id, It.IsAny<CancellationToken>()))
@@ -183,6 +187,7 @@ public class UpdateConferenceCommandHandlerTests
             "https://updated.com/image.jpg",
             startDate,
             endDate,
+            null,
             null);
 
         ConferenceUpdatedEvent? publishedEvent = null;

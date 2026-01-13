@@ -1,0 +1,213 @@
+@use '../../../../styles/variables' as vars;
+
+.personal-schedule-page {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.loading-container,
+.error-container,
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.error-message,
+.empty-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 2rem;
+
+    i {
+        font-size: 3rem;
+        color: vars.$accent-warning;
+    }
+
+    h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: vars.$text-primary;
+    }
+
+    p {
+        margin: 0;
+        color: vars.$text-secondary;
+    }
+}
+
+.schedule-container {
+    .page-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 600;
+        color: vars.$text-primary;
+    }
+
+    .conference-name {
+        margin: 0 0 2rem 0;
+        font-size: 1.25rem;
+        font-weight: 400;
+        color: vars.$text-secondary;
+    }
+}
+
+.day-schedule {
+    margin-top: 2rem;
+}
+
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.time-slot {
+    display: flex;
+    min-height: 120px;
+    border-bottom: 1px solid vars.$border-color;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.time-label {
+    width: 100px;
+    flex-shrink: 0;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: vars.$text-secondary;
+    background: vars.$background-tertiary;
+    border-right: 2px solid vars.$border-color;
+}
+
+.presentations-container {
+    flex: 1;
+    padding: 0.5rem;
+    position: relative;
+}
+
+.empty-slot {
+    width: 100%;
+    height: 100%;
+    min-height: 100px;
+}
+
+.presentations-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    height: 100%;
+}
+
+.presentation-card {
+    flex: 1;
+    min-height: 100px;
+    padding: 1rem;
+    background: vars.$background-secondary;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$radius-md;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    &.preferred {
+        border-color: vars.$accent-error;
+        border-width: 2px;
+        background: linear-gradient(to bottom,
+                rgba(239, 68, 68, 0.05),
+                vars.$background-secondary );
+    }
+}
+
+.presentation-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.presentation-time {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: vars.$primary-color;
+    background: rgba(74, 144, 226, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: vars.$radius-sm;
+}
+
+.favorite-icon {
+    font-size: 0.875rem;
+    color: vars.$accent-warning;
+    margin-left: auto;
+}
+
+.preferred-icon {
+    font-size: 0.875rem;
+    color: vars.$accent-error;
+}
+
+.presentation-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: vars.$text-primary;
+    line-height: 1.3;
+}
+
+.presentation-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: vars.$text-secondary;
+
+    i {
+        font-size: 0.75rem;
+        color: vars.$text-muted;
+    }
+
+    span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .personal-schedule-page {
+        padding: 1rem;
+    }
+
+    .time-label {
+        width: 70px;
+        font-size: 0.75rem;
+    }
+
+    .presentations-row {
+        flex-direction: column;
+    }
+
+    .presentation-card {
+        width: 100%;
+    }
+}

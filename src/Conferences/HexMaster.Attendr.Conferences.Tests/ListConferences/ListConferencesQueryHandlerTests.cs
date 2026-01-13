@@ -46,6 +46,7 @@ public sealed class ListConferencesQueryHandlerTests
             null,
             1,
             PaginationConstants.DefaultPageSize,
+            false,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -63,6 +64,7 @@ public sealed class ListConferencesQueryHandlerTests
             null,
             1,
             PaginationConstants.DefaultPageSize,
+            false,
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -82,6 +84,7 @@ public sealed class ListConferencesQueryHandlerTests
             searchQuery,
             1,
             PaginationConstants.DefaultPageSize,
+            false,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -97,6 +100,7 @@ public sealed class ListConferencesQueryHandlerTests
             searchQuery,
             1,
             PaginationConstants.DefaultPageSize,
+            false,
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -117,6 +121,7 @@ public sealed class ListConferencesQueryHandlerTests
             null,
             2,
             pageSize,
+            false,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -134,6 +139,7 @@ public sealed class ListConferencesQueryHandlerTests
             null,
             2,
             pageSize,
+            false,
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -149,6 +155,7 @@ public sealed class ListConferencesQueryHandlerTests
             null,
             1,
             PaginationConstants.DefaultPageSize,
+            false,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -164,6 +171,7 @@ public sealed class ListConferencesQueryHandlerTests
             null,
             1,
             PaginationConstants.DefaultPageSize,
+            false,
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -190,6 +198,7 @@ public sealed class ListConferencesQueryHandlerTests
             null,
             1,
             PaginationConstants.DefaultPageSize,
+            false,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -214,6 +223,7 @@ public sealed class ListConferencesQueryHandlerTests
             null,
             1,
             PaginationConstants.DefaultPageSize,
+            false,
             It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Database error"));
 
