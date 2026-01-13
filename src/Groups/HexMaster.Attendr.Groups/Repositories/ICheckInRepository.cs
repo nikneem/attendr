@@ -58,6 +58,14 @@ public interface ICheckInRepository
     Task<IReadOnlyCollection<CheckIn>> GetActiveByConferenceAsync(Guid conferenceId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves all active check-ins for a group, ordered by expiration (longest first).
+    /// </summary>
+    /// <param name="groupId">The group ID.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A collection of active check-ins ordered by expiration descending.</returns>
+    Task<IReadOnlyCollection<CheckIn>> GetActiveByGroupAsync(Guid groupId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Deletes expired check-ins.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>

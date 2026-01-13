@@ -5,6 +5,7 @@ using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.Features.GetGroupDetails;
 using HexMaster.Attendr.Groups.Features.GetMyGroups;
 using HexMaster.Attendr.Groups.Features.ListGroups;
+using HexMaster.Attendr.Groups.Features.GetGroupCheckIns;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
@@ -33,6 +34,11 @@ public static class GroupsQueryEndpoints
             .WithName("GetGroupDetails")
             .Produces<GroupDetailsDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
+
+        group.MapGet("/{groupId:guid}/checkins", GetGroupCheckIns)
+            .WithName("GetGroupCheckIns")
+            .Produces<IReadOnlyCollection<CheckInDto>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         return group;
@@ -118,6 +124,25 @@ public static class GroupsQueryEndpoints
         catch (ProfileNotFoundException ex)
         {
             return Results.NotFound(new { error = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> GetGroupCheckIns(
+        Guid groupId,
+        IQueryHandler<GetGroupCheckInsQuery, IReadOnlyCollection<CheckInDto>> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var query = new GetGroupCheckInsQuery(groupId);
+            var checkIns = await handler.Handle(query, cancellationToken);
+
+            return Results.Ok(checkIns);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
         }
     }
 }

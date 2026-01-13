@@ -6,6 +6,7 @@ using HexMaster.Attendr.Groups.Features.FollowConference;
 using HexMaster.Attendr.Groups.Features.GetGroupDetails;
 using HexMaster.Attendr.Groups.Features.GetGroupFollowedConferences;
 using HexMaster.Attendr.Groups.Features.GetMyGroups;
+using HexMaster.Attendr.Groups.Features.GetGroupCheckIns;
 using HexMaster.Attendr.Groups.Features.JoinGroup;
 using HexMaster.Attendr.Groups.Features.ListGroups;
 using HexMaster.Attendr.Groups.Features.RemoveMember;
@@ -27,6 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IQueryHandler<ListGroupsQuery, ListGroupsResult>, ListGroupsQueryHandler>();
         services.AddScoped<IQueryHandler<GetGroupDetailsQuery, GroupDetailsDto?>, GetGroupDetailsQueryHandler>();
         services.AddScoped<IQueryHandler<GetGroupFollowedConferencesQuery, IReadOnlyCollection<FollowedConferenceDto>>, GetGroupFollowedConferencesQueryHandler>();
+        services.AddScoped<IQueryHandler<GetGroupCheckInsQuery, IReadOnlyCollection<CheckInDto>>, GetGroupCheckInsQueryHandler>();
 
         services.AddScoped<ICommandHandler<JoinGroupCommand>, JoinGroupCommandHandler>();
         services.AddScoped<ICommandHandler<RemoveMemberCommand>, RemoveMemberCommandHandler>();

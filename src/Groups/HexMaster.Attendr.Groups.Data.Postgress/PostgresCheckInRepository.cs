@@ -224,6 +224,39 @@ public sealed class PostgresCheckInRepository : ICheckInRepository
     }
 
     /// <inheritdoc />
+    public async Task<IReadOnlyCollection<CheckIn>> GetActiveByGroupAsync(Guid groupId, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var sql = $@"
+            SELECT data
+            FROM {TableName}
+            WHERE group_id = @group_id
+              AND expiration > @now
+            ORDER BY expiration DESC";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@group_id", groupId);
+        command.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow);
+
+        var checkIns = new List<CheckIn>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var dataJson = reader.GetString(0);
+            var entity = JsonSerializer.Deserialize<CheckInEntity>(dataJson, _jsonOptions);
+
+            if (entity != null)
+            {
+                checkIns.Add(CheckInMapper.ToDomain(entity));
+            }
+        }
+
+        return checkIns.AsReadOnly();
+    }
+
+    /// <inheritdoc />
     public async Task<int> DeleteExpiredAsync(CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
