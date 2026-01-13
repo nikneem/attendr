@@ -15,6 +15,8 @@ public sealed class PresentationPresence
     public bool IsCheckedIn { get; private set; }
     public DateTimeOffset? CheckedInAt { get; private set; }
     public byte? Rating { get; private set; }
+    public bool IsRecommended { get; private set; }
+    public bool IsPreferred { get; private set; }
 
     private readonly List<PresentationSpeaker> _speakers = new();
     public IReadOnlyCollection<PresentationSpeaker> Speakers => _speakers.AsReadOnly();
@@ -33,7 +35,9 @@ public sealed class PresentationPresence
         bool isFavorite = false,
         bool isCheckedIn = false,
         DateTimeOffset? checkedInAt = null,
-        byte? rating = null)
+        byte? rating = null,
+        bool isRecommended = false,
+        bool isPreferred = false)
     {
         if (profileId == Guid.Empty)
         {
@@ -72,6 +76,8 @@ public sealed class PresentationPresence
         IsCheckedIn = isCheckedIn;
         CheckedInAt = checkedInAt;
         Rating = rating;
+        IsRecommended = isRecommended;
+        IsPreferred = isPreferred;
 
         if (speakers != null)
         {

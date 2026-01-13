@@ -43,7 +43,9 @@ internal static class PresentationPresenceMapper
             presence.IsFavorite,
             presence.IsCheckedIn,
             presence.CheckedInAt,
-            presence.Rating
+            presence.Rating,
+            presence.IsRecommended,
+            presence.IsPreferred
         );
     }
 
@@ -74,7 +76,9 @@ internal static class PresentationPresenceMapper
             entity.IsFavorite,
             entity.IsCheckedIn,
             entity.CheckedInAt,
-            entity.Rating
+            entity.Rating,
+            entity.IsRecommended,
+            entity.IsPreferred
         );
     }
 }

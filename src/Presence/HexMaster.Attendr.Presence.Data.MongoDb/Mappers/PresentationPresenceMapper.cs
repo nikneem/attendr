@@ -23,6 +23,8 @@ public static class PresentationPresenceMapper
             IsCheckedIn = domain.IsCheckedIn,
             CheckedInAt = domain.CheckedInAt,
             Rating = domain.Rating,
+            IsRecommended = domain.IsRecommended,
+            IsPreferred = domain.IsPreferred,
             Speakers = domain.Speakers.Select(s => new PresentationSpeakerDocument
             {
                 SpeakerId = s.SpeakerId,
@@ -50,7 +52,9 @@ public static class PresentationPresenceMapper
             doc.IsFavorite,
             doc.IsCheckedIn,
             doc.CheckedInAt,
-            doc.Rating);
+            doc.Rating,
+            doc.IsRecommended,
+            doc.IsPreferred);
     }
 
     public static string BuildId(Guid profileId, Guid conferenceId, Guid presentationId) =>

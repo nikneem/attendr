@@ -51,6 +51,12 @@ public sealed class PresentationPresenceDocument
     [BsonElement("rating")]
     public byte? Rating { get; set; }
 
+    [BsonElement("isRecommended")]
+    public bool IsRecommended { get; set; }
+
+    [BsonElement("isPreferred")]
+    public bool IsPreferred { get; set; }
+
     [BsonElement("speakers")]
     public List<PresentationSpeakerDocument> Speakers { get; set; } = new();
 }

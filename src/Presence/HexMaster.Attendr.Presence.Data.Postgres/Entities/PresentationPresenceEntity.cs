@@ -19,5 +19,7 @@ public sealed record PresentationPresenceEntity(
     [property: JsonPropertyName("isFavorite")] bool IsFavorite,
     [property: JsonPropertyName("isCheckedIn")] bool IsCheckedIn,
     [property: JsonPropertyName("checkedInAt")] DateTimeOffset? CheckedInAt,
-    [property: JsonPropertyName("rating")] byte? Rating
+    [property: JsonPropertyName("rating")] byte? Rating,
+    [property: JsonPropertyName("isRecommended")] bool IsRecommended,
+    [property: JsonPropertyName("isPreferred")] bool IsPreferred
 );
