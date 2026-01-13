@@ -6,6 +6,7 @@ import { ConferencePresenceDto } from '../models/conference-presence-dto';
 import { ConferenceAttendanceDto } from '../models/conference-attendance-dto';
 import { ConferenceScheduleDto } from '../models/conference-schedule-dto';
 import { PresentationToRateDto } from '../models/presentation-to-rate-dto';
+import { CurrentConferenceDto } from '../models/current-conference-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -16,6 +17,10 @@ export class PresenceService {
 
     getMyConferences(): Observable<ConferencePresenceDto[]> {
         return this.http.get<ConferencePresenceDto[]>(`${this.apiUrl}/my-conferences`);
+    }
+
+    getCurrentConferences(): Observable<CurrentConferenceDto[]> {
+        return this.http.get<CurrentConferenceDto[]>(`${this.apiUrl}/now`);
     }
 
     getConferenceSchedule(conferenceId: string): Observable<ConferenceScheduleDto> {

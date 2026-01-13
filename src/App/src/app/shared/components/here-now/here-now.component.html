@@ -1,0 +1,66 @@
+@if (hasConferences() && !loading()) {
+<div class="here-now-container">
+    <h2 class="section-title">
+        <i class="pi pi-bolt"></i>
+        Here & Now
+    </h2>
+
+    <div class="conferences-list">
+        @for (conference of conferences(); track conference.conferenceId) {
+        <div class="conference-row">
+            <div class="conference-header">
+                <div class="conference-info">
+                    @if (conference.imageUrl) {
+                    <img [src]="conference.imageUrl" [alt]="conference.conferenceName" class="conference-image" />
+                    }
+                    <div class="conference-details">
+                        <h3 class="conference-name">{{ conference.conferenceName }}</h3>
+                        <div class="conference-meta">
+                            <span class="location">
+                                <i class="pi pi-map-marker"></i>
+                                {{ conference.location }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sessions-grid">
+                <div class="session-column">
+                    <div class="column-header">
+                        <i class="pi pi-angle-left"></i>
+                        Previous
+                    </div>
+                    <div class="session-placeholder">
+                        <i class="pi pi-clock"></i>
+                        <span>No previous session</span>
+                    </div>
+                </div>
+
+                <div class="session-column current">
+                    <div class="column-header">
+                        <i class="pi pi-circle-fill"></i>
+                        Now
+                    </div>
+                    <div class="session-placeholder">
+                        <i class="pi pi-calendar"></i>
+                        <span>No current session</span>
+                    </div>
+                </div>
+
+                <div class="session-column">
+                    <div class="column-header">
+                        <i class="pi pi-angle-right"></i>
+                        Next
+                    </div>
+                    <div class="session-placeholder">
+                        <i class="pi pi-clock"></i>
+                        <span>No upcoming session</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+}
