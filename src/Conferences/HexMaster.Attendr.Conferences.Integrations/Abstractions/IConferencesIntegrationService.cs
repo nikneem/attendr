@@ -16,4 +16,14 @@ public interface IConferencesIntegrationService
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Conference details if found; otherwise, null.</returns>
     Task<ConferenceDetailsDto?> GetConferenceDetails(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets presentation details by conference ID and presentation ID using cache-aside pattern.
+    /// First checks cache, then fetches from API if not found and stores in cache.
+    /// </summary>
+    /// <param name="conferenceId">The conference ID.</param>
+    /// <param name="presentationId">The presentation ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Presentation details if found; otherwise, null.</returns>
+    Task<PresentationDto?> GetPresentationDetails(Guid conferenceId, Guid presentationId, CancellationToken cancellationToken = default);
 }

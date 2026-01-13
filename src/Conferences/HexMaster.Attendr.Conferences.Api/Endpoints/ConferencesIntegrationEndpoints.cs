@@ -22,6 +22,12 @@ public static class ConferencesIntegrationEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .AllowAnonymous();
 
+        group.MapGet("/{conferenceId:guid}/presentations/{presentationId:guid}", GetPresentationDetails)
+            .WithName("GetPresentationDetailsIntegration")
+            .Produces<PresentationDto>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .AllowAnonymous();
+
         return app;
     }
 
@@ -40,6 +46,36 @@ public static class ConferencesIntegrationEndpoints
             }
 
             return Results.Ok(conference);
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> GetPresentationDetails(
+        Guid conferenceId,
+        Guid presentationId,
+        IConferenceRepository repository,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var conference = await repository.GetDetailsByIdAsync(conferenceId, cancellationToken);
+            
+            if (conference is null)
+            {
+                return Results.NotFound();
+            }
+
+            var presentation = conference.Presentations.FirstOrDefault(p => p.Id == presentationId);
+
+            if (presentation is null)
+            {
+                return Results.NotFound();
+            }
+
+            return Results.Ok(presentation);
         }
         catch (Exception)
         {

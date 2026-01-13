@@ -7,6 +7,7 @@ import { ConferenceAttendanceDto } from '../models/conference-attendance-dto';
 import { ConferenceScheduleDto } from '../models/conference-schedule-dto';
 import { PresentationToRateDto } from '../models/presentation-to-rate-dto';
 import { CurrentConferenceDto } from '../models/current-conference-dto';
+import { ConferenceScheduleNowDto } from '../models/conference-schedule-now-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -25,6 +26,10 @@ export class PresenceService {
 
     getConferenceSchedule(conferenceId: string): Observable<ConferenceScheduleDto> {
         return this.http.get<ConferenceScheduleDto>(`${this.apiUrl}/${conferenceId}`);
+    }
+
+    getConferenceScheduleNow(conferenceId: string): Observable<ConferenceScheduleNowDto> {
+        return this.http.get<ConferenceScheduleNowDto>(`${this.apiUrl}/${conferenceId}/now`);
     }
 
     updateAttendance(conferenceId: string, isAttending: boolean): Observable<void> {
@@ -52,5 +57,9 @@ export class PresenceService {
 
     setPreferredPresentation(conferenceId: string, presentationId: string): Observable<void> {
         return this.http.get<void>(`${this.apiUrl}/${conferenceId}/prefer/${presentationId}`);
+    }
+
+    checkInToPresentation(conferenceId: string, presentationId: string): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/${conferenceId}/checkin/${presentationId}`, { isCheckedIn: true });
     }
 }

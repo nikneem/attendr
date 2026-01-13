@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using HexMaster.Attendr.Conferences.Integrations.Abstractions;
+using HexMaster.Attendr.Profiles.Integrations.Services;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Groups.Repositories;
@@ -18,15 +20,21 @@ public sealed class ProcessProfileCheckedInCommandHandler : ICommandHandler<Proc
 {
     private readonly IGroupRepository _groupRepository;
     private readonly ICheckInRepository _checkInRepository;
+    private readonly IConferencesIntegrationService _conferencesIntegration;
+    private readonly IProfilesIntegrationService _profilesIntegration;
     private readonly ILogger<ProcessProfileCheckedInCommandHandler> _logger;
 
     public ProcessProfileCheckedInCommandHandler(
         IGroupRepository groupRepository,
         ICheckInRepository checkInRepository,
+        IConferencesIntegrationService conferencesIntegration,
+        IProfilesIntegrationService profilesIntegration,
         ILogger<ProcessProfileCheckedInCommandHandler> logger)
     {
         _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
         _checkInRepository = checkInRepository ?? throw new ArgumentNullException(nameof(checkInRepository));
+        _conferencesIntegration = conferencesIntegration ?? throw new ArgumentNullException(nameof(conferencesIntegration));
+        _profilesIntegration = profilesIntegration ?? throw new ArgumentNullException(nameof(profilesIntegration));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -61,14 +69,23 @@ public sealed class ProcessProfileCheckedInCommandHandler : ICommandHandler<Proc
                 ? $"checked in to {command.Event.Title} at {command.Event.Room}"
                 : $"checked out of {command.Event.Title} at {command.Event.Room}";
 
-            // TODO: Fetch profile details (name, picture) from IProfilesIntegrationService
-            // Currently using placeholder values as the event doesn't include this data
-            // and there's no GetProfileById method available yet
+            // Fetch profile details from Profiles service
+            var profileDetails = await _profilesIntegration.GetProfileDetails(
+                command.Event.ProfileId.ToString(), 
+                cancellationToken);
+
             // Create checked-in member from the profile
             var checkedInMember = new CheckedInMember(
                 command.Event.ProfileId,
-                "Member", // Placeholder - should be actual profile name
-                null); // ProfilePictureUrl not available in event
+                profileDetails?.DisplayName ?? "Member", // Use actual display name or fallback
+                profileDetails?.ProfilePictureUrl); // Use actual profile picture URL
+
+            if (profileDetails == null)
+            {
+                _logger.LogWarning(
+                    "Could not fetch profile details for {ProfileId}, using placeholder values",
+                    command.Event.ProfileId);
+            }
 
             // Process each group
             foreach (var group in groups)
@@ -88,38 +105,86 @@ public sealed class ProcessProfileCheckedInCommandHandler : ICommandHandler<Proc
 
                     if (existingCheckIn == null)
                     {
-                        // TODO: Fetch full presentation data (abstract, speakers) from Conferences service
-                        // Currently using data available in the event with placeholders for missing fields
-                        // Create new check-in with presentation data from the event
-                        var presentationData = new PresentationData(
-                            command.Event.PresentationId,
-                            command.Event.Title,
-                            string.Empty, // Abstract not available in event
-                            command.Event.Room,
-                            command.Event.StartDateTime,
-                            command.Event.EndDateTime,
-                            Array.Empty<PresentationSpeaker>()); // Speakers not available in event
-
-                        // Set expiration to 2 hours after the presentation ends
-                        var expiration = command.Event.EndDateTime.AddMinutes(10);
-
-                        var newCheckIn = CheckIn.Create(
-                            group.Id,
+                        // Fetch full presentation details from Conferences service
+                        var presentationDto = await _conferencesIntegration.GetPresentationDetails(
                             command.Event.ConferenceId,
                             command.Event.PresentationId,
-                            presentationData,
-                            expiration);
+                            cancellationToken);
 
-                        newCheckIn.AddMember(checkedInMember);
-                        await _checkInRepository.AddAsync(newCheckIn, cancellationToken);
+                        if (presentationDto == null)
+                        {
+                            _logger.LogWarning(
+                                "Could not fetch presentation details for conference {ConferenceId} and presentation {PresentationId}, using event data",
+                                command.Event.ConferenceId,
+                                command.Event.PresentationId);
 
-                        _logger.LogInformation(
-                            "Created check-in {CheckInId} for group {GroupId}, conference {ConferenceId}, presentation {PresentationId} and added member {ProfileId}",
-                            newCheckIn.Id,
-                            group.Id,
-                            command.Event.ConferenceId,
-                            command.Event.PresentationId,
-                            command.Event.ProfileId);
+                            // Fallback to event data if presentation not found
+                            var fallbackPresentationData = new PresentationData(
+                                command.Event.PresentationId,
+                                command.Event.Title,
+                                string.Empty,
+                                command.Event.Room,
+                                command.Event.StartDateTime,
+                                command.Event.EndDateTime,
+                                Array.Empty<PresentationSpeaker>());
+
+                            // Set expiration to 10 minutes after the presentation ends (ensure UTC)
+                            var expiration = new DateTimeOffset(
+                                DateTime.SpecifyKind(command.Event.EndDateTime, DateTimeKind.Utc))
+                                .AddMinutes(10);
+
+                            var fallbackCheckIn = CheckIn.Create(
+                                group.Id,
+                                command.Event.ConferenceId,
+                                command.Event.PresentationId,
+                                fallbackPresentationData,
+                                expiration);
+
+                            fallbackCheckIn.AddMember(checkedInMember);
+                            await _checkInRepository.AddAsync(fallbackCheckIn, cancellationToken);
+                        }
+                        else
+                        {
+                            // Map speakers from DTO to domain model
+                            var speakers = presentationDto.Speakers
+                                .Select(s => new PresentationSpeaker(s.Id, s.Name, s.ProfilePictureUrl))
+                                .ToArray();
+
+                            // Create presentation data from fetched details
+                            var presentationData = new PresentationData(
+                                presentationDto.Id,
+                                presentationDto.Title,
+                                presentationDto.Abstract,
+                                presentationDto.RoomName,
+                                presentationDto.StartDateTime,
+                                presentationDto.EndDateTime,
+                                speakers);
+
+                            // Set expiration to 10 minutes after the presentation ends (ensure UTC)
+                            var expiration = new DateTimeOffset(
+                                DateTime.SpecifyKind(presentationDto.EndDateTime, DateTimeKind.Utc))
+                                .AddMinutes(10);
+
+                            var newCheckIn = CheckIn.Create(
+                                group.Id,
+                                command.Event.ConferenceId,
+                                command.Event.PresentationId,
+                                presentationData,
+                                expiration);
+
+                            newCheckIn.AddMember(checkedInMember);
+                            await _checkInRepository.AddAsync(newCheckIn, cancellationToken);
+
+                            _logger.LogInformation(
+                                "Created check-in {CheckInId} for group {GroupId}, conference {ConferenceId}, presentation {PresentationId} with {SpeakerCount} speakers and added member {ProfileId} ({MemberName})",
+                                newCheckIn.Id,
+                                group.Id,
+                                command.Event.ConferenceId,
+                                command.Event.PresentationId,
+                                speakers.Length,
+                                command.Event.ProfileId,
+                                profileDetails?.DisplayName ?? "Unknown");
+                        }
                     }
                     else
                     {
@@ -127,8 +192,9 @@ public sealed class ProcessProfileCheckedInCommandHandler : ICommandHandler<Proc
                         await _checkInRepository.AddMemberAsync(existingCheckIn.Id, checkedInMember, cancellationToken);
 
                         _logger.LogInformation(
-                            "Added member {ProfileId} to existing check-in {CheckInId} for group {GroupId}",
+                            "Added member {ProfileId} ({MemberName}) to existing check-in {CheckInId} for group {GroupId}",
                             command.Event.ProfileId,
+                            profileDetails?.DisplayName ?? "Unknown",
                             existingCheckIn.Id,
                             group.Id);
                     }
@@ -147,8 +213,9 @@ public sealed class ProcessProfileCheckedInCommandHandler : ICommandHandler<Proc
                         await _checkInRepository.RemoveMemberAsync(existingCheckIn.Id, command.Event.ProfileId, cancellationToken);
 
                         _logger.LogInformation(
-                            "Removed member {ProfileId} from check-in {CheckInId} for group {GroupId}",
+                            "Removed member {ProfileId} ({MemberName}) from check-in {CheckInId} for group {GroupId}",
                             command.Event.ProfileId,
+                            profileDetails?.DisplayName ?? "Unknown",
                             existingCheckIn.Id,
                             group.Id);
                     }

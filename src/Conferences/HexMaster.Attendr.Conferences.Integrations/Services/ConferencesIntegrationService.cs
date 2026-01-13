@@ -14,7 +14,8 @@ public sealed class ConferencesIntegrationService : IConferencesIntegrationServi
     private readonly HttpClient _httpClient;
     private readonly IAttendrCacheClient _cacheClient;
     private readonly ILogger<ConferencesIntegrationService> _logger;
-    private const string CacheKeyPrefix = "conference:details:";
+    private const string ConferenceDetailsCacheKeyPrefix = "conference:details:";
+    private const string PresentationDetailsCacheKeyPrefix = "presentation:details:";
     private static readonly TimeSpan CacheTtl = TimeSpan.FromMinutes(30);
 
     public ConferencesIntegrationService(
@@ -30,7 +31,7 @@ public sealed class ConferencesIntegrationService : IConferencesIntegrationServi
     /// <inheritdoc />
     public async Task<ConferenceDetailsDto?> GetConferenceDetails(Guid id, CancellationToken cancellationToken = default)
     {
-        var cacheKey = $"{CacheKeyPrefix}{id}";
+        var cacheKey = $"{ConferenceDetailsCacheKeyPrefix}{id}";
 
         try
         {
@@ -47,6 +48,31 @@ public sealed class ConferencesIntegrationService : IConferencesIntegrationServi
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to get conference details for {ConferenceId}", id);
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<PresentationDto?> GetPresentationDetails(Guid conferenceId, Guid presentationId, CancellationToken cancellationToken = default)
+    {
+        var cacheKey = $"{PresentationDetailsCacheKeyPrefix}{conferenceId}:{presentationId}";
+
+        try
+        {
+            // Use cache-aside pattern: GetOrSetAsync will check cache first,
+            // then call the factory function if not found
+            var presentation = await _cacheClient.GetOrSetAsync(
+                cacheKey,
+                async ct => await FetchPresentationFromApi(conferenceId, presentationId, ct),
+                CacheTtl,
+                cancellationToken);
+
+            return presentation;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get presentation details for conference {ConferenceId} and presentation {PresentationId}", 
+                conferenceId, presentationId);
             throw;
         }
     }
@@ -76,6 +102,41 @@ public sealed class ConferencesIntegrationService : IConferencesIntegrationServi
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP error fetching conference {ConferenceId} from API", id);
+            throw;
+        }
+    }
+
+    private async Task<PresentationDto?> FetchPresentationFromApi(Guid conferenceId, Guid presentationId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogDebug("Fetching presentation {PresentationId} for conference {ConferenceId} from API", 
+                presentationId, conferenceId);
+
+            var response = await _httpClient.GetAsync(
+                $"/api/conferences-integration/{conferenceId}/presentations/{presentationId}", 
+                cancellationToken);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger.LogWarning("Presentation {PresentationId} for conference {ConferenceId} not found", 
+                    presentationId, conferenceId);
+                return null;
+            }
+
+            response.EnsureSuccessStatusCode();
+
+            var presentation = await response.Content.ReadFromJsonAsync<PresentationDto>(cancellationToken);
+
+            _logger.LogInformation("Successfully fetched presentation {PresentationId} for conference {ConferenceId} from API", 
+                presentationId, conferenceId);
+
+            return presentation;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP error fetching presentation {PresentationId} for conference {ConferenceId} from API", 
+                presentationId, conferenceId);
             throw;
         }
     }

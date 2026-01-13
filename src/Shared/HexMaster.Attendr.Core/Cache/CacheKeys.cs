@@ -12,5 +12,14 @@ public static class CacheKeys
             }
             return $"profiles:subject:{subjectId}";
         }
+
+        public static string Details(string profileId)
+        {
+            if (string.IsNullOrWhiteSpace(profileId))
+            {
+                throw new ArgumentException("ProfileId cannot be null or whitespace.", nameof(profileId));
+            }
+            return $"profiles:details:{profileId}";
+        }
     }
 }
