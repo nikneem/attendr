@@ -34,6 +34,7 @@ internal static class CheckInMapper
 
         return new CheckInEntity(
             checkIn.Id,
+            checkIn.GroupId,
             checkIn.ConferenceId,
             checkIn.PresentationId,
             presentationData,
@@ -70,6 +71,7 @@ internal static class CheckInMapper
 
         return CheckIn.FromPersisted(
             entity.Id,
+            entity.GroupId,
             entity.ConferenceId,
             entity.PresentationId,
             presentationData,

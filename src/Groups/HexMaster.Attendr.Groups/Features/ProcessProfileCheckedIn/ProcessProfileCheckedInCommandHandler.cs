@@ -17,13 +17,16 @@ namespace HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
 public sealed class ProcessProfileCheckedInCommandHandler : ICommandHandler<ProcessProfileCheckedInCommand>
 {
     private readonly IGroupRepository _groupRepository;
+    private readonly ICheckInRepository _checkInRepository;
     private readonly ILogger<ProcessProfileCheckedInCommandHandler> _logger;
 
     public ProcessProfileCheckedInCommandHandler(
         IGroupRepository groupRepository,
+        ICheckInRepository checkInRepository,
         ILogger<ProcessProfileCheckedInCommandHandler> logger)
     {
         _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
+        _checkInRepository = checkInRepository ?? throw new ArgumentNullException(nameof(checkInRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -58,11 +61,98 @@ public sealed class ProcessProfileCheckedInCommandHandler : ICommandHandler<Proc
                 ? $"checked in to {command.Event.Title} at {command.Event.Room}"
                 : $"checked out of {command.Event.Title} at {command.Event.Room}";
 
-            // Add activity to each group
+            // TODO: Fetch profile details (name, picture) from IProfilesIntegrationService
+            // Currently using placeholder values as the event doesn't include this data
+            // and there's no GetProfileById method available yet
+            // Create checked-in member from the profile
+            var checkedInMember = new CheckedInMember(
+                command.Event.ProfileId,
+                "Member", // Placeholder - should be actual profile name
+                null); // ProfilePictureUrl not available in event
+
+            // Process each group
             foreach (var group in groups)
             {
+                // Add activity to the group
                 group.AddActivity(command.Event.ProfileId, activityDescription, activityType);
                 await _groupRepository.UpdateAsync(group, cancellationToken);
+
+                if (command.Event.IsCheckedIn)
+                {
+                    // Check if there's already a check-in for this group, conference, and presentation
+                    var existingCheckIn = await _checkInRepository.GetByGroupConferenceAndPresentationAsync(
+                        group.Id,
+                        command.Event.ConferenceId,
+                        command.Event.PresentationId,
+                        cancellationToken);
+
+                    if (existingCheckIn == null)
+                    {
+                        // TODO: Fetch full presentation data (abstract, speakers) from Conferences service
+                        // Currently using data available in the event with placeholders for missing fields
+                        // Create new check-in with presentation data from the event
+                        var presentationData = new PresentationData(
+                            command.Event.PresentationId,
+                            command.Event.Title,
+                            string.Empty, // Abstract not available in event
+                            command.Event.Room,
+                            command.Event.StartDateTime,
+                            command.Event.EndDateTime,
+                            Array.Empty<PresentationSpeaker>()); // Speakers not available in event
+
+                        // Set expiration to 2 hours after the presentation ends
+                        var expiration = command.Event.EndDateTime.AddMinutes(10);
+
+                        var newCheckIn = CheckIn.Create(
+                            group.Id,
+                            command.Event.ConferenceId,
+                            command.Event.PresentationId,
+                            presentationData,
+                            expiration);
+
+                        newCheckIn.AddMember(checkedInMember);
+                        await _checkInRepository.AddAsync(newCheckIn, cancellationToken);
+
+                        _logger.LogInformation(
+                            "Created check-in {CheckInId} for group {GroupId}, conference {ConferenceId}, presentation {PresentationId} and added member {ProfileId}",
+                            newCheckIn.Id,
+                            group.Id,
+                            command.Event.ConferenceId,
+                            command.Event.PresentationId,
+                            command.Event.ProfileId);
+                    }
+                    else
+                    {
+                        // Add member to existing check-in
+                        await _checkInRepository.AddMemberAsync(existingCheckIn.Id, checkedInMember, cancellationToken);
+
+                        _logger.LogInformation(
+                            "Added member {ProfileId} to existing check-in {CheckInId} for group {GroupId}",
+                            command.Event.ProfileId,
+                            existingCheckIn.Id,
+                            group.Id);
+                    }
+                }
+                else
+                {
+                    // Handle check-out: remove member from check-in
+                    var existingCheckIn = await _checkInRepository.GetByGroupConferenceAndPresentationAsync(
+                        group.Id,
+                        command.Event.ConferenceId,
+                        command.Event.PresentationId,
+                        cancellationToken);
+
+                    if (existingCheckIn != null)
+                    {
+                        await _checkInRepository.RemoveMemberAsync(existingCheckIn.Id, command.Event.ProfileId, cancellationToken);
+
+                        _logger.LogInformation(
+                            "Removed member {ProfileId} from check-in {CheckInId} for group {GroupId}",
+                            command.Event.ProfileId,
+                            existingCheckIn.Id,
+                            group.Id);
+                    }
+                }
 
                 _logger.LogInformation(
                     "Added {ActivityType} activity to group {GroupId} for profile {ProfileId} and presentation {PresentationId}",

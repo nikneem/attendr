@@ -7,6 +7,7 @@ namespace HexMaster.Attendr.Groups.Data.Postgress.Entities;
 /// </summary>
 public sealed record CheckInEntity(
     [property: JsonPropertyName("id")] Guid Id,
+    [property: JsonPropertyName("groupId")] Guid GroupId,
     [property: JsonPropertyName("conferenceId")] Guid ConferenceId,
     [property: JsonPropertyName("presentationId")] Guid PresentationId,
     [property: JsonPropertyName("presentationData")] PresentationDataEntity PresentationData,

@@ -8,11 +8,10 @@ namespace HexMaster.Attendr.Groups.DomainModels;
 public sealed class CheckIn : ICheckIn
 {
     public Guid Id { get; private set; }
+    public Guid GroupId { get; private set; }
     public Guid ConferenceId { get; private set; }
     public Guid PresentationId { get; private set; }
-    public PresentationData PresentationData { get; private set; }
-
-    IPresentationData ICheckIn.PresentationData => PresentationData;
+    public IPresentationData PresentationData { get; private set; }
 
     public DateTimeOffset Expiration { get; private set; }
 
@@ -23,6 +22,7 @@ public sealed class CheckIn : ICheckIn
 
     private CheckIn(
         Guid id,
+        Guid groupId,
         Guid conferenceId,
         Guid presentationId,
         PresentationData presentationData,
@@ -32,6 +32,11 @@ public sealed class CheckIn : ICheckIn
         if (id == Guid.Empty)
         {
             throw new ArgumentException("Check-in ID cannot be empty.", nameof(id));
+        }
+
+        if (groupId == Guid.Empty)
+        {
+            throw new ArgumentException("Group ID cannot be empty.", nameof(groupId));
         }
 
         if (conferenceId == Guid.Empty)
@@ -47,6 +52,7 @@ public sealed class CheckIn : ICheckIn
         ArgumentNullException.ThrowIfNull(presentationData);
 
         Id = id;
+        GroupId = groupId;
         ConferenceId = conferenceId;
         PresentationId = presentationId;
         PresentationData = presentationData;
@@ -59,23 +65,25 @@ public sealed class CheckIn : ICheckIn
     }
 
     public static CheckIn Create(
+        Guid groupId,
         Guid conferenceId,
         Guid presentationId,
         PresentationData presentationData,
         DateTimeOffset expiration)
     {
-        return new CheckIn(Guid.NewGuid(), conferenceId, presentationId, presentationData, expiration);
+        return new CheckIn(Guid.NewGuid(), groupId, conferenceId, presentationId, presentationData, expiration);
     }
 
     public static CheckIn FromPersisted(
         Guid id,
+        Guid groupId,
         Guid conferenceId,
         Guid presentationId,
         PresentationData presentationData,
         DateTimeOffset expiration,
         IEnumerable<CheckedInMember>? members = null)
     {
-        return new CheckIn(id, conferenceId, presentationId, presentationData, expiration, members);
+        return new CheckIn(id, groupId, conferenceId, presentationId, presentationData, expiration, members);
     }
 
     public void AddMember(CheckedInMember member)

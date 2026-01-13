@@ -11,6 +11,11 @@ public interface ICheckIn
     Guid Id { get; }
 
     /// <summary>
+    /// Gets the group identifier.
+    /// </summary>
+    Guid GroupId { get; }
+
+    /// <summary>
     /// Gets the conference identifier.
     /// </summary>
     Guid ConferenceId { get; }

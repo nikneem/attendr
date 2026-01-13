@@ -40,6 +40,16 @@ public interface ICheckInRepository
     Task<CheckIn?> GetByConferenceAndPresentationAsync(Guid conferenceId, Guid presentationId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves a check-in by group, conference and presentation IDs.
+    /// </summary>
+    /// <param name="groupId">The group ID.</param>
+    /// <param name="conferenceId">The conference ID.</param>
+    /// <param name="presentationId">The presentation ID.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The check-in if found; otherwise, null.</returns>
+    Task<CheckIn?> GetByGroupConferenceAndPresentationAsync(Guid groupId, Guid conferenceId, Guid presentationId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieves all active check-ins for a conference.
     /// </summary>
     /// <param name="conferenceId">The conference ID.</param>
