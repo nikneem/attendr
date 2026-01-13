@@ -4,6 +4,7 @@ using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Features.CheckIn;
 using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
+using HexMaster.Attendr.Presence.Features.GetConferenceScheduleNow;
 using HexMaster.Attendr.Presence.Features.GetConferenceWithPresentations;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.GetCurrentConferences;
@@ -94,6 +95,12 @@ public static class PresenceEndpoints
             .WithName("SetPreferredPresentation")
             .Produces(StatusCodes.Status202Accepted)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapGet("/{conferenceId:guid}/now", GetConferenceScheduleNow)
+            .WithName("GetConferenceScheduleNow")
+            .Produces<ConferenceScheduleNowResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
@@ -549,6 +556,46 @@ public static class PresenceEndpoints
         {
             logger.LogError(ex, "Error setting preferred presentation {PresentationId} for conference {ConferenceId}",
                 presentationId, conferenceId);
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> GetConferenceScheduleNow(
+        Guid conferenceId,
+        HttpContext context,
+        IQueryHandler<GetConferenceScheduleNowQuery, ConferenceScheduleNowResponse> handler,
+        IProfilesIntegrationService profilesIntegration,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("GetConferenceScheduleNowEndpoint");
+
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            var result = await handler.Handle(
+                new GetConferenceScheduleNowQuery(profileId, conferenceId),
+                cancellationToken);
+
+            return Results.Ok(result);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting conference schedule now for conference {ConferenceId}", conferenceId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
