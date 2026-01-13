@@ -6,6 +6,7 @@ using HexMaster.Attendr.Presence.Features.CheckIn;
 using HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
 using HexMaster.Attendr.Presence.Features.GetConferenceWithPresentations;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
+using HexMaster.Attendr.Presence.Features.GetCurrentConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
 using HexMaster.Attendr.Presence.Features.SetPreferredPresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
@@ -34,6 +35,12 @@ public static class PresenceEndpoints
         group.MapGet("/my-conferences", GetMyConferences)
             .WithName("GetMyConferences")
             .Produces<List<MyConferenceResponse>>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapGet("/now", GetCurrentConferences)
+            .WithName("GetCurrentConferences")
+            .Produces<List<CurrentConferenceResponse>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
@@ -125,6 +132,42 @@ public static class PresenceEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Error retrieving conferences for user");
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> GetCurrentConferences(
+        HttpContext context,
+        IQueryHandler<GetCurrentConferencesQuery, List<CurrentConferenceResponse>> handler,
+        IProfilesIntegrationService profilesIntegration,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("GetCurrentConferencesEndpoint");
+
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            var result = await handler.Handle(new GetCurrentConferencesQuery(profileId), cancellationToken);
+            return Results.Ok(result);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving current conferences for user");
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
