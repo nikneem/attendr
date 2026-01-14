@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Configuration;
+using Azure.Identity; // for DefaultAzureCredential
+using Azure.Data.AppConfiguration; // for LabelFilter
 
 namespace HexMaster.Attendr.Core.Configuration;
 
