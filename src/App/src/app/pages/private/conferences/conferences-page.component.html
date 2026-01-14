@@ -32,7 +32,7 @@
             @for (conference of conferences; track conference.id) {
             <p-card [styleClass]="'conference-card'" (click)="viewConference(conference.id)">
                 <div class="conference-visual"
-                    [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : 'url(/images/attendr-logo-flat.svg)'">
+                    [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : 'url(/images/attendr-logo-flat.png)'">
                     <div class="visual-header">
                         <h3 class="visual-title" [pTooltip]="conference.title" tooltipPosition="bottom">{{
                             conference.title }}</h3>
