@@ -40,9 +40,9 @@ public sealed class CheckInCommandHandler : ICommandHandler<CheckInCommand>
         try
         {
             var presentation = await _repository.GetByIdAsync(
-                command.ProfileId, 
-                command.ConferenceId, 
-                command.PresentationId, 
+                command.ProfileId,
+                command.ConferenceId,
+                command.PresentationId,
                 cancellationToken);
 
             if (presentation is null)
@@ -50,8 +50,8 @@ public sealed class CheckInCommandHandler : ICommandHandler<CheckInCommand>
                 activity?.SetStatus(ActivityStatusCode.Error, "Presentation presence not found");
                 _logger.LogWarning(
                     "Presentation presence not found for profile {ProfileId}, conference {ConferenceId}, and presentation {PresentationId}",
-                    command.ProfileId, 
-                    command.ConferenceId, 
+                    command.ProfileId,
+                    command.ConferenceId,
                     command.PresentationId);
                 throw new KeyNotFoundException(
                     $"Presentation presence not found for profile {command.ProfileId}, conference {command.ConferenceId}, and presentation {command.PresentationId}");
@@ -62,7 +62,7 @@ public sealed class CheckInCommandHandler : ICommandHandler<CheckInCommand>
                 presentation.CheckIn();
                 _logger.LogInformation(
                     "Profile {ProfileId} checked in to presentation {PresentationId}",
-                    command.ProfileId, 
+                    command.ProfileId,
                     command.PresentationId);
             }
             else
@@ -70,14 +70,14 @@ public sealed class CheckInCommandHandler : ICommandHandler<CheckInCommand>
                 presentation.CheckOut();
                 _logger.LogInformation(
                     "Profile {ProfileId} checked out of presentation {PresentationId}",
-                    command.ProfileId, 
+                    command.ProfileId,
                     command.PresentationId);
             }
 
             await _repository.UpdateAsync(
-                command.ProfileId, 
-                command.ConferenceId, 
-                presentation, 
+                command.ProfileId,
+                command.ConferenceId,
+                presentation,
                 cancellationToken);
 
             var integrationEvent = new ProfileCheckedInEvent
@@ -98,7 +98,7 @@ public sealed class CheckInCommandHandler : ICommandHandler<CheckInCommand>
 
             _logger.LogInformation(
                 "Published ProfileCheckedInEvent for profile {ProfileId} and presentation {PresentationId}",
-                command.ProfileId, 
+                command.ProfileId,
                 command.PresentationId);
         }
         catch (KeyNotFoundException)
@@ -110,9 +110,9 @@ public sealed class CheckInCommandHandler : ICommandHandler<CheckInCommand>
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             activity?.AddException(ex);
 
-            _logger.LogError(ex, 
+            _logger.LogError(ex,
                 "Failed to process check-in for profile {ProfileId} and presentation {PresentationId}",
-                command.ProfileId, 
+                command.ProfileId,
                 command.PresentationId);
             throw;
         }
