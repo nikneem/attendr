@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Exceptions;
+using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 
@@ -22,6 +23,14 @@ public static class GroupsMemberEndpoints
 
         group.MapDelete("/{id:guid}/members/{memberId:guid}", RemoveMember)
             .WithName("RemoveMember")
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapPut("/{id:guid}/members/{memberId:guid}", UpdateMemberRole)
+            .WithName("UpdateMemberRole")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
@@ -95,6 +104,44 @@ public static class GroupsMemberEndpoints
         catch (ProfileNotFoundException ex)
         {
             return Results.NotFound(new { error = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> UpdateMemberRole(
+        Guid id,
+        Guid memberId,
+        UpdateMemberRoleRequest request,
+        IProfilesIntegrationService profilesIntegration,
+        ICommandHandler<Features.UpdateMemberRole.UpdateMemberRoleCommand> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var command = new Features.UpdateMemberRole.UpdateMemberRoleCommand(
+                id, 
+                memberId, 
+                (Abstractions.DomainModels.GroupRole)request.Role,
+                Guid.Parse(profile.ProfileId));
+            await handler.Handle(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status403Forbidden,
+                title: "Forbidden",
+                detail: ex.Message);
         }
     }
 

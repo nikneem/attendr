@@ -54,7 +54,42 @@ export class GroupMembersComponent {
     }
 
     onRoleChange(memberId: string, newRole: number): void {
-        this.store.updateMemberRole(this.groupId(), memberId, newRole);
+        const newRoleName = this.getRoleName(newRole);
+
+        this.confirmationService.confirm({
+            message: `Do you want to change the member role to ${newRoleName}?`,
+            header: 'Change Member Role',
+            icon: 'pi pi-exclamation-triangle',
+            acceptIcon: 'pi pi-check',
+            rejectIcon: 'pi pi-times',
+            acceptLabel: 'Yes, Change Role',
+            rejectLabel: 'Cancel',
+            accept: () => {
+                this.store.updateMemberRole(this.groupId(), memberId, newRole);
+
+                // Show success message if no error occurred
+                setTimeout(() => {
+                    if (!this.store.error()) {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Success',
+                            detail: 'Member role updated successfully',
+                        });
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: this.store.error() || 'Failed to update member role',
+                        });
+                        this.store.clearError();
+                    }
+                }, 500);
+            },
+            reject: () => {
+                // Reload to reset the dropdown to the original value
+                this.store.loadGroupDetails(this.groupId());
+            }
+        });
     }
 
     canRemoveMember(memberRole: number): boolean {

@@ -40,6 +40,10 @@ export class AllGroupsService {
         return this.http.delete<void>(`${this.apiUrl}/${groupId}/members/${memberId}`);
     }
 
+    updateMemberRole(groupId: string, memberId: string, role: number): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/${groupId}/members/${memberId}`, { role });
+    }
+
     approveJoinRequest(groupId: string, profileId: string): Observable<void> {
         return this.http.post<void>(`${this.apiUrl}/${groupId}/join-requests/${profileId}/approve`, {});
     }

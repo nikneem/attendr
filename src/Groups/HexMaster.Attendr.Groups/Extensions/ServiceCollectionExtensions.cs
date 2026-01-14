@@ -16,6 +16,7 @@ using HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
 using HexMaster.Attendr.Groups.Features.ProcessProfileConferenceAttendanceChanged;
 using HexMaster.Attendr.Groups.Features.ProcessGroupMemberAdded;
 using HexMaster.Attendr.Groups.Features.ProcessGroupMemberRemoved;
+using HexMaster.Attendr.Groups.Features.UpdateMemberRole;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Groups.Extensions;
@@ -34,6 +35,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ICommandHandler<JoinGroupCommand>, JoinGroupCommandHandler>();
         services.AddScoped<ICommandHandler<RemoveMemberCommand>, RemoveMemberCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateMemberRoleCommand>, UpdateMemberRoleCommandHandler>();
         services.AddScoped<ICommandHandler<ApproveJoinRequestCommand>, ApproveJoinRequestCommandHandler>();
         services.AddScoped<ICommandHandler<DenyJoinRequestCommand>, DenyJoinRequestCommandHandler>();
         services.AddScoped<ICommandHandler<FollowConferenceCommand>, FollowConferenceCommandHandler>();

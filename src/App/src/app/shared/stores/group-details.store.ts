@@ -40,10 +40,14 @@ export class GroupDetailsStore {
     }
 
     updateMemberRole(groupId: string, memberId: string, newRole: number): void {
-        // TODO: Implement when API is ready
-        console.log('Update member role:', memberId, newRole);
-        // After successful API call:
-        // this.loadGroupDetails(groupId);
+        this.groupsService.updateMemberRole(groupId, memberId, newRole).subscribe({
+            next: () => {
+                this.loadGroupDetails(groupId);
+            },
+            error: (err) => {
+                this._error.set(err.error?.error || 'Failed to update member role');
+            },
+        });
     }
 
     removeMember(groupId: string, memberId: string): void {
