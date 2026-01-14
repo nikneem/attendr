@@ -27,6 +27,15 @@ public static class GroupsEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
+        // Map group update endpoint
+        group.MapPut("/{id:guid}", UpdateGroup)
+            .WithName("UpdateGroup")
+            .Produces<UpdateGroupResult>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
         // Map query endpoints (list, get details, my groups)
         group.MapGroupsQueryEndpoints();
 
@@ -82,6 +91,81 @@ public static class GroupsEndpoints
             var result = new CreateGroupResult(group.Id, group.Name, memberDtos);
 
             return Results.Created($"/api/groups/{result.Id}", result);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> UpdateGroup(
+        Guid id,
+        UpdateGroupRequest request,
+        IProfilesIntegrationService profilesIntegration,
+        IGroupRepository repository,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        // Validate name
+        if (string.IsNullOrWhiteSpace(request.Name))
+        {
+            return Results.BadRequest(new { error = "Name is required" });
+        }
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(request.Name, @"^[a-zA-Z0-9\s]+$"))
+        {
+            return Results.BadRequest(new { error = "Name can only contain alphanumeric characters and spaces" });
+        }
+
+        if (request.Name.Trim().Length < 3)
+        {
+            return Results.BadRequest(new { error = "Name must be at least 3 characters long" });
+        }
+
+        if (request.Name.Trim().Length > 100)
+        {
+            return Results.BadRequest(new { error = "Name must not exceed 100 characters" });
+        }
+
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+            var group = await repository.GetByIdAsync(id, cancellationToken);
+
+            if (group == null)
+            {
+                return Results.NotFound(new { error = "Group not found" });
+            }
+
+            // Check if user is owner or admin
+            var member = group.Members.FirstOrDefault(m => m.Id == Guid.Parse(profile.ProfileId));
+            if (member == null || (member.Role != Abstractions.DomainModels.GroupRole.Owner && member.Role != Abstractions.DomainModels.GroupRole.Manager))
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status403Forbidden,
+                    title: "Forbidden",
+                    detail: "Only group owners and administrators can update group details");
+            }
+
+            // Update group details
+            group.UpdateName(request.Name.Trim());
+            
+            var newSettings = GroupSettings.Create(request.IsPublic, request.IsSearchable);
+            group.UpdateSettings(newSettings);
+
+            await repository.UpdateAsync(group, cancellationToken);
+
+            var result = new UpdateGroupResult(
+                group.Id,
+                group.Name,
+                group.Settings.IsPublic,
+                group.Settings.IsSearchable);
+
+            return Results.Ok(result);
         }
         catch (UnauthorizedException)
         {

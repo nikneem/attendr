@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import { GroupDetailsStore } from '@stores/group-details.store';
 import { GroupMembersComponent } from '@components/group-members/group-members.component';
@@ -12,6 +13,7 @@ import { GroupJoinRequestsComponent } from '@components/group-join-requests/grou
 import { GroupInvitationsComponent } from '@components/group-invitations/group-invitations.component';
 import { GroupActivitiesComponent } from '@components/group-activities/group-activities.component';
 import { MemberLocationsComponent } from '@components/member-locations/member-locations.component';
+import { EditGroupComponent } from '@components/edit-group/edit-group.component';
 
 @Component({
     selector: 'attn-group-details-page',
@@ -20,12 +22,14 @@ import { MemberLocationsComponent } from '@components/member-locations/member-lo
         ProgressSpinnerModule,
         TagModule,
         ButtonModule,
+        DialogModule,
         GroupMembersComponent,
         GroupConferencesComponent,
         GroupJoinRequestsComponent,
         GroupInvitationsComponent,
         GroupActivitiesComponent,
         MemberLocationsComponent,
+        EditGroupComponent,
     ],
     templateUrl: './group-details-page.component.html',
     styleUrls: ['./group-details-page.component.scss'],
@@ -40,6 +44,11 @@ export class GroupDetailsPageComponent implements OnInit {
     loading = this.store.loading;
     error = this.store.error;
     joiningGroup = signal(false);
+    showEditDialog = signal(false);
+
+    get isOwner(): boolean {
+        return this.group()?.currentMemberRole === 0; // 0 = Owner
+    }
 
     ngOnInit(): void {
         const id = this.route.snapshot.paramMap.get('id');
@@ -76,5 +85,18 @@ export class GroupDetailsPageComponent implements OnInit {
                 this.store.clearError();
             }
         }, 500);
+    }
+
+    openEditDialog(): void {
+        this.showEditDialog.set(true);
+    }
+
+    onGroupUpdated(): void {
+        this.showEditDialog.set(false);
+        // Reload group details to get updated information
+        const id = this.groupId();
+        if (id) {
+            this.store.loadGroupDetails(id);
+        }
     }
 }

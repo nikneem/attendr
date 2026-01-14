@@ -1,0 +1,64 @@
+.edit-group-form {
+    padding: 1rem;
+
+    .form-field {
+        margin-bottom: 1.5rem;
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        .error-message {
+            display: block;
+            color: var(--p-red-500);
+            margin-top: 0.25rem;
+        }
+
+        .help-text {
+            display: block;
+            color: var(--p-surface-500);
+            margin-top: 0.25rem;
+        }
+
+        .checkbox-field {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+
+            label {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+                margin-bottom: 0;
+                cursor: pointer;
+
+                strong {
+                    font-weight: 600;
+                    color: var(--text-color);
+                }
+
+                .field-description {
+                    font-size: 0.875rem;
+                    color: var(--text-color-secondary);
+                    font-weight: normal;
+                }
+            }
+
+            p-checkbox {
+                margin-top: 0.125rem;
+            }
+        }
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+}

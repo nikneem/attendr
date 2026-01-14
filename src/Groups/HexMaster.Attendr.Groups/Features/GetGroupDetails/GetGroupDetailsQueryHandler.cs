@@ -133,6 +133,7 @@ public sealed class GetGroupDetailsQueryHandler : IQueryHandler<GetGroupDetailsQ
                 group.Members.Count,
                 currentMember != null,
                 group.Settings.IsPublic,
+                group.Settings.IsSearchable,
                 currentMemberRole.HasValue ? (Abstractions.Dtos.GroupRole?)currentMemberRole.Value : null,
                 members,
                 invitations,

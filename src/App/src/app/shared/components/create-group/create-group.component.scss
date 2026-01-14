@@ -10,6 +10,10 @@
             font-weight: 600;
         }
 
+        input {
+            width: 100%;
+        }
+
         .error-message {
             display: block;
             color: var(--p-red-500);

@@ -35,6 +35,7 @@ export interface GroupDetailsDto {
     memberCount: number;
     isMember: boolean;
     isPublic: boolean;
+    isSearchable: boolean;
     currentMemberRole: number | null; // 0 = Owner, 1 = Manager, 2 = Member, null if not a member
     members: GroupMemberDto[];
     invitations: GroupInvitationDto[];
