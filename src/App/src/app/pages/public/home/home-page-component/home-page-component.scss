@@ -105,6 +105,9 @@
             max-width: 500px;
             margin: 0 auto $spacing-lg;
             filter: drop-shadow(0 10px 30px rgba($primary-color, 0.5));
+            font-family: 'Special Elite', cursive;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
 
             @media (max-width: 768px) {
                 max-width: 300px;
