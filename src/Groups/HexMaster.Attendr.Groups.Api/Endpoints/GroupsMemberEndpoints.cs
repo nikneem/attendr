@@ -120,8 +120,8 @@ public static class GroupsMemberEndpoints
         {
             var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
             var command = new Features.UpdateMemberRole.UpdateMemberRoleCommand(
-                id, 
-                memberId, 
+                id,
+                memberId,
                 (Abstractions.DomainModels.GroupRole)request.Role,
                 Guid.Parse(profile.ProfileId));
             await handler.Handle(command, cancellationToken);

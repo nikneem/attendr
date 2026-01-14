@@ -30,7 +30,6 @@ export class GroupMembersComponent {
     members = computed(() => this.group()?.members ?? []);
 
     roleOptions = [
-        { label: 'Owner', value: 0 },
         { label: 'Manager', value: 1 },
         { label: 'Member', value: 2 }
     ];
