@@ -3,25 +3,39 @@
 .schedule-container {
     width: 100%;
     overflow-x: auto;
-    overflow-y: visible;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
 
-    // Add subtle scrollbar styling
+    // Styled scrollbar with secondary color
     &::-webkit-scrollbar {
-        height: 8px;
+        height: 10px;
     }
 
     &::-webkit-scrollbar-track {
-        background: var(--surface-ground);
+        background: rgba(vars.$secondary-darker, 0.1);
+        border-radius: 5px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background: var(--surface-border);
-        border-radius: 4px;
+        background: vars.$secondary-color;
+        border-radius: 5px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
 
         &:hover {
-            background: var(--text-color-secondary);
+            background: vars.$secondary-light;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        &:active {
+            background: vars.$secondary-dark;
         }
     }
+
+    // Firefox scrollbar styling
+    scrollbar-width: thin;
+    scrollbar-color: vars.$secondary-color rgba(vars.$secondary-darker, 0.1);
 }
 
 .schedule-day {
@@ -29,6 +43,15 @@
 
     @media (min-width: 1440px) {
         min-width: 1200px;
+    }
+
+    // Enable horizontal scrolling with mouse wheel
+    &:hover {
+        cursor: grab;
+    }
+
+    &:active {
+        cursor: grabbing;
     }
 }
 

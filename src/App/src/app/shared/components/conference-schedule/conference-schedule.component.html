@@ -4,7 +4,7 @@
     <p>No sessions scheduled</p>
 </div>
 } @else if (scheduleDays().length === 1) {
-<div class="schedule-container">
+<div class="schedule-container" #scheduleContainer>
     @for (day of scheduleDays(); track day.date) {
     <div class="schedule-day">
         <div class="timeline-container">

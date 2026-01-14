@@ -1,4 +1,4 @@
-import { Component, input, computed, signal } from '@angular/core';
+import { Component, input, computed, signal, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { DialogModule } from 'primeng/dialog';
@@ -28,7 +28,8 @@ interface TimelineSession {
     templateUrl: './conference-schedule.component.html',
     styleUrl: './conference-schedule.component.scss',
 })
-export class ConferenceScheduleComponent {
+export class ConferenceScheduleComponent implements AfterViewInit {
+    @ViewChild('scheduleContainer') scheduleContainer?: ElementRef<HTMLDivElement>;
     presentations = input.required<PresentationDto[]>();
     startDate = input.required<string>();
     endDate = input.required<string>();
@@ -36,6 +37,19 @@ export class ConferenceScheduleComponent {
 
     selectedPresentation = signal<PresentationDto | null>(null);
     showDialog = signal<boolean>(false);
+
+    ngAfterViewInit(): void {
+        // Convert vertical scroll to horizontal scroll with 4x speed for high sensitivity
+        const container = this.scheduleContainer?.nativeElement;
+        if (container) {
+            container.addEventListener('wheel', (e: WheelEvent) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    container.scrollLeft += e.deltaY * 4;
+                }
+            }, { passive: false });
+        }
+    }
 
     scheduleDays = computed(() => {
         const presentations = this.presentations();
