@@ -1,8 +1,6 @@
 using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Exceptions;
-using HexMaster.Attendr.Groups.Abstractions.Dtos;
-using HexMaster.Attendr.Groups.DomainModels;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 

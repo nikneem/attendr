@@ -3,8 +3,11 @@ using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
 using HexMaster.Attendr.Groups.Features.ProcessProfileConferenceAttendanceChanged;
+using HexMaster.Attendr.Groups.Features.ProcessGroupMemberAdded;
+using HexMaster.Attendr.Groups.Features.ProcessGroupMemberRemoved;
 using HexMaster.Attendr.IntegrationEvents.Constants;
 using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
+using HexMaster.Attendr.IntegrationEvents.Events.Groups;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
 
@@ -35,6 +38,24 @@ public static class EventHandlersEndpoints
             .WithName("HandleProfileConferenceAttendanceChanged")
             .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ProfileConferenceAttendanceChanged)
             .Accepts<ProfileConferenceAttendanceChangedEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
+
+        group.MapPost("/GroupMemberAddedHandler", HandleGroupMemberAdded)
+            .WithName("HandleGroupMemberAdded")
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.GroupMemberAdded)
+            .Accepts<GroupMemberAddedEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
+
+        group.MapPost("/GroupMemberRemovedHandler", HandleGroupMemberRemoved)
+            .WithName("HandleGroupMemberRemoved")
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.GroupMemberRemoved)
+            .Accepts<GroupMemberRemovedEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError)
@@ -109,6 +130,73 @@ public static class EventHandlersEndpoints
                 "Error handling ProfileConferenceAttendanceChanged for profile {ProfileId}, conference {ConferenceId}",
                 @event.ProfileId,
                 @event.ConferenceId);
+            return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> HandleGroupMemberAdded(
+        GroupMemberAddedEvent @event,
+        ICommandHandler<ProcessGroupMemberAddedCommand> handler,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("GroupMemberAddedEventHandler");
+        try
+        {
+            logger.LogInformation(
+                "Processing GroupMemberAdded event for profile {ProfileId} in group {GroupId}",
+                @event.ProfileId,
+                @event.GroupId);
+
+            await handler.Handle(new ProcessGroupMemberAddedCommand(@event), cancellationToken);
+
+            return Results.Ok(new
+            {
+                message = "Group member added activity recorded",
+                profileId = @event.ProfileId,
+                groupId = @event.GroupId,
+                role = @event.Role
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex,
+                "Error handling GroupMemberAdded for profile {ProfileId} in group {GroupId}",
+                @event.ProfileId,
+                @event.GroupId);
+            return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> HandleGroupMemberRemoved(
+        GroupMemberRemovedEvent @event,
+        ICommandHandler<ProcessGroupMemberRemovedCommand> handler,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("GroupMemberRemovedEventHandler");
+        try
+        {
+            logger.LogInformation(
+                "Processing GroupMemberRemoved event for profile {ProfileId} in group {GroupId}",
+                @event.ProfileId,
+                @event.GroupId);
+
+            await handler.Handle(new ProcessGroupMemberRemovedCommand(@event), cancellationToken);
+
+            return Results.Ok(new
+            {
+                message = "Group member removed activity recorded",
+                profileId = @event.ProfileId,
+                groupId = @event.GroupId
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex,
+                "Error handling GroupMemberRemoved for profile {ProfileId} in group {GroupId}",
+                @event.ProfileId,
+                @event.GroupId);
             return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
         }
     }

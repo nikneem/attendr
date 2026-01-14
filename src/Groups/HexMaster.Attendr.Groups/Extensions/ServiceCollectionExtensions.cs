@@ -14,6 +14,8 @@ using HexMaster.Attendr.Groups.Features.UnfollowConference;
 using HexMaster.Attendr.Groups.Observability;
 using HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
 using HexMaster.Attendr.Groups.Features.ProcessProfileConferenceAttendanceChanged;
+using HexMaster.Attendr.Groups.Features.ProcessGroupMemberAdded;
+using HexMaster.Attendr.Groups.Features.ProcessGroupMemberRemoved;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HexMaster.Attendr.Groups.Extensions;
@@ -38,6 +40,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICommandHandler<UnfollowConferenceCommand>, UnfollowConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<ProcessProfileCheckedInCommand>, ProcessProfileCheckedInCommandHandler>();
         services.AddScoped<ICommandHandler<ProcessProfileConferenceAttendanceChangedCommand>, ProcessProfileConferenceAttendanceChangedCommandHandler>();
+        services.AddScoped<ICommandHandler<ProcessGroupMemberAddedCommand>, ProcessGroupMemberAddedCommandHandler>();
+        services.AddScoped<ICommandHandler<ProcessGroupMemberRemovedCommand>, ProcessGroupMemberRemovedCommandHandler>();
 
         return services;
     }

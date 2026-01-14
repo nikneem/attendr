@@ -1,5 +1,3 @@
-using HexMaster.Attendr.Core.CommandHandlers;
-
 namespace HexMaster.Attendr.Presence.Features.GetConferenceWithPresentations;
 
 /// <summary>

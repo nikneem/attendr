@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
@@ -14,7 +13,6 @@ using HexMaster.Attendr.Presence.Features.UnfollowConference;
 using HexMaster.Attendr.Presence.Features.UpdateAttendance;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
 
