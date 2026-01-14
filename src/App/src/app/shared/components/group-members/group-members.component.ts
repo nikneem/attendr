@@ -6,7 +6,7 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { GroupDetailsStore } from '@stores/group-details.store';
 
 @Component({
@@ -19,6 +19,7 @@ import { GroupDetailsStore } from '@stores/group-details.store';
 export class GroupMembersComponent {
     private readonly store = inject(GroupDetailsStore);
     private readonly messageService = inject(MessageService);
+    private readonly confirmationService = inject(ConfirmationService);
 
     groupId = input.required<string>();
 
@@ -67,28 +68,35 @@ export class GroupMembersComponent {
     }
 
     removeMember(memberId: string): void {
-        if (!confirm('Are you sure you want to remove this member from the group?')) {
-            return;
-        }
+        this.confirmationService.confirm({
+            message: 'Are you sure you want to remove this member from the group?',
+            header: 'Remove Member',
+            icon: 'pi pi-exclamation-triangle',
+            acceptIcon: 'pi pi-check',
+            rejectIcon: 'pi pi-times',
+            acceptLabel: 'Yes, Remove',
+            rejectLabel: 'Cancel',
+            accept: () => {
+                this.store.removeMember(this.groupId(), memberId);
 
-        this.store.removeMember(this.groupId(), memberId);
-
-        // Show success message if no error occurred
-        setTimeout(() => {
-            if (!this.store.error()) {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Member removed successfully',
-                });
-            } else {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: this.store.error() || 'Failed to remove member',
-                });
-                this.store.clearError();
+                // Show success message if no error occurred
+                setTimeout(() => {
+                    if (!this.store.error()) {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Success',
+                            detail: 'Member removed successfully',
+                        });
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: this.store.error() || 'Failed to remove member',
+                        });
+                        this.store.clearError();
+                    }
+                }, 500);
             }
-        }, 500);
+        });
     }
 }

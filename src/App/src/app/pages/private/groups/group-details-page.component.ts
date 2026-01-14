@@ -5,7 +5,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { GroupDetailsStore } from '@stores/group-details.store';
 import { GroupMembersComponent } from '@components/group-members/group-members.component';
 import { GroupConferencesComponent } from '@components/group-conferences/group-conferences.component';
@@ -23,6 +24,7 @@ import { EditGroupComponent } from '@components/edit-group/edit-group.component'
         TagModule,
         ButtonModule,
         DialogModule,
+        ConfirmDialogModule,
         GroupMembersComponent,
         GroupConferencesComponent,
         GroupJoinRequestsComponent,
@@ -31,6 +33,7 @@ import { EditGroupComponent } from '@components/edit-group/edit-group.component'
         MemberLocationsComponent,
         EditGroupComponent,
     ],
+    providers: [ConfirmationService],
     templateUrl: './group-details-page.component.html',
     styleUrls: ['./group-details-page.component.scss'],
 })
