@@ -65,4 +65,16 @@ public static class IntegrationEventTopics
     /// Published when a profile changes their attendance status for a conference.
     /// </summary>
     public const string ProfileConferenceAttendanceChanged = "profile.conference-attendance-changed";
+
+    /// <summary>
+    /// Topic for group member added events.
+    /// Published when a member is added to a group.
+    /// </summary>
+    public const string GroupMemberAdded = "group.member-added";
+
+    /// <summary>
+    /// Topic for group member removed events.
+    /// Published when a member is removed from a group.
+    /// </summary>
+    public const string GroupMemberRemoved = "group.member-removed";
 }

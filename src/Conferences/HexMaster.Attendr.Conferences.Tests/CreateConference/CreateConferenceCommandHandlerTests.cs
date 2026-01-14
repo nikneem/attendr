@@ -3,7 +3,7 @@ using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.CreateConference;
 using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Conferences.Tests.Helpers;
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -4,7 +4,6 @@ using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Groups.Abstractions.Dtos;
 using HexMaster.Attendr.Groups.Repositories;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Groups.Features.GetGroupCheckIns;
 

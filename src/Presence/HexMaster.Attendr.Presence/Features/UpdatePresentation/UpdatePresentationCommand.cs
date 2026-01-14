@@ -1,5 +1,5 @@
 using HexMaster.Attendr.Core.CommandHandlers;
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 
 namespace HexMaster.Attendr.Presence.Features.UpdatePresentation;
 

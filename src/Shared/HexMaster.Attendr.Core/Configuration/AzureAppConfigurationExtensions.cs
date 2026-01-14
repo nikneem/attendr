@@ -1,6 +1,4 @@
-using Azure.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
 namespace HexMaster.Attendr.Core.Configuration;
 

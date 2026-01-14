@@ -1,5 +1,4 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
-using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Conferences.GetConference;
 using HexMaster.Attendr.Conferences.Tests.Helpers;
 using Microsoft.Extensions.Logging;

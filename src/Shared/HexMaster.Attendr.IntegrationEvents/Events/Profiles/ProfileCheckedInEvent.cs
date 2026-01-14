@@ -1,6 +1,6 @@
 using HexMaster.Attendr.IntegrationEvents.Constants;
 
-namespace HexMaster.Attendr.IntegrationEvents.Events;
+namespace HexMaster.Attendr.IntegrationEvents.Events.Profiles;
 
 /// <summary>
 /// Integration event published when a profile checks in or out of a presentation.

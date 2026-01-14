@@ -4,7 +4,7 @@ using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
 using HexMaster.Attendr.Groups.Features.ProcessProfileConferenceAttendanceChanged;
 using HexMaster.Attendr.IntegrationEvents.Constants;
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
 
 namespace HexMaster.Attendr.Groups.Api.Endpoints;
 

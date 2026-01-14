@@ -1,6 +1,6 @@
 using HexMaster.Attendr.IntegrationEvents.Constants;
 
-namespace HexMaster.Attendr.IntegrationEvents.Events;
+namespace HexMaster.Attendr.IntegrationEvents.Events.Groups;
 
 public sealed class ProfilesFollowedConferenceEvent : IntegrationEvent
 {

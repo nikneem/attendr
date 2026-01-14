@@ -2,10 +2,8 @@ using System.Diagnostics;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Groups.Repositories;
-using HexMaster.Attendr.Groups.DomainModels;
 using HexMaster.Attendr.Groups.Observability;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Groups.Features.UnfollowConference;
 

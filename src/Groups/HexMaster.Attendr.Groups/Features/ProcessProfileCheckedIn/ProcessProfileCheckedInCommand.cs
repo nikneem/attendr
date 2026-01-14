@@ -1,4 +1,4 @@
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
 
 namespace HexMaster.Attendr.Groups.Features.ProcessProfileCheckedIn;
 

@@ -1,5 +1,4 @@
 using Bogus;
-using HexMaster.Attendr.Profiles.Tests.Factories;
 
 namespace HexMaster.Attendr.Profiles.Tests.DataAccess;
 

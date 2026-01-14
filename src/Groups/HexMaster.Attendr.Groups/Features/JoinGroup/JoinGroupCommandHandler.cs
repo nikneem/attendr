@@ -5,6 +5,8 @@ using HexMaster.Attendr.Groups.Repositories;
 using HexMaster.Attendr.Groups.DomainModels;
 using HexMaster.Attendr.Groups.Abstractions.DomainModels;
 using HexMaster.Attendr.Groups.Observability;
+using HexMaster.Attendr.IntegrationEvents.Events.Groups;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
 
@@ -18,15 +20,18 @@ namespace HexMaster.Attendr.Groups.Features.JoinGroup;
 public sealed class JoinGroupCommandHandler : ICommandHandler<JoinGroupCommand>
 {
     private readonly IGroupRepository _groupRepository;
+    private readonly IIntegrationEventPublisher _eventPublisher;
     private readonly GroupMetrics _metrics;
     private readonly ILogger<JoinGroupCommandHandler> _logger;
 
     public JoinGroupCommandHandler(
         IGroupRepository groupRepository,
+        IIntegrationEventPublisher eventPublisher,
         GroupMetrics metrics,
         ILogger<JoinGroupCommandHandler> logger)
     {
         _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
+        _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -90,6 +95,24 @@ public sealed class JoinGroupCommandHandler : ICommandHandler<JoinGroupCommand>
 
             // Persist changes
             await _groupRepository.UpdateAsync(group, cancellationToken);
+
+            // Publish integration event if member was added directly
+            if (group.Settings.IsPublic)
+            {
+                var integrationEvent = new GroupMemberAddedEvent
+                {
+                    GroupId = group.Id,
+                    GroupName = group.Name,
+                    ProfileId = command.ProfileId,
+                    Role = GroupRole.Member.ToString()
+                };
+
+                await _eventPublisher.PublishAsync(integrationEvent, cancellationToken);
+
+                _logger.LogInformation(
+                    "Published GroupMemberAdded event for profile {ProfileId} joining group {GroupId}",
+                    command.ProfileId, command.GroupId);
+            }
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordOperationDuration("JoinGroup", stopwatch.Elapsed.TotalMilliseconds, success: true);

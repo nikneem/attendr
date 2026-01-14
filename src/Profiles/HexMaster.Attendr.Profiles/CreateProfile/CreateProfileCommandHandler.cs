@@ -7,7 +7,6 @@ using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Observability;
 using HexMaster.Attendr.Profiles.Repositories;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Profiles.CreateProfile;
 

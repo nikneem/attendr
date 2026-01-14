@@ -3,12 +3,10 @@ using HexMaster.Attendr.Conferences.Integrations.Abstractions;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Groups.Repositories;
-using HexMaster.Attendr.Groups.DomainModels;
 using HexMaster.Attendr.Groups.Observability;
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Groups;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Groups.Features.FollowConference;
 

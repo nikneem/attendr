@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace HexMaster.Attendr.Core.Cache;
 
 public interface IAttendrCacheClient

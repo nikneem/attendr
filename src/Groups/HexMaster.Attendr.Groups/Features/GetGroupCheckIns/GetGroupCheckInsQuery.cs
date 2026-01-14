@@ -1,5 +1,3 @@
-using HexMaster.Attendr.Groups.Abstractions.Dtos;
-
 namespace HexMaster.Attendr.Groups.Features.GetGroupCheckIns;
 
 /// <summary>

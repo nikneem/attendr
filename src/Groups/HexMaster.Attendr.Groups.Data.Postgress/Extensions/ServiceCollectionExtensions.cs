@@ -1,7 +1,5 @@
 using HexMaster.Attendr.Groups.Repositories;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace HexMaster.Attendr.Groups.Data.Postgress.Extensions;
 

@@ -1,6 +1,6 @@
 using HexMaster.Attendr.IntegrationEvents.Constants;
 
-namespace HexMaster.Attendr.IntegrationEvents.Events;
+namespace HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 
 /// <summary>
 /// Integration event published when a presentation's schedule changes and the profile has favorited it.

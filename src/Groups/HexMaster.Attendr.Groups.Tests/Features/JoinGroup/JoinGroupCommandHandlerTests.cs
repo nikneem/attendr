@@ -5,6 +5,7 @@ using HexMaster.Attendr.Groups.Observability;
 using HexMaster.Attendr.Groups.Repositories;
 using HexMaster.Attendr.Groups.Tests.Factories;
 using HexMaster.Attendr.Groups.Tests.Helpers;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -13,6 +14,7 @@ namespace HexMaster.Attendr.Groups.Tests.Features.JoinGroup;
 public sealed class JoinGroupCommandHandlerTests
 {
     private readonly Mock<IGroupRepository> _mockRepository;
+    private readonly Mock<IIntegrationEventPublisher> _mockEventPublisher;
     private readonly GroupMetrics _metrics;
     private readonly Mock<ILogger<JoinGroupCommandHandler>> _mockLogger;
     private readonly JoinGroupCommandHandler _handler;
@@ -21,10 +23,12 @@ public sealed class JoinGroupCommandHandlerTests
     public JoinGroupCommandHandlerTests()
     {
         _mockRepository = new Mock<IGroupRepository>();
+        _mockEventPublisher = new Mock<IIntegrationEventPublisher>();
         _metrics = TestMetricsFactory.CreateGroupMetrics();
         _mockLogger = new Mock<ILogger<JoinGroupCommandHandler>>();
         _handler = new JoinGroupCommandHandler(
             _mockRepository.Object,
+            _mockEventPublisher.Object,
             _metrics,
             _mockLogger.Object);
         _faker = new Faker();

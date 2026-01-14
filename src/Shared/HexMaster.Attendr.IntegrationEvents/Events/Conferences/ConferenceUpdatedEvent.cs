@@ -1,6 +1,6 @@
 using HexMaster.Attendr.IntegrationEvents.Constants;
 
-namespace HexMaster.Attendr.IntegrationEvents.Events;
+namespace HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 
 public sealed class ConferenceUpdatedEvent : IntegrationEvent
 {

@@ -1,7 +1,7 @@
 using Bogus;
 using HexMaster.Attendr.Conferences.FollowConference;
 using HexMaster.Attendr.Conferences.Tests.Factories;
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using Moq;

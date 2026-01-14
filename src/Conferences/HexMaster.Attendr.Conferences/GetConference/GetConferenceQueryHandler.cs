@@ -4,7 +4,6 @@ using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Conferences.GetConference;
 

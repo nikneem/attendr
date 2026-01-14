@@ -1,6 +1,6 @@
 using HexMaster.Attendr.IntegrationEvents.Constants;
 
-namespace HexMaster.Attendr.IntegrationEvents.Events;
+namespace HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 
 /// <summary>
 /// Integration event raised when a presentation is updated during conference import/synchronization.
@@ -56,13 +56,12 @@ public sealed class PresentationUpdatedEvent : IntegrationEvent
     public IReadOnlyCollection<Guid> SpeakerIds { get; init; } = Array.Empty<Guid>();
 
     /// <summary>
-    /// Gets the external ID from the synchronization source (e.g., Sessionize).
+    /// Gets the external ID from the source system (e.g., Sessionize).
     /// </summary>
-    public string? ExternalId { get; init; }
+    public string ExternalId { get; init; } = string.Empty;
 
     /// <summary>
-    /// Gets a value indicating whether the schedule has changed.
-    /// This is true when the date/time changed or the presentation was moved to a different room.
+    /// Gets a value indicating whether the schedule (time or room) has changed.
     /// </summary>
     public bool IsScheduleChanged { get; init; }
 }

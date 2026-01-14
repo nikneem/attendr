@@ -1,14 +1,12 @@
 using System.Diagnostics;
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
-using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Conferences.CreateConference;
 

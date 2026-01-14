@@ -5,6 +5,8 @@ using HexMaster.Attendr.Groups.Repositories;
 using HexMaster.Attendr.Groups.DomainModels;
 using HexMaster.Attendr.Groups.Abstractions.DomainModels;
 using HexMaster.Attendr.Groups.Observability;
+using HexMaster.Attendr.IntegrationEvents.Events.Groups;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Trace;
 
@@ -18,15 +20,18 @@ namespace HexMaster.Attendr.Groups.Features.ApproveJoinRequest;
 public sealed class ApproveJoinRequestCommandHandler : ICommandHandler<ApproveJoinRequestCommand>
 {
     private readonly IGroupRepository _groupRepository;
+    private readonly IIntegrationEventPublisher _eventPublisher;
     private readonly GroupMetrics _metrics;
     private readonly ILogger<ApproveJoinRequestCommandHandler> _logger;
 
     public ApproveJoinRequestCommandHandler(
         IGroupRepository groupRepository,
+        IIntegrationEventPublisher eventPublisher,
         GroupMetrics metrics,
         ILogger<ApproveJoinRequestCommandHandler> logger)
     {
         _groupRepository = groupRepository ?? throw new ArgumentNullException(nameof(groupRepository));
+        _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -89,6 +94,21 @@ public sealed class ApproveJoinRequestCommandHandler : ICommandHandler<ApproveJo
 
             // Persist changes
             await _groupRepository.UpdateAsync(group, cancellationToken);
+
+            // Find the newly added member to get their role
+            var addedMember = group.Members.FirstOrDefault(m => m.Id == command.ProfileIdToApprove);
+            if (addedMember != null)
+            {
+                // Publish integration event
+                var memberAddedEvent = new GroupMemberAddedEvent
+                {
+                    GroupId = group.Id,
+                    GroupName = group.Name,
+                    ProfileId = addedMember.Id,
+                    Role = addedMember.Role.ToString()
+                };
+                await _eventPublisher.PublishAsync(memberAddedEvent, cancellationToken);
+            }
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordOperationDuration("ApproveJoinRequest", stopwatch.Elapsed.TotalMilliseconds, success: true);

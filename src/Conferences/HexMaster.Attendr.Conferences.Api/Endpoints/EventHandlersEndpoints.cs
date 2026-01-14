@@ -3,7 +3,7 @@ using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Core.Constants;
 using HexMaster.Attendr.IntegrationEvents.Constants;
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 
 namespace HexMaster.Attendr.Conferences.Api.Endpoints;
 

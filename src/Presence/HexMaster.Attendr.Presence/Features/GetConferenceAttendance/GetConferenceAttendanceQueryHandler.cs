@@ -4,7 +4,6 @@ using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Presence.Abstractions.Dtos;
 using HexMaster.Attendr.Presence.Observability;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 
 namespace HexMaster.Attendr.Presence.Features.GetConferenceAttendance;
 

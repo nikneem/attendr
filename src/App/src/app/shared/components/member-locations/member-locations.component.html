@@ -48,7 +48,8 @@
 
                     <div class="checkin-members">
                         <span class="members-count">
-                            {{ checkIn.members.length }} {{ checkIn.members.length === 1 ? 'member' : 'members' }} checked in
+                            {{ checkIn.members.length }} {{ checkIn.members.length === 1 ? 'member' : 'members' }}
+                            checked in
                         </span>
                         <div class="members-avatars">
                             @for (member of getVisibleMembers(checkIn); track member.id) {
@@ -63,7 +64,8 @@
                             }
                             @if (getRemainingMembersCount(checkIn) > 0) {
                             <div class="member-avatar more-avatar"
-                                [pTooltip]="'+' + getRemainingMembersCount(checkIn) + ' more members'" tooltipPosition="top">
+                                [pTooltip]="'+' + getRemainingMembersCount(checkIn) + ' more members'"
+                                tooltipPosition="top">
                                 +{{ getRemainingMembersCount(checkIn) }}
                             </div>
                             }
