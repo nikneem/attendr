@@ -21,7 +21,8 @@
 
     <div class="form-field">
         <div class="checkbox-field">
-            <p-checkbox [(ngModel)]="isSearchable" [binary]="true" inputId="isSearchable" [disabled]="isUpdating()" (onChange)="onSearchableChange($event.checked)" />
+            <p-checkbox [(ngModel)]="isSearchable" [binary]="true" inputId="isSearchable" [disabled]="isUpdating()"
+                (onChange)="onSearchableChange($event.checked)" />
             <label for="isSearchable">
                 <strong>Searchable</strong>
                 <span class="field-description">Group appears in search results</span>

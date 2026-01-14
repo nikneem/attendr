@@ -21,15 +21,8 @@
                     <p-tag value="Private" severity="warn" icon="pi pi-lock" />
                     }
                     @if (isOwner) {
-                    <p-button
-                        icon="pi pi-pencil"
-                        [rounded]="true"
-                        [text]="true"
-                        severity="secondary"
-                        (onClick)="openEditDialog()"
-                        pTooltip="Edit Group"
-                        tooltipPosition="bottom"
-                    />
+                    <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary"
+                        (onClick)="openEditDialog()" pTooltip="Edit Group" tooltipPosition="bottom" />
                     }
                 </div>
                 <div class="header-info">
@@ -69,22 +62,13 @@
     </div>
 
     <!-- Edit Group Dialog -->
-    <p-dialog
-        [(visible)]="showEditDialog"
-        [modal]="true"
-        [style]="{ width: '30rem' }"
-        [draggable]="false"
-        [resizable]="false"
-    >
+    <p-dialog [(visible)]="showEditDialog" [modal]="true" [style]="{ width: '30rem' }" [draggable]="false"
+        [resizable]="false">
         <ng-template pTemplate="header">
             <span class="text-xl font-semibold">Edit Group</span>
         </ng-template>
         @if (group()) {
-        <attn-edit-group
-            [group]="group()!"
-            (groupUpdated)="onGroupUpdated()"
-            (cancelled)="showEditDialog.set(false)"
-        />
+        <attn-edit-group [group]="group()!" (groupUpdated)="onGroupUpdated()" (cancelled)="showEditDialog.set(false)" />
         }
     </p-dialog>
 </div>

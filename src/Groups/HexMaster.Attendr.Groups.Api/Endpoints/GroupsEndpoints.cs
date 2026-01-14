@@ -153,7 +153,7 @@ public static class GroupsEndpoints
 
             // Update group details
             group.UpdateName(request.Name.Trim());
-            
+
             var newSettings = GroupSettings.Create(request.IsPublic, request.IsSearchable);
             group.UpdateSettings(newSettings);
 
