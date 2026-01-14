@@ -59,59 +59,24 @@
                 height: 60px;
                 top: 60%;
                 left: 80%;
-                animation-delay: 2s;
+                animation-delay: 3s;
             }
 
             &:nth-child(3) {
-                width: 100px;
-                height: 100px;
+                width: 90px;
+                height: 90px;
                 top: 40%;
                 left: 70%;
-                animation-delay: 4s;
+                animation-delay: 6s;
                 background: radial-gradient(circle, $secondary-light 0%, transparent 70%);
             }
 
             &:nth-child(4) {
-                width: 50px;
-                height: 50px;
-                top: 80%;
-                left: 20%;
-                animation-delay: 6s;
-                background: radial-gradient(circle, $secondary-color 0%, transparent 70%);
-            }
-
-            &:nth-child(5) {
                 width: 70px;
                 height: 70px;
-                top: 10%;
-                left: 50%;
-                animation-delay: 8s;
-            }
-
-            &:nth-child(6) {
-                width: 90px;
-                height: 90px;
-                top: 70%;
-                left: 50%;
-                animation-delay: 10s;
-                background: radial-gradient(circle, $primary-color 0%, transparent 70%);
-            }
-
-            &:nth-child(7) {
-                width: 55px;
-                height: 55px;
-                top: 30%;
-                left: 15%;
-                animation-delay: 12s;
-                background: radial-gradient(circle, $secondary-lighter 0%, transparent 70%);
-            }
-
-            &:nth-child(8) {
-                width: 75px;
-                height: 75px;
-                top: 50%;
-                left: 85%;
-                animation-delay: 14s;
+                top: 80%;
+                left: 20%;
+                animation-delay: 9s;
             }
         }
     }
@@ -123,26 +88,6 @@
         max-width: 900px;
         padding: $spacing-2xl;
         animation: fadeInUp 1s ease-out;
-    }
-
-    .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: $spacing-xs;
-        background: rgba($background-elevated, 0.8);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba($primary-color, 0.3);
-        padding: $spacing-xs $spacing-lg;
-        border-radius: $radius-full;
-        margin-bottom: $spacing-xl;
-        font-size: $font-size-sm;
-        color: $text-secondary;
-        animation: float 3s infinite ease-in-out;
-
-        .badge-icon {
-            font-size: $font-size-lg;
-            animation: pulse 2s infinite;
-        }
     }
 
     .hero-title {
@@ -160,7 +105,6 @@
             max-width: 500px;
             margin: 0 auto $spacing-lg;
             filter: drop-shadow(0 10px 30px rgba($primary-color, 0.5));
-            animation: logoGlow 3s infinite ease-in-out;
 
             @media (max-width: 768px) {
                 max-width: 300px;
@@ -207,46 +151,7 @@
         gap: $spacing-lg;
         justify-content: center;
         flex-wrap: wrap;
-        margin-bottom: $spacing-3xl;
-    }
-
-    .hero-stats {
-        display: flex;
-        gap: $spacing-3xl;
-        justify-content: center;
-        flex-wrap: wrap;
-        padding: $spacing-2xl 0;
-        border-top: 1px solid rgba($border-color, 0.3);
-        margin-top: $spacing-2xl;
-
-        .stat-item {
-            text-align: center;
-
-            .stat-number {
-                font-size: $font-size-4xl;
-                font-weight: 700;
-                background: linear-gradient(135deg, $primary-light 0%, $secondary-light 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                margin-bottom: $spacing-xs;
-            }
-
-            .stat-label {
-                font-size: $font-size-sm;
-                color: $text-muted;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-            }
-        }
-
-        @media (max-width: 768px) {
-            gap: $spacing-xl;
-
-            .stat-item .stat-number {
-                font-size: $font-size-2xl;
-            }
-        }
+        margin-bottom: $spacing-2xl;
     }
 
     .scroll-indicator {
@@ -286,7 +191,6 @@
             top: -150px;
             left: -150px;
             background: radial-gradient(circle, $primary-color 0%, transparent 70%);
-            animation-delay: 0s;
         }
 
         &.circle-2 {
@@ -296,41 +200,6 @@
             right: 10%;
             background: radial-gradient(circle, $secondary-color 0%, transparent 70%);
             animation-delay: 5s;
-        }
-
-        &.circle-3 {
-            width: 300px;
-            height: 300px;
-            top: 50%;
-            right: -100px;
-            background: radial-gradient(circle, $primary-lighter 0%, transparent 70%);
-            animation-delay: 10s;
-        }
-    }
-
-    .decoration-orb {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(40px);
-        opacity: 0.2;
-        animation: pulse 4s infinite ease-in-out;
-
-        &.orb-1 {
-            width: 250px;
-            height: 250px;
-            top: 20%;
-            left: 15%;
-            background: $primary-color;
-            animation-delay: 0s;
-        }
-
-        &.orb-2 {
-            width: 200px;
-            height: 200px;
-            bottom: 30%;
-            right: 20%;
-            background: $secondary-color;
-            animation-delay: 2s;
         }
     }
 }
@@ -408,18 +277,6 @@
     50% {
         transform: scale(1.1);
         opacity: 0.8;
-    }
-}
-
-@keyframes logoGlow {
-
-    0%,
-    100% {
-        filter: drop-shadow(0 10px 30px rgba($primary-color, 0.5));
-    }
-
-    50% {
-        filter: drop-shadow(0 10px 40px rgba($secondary-color, 0.7));
     }
 }
 
@@ -790,10 +647,6 @@
 
         .hero-content {
             padding: $spacing-xl;
-        }
-
-        .hero-stats {
-            gap: $spacing-lg;
         }
 
         .scroll-indicator {
