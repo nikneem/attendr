@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
+import { AccordionModule } from 'primeng/accordion';
 import { TimelineModule } from 'primeng/timeline';
 import { TagModule } from 'primeng/tag';
 import { GroupDetailsStore } from '@stores/group-details.store';
@@ -13,7 +13,7 @@ interface EnrichedGroupActivity extends GroupActivityDto {
 @Component({
     selector: 'attn-group-activities',
     standalone: true,
-    imports: [CommonModule, CardModule, TimelineModule, TagModule],
+    imports: [CommonModule, AccordionModule, TimelineModule, TagModule],
     templateUrl: './group-activities.component.html',
     styleUrl: './group-activities.component.scss',
 })
@@ -39,6 +39,11 @@ export class GroupActivitiesComponent {
             ...activity,
             memberName: memberMap.get(activity.profileId) || 'Unknown Member'
         }));
+    });
+
+    // Expand accordion when there is data
+    accordionValue = computed(() => {
+        return this.activities().length > 0 ? '0' : undefined;
     });
 
     getActivityIcon(activityTypeId: number): string {

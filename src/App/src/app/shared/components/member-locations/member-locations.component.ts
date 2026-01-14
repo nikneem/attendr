@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
+import { AccordionModule } from 'primeng/accordion';
 import { TagModule } from 'primeng/tag';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
@@ -12,7 +12,7 @@ import { CheckInDto } from '@models/check-in-dto';
 @Component({
     selector: 'attn-member-locations',
     standalone: true,
-    imports: [CommonModule, CardModule, TagModule, AvatarModule, AvatarGroupModule, TooltipModule],
+    imports: [CommonModule, AccordionModule, TagModule, AvatarModule, AvatarGroupModule, TooltipModule],
     templateUrl: './member-locations.component.html',
     styleUrl: './member-locations.component.scss',
 })
@@ -28,6 +28,11 @@ export class MemberLocationsComponent implements OnInit {
 
     // Computed property to show only first 5 members per check-in
     visibleMembersPerCheckIn = 5;
+
+    // Expand accordion when there is data
+    accordionValue = computed(() => {
+        return this.checkIns().length > 0 && !this.loading() ? '0' : undefined;
+    });
 
     ngOnInit() {
         this.loadCheckIns();

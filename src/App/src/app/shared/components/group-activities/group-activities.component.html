@@ -1,34 +1,40 @@
-<p-card styleClass="group-activities-card">
-    <ng-template pTemplate="header">
-        <div class="section-header">
-            <h2>Recent Activity</h2>
-        </div>
-    </ng-template>
-
-    @if (activities().length === 0) {
-    <div class="empty-state">
-        <div class="empty-state-icon">
-            <i class="pi pi-inbox" style="font-size: 3rem;"></i>
-        </div>
-        <h4 class="empty-state-title">No Activity Yet</h4>
-        <p class="empty-state-text">When members join, check in to presentations, or follow conferences, you'll see
-            their activity here.</p>
-    </div>
-    } @else {
-    <div class="activities-list">
-        @for (activity of activities(); track activity.id) {
-        <div class="activity-item">
-            <div class="activity-icon" [style.background-color]="getActivityColor(activity.activitySeverity)">
-                <i [class]="getActivityIcon(activity.activityTypeId)"></i>
+<p-accordion [value]="accordionValue()">
+    <p-accordion-panel value="0">
+        <p-accordion-header>
+            <div class="section-header">
+                <h2>Recent Activity</h2>
+                @if (activities().length > 0) {
+                <p-tag [value]="activities().length.toString()" severity="info" />
+                }
             </div>
-            <div class="activity-content">
-                <p class="activity-message">
-                    <strong>{{ getMemberName(activity) }}</strong> - {{ getActivityMessage(activity) }}
-                </p>
-                <span class="activity-time">{{ getRelativeTime(activity.createdAt) }}</span>
+        </p-accordion-header>
+        <p-accordion-content>
+            @if (activities().length === 0) {
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="pi pi-inbox" style="font-size: 3rem;"></i>
+                </div>
+                <h4 class="empty-state-title">No Activity Yet</h4>
+                <p class="empty-state-text">When members join, check in to presentations, or follow conferences, you'll see
+                    their activity here.</p>
             </div>
-        </div>
-        }
-    </div>
-    }
-</p-card>
+            } @else {
+            <div class="activities-list">
+                @for (activity of activities(); track activity.id) {
+                <div class="activity-item">
+                    <div class="activity-icon" [style.background-color]="getActivityColor(activity.activitySeverity)">
+                        <i [class]="getActivityIcon(activity.activityTypeId)"></i>
+                    </div>
+                    <div class="activity-content">
+                        <p class="activity-message">
+                            <strong>{{ getMemberName(activity) }}</strong> - {{ getActivityMessage(activity) }}
+                        </p>
+                        <span class="activity-time">{{ getRelativeTime(activity.createdAt) }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </p-accordion-content>
+    </p-accordion-panel>
+</p-accordion>
