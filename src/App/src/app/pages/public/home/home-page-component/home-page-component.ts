@@ -13,4 +13,8 @@ export class HomePageComponent {
   login() {
     this.oidcSecurityService.authorize();
   }
+
+  scrollToFeatures() {
+    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+  }
 }
