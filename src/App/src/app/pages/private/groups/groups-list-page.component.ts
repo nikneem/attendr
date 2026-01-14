@@ -12,6 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { AllGroupsStore } from '@stores/all-groups.store';
 import { GroupListItemDto } from '@models/group-list-item-dto';
 import { GroupDetailsViewComponent } from '@components/group-details-view/group-details-view.component';
+import { CreateGroupComponent } from '@components/create-group/create-group.component';
 import { AllGroupsService } from '@services/all-groups.service';
 import { MessageService } from 'primeng/api';
 
@@ -28,6 +29,7 @@ import { MessageService } from 'primeng/api';
         ProgressSpinnerModule,
         TagModule,
         GroupDetailsViewComponent,
+        CreateGroupComponent,
     ],
     templateUrl: './groups-list-page.component.html',
     styleUrl: './groups-list-page.component.scss',
@@ -50,6 +52,7 @@ export class GroupsListPageComponent implements OnInit {
     searchInput = '';
     showDetailsDialog = signal(false);
     selectedGroup = signal<GroupListItemDto | null>(null);
+    showCreateDialog = signal(false);
 
     ngOnInit(): void {
         // Defer loading to avoid ExpressionChangedAfterItHasBeenCheckedError
@@ -124,5 +127,12 @@ export class GroupsListPageComponent implements OnInit {
                 });
             }
         });
+    }
+
+    onGroupCreated(group: { id: string; name: string; memberCount: number }): void {
+        this.showCreateDialog.set(false);
+        this.groupsStore.loadGroups(); // Refresh the list
+        // Navigate to the newly created group
+        this.router.navigate(['/app/groups', group.id]);
     }
 }

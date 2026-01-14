@@ -2,6 +2,7 @@
     <div class="container">
         <div class="header-section">
             <h1>Groups</h1>
+            <button pButton label="Create Group" icon="pi pi-plus" (click)="showCreateDialog.set(true)"></button>
         </div>
 
         <div class="search-section">
@@ -74,4 +75,9 @@
     <attn-group-details-view [group]="selectedGroup()!" (joinRequested)="onJoinGroup($event)"
         (requestAccessRequested)="onRequestAccess($event)" />
     }
+</p-dialog>
+
+<!-- Create Group Dialog -->
+<p-dialog header="Create New Group" [(visible)]="showCreateDialog" [modal]="true" [style]="{width: '450px'}">
+    <attn-create-group (groupCreated)="onGroupCreated($event)" />
 </p-dialog>
