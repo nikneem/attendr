@@ -27,7 +27,6 @@ export class PrivatePageTemplateComponent {
         { label: 'Dashboard', routerLink: ['/app/dashboard'] },
         { label: 'Groups', routerLink: ['/app/groups'] },
         { label: 'Conferences', routerLink: ['/app/conferences'] },
-        { label: 'Reviews', routerLink: ['/app/reviews'] },
     ];
 
     accountItems: MenuItem[] = [

@@ -31,9 +31,9 @@
     position: absolute;
     top: 0;
     right: 0;
-    background: transparent;
-    border: none;
-    color: vars.$accent-warning;
+    background: transparent !important;
+    border: none !important;
+    color: vars.$accent-warning !important;
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
@@ -42,7 +42,8 @@
     line-height: 1;
 
     &:hover {
-        background: rgba(245, 158, 11, 0.1);
+        background: rgba(245, 158, 11, 0.1) !important;
+        color: vars.$accent-warning !important;
         transform: scale(1.1);
     }
 

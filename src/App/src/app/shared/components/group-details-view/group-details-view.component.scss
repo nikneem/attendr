@@ -145,23 +145,6 @@
         .w-full {
             width: 100%;
         }
-
-        ::ng-deep {
-            .p-button {
-                font-weight: 500;
-
-                &.join-button {
-                    background: #4A90E2 !important;
-                    border-color: #4A90E2 !important;
-                    color: white !important;
-
-                    &:hover:not(:disabled) {
-                        background: #3575C6 !important;
-                        border-color: #3575C6 !important;
-                    }
-                }
-            }
-        }
     }
 
     ::ng-deep {

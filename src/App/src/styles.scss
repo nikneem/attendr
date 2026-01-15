@@ -132,3 +132,57 @@ button {
 .p-connected-overlay {
     z-index: 9999 !important;
 }
+
+// Global PrimeNG Button Styling
+::ng-deep .p-button {
+    background-color: $secondary-color !important;
+    color: #000 !important;
+    border-color: $secondary-color !important;
+    font-weight: 600;
+    transition: all $transition-base;
+
+    &:hover:not(:disabled) {
+        background-color: $secondary-color !important;
+        color: #fff !important;
+        border-color: $secondary-color !important;
+        transform: translateY(-1px);
+        box-shadow: $shadow-md;
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 2px $background-primary, 0 0 0 4px rgba($secondary-color, 0.3) !important;
+    }
+
+    &.primary {
+        background-color: $primary-color !important;
+        color: #000 !important;
+        border-color: $primary-color !important;
+
+        &:hover:not(:disabled) {
+            background-color: $primary-color !important;
+            color: #fff !important;
+            border-color: $primary-color !important;
+        }
+    }
+
+    &.secondary {
+        background-color: $secondary-color !important;
+        color: #000 !important;
+        border-color: $secondary-color !important;
+
+        &:hover:not(:disabled) {
+            background-color: $secondary-color !important;
+            color: #fff !important;
+            border-color: $secondary-color !important;
+        }
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
