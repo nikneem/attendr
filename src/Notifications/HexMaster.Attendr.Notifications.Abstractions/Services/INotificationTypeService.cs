@@ -1,4 +1,4 @@
-using HexMaster.Attendr.Notifications.Abstractions.Models;
+using HexMaster.Attendr.Notifications.Models;
 
 namespace HexMaster.Attendr.Notifications.Abstractions.Services;
 

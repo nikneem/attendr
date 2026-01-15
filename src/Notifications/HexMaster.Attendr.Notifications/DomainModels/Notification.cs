@@ -1,11 +1,12 @@
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 
-namespace HexMaster.Attendr.Notifications.Abstractions.DomainModels;
+namespace HexMaster.Attendr.Notifications.DomainModels;
 
 /// <summary>
 /// Represents a notification targeting a single profile.
 /// </summary>
-public sealed class Notification
+public sealed class Notification : INotification
 {
     /// <summary>
     /// Unique identifier for the notification.
@@ -91,12 +92,18 @@ public sealed class Notification
     /// Delivery status per channel.
     /// </summary>
     public required Dictionary<NotificationChannel, ChannelDeliveryInfo> ChannelDeliveries { get; init; }
+
+    /// <summary>
+    /// Delivery status per channel (interface implementation).
+    /// </summary>
+    Dictionary<NotificationChannel, IChannelDeliveryInfo> INotification.ChannelDeliveries =>
+        ChannelDeliveries.ToDictionary(kvp => kvp.Key, kvp => (IChannelDeliveryInfo)kvp.Value);
 }
 
 /// <summary>
 /// Tracks delivery information for a specific channel.
 /// </summary>
-public sealed class ChannelDeliveryInfo
+public sealed class ChannelDeliveryInfo : IChannelDeliveryInfo
 {
     /// <summary>
     /// Whether delivery is enabled for this channel.

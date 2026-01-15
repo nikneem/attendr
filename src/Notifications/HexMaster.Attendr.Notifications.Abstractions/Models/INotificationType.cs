@@ -3,48 +3,48 @@ using HexMaster.Attendr.Notifications.Abstractions.Enums;
 namespace HexMaster.Attendr.Notifications.Abstractions.Models;
 
 /// <summary>
-/// Defines a type of notification with its configuration and default channel settings.
+/// Abstraction for a notification type with its configuration and default channel settings.
 /// </summary>
-public sealed class NotificationType
+public interface INotificationType
 {
     /// <summary>
     /// Unique identifier for the notification type.
     /// </summary>
-    public required string TypeKey { get; init; }
+    string TypeKey { get; }
 
     /// <summary>
     /// Display name for the notification type.
     /// </summary>
-    public required string DisplayName { get; init; }
+    string DisplayName { get; }
 
     /// <summary>
     /// Description of when this notification is triggered.
     /// </summary>
-    public required string Description { get; init; }
+    string Description { get; }
 
     /// <summary>
     /// The severity level of this notification type.
     /// </summary>
-    public required NotificationSeverity Severity { get; init; }
+    NotificationSeverity Severity { get; }
 
     /// <summary>
     /// Whether this notification type allows stacking (combining multiple similar notifications).
     /// </summary>
-    public required bool AllowsStacking { get; init; }
+    bool AllowsStacking { get; }
 
     /// <summary>
     /// Time window in seconds within which notifications can be stacked.
     /// Only applicable if AllowsStacking is true.
     /// </summary>
-    public int? StackWindowSeconds { get; init; }
+    int? StackWindowSeconds { get; }
 
     /// <summary>
     /// Default channel settings for this notification type.
     /// </summary>
-    public required Dictionary<NotificationChannel, bool> DefaultChannelSettings { get; init; }
+    Dictionary<NotificationChannel, bool> DefaultChannelSettings { get; }
 
     /// <summary>
     /// Optional template for generating notification messages.
     /// </summary>
-    public string? MessageTemplate { get; init; }
+    string? MessageTemplate { get; }
 }

@@ -1,9 +1,9 @@
 using Azure;
 using Azure.Data.Tables;
-using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Data.TableStorage.Entities;
 using HexMaster.Attendr.Notifications.Data.TableStorage.Mappers;
+using HexMaster.Attendr.Notifications.DomainModels;
 
 namespace HexMaster.Attendr.Notifications.Data.TableStorage.Repositories;
 

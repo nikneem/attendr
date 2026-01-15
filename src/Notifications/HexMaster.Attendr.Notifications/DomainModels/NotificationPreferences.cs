@@ -1,11 +1,12 @@
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 
-namespace HexMaster.Attendr.Notifications.Abstractions.DomainModels;
+namespace HexMaster.Attendr.Notifications.DomainModels;
 
 /// <summary>
 /// Represents a user's notification preferences.
 /// </summary>
-public sealed class NotificationPreferences
+public sealed class NotificationPreferences : INotificationPreferences
 {
     /// <summary>
     /// The profile ID these preferences belong to.

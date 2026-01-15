@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Core.Claims;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
+using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
 using HexMaster.Attendr.Notifications.Mappers;
 using Microsoft.AspNetCore.Http.HttpResults;

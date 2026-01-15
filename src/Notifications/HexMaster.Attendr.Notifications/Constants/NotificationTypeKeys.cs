@@ -1,4 +1,4 @@
-namespace HexMaster.Attendr.Notifications.Abstractions.Constants;
+namespace HexMaster.Attendr.Notifications.Constants;
 
 /// <summary>
 /// Constants for notification type keys used throughout the system.
@@ -8,6 +8,7 @@ public static class NotificationTypeKeys
     // Group notifications
     public const string GroupMemberAdded = "group.member-added";
     public const string GroupMemberRemoved = "group.member-removed";
+    public const string GroupAccessRequested = "group.access-requested";
 
     // Conference notifications
     public const string ConferenceCreated = "conference.created";

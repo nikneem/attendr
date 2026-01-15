@@ -1,7 +1,7 @@
-using HexMaster.Attendr.Notifications.Abstractions.Constants;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
-using HexMaster.Attendr.Notifications.Abstractions.Models;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
+using HexMaster.Attendr.Notifications.Constants;
+using HexMaster.Attendr.Notifications.Models;
 
 namespace HexMaster.Attendr.Notifications.Services;
 
@@ -68,6 +68,22 @@ public sealed class NotificationTypeService : INotificationTypeService
                     { NotificationChannel.Push, false }
                 },
                 MessageTemplate = "{count} user(s) left your group"
+            },
+            new()
+            {
+                TypeKey = NotificationTypeKeys.GroupAccessRequested,
+                DisplayName = "Group Access Request",
+                Description = "Notifies group owners when someone requests access to a private group",
+                Severity = NotificationSeverity.Update,
+                AllowsStacking = true,
+                StackWindowSeconds = 86400, // 24 hours
+                DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, false }
+                },
+                MessageTemplate = "Member request for group {groupName}"
             },
 
             // Conference notifications

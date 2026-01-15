@@ -1,5 +1,5 @@
-using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
+using HexMaster.Attendr.Notifications.DomainModels;
 
 namespace HexMaster.Attendr.Notifications.Abstractions.Repositories;
 

@@ -1,7 +1,7 @@
-using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
+using HexMaster.Attendr.Notifications.DomainModels;
 using Microsoft.Extensions.Logging;
 
 namespace HexMaster.Attendr.Notifications.Services;

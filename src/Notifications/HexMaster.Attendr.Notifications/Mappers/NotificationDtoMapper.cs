@@ -1,6 +1,7 @@
-using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.DTOs;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
+using HexMaster.Attendr.Notifications.DomainModels;
+using HexMaster.Attendr.Notifications.Models;
 
 namespace HexMaster.Attendr.Notifications.Mappers;
 
@@ -35,7 +36,7 @@ internal static class NotificationDtoMapper
         };
     }
 
-    public static NotificationTypeDto ToDto(Abstractions.Models.NotificationType type)
+    public static NotificationTypeDto ToDto(NotificationType type)
     {
         return new NotificationTypeDto
         {

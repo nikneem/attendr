@@ -2,10 +2,10 @@ using Dapr;
 using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.IntegrationEvents.Constants;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Events.Groups;
 using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
-using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
-using HexMaster.Attendr.Notifications.Abstractions.Constants;
+using HexMaster.Attendr.Notifications.Constants;
 using HexMaster.Attendr.Notifications.Features.ProcessNotificationTrigger;
 using Microsoft.AspNetCore.Mvc;
 

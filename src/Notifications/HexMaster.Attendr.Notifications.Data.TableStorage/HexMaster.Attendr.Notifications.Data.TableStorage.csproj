@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HexMaster.Attendr.Notifications.Abstractions\HexMaster.Attendr.Notifications.Abstractions.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Notifications\HexMaster.Attendr.Notifications.csproj" />
   </ItemGroup>
 
 </Project>

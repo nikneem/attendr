@@ -1,7 +1,7 @@
 using System.Text.Json;
-using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.Data.TableStorage.Entities;
+using HexMaster.Attendr.Notifications.DomainModels;
 
 namespace HexMaster.Attendr.Notifications.Data.TableStorage.Mappers;
 
