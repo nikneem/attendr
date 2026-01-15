@@ -125,4 +125,6 @@ if (Directory.Exists(frontEndSourceFolder))
 
 }
 
+builder.AddProject<Projects.HexMaster_Attendr_Notifications_Api>("hexmaster-attendr-notifications-api");
+
 builder.Build().Run();
