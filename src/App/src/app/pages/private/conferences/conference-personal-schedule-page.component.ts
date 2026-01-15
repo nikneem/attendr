@@ -329,13 +329,19 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
                 label: 'Check In',
                 icon: 'pi pi-check-circle',
                 disabled: !canCheckIn,
-                command: () => this.checkInToPresentation(presentation)
+                command: () => {
+                    this.checkInToPresentation(presentation);
+                    this.popover?.hide();
+                }
             },
             {
                 label: 'Set as Preferred',
                 icon: 'pi pi-heart',
                 disabled: !canSetPreferred,
-                command: () => this.setPreferredPresentation(presentation)
+                command: () => {
+                    this.setPreferredPresentation(presentation);
+                    this.popover?.hide();
+                }
             }
         ]);
 
@@ -384,7 +390,6 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
 
     onPopoverPresentationClick(event: MouseEvent, presentation: PresentationScheduleDto): void {
         event.stopPropagation();
-        this.popover.hide();
 
         // Find the row that contains this presentation
         const days = this.timeSlotsByDay();
@@ -392,6 +397,7 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
             for (const slot of dayData.slots) {
                 for (const row of slot.rows) {
                     if (row.presentations.some(p => p.presentation.presentationId === presentation.presentationId)) {
+                        // Keep popover open and show context menu
                         this.onPresentationClick(event, presentation, row);
                         return;
                     }
