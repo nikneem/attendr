@@ -1,4 +1,4 @@
-using HexMaster.Attendr.Notifications.DomainModels;
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 
 namespace HexMaster.Attendr.Notifications.Abstractions.Services;
 
@@ -11,7 +11,7 @@ public interface INotificationService
     /// Creates a new notification for a profile.
     /// Handles stacking logic if the notification type allows it.
     /// </summary>
-    Task<Notification> CreateNotificationAsync(
+    Task<INotification> CreateNotificationAsync(
         Guid profileId,
         string typeKey,
         string title,
@@ -25,7 +25,7 @@ public interface INotificationService
     /// <summary>
     /// Gets notifications for a profile with filtering options.
     /// </summary>
-    Task<IReadOnlyList<Notification>> GetNotificationsAsync(
+    Task<IReadOnlyList<INotification>> GetNotificationsAsync(
         Guid profileId,
         bool includeRead = true,
         bool includeDeleted = false,
@@ -34,7 +34,7 @@ public interface INotificationService
     /// <summary>
     /// Gets a single notification by ID.
     /// </summary>
-    Task<Notification?> GetNotificationByIdAsync(Guid notificationId, CancellationToken cancellationToken = default);
+    Task<INotification?> GetNotificationByIdAsync(Guid notificationId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the count of unread notifications for a profile.

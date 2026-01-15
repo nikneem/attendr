@@ -77,4 +77,10 @@ public static class IntegrationEventTopics
     /// Published when a member is removed from a group.
     /// </summary>
     public const string GroupMemberRemoved = "group.member-removed";
+
+    /// <summary>
+    /// Topic for group access requested events.
+    /// Published when a user requests access to a private group.
+    /// </summary>
+    public const string GroupAccessRequested = "group.access-requested";
 }
