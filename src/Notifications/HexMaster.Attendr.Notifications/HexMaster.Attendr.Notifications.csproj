@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HexMaster.Attendr.Notifications.Abstractions\HexMaster.Attendr.Notifications.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
+  </ItemGroup>
+
 </Project>

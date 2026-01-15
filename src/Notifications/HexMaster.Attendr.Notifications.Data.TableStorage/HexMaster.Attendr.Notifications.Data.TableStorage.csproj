@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HexMaster.Attendr.Notifications.Abstractions\HexMaster.Attendr.Notifications.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,10 +1,33 @@
+using HexMaster.Attendr.Notifications.Api.Endpoints;
+using HexMaster.Attendr.Notifications.Data.TableStorage.Extensions;
+using HexMaster.Attendr.Notifications.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Add Azure Table Storage using Aspire integration
+builder.AddAzureTableClient("notifications");
+
+// Add OpenAPI
 builder.Services.AddOpenApi();
+
+// Add authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "https://attendr.eu.auth0.com/";
+        options.Audience = "https://api.attendr.com";
+    });
+builder.Services.AddAuthorization();
+
+// Add Dapr
+builder.Services.AddDaprClient();
+
+// Add notification repositories and services
+builder.Services.AddTableStorageNotificationRepositories();
+builder.Services.AddNotificationFeatures();
 
 var app = builder.Build();
 
@@ -16,30 +39,19 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Map notification endpoints
+app.MapNotificationsEndpoints();
+app.MapNotificationPreferencesEndpoints();
+app.MapNotificationTypesEndpoints();
+app.MapEventHandlersEndpoints();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// Enable Dapr pub/sub
+app.UseCloudEvents();
+app.MapSubscribeHandler();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
