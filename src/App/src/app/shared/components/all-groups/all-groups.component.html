@@ -41,17 +41,16 @@
                     <tr>
                         <td>{{ group.name }}</td>
                         <td>
-                            <p-tag [value]="group.isPublic ? 'Public' : 'Private'" 
-                                   [severity]="group.isPublic ? 'info' : 'warn'" />
+                            <p-tag [value]="group.isPublic ? 'Public' : 'Private'"
+                                [severity]="group.isPublic ? 'info' : 'warn'" />
                         </td>
                         <td>{{ group.memberCount }}</td>
                         <td style="text-align: center">
                             @if (group.isMember) {
                             <p-tag value="Joined" severity="success" />
                             } @else {
-                            <p-button [label]="group.isPublic ? 'Join' : 'Request access'" 
-                                      size="small" 
-                                      (click)="onJoinGroup(group.id)" />
+                            <p-button [label]="group.isPublic ? 'Join' : 'Request access'" size="small"
+                                (click)="onJoinGroup(group.id)" />
                             }
                         </td>
                     </tr>
