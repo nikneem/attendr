@@ -9,9 +9,11 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { TagModule } from 'primeng/tag';
 import { PaginatorModule } from 'primeng/paginator';
+import { MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AllGroupsStore } from '../../stores/all-groups.store';
+import { AllGroupsService } from '../../services/all-groups.service';
 
 @Component({
     selector: 'attn-all-groups',
@@ -33,6 +35,8 @@ import { AllGroupsStore } from '../../stores/all-groups.store';
 })
 export class AllGroupsComponent implements OnInit, OnDestroy {
     readonly store = inject(AllGroupsStore);
+    private readonly groupsService = inject(AllGroupsService);
+    private readonly messageService = inject(MessageService);
     searchQuery = '';
     private searchSubject = new Subject<string>();
 
@@ -75,7 +79,27 @@ export class AllGroupsComponent implements OnInit, OnDestroy {
     }
 
     onJoinGroup(groupId: string): void {
-        // TODO: Implement join group logic
-        console.log('Join group:', groupId);
+        this.groupsService.joinGroup(groupId).subscribe({
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Successfully joined the group',
+                });
+                // Refresh the groups list to show updated status
+                this.store.loadGroups(
+                    this.searchQuery || undefined,
+                    this.store.pageSize(),
+                    this.store.pageNumber()
+                );
+            },
+            error: (err: any) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: err.error?.error || 'Failed to join group. Please try again.',
+                });
+            },
+        });
     }
 }

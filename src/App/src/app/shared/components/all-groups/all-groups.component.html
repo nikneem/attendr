@@ -32,26 +32,33 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Group Name</th>
-                        <th style="width: 150px">Members</th>
-                        <th style="width: 150px; text-align: center">Status</th>
+                        <th style="width: 120px">Type</th>
+                        <th style="width: 120px">Members</th>
+                        <th style="width: 180px; text-align: center">Status</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-group>
                     <tr>
                         <td>{{ group.name }}</td>
+                        <td>
+                            <p-tag [value]="group.isPublic ? 'Public' : 'Private'" 
+                                   [severity]="group.isPublic ? 'info' : 'warn'" />
+                        </td>
                         <td>{{ group.memberCount }}</td>
                         <td style="text-align: center">
                             @if (group.isMember) {
                             <p-tag value="Joined" severity="success" />
                             } @else {
-                            <p-button label="Join" size="small" (click)="onJoinGroup(group.id)" />
+                            <p-button [label]="group.isPublic ? 'Join' : 'Request access'" 
+                                      size="small" 
+                                      (click)="onJoinGroup(group.id)" />
                             }
                         </td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="3" class="text-center">
+                        <td colspan="4" class="text-center">
                             <div class="empty-state">
                                 <i class="pi pi-users" style="font-size: 3rem; color: var(--text-color-secondary)"></i>
                                 <p>No groups found</p>
