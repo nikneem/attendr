@@ -1,0 +1,60 @@
+{
+    "index": "/index.html",
+    "assetGroups": [
+        {
+            "name": "app",
+            "installMode": "prefetch",
+            "updateMode": "prefetch",
+            "resources": {
+                "files": [
+                    "/favicon.ico",
+                    "/index.html",
+                    "/manifest.webmanifest",
+                    "/**/*.js",
+                    "/**/*.css"
+                ]
+            }
+        },
+        {
+            "name": "assets",
+            "installMode": "lazy",
+            "updateMode": "lazy",
+            "resources": {
+                "files": [
+                    "/images/**",
+                    "/assets/**"
+                ]
+            }
+        }
+    ],
+    "dataGroups": [
+        {
+            "name": "api-cache",
+            "urls": [
+                "/api/**"
+            ],
+            "cacheConfig": {
+                "strategy": "freshness",
+                "maxAge": "1h",
+                "maxSize": 100
+            }
+        },
+        {
+            "name": "fonts",
+            "urls": [
+                "https://fonts.googleapis.com/**",
+                "https://fonts.gstatic.com/**"
+            ],
+            "cacheConfig": {
+                "strategy": "freshness",
+                "maxAge": "30d",
+                "maxSize": 50
+            }
+        }
+    ],
+    "navigationUrls": [
+        "/**",
+        "!/**/*.*",
+        "!/**/__*"
+    ]
+}

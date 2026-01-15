@@ -1,0 +1,64 @@
+{
+    "name": "Attendr - Conference Management",
+    "short_name": "Attendr",
+    "description": "Conference and event management platform for seamless attendance tracking and networking.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "theme_color": "#1f2937",
+    "background_color": "#ffffff",
+    "icons": [
+        {
+            "src": "images/attendr-icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "images/attendr-icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "images/attendr-icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "images/preview.png",
+            "sizes": "540x720",
+            "type": "image/png",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "images/preview.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ],
+    "categories": [
+        "productivity",
+        "business"
+    ],
+    "shortcuts": [
+        {
+            "name": "View Conferences",
+            "short_name": "Conferences",
+            "description": "View all conferences",
+            "url": "/conferences",
+            "icons": [
+                {
+                    "src": "images/attendr-icon.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ]
+}
