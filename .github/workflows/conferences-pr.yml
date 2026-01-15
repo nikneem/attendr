@@ -37,6 +37,12 @@ jobs:
             --configuration Release \
             --no-restore
 
+      - name: Build Test Project
+        run: |
+          dotnet build ${{ env.TEST_PROJECT_PATH }} \
+            --configuration Release \
+            --no-restore
+
       - name: Test with Coverage
         run: |
           dotnet test ${{ env.TEST_PROJECT_PATH }} \
@@ -46,6 +52,9 @@ jobs:
             --settings ${{ env.RUNSETTINGS_PATH }} \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults
+
+      - name: List TestResults for debug
+        run: ls -R ./TestResults
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
