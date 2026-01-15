@@ -53,11 +53,12 @@
                                     } @else {
                                     @for (row of slot.rows; track row.startTime) {
                                     <div class="presentations-row" [style.top.px]="row.topPixels">
-                                        @for (info of row.presentations; track info.presentation.presentationId) {
+                                        @for (info of row.presentations; track info.presentation.presentationId; let idx
+                                        = $index) {
                                         <div class="presentation-card" [style.opacity]="info.opacity"
                                             [style.height.px]="info.heightPixels" [style.z-index]="info.zIndex"
                                             [class.preferred]="info.isPreferred"
-                                            [class.non-preferred]="info.opacity < 1"
+                                            [class.non-preferred]="info.opacity < 1" [class.mobile-hidden]="idx > 0"
                                             (click)="onPresentationClick($event, info.presentation, row)">
                                             <div class="presentation-header">
                                                 <span class="presentation-time">
@@ -88,6 +89,12 @@
                                                     }
                                                 </div>
                                             </div>
+                                            @if (idx === 0 && row.presentations.length > 1) {
+                                            <div class="mobile-more-overlay"
+                                                (click)="showMorePresentations($event, row.presentations)">
+                                                <span>+{{ row.presentations.length - 1 }}</span>
+                                            </div>
+                                            }
                                         </div>
                                         }
                                     </div>
@@ -106,4 +113,39 @@
     }
 
     <p-contextmenu #cm [model]="contextMenuItems()" />
+
+    <p-popover #popover>
+        <div class="popover-presentations">
+            <h4 class="popover-title">All Sessions in This Time Slot</h4>
+            @for (info of popoverPresentations(); track info.presentation.presentationId) {
+            <div class="popover-presentation-item" (click)="onPopoverPresentationClick($event, info.presentation)">
+                <div class="popover-presentation-header">
+                    <span class="presentation-time">
+                        {{ formatTime(info.presentation.startDateTime) }} -
+                        {{ formatTime(info.presentation.endDateTime) }}
+                    </span>
+                    <div class="popover-icons">
+                        @if (info.isPreferred) {
+                        <i class="pi pi-heart-fill preferred-icon" title="Preferred session"></i>
+                        }
+                        <i class="pi pi-star-fill favorite-icon" title="Favorite"></i>
+                    </div>
+                </div>
+                <h5 class="popover-presentation-title">{{ info.presentation.title }}</h5>
+                <div class="popover-presentation-details">
+                    <div class="detail-item room">
+                        <i class="pi pi-map-marker"></i>
+                        <span>{{ info.presentation.room }}</span>
+                    </div>
+                    @if (info.presentation.speakers.length > 0) {
+                    <div class="detail-item speakers">
+                        <i class="pi pi-user"></i>
+                        <span>{{ getSpeakerNames(info.presentation) }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </p-popover>
 </div>

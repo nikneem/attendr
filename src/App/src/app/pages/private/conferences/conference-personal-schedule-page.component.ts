@@ -6,9 +6,12 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { ContextMenu, ContextMenuModule } from 'primeng/contextmenu';
+import { Popover, PopoverModule } from 'primeng/popover';
 import { MenuItem } from 'primeng/api';
 import { PresenceService } from '@services/presence.service';
 import { ConferenceScheduleDto, PresentationScheduleDto } from '@models/conference-schedule-dto';
+
+// Mobile view popover support for multiple presentations per timeslot
 
 interface ScheduleDay {
     date: Date;
@@ -44,7 +47,7 @@ interface PresentationInfo {
 
 @Component({
     selector: 'attn-conference-personal-schedule-page',
-    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, ProgressSpinnerModule, CardModule, TooltipModule, ContextMenuModule],
+    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, ProgressSpinnerModule, CardModule, TooltipModule, ContextMenuModule, PopoverModule],
     templateUrl: './conference-personal-schedule-page.component.html',
     styleUrl: './conference-personal-schedule-page.component.scss',
 })
@@ -53,6 +56,7 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
     private readonly presenceService = inject(PresenceService);
 
     @ViewChild('cm') contextMenu!: ContextMenu;
+    @ViewChild('popover') popover!: Popover;
 
     conferenceSchedule = signal<ConferenceScheduleDto | null>(null);
     loading = signal(true);
@@ -60,6 +64,7 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
     activeTabIndex = signal(0);
     contextMenuItems = signal<MenuItem[]>([]);
     selectedPresentation = signal<PresentationScheduleDto | null>(null);
+    popoverPresentations = signal<PresentationInfo[]>([]);
 
     scheduleDays = computed(() => {
         const schedule = this.conferenceSchedule();
@@ -369,5 +374,29 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
                 // TODO: Show error message to user
             }
         });
+    }
+
+    showMorePresentations(event: MouseEvent, presentations: PresentationInfo[]): void {
+        event.stopPropagation();
+        this.popoverPresentations.set(presentations);
+        this.popover.toggle(event);
+    }
+
+    onPopoverPresentationClick(event: MouseEvent, presentation: PresentationScheduleDto): void {
+        event.stopPropagation();
+        this.popover.hide();
+
+        // Find the row that contains this presentation
+        const days = this.timeSlotsByDay();
+        for (const dayData of days) {
+            for (const slot of dayData.slots) {
+                for (const row of slot.rows) {
+                    if (row.presentations.some(p => p.presentation.presentationId === presentation.presentationId)) {
+                        this.onPresentationClick(event, presentation, row);
+                        return;
+                    }
+                }
+            }
+        }
     }
 }
