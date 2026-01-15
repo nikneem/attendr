@@ -1,10 +1,12 @@
-import { Component, input, computed, signal, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, input, computed, signal, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { DialogModule } from 'primeng/dialog';
 import { PresentationDto } from '../../models/presentation-dto';
 import { SpeakerDto } from '../../models/speaker-dto';
 import { PresentationDetailsComponent } from '../presentation-details/presentation-details.component';
+import { ConferenceAttendanceStore } from '../../services/conference-attendance.store';
+import { PresenceService } from '../../services/presence.service';
 
 interface ScheduleDay {
     date: Date;
@@ -29,11 +31,15 @@ interface TimelineSession {
     styleUrl: './conference-schedule.component.scss',
 })
 export class ConferenceScheduleComponent implements AfterViewInit {
+    private readonly attendanceStore = inject(ConferenceAttendanceStore);
+    private readonly presenceService = inject(PresenceService);
+
     @ViewChild('scheduleContainer') scheduleContainer?: ElementRef<HTMLDivElement>;
     presentations = input.required<PresentationDto[]>();
     startDate = input.required<string>();
     endDate = input.required<string>();
     favoritePresentationIds = input<string[]>([]);
+    conferenceId = input.required<string>();
 
     selectedPresentation = signal<PresentationDto | null>(null);
     showDialog = signal<boolean>(false);
@@ -184,7 +190,26 @@ export class ConferenceScheduleComponent implements AfterViewInit {
     }
 
     onFavoriteToggled(isFavorite: boolean): void {
-        // TODO: Implement favorite functionality
-        console.log('Favorite toggled:', isFavorite);
+        const presentation = this.selectedPresentation();
+        if (!presentation) {
+            return;
+        }
+
+        // Update backend
+        this.presenceService
+            .ratePresentation(this.conferenceId(), presentation.id, null, isFavorite)
+            .subscribe({
+                next: () => {
+                    // Update local store
+                    if (isFavorite) {
+                        this.attendanceStore.addFavorite(presentation.id);
+                    } else {
+                        this.attendanceStore.removeFavorite(presentation.id);
+                    }
+                },
+                error: (err) => {
+                    console.error('Error toggling favorite:', err);
+                },
+            });
     }
 }

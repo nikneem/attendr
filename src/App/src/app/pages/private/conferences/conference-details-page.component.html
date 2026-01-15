@@ -92,8 +92,8 @@
                     </div>
                 </ng-template>
                 <attn-conference-schedule [presentations]="conference.presentations" [startDate]="conference.startDate"
-                    [endDate]="conference.endDate"
-                    [favoritePresentationIds]="attendanceStore.favoritePresentationIds()" />
+                    [endDate]="conference.endDate" [favoritePresentationIds]="attendanceStore.favoritePresentationIds()"
+                    [conferenceId]="conference.id" />
             </p-card>
 
             <p-card styleClass="section-card">
