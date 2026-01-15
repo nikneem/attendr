@@ -38,11 +38,11 @@
             </p-tablist>
 
             <p-tabpanels>
-                @for (day of scheduleDays(); track day.date) {
+                @for (dayData of timeSlotsByDay(); track dayData.day.date) {
                 <p-tabpanel [value]="$index">
                     <div class="day-schedule">
                         <div class="timeline">
-                            @for (slot of getTimeSlots(day); track slot.hour) {
+                            @for (slot of dayData.slots; track slot.hour) {
                             <div class="time-slot">
                                 <div class="time-label">
                                     {{ formatHour(slot.hour) }}
