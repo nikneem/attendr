@@ -48,7 +48,6 @@ jobs:
         run: |
           dotnet build ${{ env.TEST_PROJECT_PATH }} \
             --configuration Release \
-            --no-restore
 
       - name: Test with Coverage
         run: |
