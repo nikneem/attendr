@@ -6,9 +6,12 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { ContextMenu, ContextMenuModule } from 'primeng/contextmenu';
+import { Popover, PopoverModule } from 'primeng/popover';
 import { MenuItem } from 'primeng/api';
 import { PresenceService } from '@services/presence.service';
 import { ConferenceScheduleDto, PresentationScheduleDto } from '@models/conference-schedule-dto';
+
+// Mobile view popover support for multiple presentations per timeslot
 
 interface ScheduleDay {
     date: Date;
@@ -44,7 +47,7 @@ interface PresentationInfo {
 
 @Component({
     selector: 'attn-conference-personal-schedule-page',
-    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, ProgressSpinnerModule, CardModule, TooltipModule, ContextMenuModule],
+    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, ProgressSpinnerModule, CardModule, TooltipModule, ContextMenuModule, PopoverModule],
     templateUrl: './conference-personal-schedule-page.component.html',
     styleUrl: './conference-personal-schedule-page.component.scss',
 })
@@ -53,6 +56,7 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
     private readonly presenceService = inject(PresenceService);
 
     @ViewChild('cm') contextMenu!: ContextMenu;
+    @ViewChild('popover') popover!: Popover;
 
     conferenceSchedule = signal<ConferenceScheduleDto | null>(null);
     loading = signal(true);
@@ -60,6 +64,7 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
     activeTabIndex = signal(0);
     contextMenuItems = signal<MenuItem[]>([]);
     selectedPresentation = signal<PresentationScheduleDto | null>(null);
+    popoverPresentations = signal<PresentationInfo[]>([]);
 
     scheduleDays = computed(() => {
         const schedule = this.conferenceSchedule();
@@ -132,6 +137,109 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
         return days;
     });
 
+    timeSlotsByDay = computed(() => {
+        const days = this.scheduleDays();
+        const PIXELS_PER_HOUR = 120;
+
+        return days.map(day => {
+            const slots: TimeSlot[] = [];
+
+            day.hours.forEach((hour) => {
+                const hourStart = hour.getTime();
+                const hourEnd = hourStart + 60 * 60 * 1000;
+
+                // Find presentations that START within this hour (not just overlap)
+                const presentationsInHour = day.presentations.filter((p) => {
+                    const presStart = new Date(p.startDateTime).getTime();
+                    return presStart >= hourStart && presStart < hourEnd;
+                });
+
+                // Group presentations by their exact start and end times
+                const timeGroups = new Map<string, PresentationScheduleDto[]>();
+                presentationsInHour.forEach((p) => {
+                    const key = `${p.startDateTime}_${p.endDateTime}`;
+                    if (!timeGroups.has(key)) {
+                        timeGroups.set(key, []);
+                    }
+                    timeGroups.get(key)!.push(p);
+                });
+
+                // Create rows for each unique time slot
+                const rows: PresentationRow[] = [];
+                timeGroups.forEach((presentations, key) => {
+                    const startTime = new Date(presentations[0].startDateTime);
+                    const endTime = new Date(presentations[0].endDateTime);
+
+                    // Calculate top position based on minutes from hour start
+                    const minutesFromHourStart = (startTime.getTime() - hourStart) / (1000 * 60);
+                    const topPixels = Math.max(0, (minutesFromHourStart / 60) * PIXELS_PER_HOUR);
+
+                    // Check if any presentation in this row is preferred
+                    const hasPreferred = presentations.some(p => p.isPreferred);
+
+                    const presentationInfos: PresentationInfo[] = presentations.map((p) => {
+                        const presStart = new Date(p.startDateTime);
+                        const presEnd = new Date(p.endDateTime);
+
+                        // Calculate position within the hour
+                        const minutesFromHourStart = (presStart.getTime() - hourStart) / (1000 * 60);
+                        const startPixels = Math.max(0, (minutesFromHourStart / 60) * PIXELS_PER_HOUR);
+
+                        // Calculate duration in pixels
+                        const durationMinutes = (presEnd.getTime() - presStart.getTime()) / (1000 * 60);
+                        const heightPixels = (durationMinutes / 60) * PIXELS_PER_HOUR;
+
+                        const isPreferred = p.isPreferred;
+                        // If there's a preferred session in this row and this isn't it, make it transparent
+                        const opacity = hasPreferred && !isPreferred ? 0.4 : 1;
+
+                        // Calculate z-index: earlier start times get higher z-index (inverse of minutes from hour start)
+                        // Base z-index of 100, subtract minutes to make earlier sessions higher
+                        const zIndex = 100 - Math.floor(minutesFromHourStart);
+
+                        return {
+                            presentation: p,
+                            isFavorite: p.isFavorite,
+                            isPreferred,
+                            startPixels,
+                            heightPixels,
+                            opacity,
+                            zIndex
+                        };
+                    });
+
+                    // Sort presentations: preferred first, then by presentation order
+                    presentationInfos.sort((a, b) => {
+                        if (a.isPreferred && !b.isPreferred) return -1;
+                        if (!a.isPreferred && b.isPreferred) return 1;
+                        return 0;
+                    });
+
+                    rows.push({
+                        startTime,
+                        endTime,
+                        presentations: presentationInfos,
+                        hasPreferred,
+                        topPixels
+                    });
+                });
+
+                // Sort rows by start time
+                rows.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+
+                slots.push({
+                    hour,
+                    rows
+                });
+            });
+
+            return {
+                day,
+                slots
+            };
+        });
+    });
+
     ngOnInit(): void {
         const conferenceId = this.route.snapshot.paramMap.get('id');
         if (conferenceId) {
@@ -188,102 +296,6 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
         }
     }
 
-    getTimeSlots(day: ScheduleDay): TimeSlot[] {
-        const slots: TimeSlot[] = [];
-        const PIXELS_PER_HOUR = 120;
-
-        day.hours.forEach((hour) => {
-            const hourStart = hour.getTime();
-            const hourEnd = hourStart + 60 * 60 * 1000;
-
-            // Find presentations that START within this hour (not just overlap)
-            const presentationsInHour = day.presentations.filter((p) => {
-                const presStart = new Date(p.startDateTime).getTime();
-                return presStart >= hourStart && presStart < hourEnd;
-            });
-
-            // Group presentations by their exact start and end times
-            const timeGroups = new Map<string, PresentationScheduleDto[]>();
-            presentationsInHour.forEach((p) => {
-                const key = `${p.startDateTime}_${p.endDateTime}`;
-                if (!timeGroups.has(key)) {
-                    timeGroups.set(key, []);
-                }
-                timeGroups.get(key)!.push(p);
-            });
-
-            // Create rows for each unique time slot
-            const rows: PresentationRow[] = [];
-            timeGroups.forEach((presentations, key) => {
-                const startTime = new Date(presentations[0].startDateTime);
-                const endTime = new Date(presentations[0].endDateTime);
-
-                // Calculate top position based on minutes from hour start
-                const minutesFromHourStart = (startTime.getTime() - hourStart) / (1000 * 60);
-                const topPixels = Math.max(0, (minutesFromHourStart / 60) * PIXELS_PER_HOUR);
-
-                // Check if any presentation in this row is preferred
-                const hasPreferred = presentations.some(p => p.isPreferred);
-
-                const presentationInfos: PresentationInfo[] = presentations.map((p) => {
-                    const presStart = new Date(p.startDateTime);
-                    const presEnd = new Date(p.endDateTime);
-
-                    // Calculate position within the hour
-                    const minutesFromHourStart = (presStart.getTime() - hourStart) / (1000 * 60);
-                    const startPixels = Math.max(0, (minutesFromHourStart / 60) * PIXELS_PER_HOUR);
-
-                    // Calculate duration in pixels
-                    const durationMinutes = (presEnd.getTime() - presStart.getTime()) / (1000 * 60);
-                    const heightPixels = (durationMinutes / 60) * PIXELS_PER_HOUR;
-
-                    const isPreferred = p.isPreferred;
-                    // If there's a preferred session in this row and this isn't it, make it transparent
-                    const opacity = hasPreferred && !isPreferred ? 0.4 : 1;
-
-                    // Calculate z-index: earlier start times get higher z-index (inverse of minutes from hour start)
-                    // Base z-index of 100, subtract minutes to make earlier sessions higher
-                    const zIndex = 100 - Math.floor(minutesFromHourStart);
-
-                    return {
-                        presentation: p,
-                        isFavorite: p.isFavorite,
-                        isPreferred,
-                        startPixels,
-                        heightPixels,
-                        opacity,
-                        zIndex
-                    };
-                });
-
-                // Sort presentations: preferred first, then by presentation order
-                presentationInfos.sort((a, b) => {
-                    if (a.isPreferred && !b.isPreferred) return -1;
-                    if (!a.isPreferred && b.isPreferred) return 1;
-                    return 0;
-                });
-
-                rows.push({
-                    startTime,
-                    endTime,
-                    presentations: presentationInfos,
-                    hasPreferred,
-                    topPixels
-                });
-            });
-
-            // Sort rows by start time
-            rows.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
-
-            slots.push({
-                hour,
-                rows
-            });
-        });
-
-        return slots;
-    }
-
     formatHour(date: Date): string {
         return date.toLocaleTimeString('en-US', {
             hour: '2-digit',
@@ -317,13 +329,19 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
                 label: 'Check In',
                 icon: 'pi pi-check-circle',
                 disabled: !canCheckIn,
-                command: () => this.checkInToPresentation(presentation)
+                command: () => {
+                    this.checkInToPresentation(presentation);
+                    this.popover?.hide();
+                }
             },
             {
                 label: 'Set as Preferred',
                 icon: 'pi pi-heart',
                 disabled: !canSetPreferred,
-                command: () => this.setPreferredPresentation(presentation)
+                command: () => {
+                    this.setPreferredPresentation(presentation);
+                    this.popover?.hide();
+                }
             }
         ]);
 
@@ -362,5 +380,29 @@ export class ConferencePersonalSchedulePageComponent implements OnInit {
                 // TODO: Show error message to user
             }
         });
+    }
+
+    showMorePresentations(event: MouseEvent, presentations: PresentationInfo[]): void {
+        event.stopPropagation();
+        this.popoverPresentations.set(presentations);
+        this.popover.toggle(event);
+    }
+
+    onPopoverPresentationClick(event: MouseEvent, presentation: PresentationScheduleDto): void {
+        event.stopPropagation();
+
+        // Find the row that contains this presentation
+        const days = this.timeSlotsByDay();
+        for (const dayData of days) {
+            for (const slot of dayData.slots) {
+                for (const row of slot.rows) {
+                    if (row.presentations.some(p => p.presentation.presentationId === presentation.presentationId)) {
+                        // Keep popover open and show context menu
+                        this.onPresentationClick(event, presentation, row);
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

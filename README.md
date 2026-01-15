@@ -11,7 +11,7 @@
 [![PrimeNG](https://img.shields.io/badge/PrimeNG-21-007ACC?style=for-the-badge)](https://primeng.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Contributing](#-contributing)
+[🌐 Live Demo](https://attendr.live) • [Features](#-features) • [Tech Stack](#-tech-stack) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Contributing](#-contributing)
 
 </div>
 
@@ -88,8 +88,8 @@ Whether you're navigating a massive tech conference or an intimate industry gath
   - Conferences Service
   - Proxy API Gateway
 - **Data Persistence**: 
-  - MongoDB (Conferences)
-  - Azure Table Storage (Profiles, Groups)
+  - PostgreSQL (Groups, Conferences, Profiles)
+  - MongoDB (Presence - real-time attendance)
   - In-memory repositories for development
 - **Observability**: OpenTelemetry integration
 
@@ -113,23 +113,32 @@ attendr/
 │   │   ├── HexMaster.Attendr.Conferences/
 │   │   ├── HexMaster.Attendr.Conferences.Api/
 │   │   ├── HexMaster.Attendr.Conferences.Abstractions/
-│   │   ├── HexMaster.Attendr.Conferences.Data.MongoDb/
+│   │   ├── HexMaster.Attendr.Conferences.Data.Postgres/
+│   │   ├── HexMaster.Attendr.Conferences.Integrations/
 │   │   └── HexMaster.Attendr.Conferences.Tests/
 │   │
 │   ├── Groups/                       # Groups Microservice
 │   │   ├── HexMaster.Attendr.Groups/
 │   │   ├── HexMaster.Attendr.Groups.Api/
 │   │   ├── HexMaster.Attendr.Groups.Abstractions/
-│   │   ├── HexMaster.Attendr.Groups.Data.TableStorage/
+│   │   ├── HexMaster.Attendr.Groups.Data.Postgres/
 │   │   └── HexMaster.Attendr.Groups.Tests/
 │   │
 │   ├── Profiles/                     # Profiles Microservice
 │   │   ├── HexMaster.Attendr.Profiles/
 │   │   ├── HexMaster.Attendr.Profiles.Api/
 │   │   ├── HexMaster.Attendr.Profiles.Abstractions/
-│   │   ├── HexMaster.Attendr.Profiles.Data.TableStorage/
+│   │   ├── HexMaster.Attendr.Profiles.Data.Postgres/
 │   │   ├── HexMaster.Attendr.Profiles.Integrations/
 │   │   └── HexMaster.Attendr.Profiles.Tests/
+│   │
+│   ├── Presence/                     # Presence Microservice
+│   │   ├── HexMaster.Attendr.Presence/
+│   │   ├── HexMaster.Attendr.Presence.Api/
+│   │   ├── HexMaster.Attendr.Presence.Abstractions/
+│   │   ├── HexMaster.Attendr.Presence.Data.MongoDb/
+│   │   ├── HexMaster.Attendr.Presence.Data.Postgres/
+│   │   └── HexMaster.Attendr.Presence.Tests/
 │   │
 │   ├── Shared/                       # Shared Libraries
 │   │   └── HexMaster.Attendr.Core/  # Core domain models, constants
@@ -148,7 +157,7 @@ attendr/
 ### Key Components
 
 #### Backend
-- **Aggregate Roots**: Group, Profile, Conference
+- **Aggregate Roots**: Group, Profile, Conference, Presence
 - **Query Handlers**: Encapsulated query logic with dependency injection
 - **Command Handlers**: Transactional command processing
 - **API Endpoints**: Minimal API with endpoint mapping
@@ -253,8 +262,8 @@ Configure `appsettings.json` in each API project:
 ```json
 {
   "ConnectionStrings": {
-    "MongoDB": "mongodb://localhost:27017",
-    "TableStorage": "UseDevelopmentStorage=true"
+    "PostgreSQL": "Host=localhost;Database=attendr;Username=postgres;Password=yourpassword",
+    "MongoDB": "mongodb://localhost:27017"
   },
   "Attendr": {
     "Cache": {

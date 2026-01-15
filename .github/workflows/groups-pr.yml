@@ -41,19 +41,10 @@ jobs:
             --configuration Release \
             --no-restore
 
-      - name: Restore Test Project dependencies
-        run: dotnet restore ${{ env.TEST_PROJECT_PATH }}
-
-      - name: Build Test Project
-        run: |
-          dotnet build ${{ env.TEST_PROJECT_PATH }} \
-            --configuration Release \
-
       - name: Test with Coverage
         run: |
           dotnet test ${{ env.TEST_PROJECT_PATH }} \
             --configuration Release \
-            --no-build \
             --verbosity normal \
             --settings ${{ env.RUNSETTINGS_PATH }} \
             --collect:"XPlat Code Coverage" \

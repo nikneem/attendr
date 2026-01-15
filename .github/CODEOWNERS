@@ -1,0 +1,21 @@
+# Code owners for Attendr
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for all files
+* @nikneem
+
+# Frontend
+/src/App/ @nikneem
+
+# Backend services
+/src/Groups/ @nikneem
+/src/Profiles/ @nikneem
+/src/Conferences/ @nikneem
+/src/Presence/ @nikneem
+/src/HexMaster.Attendr.Proxy.Api/ @nikneem
+
+# CI/CD and workflows
+/.github/ @nikneem
+
+# Infrastructure
+/src/**/Infrastructure/ @nikneem
