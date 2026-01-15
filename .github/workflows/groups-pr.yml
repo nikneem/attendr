@@ -37,6 +37,9 @@ jobs:
             --configuration Release \
             --no-restore
 
+      - name: Restore Test Project dependencies
+        run: dotnet restore ${{ env.TEST_PROJECT_PATH }}
+
       - name: Build Test Project
         run: |
           dotnet build ${{ env.TEST_PROJECT_PATH }} \
