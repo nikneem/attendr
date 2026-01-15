@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Include>
+            <Assembly>HexMaster.Attendr.Conferences.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Conferences.Abstractions.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Conferences.Integrations.dll</Assembly>
+          </Include>
+          <Exclude>
+            <Assembly>HexMaster.Attendr.Conferences.Api.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Conferences.Data.Postgres.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Conferences.Tests.dll</Assembly>
+          </Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

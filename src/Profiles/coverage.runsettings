@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Include>
+            <Assembly>HexMaster.Attendr.Profiles.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Profiles.Abstractions.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Profiles.Integrations.dll</Assembly>
+          </Include>
+          <Exclude>
+            <Assembly>HexMaster.Attendr.Profiles.Api.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Profiles.Data.TableStorage.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Profiles.Tests.dll</Assembly>
+          </Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
