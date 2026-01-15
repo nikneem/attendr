@@ -151,12 +151,13 @@
                 font-weight: 500;
 
                 &.join-button {
-                    background: var(--green-500);
-                    border-color: var(--green-500);
+                    background: #4A90E2 !important;
+                    border-color: #4A90E2 !important;
+                    color: white !important;
 
-                    &:hover {
-                        background: var(--green-600);
-                        border-color: var(--green-600);
+                    &:hover:not(:disabled) {
+                        background: #3575C6 !important;
+                        border-color: #3575C6 !important;
                     }
                 }
             }
