@@ -8,6 +8,10 @@ on:
       - 'src/Aspire/HexMaster.Attendr.Aspire/HexMaster.Attendr.Aspire.ServiceDefaults**'
       - '.github/workflows/conferences-pr.yml'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   PROJECT_PATH: 'src/Conferences/HexMaster.Attendr.Conferences.Api/HexMaster.Attendr.Conferences.Api.csproj'
   TEST_PROJECT_PATH: 'src/Conferences/HexMaster.Attendr.Conferences.Tests/HexMaster.Attendr.Conferences.Tests.csproj'

@@ -8,6 +8,10 @@ on:
       - 'src/Aspire/HexMaster.Attendr.Aspire/HexMaster.Attendr.Aspire.ServiceDefaults**'
       - '.github/workflows/groups-pr.yml'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   PROJECT_PATH: 'src/Groups/HexMaster.Attendr.Groups.Api/HexMaster.Attendr.Groups.Api.csproj'
   TEST_PROJECT_PATH: 'src/Groups/HexMaster.Attendr.Groups.Tests/HexMaster.Attendr.Groups.Tests.csproj'
