@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Include>
+            <Assembly>HexMaster.Attendr.Presence.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Presence.Abstractions.dll</Assembly>
+          </Include>
+          <Exclude>
+            <Assembly>HexMaster.Attendr.Presence.Api.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Presence.Data.MongoDb.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Presence.Data.Postgres.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Presence.Tests.dll</Assembly>
+          </Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
