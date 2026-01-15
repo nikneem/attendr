@@ -19,6 +19,7 @@
     <Project Path="Groups/HexMaster.Attendr.Groups/HexMaster.Attendr.Groups.csproj" Id="480b7a96-dfbd-4f44-8e4a-7c08772164d1" />
   </Folder>
   <Folder Name="/Notifications/">
+    <Project Path="Notifications/HexMaster.Attendr.Notifications.Tests/HexMaster.Attendr.Notifications.Tests.csproj" Id="a1ecf77c-a4fd-42d5-90c4-aecd6466523e" />
     <Project Path="Notifications/HexMaster.Attendr.Notifications/HexMaster.Attendr.Notifications.csproj" Id="3c40d3df-e29b-420b-958d-dbb854c36aaf" />
     <Project Path="Notifications/HexMaster.Attendr.Notifications.Abstractions/HexMaster.Attendr.Notifications.Abstractions.csproj" Id="43a6d8bc-daa0-4549-9062-e836b125656f" />
     <Project Path="Notifications/HexMaster.Attendr.Notifications.Api/HexMaster.Attendr.Notifications.Api.csproj" />

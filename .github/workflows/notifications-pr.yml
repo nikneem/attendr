@@ -1,0 +1,76 @@
+name: Notifications - PR Build and Test
+
+on:
+  pull_request:
+    paths:
+      - 'src/Notifications/**'
+      - 'src/Shared/**'
+      - 'src/Aspire/HexMaster.Attendr.Aspire/HexMaster.Attendr.Aspire.ServiceDefaults**'
+      - '.github/workflows/notifications-pr.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  PROJECT_PATH: 'src/Notifications/HexMaster.Attendr.Notifications.Api/HexMaster.Attendr.Notifications.Api.csproj'
+  TEST_PROJECT_PATH: 'src/Notifications/HexMaster.Attendr.Notifications.Tests/HexMaster.Attendr.Notifications.Tests.csproj'
+  RUNSETTINGS_PATH: 'src/Notifications/coverage.runsettings'
+  DOTNET_VERSION: '10.0.x'
+
+jobs:
+  build-test-coverage:
+    name: Build, Test and Coverage
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build
+        run: |
+          dotnet build ${{ env.PROJECT_PATH }} \
+            --configuration Release \
+            --no-restore
+
+      - name: Test with Coverage
+        run: |
+          dotnet test ${{ env.TEST_PROJECT_PATH }} \
+            --configuration Release \
+            --verbosity normal \
+            --settings ${{ env.RUNSETTINGS_PATH }} \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
+
+      - name: List TestResults for debug
+        run: ls -R ./TestResults
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: notifications-coverage-report
+          path: ./TestResults/**/coverage.cobertura.xml
+          retention-days: 30
+
+      - name: Generate Coverage Summary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: ./TestResults/**/coverage.cobertura.xml
+          badge: true
+          format: markdown
+          output: both
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md

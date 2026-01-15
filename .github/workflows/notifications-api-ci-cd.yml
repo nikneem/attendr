@@ -1,0 +1,163 @@
+name: Notifications API - CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/Notifications/**'
+      - 'src/Shared/**'
+      - 'src/Aspire/HexMaster.Attendr.Aspire/HexMaster.Attendr.Aspire.ServiceDefaults**'
+      - '.github/workflows/notifications-api-ci-cd.yml'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  PROJECT_PATH: 'src/Notifications/HexMaster.Attendr.Notifications.Api/HexMaster.Attendr.Notifications.Api.csproj'
+  TEST_PROJECT_PATH: 'src/Notifications/HexMaster.Attendr.Notifications.Tests/HexMaster.Attendr.Notifications.Tests.csproj'
+  DOTNET_VERSION: '10.0.x'
+
+jobs:
+  version:
+    name: Calculate Version
+    runs-on: ubuntu-latest
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+      assemblySemVer: ${{ steps.gitversion.outputs.assemblySemVer }}
+      informationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for GitVersion
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.2.0
+        with:
+          versionSpec: '6.4.x'
+          
+      - name: Execute GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v4.2.0
+
+      - name: Display GitVersion outputs
+        run: |
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
+
+  build-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build
+        run: |
+          dotnet build ${{ env.PROJECT_PATH }} \
+            --configuration Release \
+            --no-restore
+
+      - name: Test
+        run: |
+          dotnet test ${{ env.TEST_PROJECT_PATH }} \
+            --configuration Release \
+            --no-build \
+            --verbosity normal
+
+  publish-deploy:
+    name: Publish and Deploy
+    runs-on: ubuntu-latest
+    needs: [version, build-test]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_PROD_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_PROD_TENANTID }}
+          subscription-id: ${{ secrets.AZURE_PROD_SUBSCRIPTION }}
+
+      - name: Log in to Azure Container Registry
+        run: |
+          az acr login --name ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+
+      - name: Build Bicep templates to JSON
+        working-directory: src/Notifications/Infrastructure
+        run: |
+          # Build main Bicep template
+          az bicep build --file bicep/main.bicep --outfile bicep/main.json
+          
+          # Build parameter files
+          az bicep build-params --file parameters/main.prod.bicepparam --outfile parameters/main.prod.parameters.json
+
+      - name: Publish container
+        run: |
+          dotnet publish ${{ env.PROJECT_PATH }} \
+            --configuration Release \
+            --os linux \
+            --arch x64 \
+            /t:PublishContainer \
+            /p:ContainerRegistry=${{ secrets.CONTAINER_REGISTRY_HOSTNAME }} \
+            /p:ContainerImageTag=${{ needs.version.outputs.semVer }} \
+            /p:Version=${{ needs.version.outputs.assemblySemVer }} \
+            /p:AssemblyVersion=${{ needs.version.outputs.assemblySemVer }} \
+            /p:InformationalVersion=${{ needs.version.outputs.informationalVersion }}
+
+      - name: Image details
+        run: |
+          echo "### Container Image Published :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** ${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** attendr/attendr-notifications-api" >> $GITHUB_STEP_SUMMARY
+          echo "**Tag:** ${{ needs.version.outputs.semVer }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.version.outputs.informationalVersion }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Deploy to Azure Container Apps
+        run: |
+          az deployment sub create \
+            --name "notifications-deploy-${{ github.run_number }}" \
+            --location northeurope \
+            --template-file src/Notifications/Infrastructure/bicep/main.json \
+            --parameters src/Notifications/Infrastructure/parameters/main.prod.parameters.json \
+            --parameters containerImage="attendr/attendr-notifications-api:${{ needs.version.outputs.semVer }}" \
+            --parameters containerRegistryServer="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" \
+            --parameters containerRegistryUsername="${{ secrets.CONTAINER_REGISTRY_USERNAME }}" \
+            --parameters containerRegistryPassword="${{ secrets.CONTAINER_REGISTRY_PASSWORD }}" \
+
+      - name: Get deployment outputs
+        working-directory: src/Notifications/Infrastructure
+        run: |
+          DEPLOYMENT_NAME=$(az deployment sub list --query "[?contains(name, 'notifications-deploy')].name" -o tsv | head -n 1)
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Infrastructure Deployed :cloud:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment:** $DEPLOYMENT_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          az deployment sub show \
+            --name "$DEPLOYMENT_NAME" \
+            --query properties.outputs
