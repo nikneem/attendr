@@ -32,3 +32,8 @@ param corsOrigins = [
   'https://attendr.com'
   'https://www.attendr.com'
 ]
+
+// VAPID keys (provide via GitHub secrets in workflow)
+param vapidPublicKey = ''
+
+param vapidPrivateKey = ''

@@ -36,6 +36,14 @@ param tableNames array = [
   'subscriptions'
 ]
 
+@description('Public VAPID key')
+@secure()
+param vapidPublicKey string
+
+@description('Private VAPID key')
+@secure()
+param vapidPrivateKey string
+
 // Get App Configuration endpoint
 module appConfigurationEndpoint './modules/get-app-configuration.bicep' = {
   scope: resourceGroup(landingzone.resourceGroupName)
@@ -217,6 +225,49 @@ module roleAssignments './modules/role-assignments.bicep' = {
   params: {
     principalId: containerApp.identity.principalId
     landingZoneResourceGroupName: landingzone.resourceGroupName
+  }
+}
+
+// Store VAPID keys in Key Vault (landing zone) and expose via App Configuration
+module vapidPublicKeySecret '../../../../Infrastructure/bicep/modules/keyvault-secret.bicep' = {
+  name: 'vapidPublicKeySecret'
+  scope: resourceGroup(landingzone.resourceGroupName)
+  params: {
+    keyVaultName: landingzone.keyVaultName
+    secretName: 'VAPID-PublicKey'
+    secretValue: vapidPublicKey
+  }
+}
+
+module vapidPrivateKeySecret '../../../../Infrastructure/bicep/modules/keyvault-secret.bicep' = {
+  name: 'vapidPrivateKeySecret'
+  scope: resourceGroup(landingzone.resourceGroupName)
+  params: {
+    keyVaultName: landingzone.keyVaultName
+    secretName: 'VAPID-PrivateKey'
+    secretValue: vapidPrivateKey
+  }
+}
+
+module vapidPublicKeyConfig '../../../../Infrastructure/bicep/modules/app-configuration-keyvault-reference.bicep' = {
+  name: 'vapidPublicKeyConfig'
+  scope: resourceGroup(landingzone.resourceGroupName)
+  params: {
+    appConfigurationName: landingzone.appConfigurationName
+    keyName: 'VAPID:PublicKey'
+    keyVaultName: landingzone.keyVaultName
+    secretName: vapidPublicKeySecret.outputs.secretName
+  }
+}
+
+module vapidPrivateKeyConfig '../../../../Infrastructure/bicep/modules/app-configuration-keyvault-reference.bicep' = {
+  name: 'vapidPrivateKeyConfig'
+  scope: resourceGroup(landingzone.resourceGroupName)
+  params: {
+    appConfigurationName: landingzone.appConfigurationName
+    keyName: 'VAPID:PrivateKey'
+    keyVaultName: landingzone.keyVaultName
+    secretName: vapidPrivateKeySecret.outputs.secretName
   }
 }
 

@@ -38,6 +38,14 @@ param containerImage string
 @description('CORS allowed origins')
 param corsOrigins array = []
 
+@description('Public VAPID key (from GitHub secret VAPID_PUBLIC_KEY)')
+@secure()
+param vapidPublicKey string = ''
+
+@description('Private VAPID key (from GitHub secret VAPID_PRIVATE_KEY)')
+@secure()
+param vapidPrivateKey string = ''
+
 var resourceGroupName = 'rg-${baseName}-${environmentName}'
 
 // Deploy Resource Group for Notifications service
@@ -59,6 +67,8 @@ module appResources 'resources.bicep' = {
     containerRegistryUsername: containerRegistryUsername
     containerRegistryPassword: containerRegistryPassword
     corsOrigins: corsOrigins
+    vapidPublicKey: vapidPublicKey
+    vapidPrivateKey: vapidPrivateKey
 
     tableNames: [
       'notifications'

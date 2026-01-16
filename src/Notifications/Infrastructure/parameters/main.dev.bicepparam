@@ -33,3 +33,8 @@ param corsOrigins = [
   'https://localhost:4200'
   'https://attendr-dev.azurewebsites.net'
 ]
+
+// VAPID keys (provide via GitHub secrets in workflow)
+param vapidPublicKey = ''
+
+param vapidPrivateKey = ''
