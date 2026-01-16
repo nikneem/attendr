@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Conferences\HexMaster.Attendr.Conferences.Api\HexMaster.Attendr.Conferences.Api.csproj" />
     <ProjectReference Include="..\..\..\Groups\HexMaster.Attendr.Groups.Api\HexMaster.Attendr.Groups.Api.csproj" />
+    <ProjectReference Include="..\..\..\Notifications\HexMaster.Attendr.Notifications.Api\HexMaster.Attendr.Notifications.Api.csproj" />
     <ProjectReference Include="..\..\..\Presence\HexMaster.Attendr.Presence.Api\HexMaster.Attendr.Presence.Api.csproj" />
     <ProjectReference Include="..\..\..\Profiles\HexMaster.Attendr.Profiles.Api\HexMaster.Attendr.Profiles.Api.csproj" />
   </ItemGroup>

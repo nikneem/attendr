@@ -7,6 +7,7 @@ import { ConferencePersonalSchedulePageComponent } from './pages/private/confere
 import { RateSessionsPageComponent } from './pages/private/conferences/rate-sessions-page.component';
 import { GroupsListPageComponent } from './pages/private/groups/groups-list-page.component';
 import { GroupDetailsPageComponent } from './pages/private/groups/group-details-page.component';
+import { NotificationPreferencesPageComponent } from './pages/private/preferences/notification-preferences-page.component';
 import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
 import { PrivatePageTemplateComponent } from './templates/private/private-page-template/private-page-template';
 
@@ -24,7 +25,8 @@ export const routes: Routes = [
             { path: 'conferences/:id/schedule', component: ConferencePersonalSchedulePageComponent },
             { path: 'conferences/:id/rate', component: RateSessionsPageComponent },
             { path: 'groups', component: GroupsListPageComponent },
-            { path: 'groups/:id', component: GroupDetailsPageComponent }
+            { path: 'groups/:id', component: GroupDetailsPageComponent },
+            { path: 'preferences/notifications', component: NotificationPreferencesPageComponent }
         ]
     }
 ];

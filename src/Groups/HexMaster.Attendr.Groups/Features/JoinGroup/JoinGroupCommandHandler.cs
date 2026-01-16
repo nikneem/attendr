@@ -113,6 +113,33 @@ public sealed class JoinGroupCommandHandler : ICommandHandler<JoinGroupCommand>
                     "Published GroupMemberAdded event for profile {ProfileId} joining group {GroupId}",
                     command.ProfileId, command.GroupId);
             }
+            else
+            {
+                // Publish integration event for join request
+                var notificationTargets = group.Members.Where(m => m.Role == GroupRole.Owner || m.Role == GroupRole.Manager)
+                    .Select(admin => new IntegrationEvents.Models.NotificationTarget
+                    {
+                        ProfileId = admin.Id,
+                        ProfileName = admin.Name
+                    })
+                    .ToList();
+
+                var joinRequestEvent = new GroupAccessRequestedEvent
+                {
+                    GroupId = group.Id,
+                    GroupName = group.Name,
+                    ProfileId = command.ProfileId,
+                    ProfileName = command.ProfileName,
+                    CreatedOn = DateTimeOffset.UtcNow,
+                    NotificationTargets = notificationTargets
+                };
+
+                await _eventPublisher.PublishAsync(joinRequestEvent, cancellationToken);
+
+                _logger.LogInformation(
+                    "Published GroupAccessRequested event for profile {ProfileId} requesting access to group {GroupId}",
+                    command.ProfileId, command.GroupId);
+            }
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordOperationDuration("JoinGroup", stopwatch.Elapsed.TotalMilliseconds, success: true);

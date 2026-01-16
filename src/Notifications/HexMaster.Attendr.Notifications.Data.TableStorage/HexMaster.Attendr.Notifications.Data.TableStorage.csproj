@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Azure.Data.Tables" Version="13.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HexMaster.Attendr.Notifications.Abstractions\HexMaster.Attendr.Notifications.Abstractions.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Notifications\HexMaster.Attendr.Notifications.csproj" />
+  </ItemGroup>
+
+</Project>

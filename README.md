@@ -86,8 +86,11 @@ Whether you're navigating a massive tech conference or an intimate industry gath
   - Groups Service
   - Profiles Service
   - Conferences Service
-  - Proxy API Gateway
-- **Data Persistence**: 
+  - Presence Service
+  - Notifications Service
+  - Proxy API Gateway, Presence)
+  - MongoDB (Presence - real-time attendance)
+  - Azure Table Storage (Notifications - user notification preferences
   - PostgreSQL (Groups, Conferences, Profiles)
   - MongoDB (Presence - real-time attendance)
   - In-memory repositories for development
@@ -140,6 +143,13 @@ attendr/
 │   │   ├── HexMaster.Attendr.Presence.Data.Postgres/
 │   │   └── HexMaster.Attendr.Presence.Tests/
 │   │
+│   ├── Notifications/                # Notifications Microservice
+│   │   ├── HexMaster.Attendr.Notifications/
+│   │   ├── HexMaster.Attendr.Notifications.Api/
+│   │   ├── HexMaster.Attendr.Notifications.Abstractions/
+│   │   ├── HexMaster.Attendr.Notifications.Data.TableStorage/
+│   │   └── HexMaster.Attendr.Notifications.Tests/
+│   │
 │   ├── Shared/                       # Shared Libraries
 │   │   └── HexMaster.Attendr.Core/  # Core domain models, constants
 │   │
@@ -154,7 +164,7 @@ attendr/
 - **Clean Architecture** - Separation of concerns with clear boundaries
 - **Reactive Programming** - RxJS observables for data streams
 
-### Key Components
+### Key Components, Notification
 
 #### Backend
 - **Aggregate Roots**: Group, Profile, Conference, Presence

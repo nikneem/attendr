@@ -30,7 +30,7 @@ export class PrivatePageTemplateComponent {
     ];
 
     accountItems: MenuItem[] = [
-        { label: 'Preferences', icon: 'pi pi-sliders-h', routerLink: ['/app/preferences'] },
+        { label: 'Preferences', icon: 'pi pi-sliders-h', routerLink: ['/app/preferences/notifications'] },
         { separator: true },
         { label: 'Log out', icon: 'pi pi-sign-out', command: () => this.logout() },
     ];

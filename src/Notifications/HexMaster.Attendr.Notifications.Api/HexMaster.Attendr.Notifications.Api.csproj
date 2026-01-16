@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3253e31a-8dac-4ae8-8880-2d3f9105bce4</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lib.AspNetCore.WebPush" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
+    <PackageReference Include="Aspire.Azure.Data.Tables" Version="13.1.0" />
+    <PackageReference Include="Dapr.AspNetCore" Version="1.16.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Aspire\HexMaster.Attendr.Aspire\HexMaster.Attendr.Aspire.ServiceDefaults\HexMaster.Attendr.Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Notifications\HexMaster.Attendr.Notifications.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Notifications.Data.TableStorage\HexMaster.Attendr.Notifications.Data.TableStorage.csproj" />
+    <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
+    <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
+  </ItemGroup>
+
+</Project>
