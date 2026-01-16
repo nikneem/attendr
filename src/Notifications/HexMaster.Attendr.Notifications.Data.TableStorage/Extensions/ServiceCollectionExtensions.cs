@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<INotificationRepository, TableStorageNotificationRepository>();
         services.AddScoped<INotificationPreferencesRepository, TableStorageNotificationPreferencesRepository>();
+        services.AddScoped<IPushSubscriptionRepository, TableStoragePushSubscriptionRepository>();
 
         return services;
     }

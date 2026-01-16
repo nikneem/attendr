@@ -33,6 +33,20 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       multi: true,
+      useFactory: () => {
+        return () => {
+          // Register the custom service worker for push notifications
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+              .then(reg => console.log('Custom service worker registered:', reg))
+              .catch(err => console.error('Service worker registration error:', err));
+          }
+        };
+      }
+    },
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
       deps: [OidcSecurityService, AuthCallbackHandler],
       useFactory: (oidc: OidcSecurityService, authHandler: AuthCallbackHandler) => () => {
         // authHandler is injected here to ensure it's instantiated and its constructor runs

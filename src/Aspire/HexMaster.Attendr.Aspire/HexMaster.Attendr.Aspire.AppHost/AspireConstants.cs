@@ -12,6 +12,7 @@ public static class AspireConstants
         public const string Profiles = "profiles";
         public const string Notifications = "notifications";
         public const string NotificationPreferences = "notificationpreferences";
+        public const string Subscriptions = "subscriptions";
     }
 
     public static class Dapr

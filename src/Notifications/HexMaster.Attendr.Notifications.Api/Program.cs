@@ -13,6 +13,7 @@ builder.AddServiceDefaults();
 // Add Azure Table Storage using Aspire integration
 builder.AddAzureTableClient(AspireConstants.TableStorage.Notifications);
 builder.AddAzureTableClient(AspireConstants.TableStorage.NotificationPreferences);
+builder.AddAzureTableClient(AspireConstants.TableStorage.Subscriptions);
 
 // Add OpenAPI
 builder.Services.AddOpenApi();
@@ -74,6 +75,7 @@ app.MapNotificationPreferencesEndpoints();
 app.MapNotificationPreferencesDetailEndpoints();
 app.MapNotificationTypesEndpoints();
 app.MapEventHandlersEndpoints();
+app.MapPushSubscriptionsEndpoints();
 
 // Enable Dapr pub/sub
 app.UseCloudEvents();

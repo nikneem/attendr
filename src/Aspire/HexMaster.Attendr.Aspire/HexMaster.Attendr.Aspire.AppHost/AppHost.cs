@@ -87,6 +87,7 @@ var presenceApi = builder.AddProject<HexMaster_Attendr_Presence_Api>(AspireConst
 // ## The Notifications service ##
 var notificationPreferencesTable = storage.AddTables(AspireConstants.TableStorage.NotificationPreferences);
 var notificationsTable = storage.AddTables(AspireConstants.TableStorage.Notifications);
+var subscriptionsTable = storage.AddTables(AspireConstants.TableStorage.Subscriptions);
 var notificationApi = builder.AddProject<HexMaster_Attendr_Notifications_Api>("hexmaster-attendr-notifications-api")
     .WithDaprSidecar(opts =>
     {
@@ -95,8 +96,10 @@ var notificationApi = builder.AddProject<HexMaster_Attendr_Notifications_Api>("h
     })
     .WithReference(notificationPreferencesTable)
     .WithReference(notificationsTable)
+    .WithReference(subscriptionsTable)
     .WaitFor(notificationPreferencesTable)
-    .WaitFor(notificationsTable);
+    .WaitFor(notificationsTable)
+    .WaitFor(subscriptionsTable);
 
 // Add YARP gateway
 var gateway = builder.AddYarp("gateway")

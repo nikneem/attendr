@@ -117,7 +117,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
-                    { NotificationChannel.Push, true }
+                    { NotificationChannel.Push, false }
                 },
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
@@ -137,7 +137,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, false },
-                    { NotificationChannel.Push, true }
+                    { NotificationChannel.Push, false }
                 },
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
@@ -179,7 +179,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, false },
-                    { NotificationChannel.Push, true }
+                    { NotificationChannel.Push, false }
                 },
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
@@ -199,7 +199,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
-                    { NotificationChannel.Push, true }
+                    { NotificationChannel.Push, false }
                 },
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
