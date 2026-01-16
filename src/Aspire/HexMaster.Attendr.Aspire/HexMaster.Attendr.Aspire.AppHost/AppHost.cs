@@ -84,6 +84,19 @@ var presenceApi = builder.AddProject<HexMaster_Attendr_Presence_Api>(AspireConst
     .WithReference(presenceDatabase)
     .WaitFor(presenceDatabase);
 
+// ## The Notifications service ##
+var notificationPreferencesTable = storage.AddTables(AspireConstants.TableStorage.NotificationPreferences);
+var notificationsTable = storage.AddTables(AspireConstants.TableStorage.Notifications);
+var notificationApi = builder.AddProject<HexMaster_Attendr_Notifications_Api>("hexmaster-attendr-notifications-api")
+    .WithDaprSidecar(opts =>
+    {
+        opts.WithReference(pubSub)
+            .WithReference(stateStore);
+    })
+    .WithReference(notificationPreferencesTable)
+    .WithReference(notificationsTable)
+    .WaitFor(notificationPreferencesTable)
+    .WaitFor(notificationsTable);
 
 // Add YARP gateway
 var gateway = builder.AddYarp("gateway")
@@ -107,6 +120,10 @@ var gateway = builder.AddYarp("gateway")
             .WithTransformPathRemovePrefix("/presence")
             .WithTransformPathPrefix("/api/presence");
 
+        yarp.AddRoute("/notifications/{**catch-all}", notificationApi)
+            .WithTransformPathRemovePrefix("/notifications")
+            .WithTransformPathPrefix("/api/notifications");
+
         // Route for SignalR hub - pass through without transformation
         // SignalR clients will connect to http://gateway:5000/hubs/games
         //yarp.AddRoute("/hubs/games/{**catch-all}", realtimeApi);
@@ -125,6 +142,5 @@ if (Directory.Exists(frontEndSourceFolder))
 
 }
 
-builder.AddProject<Projects.HexMaster_Attendr_Notifications_Api>("hexmaster-attendr-notifications-api");
 
 builder.Build().Run();

@@ -1,5 +1,6 @@
 using Azure;
 using Azure.Data.Tables;
+using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
@@ -14,7 +15,7 @@ namespace HexMaster.Attendr.Notifications.Data.TableStorage.Repositories;
 /// </summary>
 public sealed class TableStorageNotificationPreferencesRepository : INotificationPreferencesRepository
 {
-    private const string TableName = "notificationpreferences";
+    private const string TableName = AspireConstants.TableStorage.NotificationPreferences;
     private readonly TableServiceClient _tableServiceClient;
 
     public TableStorageNotificationPreferencesRepository(TableServiceClient tableServiceClient)

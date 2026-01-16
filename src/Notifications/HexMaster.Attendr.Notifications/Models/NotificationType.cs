@@ -45,6 +45,12 @@ public sealed class NotificationType : INotificationType
     public required Dictionary<NotificationChannel, bool> DefaultChannelSettings { get; init; }
 
     /// <summary>
+    /// Channels that are available for this notification type.
+    /// Specifies which channels can actually be used (true) vs which are not applicable (false).
+    /// </summary>
+    public required Dictionary<NotificationChannel, bool> AvailableChannels { get; init; }
+
+    /// <summary>
     /// Optional template for generating notification messages.
     /// </summary>
     public string? MessageTemplate { get; init; }

@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Notifications.Api.Endpoints;
 using HexMaster.Attendr.Notifications.Data.TableStorage.Extensions;
 using HexMaster.Attendr.Notifications.Extensions;
@@ -8,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 // Add Azure Table Storage using Aspire integration
-builder.AddAzureTableClient("notifications");
+builder.AddAzureTableClient(AspireConstants.TableStorage.Notifications);
+builder.AddAzureTableClient(AspireConstants.TableStorage.NotificationPreferences);
 
 // Add OpenAPI
 builder.Services.AddOpenApi();
@@ -47,6 +49,7 @@ app.UseHttpsRedirection();
 // Map notification endpoints
 app.MapNotificationsEndpoints();
 app.MapNotificationPreferencesEndpoints();
+app.MapNotificationPreferencesDetailEndpoints();
 app.MapNotificationTypesEndpoints();
 app.MapEventHandlersEndpoints();
 

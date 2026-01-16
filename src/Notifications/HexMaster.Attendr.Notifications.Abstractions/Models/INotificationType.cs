@@ -44,6 +44,12 @@ public interface INotificationType
     Dictionary<NotificationChannel, bool> DefaultChannelSettings { get; }
 
     /// <summary>
+    /// Channels that are available for this notification type.
+    /// Specifies which channels can actually be used (true) vs which are not applicable (false).
+    /// </summary>
+    Dictionary<NotificationChannel, bool> AvailableChannels { get; }
+
+    /// <summary>
     /// Optional template for generating notification messages.
     /// </summary>
     string? MessageTemplate { get; }

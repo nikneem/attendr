@@ -52,6 +52,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                     { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, true }
+                },
                 MessageTemplate = "{count} user(s) joined your group"
             },
             new()
@@ -68,6 +74,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                     { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, true }
+                },
                 MessageTemplate = "{count} user(s) left your group"
             },
             new()
@@ -79,6 +91,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                 AllowsStacking = true,
                 StackWindowSeconds = 86400, // 24 hours
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, false }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
@@ -100,6 +118,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
                     { NotificationChannel.Push, true }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, true }
                 }
             },
             new()
@@ -114,6 +138,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, false },
                     { NotificationChannel.Push, true }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, true }
                 }
             },
             new()
@@ -124,6 +154,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                 Severity = NotificationSeverity.Info,
                 AllowsStacking = false,
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, false },
+                    { NotificationChannel.Push, false }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, false },
@@ -144,6 +180,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, false },
                     { NotificationChannel.Push, true }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, true }
                 }
             },
             new()
@@ -154,6 +196,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                 Severity = NotificationSeverity.Warning,
                 AllowsStacking = false,
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, true }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
@@ -174,6 +222,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
                     { NotificationChannel.Push, false }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Push, false }
                 }
             },
             new()
@@ -184,6 +238,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                 Severity = NotificationSeverity.Info,
                 AllowsStacking = false,
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, false },
+                    { NotificationChannel.Push, false }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, false },
@@ -204,6 +264,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, false },
+                    { NotificationChannel.Push, false }
                 }
             },
             new()
@@ -214,6 +280,12 @@ public sealed class NotificationTypeService : INotificationTypeService
                 Severity = NotificationSeverity.Update,
                 AllowsStacking = false,
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, false },
+                    { NotificationChannel.Push, false }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, false },
