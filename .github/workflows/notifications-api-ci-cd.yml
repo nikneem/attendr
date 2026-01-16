@@ -146,6 +146,8 @@ jobs:
             --parameters containerRegistryServer="${{ secrets.CONTAINER_REGISTRY_HOSTNAME }}" \
             --parameters containerRegistryUsername="${{ secrets.CONTAINER_REGISTRY_USERNAME }}" \
             --parameters containerRegistryPassword="${{ secrets.CONTAINER_REGISTRY_PASSWORD }}" \
+            --parameters vapidPublicKey="${{ secrets.VAPID_PUBLIC_KEY }}" \
+            --parameters vapidPrivateKey="${{ secrets.VAPID_PRIVATE_KEY }}" \
 
       - name: Get deployment outputs
         working-directory: src/Notifications/Infrastructure
