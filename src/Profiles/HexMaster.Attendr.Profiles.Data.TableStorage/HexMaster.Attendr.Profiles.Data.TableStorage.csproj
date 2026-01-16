@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Azure.Data.Tables" Version="13.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>

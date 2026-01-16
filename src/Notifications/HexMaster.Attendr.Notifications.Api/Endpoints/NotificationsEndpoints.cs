@@ -1,4 +1,4 @@
-using HexMaster.Attendr.Core.Claims;
+using System.Security.Claims;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
 using HexMaster.Attendr.Notifications.Mappers;
@@ -49,11 +49,13 @@ public static class NotificationsEndpoints
     }
 
     private static async Task<Ok<IReadOnlyList<Abstractions.DTOs.NotificationDto>>> GetNotifications(
-        HttpContext context,
+        ClaimsPrincipal user,
         INotificationService notificationService,
         bool includeRead = true)
     {
-        var profileId = context.GetProfileId();
+        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? user.FindFirst("sub")?.Value
+            ?? throw new InvalidOperationException("Profile ID not found in claims"));
         var notifications = await notificationService.GetNotificationsAsync(
             profileId, includeRead, includeDeleted: false);
 
@@ -62,10 +64,12 @@ public static class NotificationsEndpoints
     }
 
     private static async Task<Ok<int>> GetUnreadCount(
-        HttpContext context,
+        ClaimsPrincipal user,
         INotificationService notificationService)
     {
-        var profileId = context.GetProfileId();
+        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? user.FindFirst("sub")?.Value
+            ?? throw new InvalidOperationException("Profile ID not found in claims"));
         var count = await notificationService.GetUnreadCountAsync(profileId);
         return TypedResults.Ok(count);
     }
@@ -86,8 +90,12 @@ public static class NotificationsEndpoints
 
     private static async Task<Results<NoContent, NotFound>> MarkAsRead(
         Guid id,
+        ClaimsPrincipal user,
         INotificationService notificationService)
     {
+        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? user.FindFirst("sub")?.Value
+            ?? throw new InvalidOperationException("Profile ID not found in claims"));
         try
         {
             await notificationService.MarkAsReadAsync(id);
@@ -100,10 +108,12 @@ public static class NotificationsEndpoints
     }
 
     private static async Task<NoContent> MarkAllAsRead(
-        HttpContext context,
+        ClaimsPrincipal user,
         INotificationService notificationService)
     {
-        var profileId = context.GetProfileId();
+        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? user.FindFirst("sub")?.Value
+            ?? throw new InvalidOperationException("Profile ID not found in claims"));
         await notificationService.MarkAllAsReadAsync(profileId);
         return TypedResults.NoContent();
     }

@@ -1,5 +1,6 @@
 using Azure;
 using Azure.Data.Tables;
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Data.TableStorage.Entities;
@@ -21,7 +22,7 @@ public sealed class TableStorageNotificationPreferencesRepository : INotificatio
         _tableServiceClient = tableServiceClient ?? throw new ArgumentNullException(nameof(tableServiceClient));
     }
 
-    public async Task<NotificationPreferences?> GetByProfileIdAsync(Guid profileId, CancellationToken cancellationToken = default)
+    public async Task<INotificationPreferences?> GetByProfileIdAsync(Guid profileId, CancellationToken cancellationToken = default)
     {
         var tableClient = await GetTableClientAsync(cancellationToken);
 
@@ -40,11 +41,15 @@ public sealed class TableStorageNotificationPreferencesRepository : INotificatio
         }
     }
 
-    public async Task UpsertAsync(NotificationPreferences preferences, CancellationToken cancellationToken = default)
+    public async Task UpsertAsync(INotificationPreferences preferences, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(preferences);
 
-        var entity = NotificationPreferencesMapper.ToEntity(preferences);
+        // Cast to concrete type for mapping
+        var concretePreferences = preferences as NotificationPreferences
+            ?? throw new InvalidOperationException($"Expected {nameof(NotificationPreferences)} but got {preferences.GetType().Name}");
+
+        var entity = NotificationPreferencesMapper.ToEntity(concretePreferences);
         var tableClient = await GetTableClientAsync(cancellationToken);
 
         await tableClient.UpsertEntityAsync(entity, TableUpdateMode.Replace, cancellationToken).ConfigureAwait(false);

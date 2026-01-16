@@ -51,7 +51,7 @@ public static class EventHandlersEndpoints
         group.MapPost("/PresentationScheduleChangedHandler", HandlePresentationScheduleChanged)
             .WithName("HandlePresentationScheduleChanged")
             .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.PresentationScheduleChanged)
-            .Accepts<PresentationScheduleChangedEvent>("application/cloudevents+json")
+            .Accepts<PresentationScheduleChangeEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .AllowAnonymous();
 
@@ -156,7 +156,7 @@ public static class EventHandlersEndpoints
     }
 
     private static async Task<IResult> HandlePresentationScheduleChanged(
-        [FromBody] PresentationScheduleChangedEvent @event,
+        [FromBody] PresentationScheduleChangeEvent @event,
         ICommandHandler<ProcessNotificationTriggerCommand> handler,
         ILogger<Program> logger,
         CancellationToken cancellationToken)
@@ -167,25 +167,21 @@ public static class EventHandlersEndpoints
                 "Processing PresentationScheduleChanged event for presentation {PresentationId}",
                 @event.PresentationId);
 
-            // For each profile that favorited this presentation, send a notification
-            // In a real scenario, you'd fetch all profiles who favorited and loop
-            foreach (var profileId in @event.AffectedProfileIds)
-            {
-                var command = new ProcessNotificationTriggerCommand(
-                    ProfileId: profileId,
-                    TypeKey: NotificationTypeKeys.PresentationScheduleChanged,
-                    Title: "Schedule Changed",
-                    Message: $"The schedule for '{@event.Title}' has changed",
-                    Url: $"/conferences/{@event.ConferenceId}/presentations/{@event.PresentationId}",
-                    EntityRefs: new Dictionary<string, string>
-                    {
-                        ["conferenceId"] = @event.ConferenceId.ToString(),
-                        ["presentationId"] = @event.PresentationId.ToString()
-                    }
-                );
+            // Send notification to the profile who favorited this presentation
+            var command = new ProcessNotificationTriggerCommand(
+                ProfileId: @event.ProfileId,
+                TypeKey: NotificationTypeKeys.PresentationScheduleChanged,
+                Title: "Schedule Changed",
+                Message: $"The schedule for '{@event.Title}' has changed",
+                Url: $"/conferences/{@event.ConferenceId}/presentations/{@event.PresentationId}",
+                EntityRefs: new Dictionary<string, string>
+                {
+                    ["conferenceId"] = @event.ConferenceId.ToString(),
+                    ["presentationId"] = @event.PresentationId.ToString()
+                }
+            );
 
-                await handler.Handle(command, cancellationToken);
-            }
+            await handler.Handle(command, cancellationToken);
 
             return Results.Ok();
         }

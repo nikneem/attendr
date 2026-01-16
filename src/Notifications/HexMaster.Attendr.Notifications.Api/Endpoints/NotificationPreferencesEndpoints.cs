@@ -1,7 +1,8 @@
-using HexMaster.Attendr.Core.Claims;
+using System.Security.Claims;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
+using HexMaster.Attendr.Notifications.DomainModels;
 using HexMaster.Attendr.Notifications.Mappers;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -35,18 +36,20 @@ public static class NotificationPreferencesEndpoints
     }
 
     private static async Task<Ok<Abstractions.DTOs.NotificationPreferencesDto>> GetPreferences(
-        HttpContext context,
+        ClaimsPrincipal user,
         INotificationPreferencesRepository preferencesRepository,
         INotificationTypeService typeService)
     {
-        var profileId = context.GetProfileId();
+        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? user.FindFirst("sub")?.Value
+            ?? throw new InvalidOperationException("Profile ID not found in claims"));
         var preferences = await preferencesRepository.GetByProfileIdAsync(profileId);
 
         if (preferences == null)
         {
             // Return defaults
             var allTypes = typeService.GetAllTypes();
-            var defaultPrefs = new Abstractions.DomainModels.NotificationPreferences
+            var defaultPrefs = new DomainModels.NotificationPreferences
             {
                 ProfileId = profileId,
                 TypeChannelPreferences = allTypes.ToDictionary(
@@ -62,11 +65,13 @@ public static class NotificationPreferencesEndpoints
     }
 
     private static async Task<NoContent> UpdatePreferences(
-        HttpContext context,
+        ClaimsPrincipal user,
         UpdatePreferencesRequest request,
         INotificationPreferencesRepository preferencesRepository)
     {
-        var profileId = context.GetProfileId();
+        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? user.FindFirst("sub")?.Value
+            ?? throw new InvalidOperationException("Profile ID not found in claims"));
         var preferences = NotificationDtoMapper.ToDomain(profileId, request.TypeChannelPreferences);
 
         await preferencesRepository.UpsertAsync(preferences);
@@ -74,11 +79,13 @@ public static class NotificationPreferencesEndpoints
     }
 
     private static async Task<NoContent> SetDoNotDisturb(
-        HttpContext context,
+        ClaimsPrincipal user,
         SetDoNotDisturbRequest request,
         INotificationPreferencesRepository preferencesRepository)
     {
-        var profileId = context.GetProfileId();
+        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? user.FindFirst("sub")?.Value
+            ?? throw new InvalidOperationException("Profile ID not found in claims"));
         await preferencesRepository.UpdateDoNotDisturbAsync(profileId, request.DoNotDisturbUntil);
         return TypedResults.NoContent();
     }

@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
@@ -28,7 +29,7 @@ public sealed class NotificationService : INotificationService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<Notification> CreateNotificationAsync(
+    public async Task<INotification> CreateNotificationAsync(
         Guid profileId,
         string typeKey,
         string title,
@@ -73,7 +74,7 @@ public sealed class NotificationService : INotificationService
 
                 existingNotification.Count++;
                 existingNotification.LastOccurredAt = DateTime.UtcNow;
-                existingNotification.Message = message; // Update with latest message
+                // Note: Message is immutable (init-only), keeping the original message from first occurrence
 
                 await _notificationRepository.UpdateAsync(existingNotification, cancellationToken);
                 return existingNotification;
@@ -108,7 +109,7 @@ public sealed class NotificationService : INotificationService
         return notification;
     }
 
-    public async Task<IReadOnlyList<Notification>> GetNotificationsAsync(
+    public async Task<IReadOnlyList<INotification>> GetNotificationsAsync(
         Guid profileId,
         bool includeRead = true,
         bool includeDeleted = false,
@@ -117,7 +118,7 @@ public sealed class NotificationService : INotificationService
         return await _notificationRepository.GetByProfileIdAsync(profileId, includeRead, includeDeleted, cancellationToken);
     }
 
-    public async Task<Notification?> GetNotificationByIdAsync(Guid notificationId, CancellationToken cancellationToken = default)
+    public async Task<INotification?> GetNotificationByIdAsync(Guid notificationId, CancellationToken cancellationToken = default)
     {
         return await _notificationRepository.GetByIdAsync(notificationId, cancellationToken);
     }
@@ -165,8 +166,8 @@ public sealed class NotificationService : INotificationService
     }
 
     private Dictionary<NotificationChannel, ChannelDeliveryInfo> GetChannelSettings(
-        Abstractions.Models.NotificationType notificationType,
-        NotificationPreferences? preferences,
+        Abstractions.Models.INotificationType notificationType,
+        INotificationPreferences? preferences,
         string typeKey)
     {
         var channelSettings = new Dictionary<NotificationChannel, ChannelDeliveryInfo>();

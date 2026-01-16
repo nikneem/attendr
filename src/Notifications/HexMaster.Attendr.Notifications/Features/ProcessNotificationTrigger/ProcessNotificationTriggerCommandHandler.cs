@@ -15,7 +15,7 @@ public sealed record ProcessNotificationTriggerCommand(
     string? Url = null,
     Guid? ActorId = null,
     Dictionary<string, string>? EntityRefs = null,
-    string? StackKey = null) : ICommand;
+    string? StackKey = null);
 
 /// <summary>
 /// Handler for processing notification trigger commands.

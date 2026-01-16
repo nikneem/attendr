@@ -1,4 +1,4 @@
-using HexMaster.Attendr.Notifications.DomainModels;
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 
 namespace HexMaster.Attendr.Notifications.Abstractions.Repositories;
 
@@ -10,12 +10,12 @@ public interface INotificationRepository
     /// <summary>
     /// Gets a notification by its ID.
     /// </summary>
-    Task<Notification?> GetByIdAsync(Guid notificationId, CancellationToken cancellationToken = default);
+    Task<INotification?> GetByIdAsync(Guid notificationId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets all notifications for a profile with optional filtering.
     /// </summary>
-    Task<IReadOnlyList<Notification>> GetByProfileIdAsync(
+    Task<IReadOnlyList<INotification>> GetByProfileIdAsync(
         Guid profileId,
         bool includeRead = true,
         bool includeDeleted = false,
@@ -24,7 +24,7 @@ public interface INotificationRepository
     /// <summary>
     /// Attempts to find an existing unread notification that can be stacked with the given criteria.
     /// </summary>
-    Task<Notification?> FindStackableNotificationAsync(
+    Task<INotification?> FindStackableNotificationAsync(
         Guid profileId,
         string typeKey,
         string stackKey,
@@ -33,12 +33,12 @@ public interface INotificationRepository
     /// <summary>
     /// Adds a new notification.
     /// </summary>
-    Task AddAsync(Notification notification, CancellationToken cancellationToken = default);
+    Task AddAsync(INotification notification, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing notification (used for stacking, marking as read/deleted, etc.).
     /// </summary>
-    Task UpdateAsync(Notification notification, CancellationToken cancellationToken = default);
+    Task UpdateAsync(INotification notification, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets count of unread notifications for a profile.

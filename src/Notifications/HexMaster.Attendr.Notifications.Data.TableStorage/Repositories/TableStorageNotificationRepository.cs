@@ -1,5 +1,6 @@
 using Azure;
 using Azure.Data.Tables;
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Data.TableStorage.Entities;
 using HexMaster.Attendr.Notifications.Data.TableStorage.Mappers;
@@ -20,7 +21,7 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
         _tableServiceClient = tableServiceClient ?? throw new ArgumentNullException(nameof(tableServiceClient));
     }
 
-    public async Task<Notification?> GetByIdAsync(Guid notificationId, CancellationToken cancellationToken = default)
+    public async Task<INotification?> GetByIdAsync(Guid notificationId, CancellationToken cancellationToken = default)
     {
         var tableClient = await GetTableClientAsync(cancellationToken);
 
@@ -35,7 +36,7 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
         return null;
     }
 
-    public async Task<IReadOnlyList<Notification>> GetByProfileIdAsync(
+    public async Task<IReadOnlyList<INotification>> GetByProfileIdAsync(
         Guid profileId,
         bool includeRead = true,
         bool includeDeleted = false,
@@ -63,7 +64,7 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
         return notifications.OrderByDescending(n => n.CreatedAt).ToList();
     }
 
-    public async Task<Notification?> FindStackableNotificationAsync(
+    public async Task<INotification?> FindStackableNotificationAsync(
         Guid profileId,
         string typeKey,
         string stackKey,
@@ -82,21 +83,29 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
         return null;
     }
 
-    public async Task AddAsync(Notification notification, CancellationToken cancellationToken = default)
+    public async Task AddAsync(INotification notification, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(notification);
 
-        var entity = NotificationMapper.ToEntity(notification);
+        // Cast to concrete type for mapping
+        var concreteNotification = notification as Notification
+            ?? throw new InvalidOperationException($"Expected {nameof(Notification)} but got {notification.GetType().Name}");
+
+        var entity = NotificationMapper.ToEntity(concreteNotification);
         var tableClient = await GetTableClientAsync(cancellationToken);
 
         await tableClient.AddEntityAsync(entity, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task UpdateAsync(Notification notification, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(INotification notification, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(notification);
 
-        var entity = NotificationMapper.ToEntity(notification);
+        // Cast to concrete type for mapping
+        var concreteNotification = notification as Notification
+            ?? throw new InvalidOperationException($"Expected {nameof(Notification)} but got {notification.GetType().Name}");
+
+        var entity = NotificationMapper.ToEntity(concreteNotification);
         var tableClient = await GetTableClientAsync(cancellationToken);
 
         try

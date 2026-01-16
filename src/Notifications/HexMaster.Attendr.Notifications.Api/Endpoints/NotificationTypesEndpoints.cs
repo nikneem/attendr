@@ -27,7 +27,7 @@ public static class NotificationTypesEndpoints
         INotificationTypeService typeService)
     {
         var types = typeService.GetAllTypes();
-        var dtos = types.Select(NotificationDtoMapper.ToDto).ToList();
+        var dtos = types.Cast<Models.NotificationType>().Select(NotificationDtoMapper.ToDto).ToList();
         return TypedResults.Ok<IReadOnlyList<Abstractions.DTOs.NotificationTypeDto>>(dtos);
     }
 }

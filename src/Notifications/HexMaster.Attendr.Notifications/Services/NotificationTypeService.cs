@@ -1,4 +1,5 @@
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
+using HexMaster.Attendr.Notifications.Abstractions.Models;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
 using HexMaster.Attendr.Notifications.Constants;
 using HexMaster.Attendr.Notifications.Models;
@@ -17,12 +18,12 @@ public sealed class NotificationTypeService : INotificationTypeService
         _notificationTypes = InitializeNotificationTypes();
     }
 
-    public IReadOnlyList<NotificationType> GetAllTypes()
+    public IReadOnlyList<INotificationType> GetAllTypes()
     {
-        return _notificationTypes.Values.ToList();
+        return _notificationTypes.Values.Cast<INotificationType>().ToList();
     }
 
-    public NotificationType? GetTypeByKey(string typeKey)
+    public INotificationType? GetTypeByKey(string typeKey)
     {
         return _notificationTypes.TryGetValue(typeKey, out var type) ? type : null;
     }

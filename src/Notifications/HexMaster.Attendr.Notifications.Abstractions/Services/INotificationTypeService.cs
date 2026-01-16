@@ -1,4 +1,4 @@
-using HexMaster.Attendr.Notifications.Models;
+using HexMaster.Attendr.Notifications.Abstractions.Models;
 
 namespace HexMaster.Attendr.Notifications.Abstractions.Services;
 
@@ -10,12 +10,12 @@ public interface INotificationTypeService
     /// <summary>
     /// Gets all available notification types.
     /// </summary>
-    IReadOnlyList<NotificationType> GetAllTypes();
+    IReadOnlyList<INotificationType> GetAllTypes();
 
     /// <summary>
     /// Gets a specific notification type by its key.
     /// </summary>
-    NotificationType? GetTypeByKey(string typeKey);
+    INotificationType? GetTypeByKey(string typeKey);
 
     /// <summary>
     /// Checks if a notification type exists.

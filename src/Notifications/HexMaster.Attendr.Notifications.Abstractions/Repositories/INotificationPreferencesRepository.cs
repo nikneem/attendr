@@ -1,5 +1,5 @@
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
-using HexMaster.Attendr.Notifications.DomainModels;
 
 namespace HexMaster.Attendr.Notifications.Abstractions.Repositories;
 
@@ -12,12 +12,12 @@ public interface INotificationPreferencesRepository
     /// Gets notification preferences for a profile.
     /// Returns null if no preferences exist yet (should use defaults).
     /// </summary>
-    Task<NotificationPreferences?> GetByProfileIdAsync(Guid profileId, CancellationToken cancellationToken = default);
+    Task<INotificationPreferences?> GetByProfileIdAsync(Guid profileId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates or updates notification preferences for a profile.
     /// </summary>
-    Task UpsertAsync(NotificationPreferences preferences, CancellationToken cancellationToken = default);
+    Task UpsertAsync(INotificationPreferences preferences, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates channel preferences for a specific notification type.

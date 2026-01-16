@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Notifications.Abstractions.DomainModels;
 using HexMaster.Attendr.Notifications.Abstractions.DTOs;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.DomainModels;
@@ -5,8 +6,16 @@ using HexMaster.Attendr.Notifications.Models;
 
 namespace HexMaster.Attendr.Notifications.Mappers;
 
-internal static class NotificationDtoMapper
+public static class NotificationDtoMapper
 {
+    public static NotificationDto ToDto(INotification notification)
+    {
+        // Cast to concrete type
+        var concreteNotification = notification as Notification
+            ?? throw new InvalidOperationException($"Expected {nameof(Notification)} but got {notification.GetType().Name}");
+        return ToDto(concreteNotification);
+    }
+
     public static NotificationDto ToDto(Notification notification)
     {
         return new NotificationDto
@@ -49,6 +58,14 @@ internal static class NotificationDtoMapper
                 kvp => kvp.Key.ToString(),
                 kvp => kvp.Value)
         };
+    }
+
+    public static NotificationPreferencesDto ToDto(INotificationPreferences preferences)
+    {
+        // Cast to concrete type
+        var concretePreferences = preferences as NotificationPreferences
+            ?? throw new InvalidOperationException($"Expected {nameof(NotificationPreferences)} but got {preferences.GetType().Name}");
+        return ToDto(concretePreferences);
     }
 
     public static NotificationPreferencesDto ToDto(NotificationPreferences preferences)
