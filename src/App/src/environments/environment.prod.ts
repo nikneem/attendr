@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
     apiUrl: 'https://gateway.thankfulhill-bb0bd872.northeurope.azurecontainerapps.io',
-    vapidPublicKey: '',
+    vapidPublicKey: 'BOnkb8qOr8a67pdpeQfvLYaOLsc-IA76OcNt1l030-NkosKALvAjNXOxrpetAKp0L_CCU0_fQ7Spk6CMZgHL57k',
 };
