@@ -39,6 +39,7 @@ export class NotificationPreferencesPageComponent implements OnInit {
     preferences = signal<NotificationPreferencesDetailDto | null>(null);
     isLoading = signal(true);
     isSaving = signal(false);
+    isSendingTest = signal(false);
 
     ngOnInit(): void {
         this.loadPreferences();
@@ -244,5 +245,28 @@ export class NotificationPreferencesPageComponent implements OnInit {
 
     trackByChannelKey(index: number, key: string): string {
         return key;
+    }
+
+    sendTestNotification(): void {
+        this.isSendingTest.set(true);
+        this.subscriptionsService.sendTestNotification().subscribe({
+            next: (response) => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Test Sent',
+                    detail: response.message,
+                });
+                this.isSendingTest.set(false);
+            },
+            error: (error) => {
+                console.error('Failed to send test notification:', error);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to send test notification',
+                });
+                this.isSendingTest.set(false);
+            },
+        });
     }
 }

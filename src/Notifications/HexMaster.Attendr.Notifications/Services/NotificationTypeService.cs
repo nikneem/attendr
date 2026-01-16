@@ -56,7 +56,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
-                    { NotificationChannel.Push, true }
+                    { NotificationChannel.Push, false }
                 },
                 MessageTemplate = "{count} user(s) joined your group"
             },
@@ -78,7 +78,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
-                    { NotificationChannel.Push, true }
+                    { NotificationChannel.Push, false }
                 },
                 MessageTemplate = "{count} user(s) left your group"
             },
@@ -100,7 +100,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
-                    { NotificationChannel.Push, false }
+                    { NotificationChannel.Push, true }
                 },
                 MessageTemplate = "Member request for group {groupName}"
             },
@@ -123,7 +123,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
-                    { NotificationChannel.Push, true }
+                    { NotificationChannel.Push, false }
                 }
             },
             new()
@@ -143,7 +143,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 {
                     { NotificationChannel.InApp, true },
                     { NotificationChannel.Email, true },
-                    { NotificationChannel.Push, true }
+                    { NotificationChannel.Push, false }
                 }
             },
             new()

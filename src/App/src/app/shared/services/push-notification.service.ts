@@ -1,12 +1,9 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { SwUpdate } from '@angular/service-worker';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
     providedIn: 'root'
 })
 export class PushNotificationService {
-    private readonly swUpdate = inject(SwUpdate);
-
     readonly isSupported = signal(this.checkPushSupport());
     readonly isSubscribed = signal(false);
     readonly subscription = signal<PushSubscription | null>(null);

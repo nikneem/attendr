@@ -1,4 +1,5 @@
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
+using HexMaster.Attendr.Notifications.Abstractions.Services;
 using HexMaster.Attendr.Notifications.DomainModels;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
@@ -22,6 +23,10 @@ public static class PushSubscriptionsEndpoints
             .WithName("RegisterPushSubscription")
             .Produces(StatusCodes.Status204NoContent)
             .Produces<string>(StatusCodes.Status400BadRequest);
+
+        group.MapGet("/test", SendTestNotification)
+            .WithName("SendTestPushNotification")
+            .Produces<TestNotificationResponse>(StatusCodes.Status200OK);
 
         return app;
     }
@@ -58,10 +63,30 @@ public static class PushSubscriptionsEndpoints
         return TypedResults.NoContent();
     }
 
+    private static async Task<Ok<TestNotificationResponse>> SendTestNotification(
+        IProfilesIntegrationService profilesIntegration,
+        HttpContext httpContext,
+        IPushNotificationService pushNotificationService)
+    {
+        var resolvedProfile = await profilesIntegration.GetProfileFromUser(httpContext.User, httpContext.RequestAborted);
+        var profileId = Guid.Parse(resolvedProfile.ProfileId);
+
+        var sentCount = await pushNotificationService.SendAsync(
+            profileId,
+            "Test Notification",
+            "This is a test push notification from Attendr!",
+            "https://attendr.com/app/groups",
+            httpContext.RequestAborted);
+
+        return TypedResults.Ok(new TestNotificationResponse(sentCount, $"Test notification sent to {sentCount} subscription(s)"));
+    }
+
     public record RegisterPushSubscriptionRequest(
         string Endpoint,
         string P256dh,
         string Auth,
         string? UserAgent,
         DateTime? ExpirationTimeUtc);
+
+    public record TestNotificationResponse(int SentCount, string Message);
 }

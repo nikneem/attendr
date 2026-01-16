@@ -26,20 +26,33 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
     provideAuth(authConfig),
-    provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
-    }),
+    // Angular Service Worker disabled - using custom service worker for push notifications
+    // provideServiceWorker('ngsw-worker.js', {
+    //   enabled: !isDevMode(),
+    //   registrationStrategy: 'registerWhenStable:30000'
+    // }),
     {
       provide: APP_INITIALIZER,
       multi: true,
       useFactory: () => {
-        return () => {
-          // Register the custom service worker for push notifications
+        return async () => {
+          // Unregister all existing service workers first to prevent duplicates
           if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-              .then(reg => console.log('Custom service worker registered:', reg))
-              .catch(err => console.error('Service worker registration error:', err));
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+              await registration.unregister();
+              console.log('Unregistered service worker:', registration.scope);
+            }
+
+            // Now register only our custom service worker
+            try {
+              const reg = await navigator.serviceWorker.register('/service-worker.js', {
+                scope: '/'
+              });
+              console.log('Custom service worker registered:', reg);
+            } catch (err) {
+              console.error('Service worker registration error:', err);
+            }
           }
         };
       }

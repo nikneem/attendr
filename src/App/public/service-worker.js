@@ -1,5 +1,8 @@
 // Handle push events for push notifications
 self.addEventListener('push', (event) => {
+    // Stop event propagation to prevent other service workers from handling it
+    event.stopImmediatePropagation();
+
     if (!event.data) {
         console.log('Push event received but no data');
         return;
@@ -13,21 +16,36 @@ self.addEventListener('push', (event) => {
         notificationData = {
             title: 'Attendr Notification',
             body: event.data.text(),
-            icon: '/images/attendr-icon.png'
+            icon: '/logo/icon-192x192.png'
         };
     }
 
     const options = {
         body: notificationData.body,
-        icon: notificationData.icon || '/images/attendr-icon.png',
-        badge: notificationData.badge || '/images/attendr-icon.png',
+        icon: notificationData.icon || '/logo/icon-192x192.png',
+        badge: notificationData.badge || '/logo/icon-192x192.png',
         tag: notificationData.tag || 'attendr-notification',
         requireInteraction: notificationData.requireInteraction || false,
-        data: notificationData.data || {}
+        data: {}
     };
 
-    if (notificationData.actions) {
-        options.actions = notificationData.actions;
+    // If notification has a URL, add a "Show More" action button
+    if (notificationData.url) {
+        options.data.url = notificationData.url;
+        options.actions = [{
+            action: 'show-more',
+            title: 'Show More'
+        }];
+    }
+
+    // Add any additional custom actions from the payload
+    if (notificationData.actions && Array.isArray(notificationData.actions)) {
+        options.actions = [...(options.actions || []), ...notificationData.actions];
+    }
+
+    // Add any additional data from the payload
+    if (notificationData.data) {
+        options.data = { ...options.data, ...notificationData.data };
     }
 
     event.waitUntil(
@@ -36,7 +54,7 @@ self.addEventListener('push', (event) => {
             options
         )
     );
-});
+}, true); // Use capture phase to handle before NGSW
 
 // Handle notification clicks
 self.addEventListener('notificationclick', (event) => {
@@ -44,21 +62,33 @@ self.addEventListener('notificationclick', (event) => {
 
     // Handle action clicks
     if (event.action) {
-        const action = event.notification.data?.actions?.find(
-            (a) => a.action === event.action
-        );
-        if (action && action.url) {
+        let targetUrl = null;
+
+        // Handle "Show More" action
+        if (event.action === 'show-more') {
+            targetUrl = event.notification.data?.url;
+        } else {
+            // Handle other custom actions
+            const action = event.notification.data?.actions?.find(
+                (a) => a.action === event.action
+            );
+            if (action && action.url) {
+                targetUrl = action.url;
+            }
+        }
+
+        if (targetUrl) {
             event.waitUntil(
                 clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
                     // Check if a window with the target URL is already open
                     for (let client of clientList) {
-                        if (client.url === action.url && 'focus' in client) {
+                        if (client.url === targetUrl && 'focus' in client) {
                             return client.focus();
                         }
                     }
                     // If not, open a new window
                     if (clients.openWindow) {
-                        return clients.openWindow(action.url);
+                        return clients.openWindow(targetUrl);
                     }
                 })
             );

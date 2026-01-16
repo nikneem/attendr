@@ -4,6 +4,8 @@
     <div class="preferences-header">
         <h1>Notification Preferences</h1>
         <p>Manage how and when you receive notifications</p>
+        <p-button label="Send Test Notification" icon="pi pi-send" [loading]="isSendingTest()" [disabled]="isLoading()"
+            (onClick)="sendTestNotification()" severity="secondary" size="small"></p-button>
     </div>
 
     <!-- Loading State -->

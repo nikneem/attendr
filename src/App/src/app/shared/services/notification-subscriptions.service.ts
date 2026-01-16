@@ -4,6 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { RegisterPushSubscriptionRequest } from '../models/register-push-subscription-request';
 
+export interface TestNotificationResponse {
+    sentCount: number;
+    message: string;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -13,5 +18,9 @@ export class NotificationSubscriptionsService {
 
     registerSubscription(request: RegisterPushSubscriptionRequest): Observable<void> {
         return this.http.post<void>(this.apiUrl, request);
+    }
+
+    sendTestNotification(): Observable<TestNotificationResponse> {
+        return this.http.get<TestNotificationResponse>(`${this.apiUrl}/test`);
     }
 }

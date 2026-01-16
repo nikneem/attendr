@@ -106,6 +106,24 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-10-02-
             }
           ]
         }
+        {
+          description: 'Route /notifications to Notifications API'
+          routes: [
+            {
+              match: {
+                pathSeparatedPrefix: '/notifications'
+              }
+              action: {
+                prefixRewrite: '/api/notifications'
+              }
+            }
+          ]
+          targets: [
+            {
+              containerApp: 'ca-attendr-notif-prod'
+            }
+          ]
+        }
       ]
     }
   }
