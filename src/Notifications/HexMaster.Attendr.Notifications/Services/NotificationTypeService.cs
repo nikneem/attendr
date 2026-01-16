@@ -55,7 +55,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 },
                 MessageTemplate = "{count} user(s) joined your group"
@@ -77,7 +77,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 },
                 MessageTemplate = "{count} user(s) left your group"
@@ -93,13 +93,13 @@ public sealed class NotificationTypeService : INotificationTypeService
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 },
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, true }
                 },
                 MessageTemplate = "Member request for group {groupName}"
@@ -116,13 +116,13 @@ public sealed class NotificationTypeService : INotificationTypeService
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 },
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 }
             },
@@ -142,7 +142,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 }
             },
@@ -184,7 +184,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, true }
                 }
             },
@@ -198,13 +198,13 @@ public sealed class NotificationTypeService : INotificationTypeService
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 },
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, true }
                 }
             },
@@ -220,13 +220,13 @@ public sealed class NotificationTypeService : INotificationTypeService
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 },
                 AvailableChannels = new Dictionary<NotificationChannel, bool>
                 {
                     { NotificationChannel.InApp, true },
-                    { NotificationChannel.Email, true },
+                    { NotificationChannel.Email, false },
                     { NotificationChannel.Push, false }
                 }
             },
