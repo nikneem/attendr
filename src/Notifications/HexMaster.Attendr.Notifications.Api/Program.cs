@@ -1,7 +1,9 @@
 using HexMaster.Attendr.Aspire.AppHost;
+using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Notifications.Api.Endpoints;
 using HexMaster.Attendr.Notifications.Data.TableStorage.Extensions;
 using HexMaster.Attendr.Notifications.Extensions;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,23 @@ builder.AddAzureTableClient(AspireConstants.TableStorage.NotificationPreferences
 // Add OpenAPI
 builder.Services.AddOpenApi();
 
+// Configure CORS to match other APIs
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "https://localhost:4200",
+                "https://attendr.com",
+                "https://www.attendr.com",
+                "https://*.attendr.com")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
 // Add authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -26,6 +45,8 @@ builder.Services.AddAuthorization();
 
 // Add Dapr
 builder.Services.AddDaprClient();
+builder.Services.AddProfilesIntegration(builder.Configuration);
+builder.Services.AddAttendrCache(builder.Configuration);
 
 // Add notification repositories and services
 builder.Services.AddTableStorageNotificationRepositories();
@@ -41,6 +62,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -19,6 +19,7 @@
     <ProjectReference Include="..\HexMaster.Attendr.Notifications.Data.TableStorage\HexMaster.Attendr.Notifications.Data.TableStorage.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
   </ItemGroup>
 
 </Project>

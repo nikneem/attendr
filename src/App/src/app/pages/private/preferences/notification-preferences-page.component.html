@@ -1,0 +1,54 @@
+<div class="notification-preferences-container">
+    <p-toast></p-toast>
+
+    <div class="preferences-header">
+        <h1>Notification Preferences</h1>
+        <p>Manage how and when you receive notifications</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading()" class="loading-container">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+
+    <!-- Preferences List -->
+    <div *ngIf="!isLoading() && preferences()" class="preferences-list">
+        <div class="preferences-table-header">
+            <div class="header-title">Notification</div>
+            <div class="header-channel" *ngFor="let channelKey of channelKeys; trackBy: trackByChannelKey">
+                {{ getChannelDisplayName(channelKey) }}
+            </div>
+        </div>
+
+        <div *ngFor="let notificationType of preferences()!.notificationTypes; trackBy: trackByTypeKey"
+            class="notification-type-card">
+            <div class="type-info">
+                <div class="type-header">
+                    <h2>{{ notificationType.displayName }}</h2>
+                </div>
+                <p class="type-description">{{ notificationType.description }}</p>
+            </div>
+
+            <div *ngFor="let channelKey of channelKeys; trackBy: trackByChannelKey" class="channel-toggle"
+                [class.disabled]="!(notificationType.channelPreferences[channelKey]?.isAvailable)">
+                <label class="sr-only" [for]="notificationType.typeKey + '-' + channelKey">
+                    {{ getChannelDisplayName(channelKey) }}
+                </label>
+                <div class="toggle-wrapper">
+                    <input type="checkbox" role="switch" class="toggle-switch"
+                        [id]="notificationType.typeKey + '-' + channelKey"
+                        [checked]="notificationType.channelPreferences[channelKey]?.isEnabled ?? false"
+                        [disabled]="!(notificationType.channelPreferences[channelKey]?.isAvailable) || isSaving()"
+                        (change)="onChannelToggle(notificationType, channelKey)" />
+                    <span class="toggle-label">{{ notificationType.channelPreferences[channelKey]?.isEnabled ? 'On' :
+                        'Off' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading() && (!preferences() || preferences()!.notificationTypes.length === 0)" class="empty-state">
+        <p>No notification types available</p>
+    </div>
+</div>

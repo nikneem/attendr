@@ -1,10 +1,11 @@
-using System.Security.Claims;
 using HexMaster.Attendr.Notifications.Abstractions.DTOs;
 using HexMaster.Attendr.Notifications.Abstractions.Enums;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
 using HexMaster.Attendr.Notifications.DomainModels;
 using HexMaster.Attendr.Notifications.Models;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
+using HexMaster.Attendr.Profiles.Integrations.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HexMaster.Attendr.Notifications.Api.Endpoints;
@@ -38,13 +39,13 @@ public static class NotificationPreferencesDetailEndpoints
     /// combining their saved preferences with notification type configuration.
     /// </summary>
     private static async Task<Ok<NotificationPreferencesDetailDto>> GetDetailedPreferences(
-        ClaimsPrincipal user,
+        IProfilesIntegrationService profilesIntegration,
+        HttpContext httpContext,
         INotificationPreferencesRepository preferencesRepository,
         INotificationTypeService typeService)
     {
-        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? user.FindFirst("sub")?.Value
-            ?? throw new InvalidOperationException("Profile ID not found in claims"));
+        var resolvedProfile = await profilesIntegration.GetProfileFromUser(httpContext.User, httpContext.RequestAborted);
+        var profileId = Guid.Parse(resolvedProfile.ProfileId);
 
         // Get user's saved preferences
         var userPreferences = await preferencesRepository.GetByProfileIdAsync(profileId);
@@ -83,14 +84,14 @@ public static class NotificationPreferencesDetailEndpoints
     /// Updates detailed notification preferences for the current user.
     /// </summary>
     private static async Task<NoContent> UpdateDetailedPreferences(
-        ClaimsPrincipal user,
+        IProfilesIntegrationService profilesIntegration,
+        HttpContext httpContext,
         UpdateDetailedPreferencesRequest request,
         INotificationPreferencesRepository preferencesRepository,
         INotificationTypeService typeService)
     {
-        var profileId = Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? user.FindFirst("sub")?.Value
-            ?? throw new InvalidOperationException("Profile ID not found in claims"));
+        var resolvedProfile = await profilesIntegration.GetProfileFromUser(httpContext.User, httpContext.RequestAborted);
+        var profileId = Guid.Parse(resolvedProfile.ProfileId);
 
         // Build TypeChannelPreferences dictionary from the request
         var typeChannelPrefs = new Dictionary<string, Dictionary<NotificationChannel, bool>>();
