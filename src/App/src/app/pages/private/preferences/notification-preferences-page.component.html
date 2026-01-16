@@ -14,7 +14,7 @@
     <!-- Preferences List -->
     <div *ngIf="!isLoading() && preferences()" class="preferences-list">
         <div class="preferences-table-header">
-            <div class="header-title">Notification</div>
+            <div class="header-title">&nbsp;</div>
             <div class="header-channel" *ngFor="let channelKey of channelKeys; trackBy: trackByChannelKey">
                 {{ getChannelDisplayName(channelKey) }}
             </div>
