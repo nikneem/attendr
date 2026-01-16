@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         // Register services
         services.AddSingleton<INotificationTypeService, NotificationTypeService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddHttpClient<IPushNotificationService, PushNotificationService>();
 
         // Register command handlers
         services.AddScoped<ICommandHandler<ProcessNotificationTriggerCommand>, ProcessNotificationTriggerCommandHandler>();

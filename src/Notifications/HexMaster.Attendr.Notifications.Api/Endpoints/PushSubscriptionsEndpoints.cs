@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.DomainModels;
+using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 

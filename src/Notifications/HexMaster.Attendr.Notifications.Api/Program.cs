@@ -11,9 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 // Add Azure Table Storage using Aspire integration
-builder.AddAzureTableClient(AspireConstants.TableStorage.Notifications);
-builder.AddAzureTableClient(AspireConstants.TableStorage.NotificationPreferences);
-builder.AddAzureTableClient(AspireConstants.TableStorage.Subscriptions);
+builder.AddAzureTableServiceClient(AspireConstants.TableStorage.Notifications);
+builder.AddAzureTableServiceClient(AspireConstants.TableStorage.NotificationPreferences);
+builder.AddAzureTableServiceClient(AspireConstants.TableStorage.Subscriptions);
 
 // Add OpenAPI
 builder.Services.AddOpenApi();
