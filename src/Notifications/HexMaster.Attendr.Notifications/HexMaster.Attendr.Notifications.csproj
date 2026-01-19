@@ -9,10 +9,12 @@
   <ItemGroup>
     <ProjectReference Include="..\HexMaster.Attendr.Notifications.Abstractions\HexMaster.Attendr.Notifications.Abstractions.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
+    <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Lib.Net.Http.WebPush" Version="3.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1" />
   </ItemGroup>
 
 </Project>

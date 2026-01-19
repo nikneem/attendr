@@ -16,10 +16,17 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddNotificationFeatures(this IServiceCollection services)
     {
-        // Register services
+        // Register core services
         services.AddSingleton<INotificationTypeService, NotificationTypeService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddHttpClient<IPushNotificationService, PushNotificationService>();
+
+        // Register channel services
+        services.AddScoped<INotificationPreferencesCacheService, NotificationPreferencesCacheService>();
+        services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+
+        // Register memory cache for preferences caching
+        services.AddMemoryCache();
 
         // Register command handlers
         services.AddScoped<ICommandHandler<ProcessNotificationTriggerCommand>, ProcessNotificationTriggerCommandHandler>();
