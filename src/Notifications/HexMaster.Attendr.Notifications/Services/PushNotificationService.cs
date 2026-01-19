@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Lib.Net.Http.WebPush;
 using Lib.Net.Http.WebPush.Authentication;
 using HexMaster.Attendr.Notifications.Abstractions.Repositories;
 using HexMaster.Attendr.Notifications.Abstractions.Services;
@@ -14,8 +15,7 @@ public sealed class PushNotificationService : IPushNotificationService
 {
     private readonly IPushSubscriptionRepository _subscriptionRepository;
     private readonly ILogger<PushNotificationService> _logger;
-    private readonly HttpClient _httpClient;
-    private readonly VapidAuthentication _vapidAuth;
+    private readonly PushServiceClient _pushClient;
 
     public PushNotificationService(
         IPushSubscriptionRepository subscriptionRepository,
@@ -25,12 +25,18 @@ public sealed class PushNotificationService : IPushNotificationService
     {
         _subscriptionRepository = subscriptionRepository ?? throw new ArgumentNullException(nameof(subscriptionRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
         var publicKey = configuration?["VAPID:PublicKey"] ?? throw new InvalidOperationException("VAPID:PublicKey not configured");
         var privateKey = configuration?["VAPID:PrivateKey"] ?? throw new InvalidOperationException("VAPID:PrivateKey not configured");
+        var subject = configuration?["VAPID:Subject"] ?? "mailto:support@attendr.io";
 
-        _vapidAuth = new VapidAuthentication(publicKey, privateKey);
+        _pushClient = new PushServiceClient(httpClient)
+        {
+            DefaultAuthentication = new VapidAuthentication(publicKey, privateKey)
+            {
+                Subject = subject
+            }
+        };
     }
 
     public async Task<int> SendAsync(
@@ -103,10 +109,6 @@ public sealed class PushNotificationService : IPushNotificationService
 
         try
         {
-            // Extract the origin from the endpoint URL
-            var endpointUri = new Uri(endpoint);
-            var audience = $"{endpointUri.Scheme}://{endpointUri.Host}";
-
             // Build the payload
             var payload = new
             {
@@ -119,41 +121,40 @@ public sealed class PushNotificationService : IPushNotificationService
 
             var payloadJson = JsonSerializer.Serialize(payload, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-            // Get VAPID authentication header
-            var authHeaderParam = _vapidAuth.GetVapidSchemeAuthenticationHeaderValueParameter(audience);
-
-            // Create HTTP request
-            var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
+            // Create PushSubscription object
+            var pushSubscription = new PushSubscription
             {
-                Content = new StringContent(payloadJson, System.Text.Encoding.UTF8, "application/json"),
-                Headers =
+                Endpoint = endpoint,
+                Keys = new Dictionary<string, string>
                 {
-                    { "TTL", "24h" },
-                    { "Content-Encoding", "aes128gcm" },
-                    { "Authorization", $"vapid {authHeaderParam}" }
+                    { "p256dh", p256dh },
+                    { "auth", auth }
                 }
             };
 
-            // Send the notification
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            // Create PushMessage with the payload
+            var pushMessage = new PushMessage(payloadJson);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.Gone)
-            {
-                // 410 Gone - subscription is no longer valid
-                _logger.LogInformation("Subscription {Endpoint} is no longer valid (410 Gone), removing it", endpoint);
-                await _subscriptionRepository.DeleteAsync(Guid.Empty, endpoint, cancellationToken);
-            }
-            else if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogError(
-                    "Failed to send push notification to {Endpoint}: {StatusCode} {ReasonPhrase}",
-                    endpoint,
-                    response.StatusCode,
-                    response.ReasonPhrase);
-                throw new InvalidOperationException($"Push notification failed with status {response.StatusCode}");
-            }
+            // Send the notification using PushServiceClient
+            await _pushClient.RequestPushMessageDeliveryAsync(pushSubscription, pushMessage, cancellationToken);
 
             _logger.LogInformation("Successfully sent push notification to {Endpoint}", endpoint);
+        }
+        catch (PushServiceClientException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Gone)
+        {
+            // 410 Gone - subscription is no longer valid
+            _logger.LogInformation("Subscription {Endpoint} is no longer valid (410 Gone), removing it", endpoint);
+            await _subscriptionRepository.DeleteAsync(Guid.Empty, endpoint, cancellationToken);
+        }
+        catch (PushServiceClientException ex)
+        {
+            _logger.LogError(
+                ex,
+                "Failed to send push notification to {Endpoint}: {StatusCode} {ReasonPhrase}",
+                endpoint,
+                ex.StatusCode,
+                ex.Message);
+            throw new InvalidOperationException($"Push notification failed with status {ex.StatusCode}", ex);
         }
         catch (HttpRequestException ex)
         {

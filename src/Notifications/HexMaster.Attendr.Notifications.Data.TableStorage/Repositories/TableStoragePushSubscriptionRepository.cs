@@ -12,15 +12,11 @@ namespace HexMaster.Attendr.Notifications.Data.TableStorage.Repositories;
 /// <summary>
 /// Azure Table Storage implementation of IPushSubscriptionRepository.
 /// </summary>
-public sealed class TableStoragePushSubscriptionRepository : IPushSubscriptionRepository
+public sealed class TableStoragePushSubscriptionRepository(TableServiceClient tableServiceClient)
+    : IPushSubscriptionRepository
 {
     private const string TableName = AspireConstants.TableStorage.Subscriptions;
-    private readonly TableServiceClient _tableServiceClient;
-
-    public TableStoragePushSubscriptionRepository(TableServiceClient tableServiceClient)
-    {
-        _tableServiceClient = tableServiceClient ?? throw new ArgumentNullException(nameof(tableServiceClient));
-    }
+    private readonly TableServiceClient _tableServiceClient = tableServiceClient ?? throw new ArgumentNullException(nameof(tableServiceClient));
 
     public async Task UpsertAsync(IPushSubscription subscription, CancellationToken cancellationToken = default)
     {
