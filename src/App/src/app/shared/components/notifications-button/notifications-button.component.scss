@@ -1,0 +1,168 @@
+.notifications-button-container {
+    position: relative;
+
+    .notifications-button {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--surface-border);
+        background-color: var(--surface-ground);
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 0;
+
+        i {
+            font-size: 1rem;
+        }
+
+        &:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary-color-transparent);
+        }
+
+        p-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+
+            ::ng-deep .p-badge {
+                min-width: 1.2rem;
+                height: 1.2rem;
+                line-height: 1.2rem;
+                font-size: 0.7rem;
+            }
+        }
+    }
+}
+
+::ng-deep .notifications-popover {
+    width: 400px;
+    max-width: 90vw;
+
+    .p-popover-content {
+        padding: 0;
+    }
+}
+
+.notifications-panel {
+    display: flex;
+    flex-direction: column;
+    max-height: 600px;
+    
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--surface-border);
+        background: var(--surface-ground);
+        
+        h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+    }
+
+    .notifications-loading,
+    .notifications-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        gap: 1rem;
+        
+        p {
+            color: var(--text-color-secondary);
+            margin: 0;
+        }
+    }
+
+    .notifications-list {
+        overflow-y: auto;
+        max-height: 500px;
+    }
+
+    .notification-item {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--surface-border);
+        transition: background-color 0.2s;
+
+        &:hover {
+            background: var(--surface-hover);
+        }
+
+        &.unread {
+            background: var(--primary-50);
+
+            &:hover {
+                background: var(--primary-100);
+            }
+        }
+
+        .notification-content {
+            flex: 1;
+            cursor: pointer;
+            min-width: 0;
+
+            .notification-header-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.25rem;
+
+                .notification-title {
+                    font-weight: 600;
+                    color: var(--text-color);
+                    font-size: 0.95rem;
+                }
+
+                .unread-indicator {
+                    width: 8px;
+                    height: 8px;
+                    background: var(--primary-color);
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                }
+            }
+
+            .notification-message {
+                color: var(--text-color-secondary);
+                font-size: 0.9rem;
+                margin: 0 0 0.5rem 0;
+                line-height: 1.4;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            .notification-time {
+                color: var(--text-color-secondary);
+                font-size: 0.8rem;
+            }
+        }
+
+        .notification-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex-shrink: 0;
+        }
+    }
+}

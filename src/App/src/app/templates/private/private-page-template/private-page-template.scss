@@ -153,6 +153,13 @@
         }
     }
 
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        height: 64px;
+    }
+
     .account {
         display: inline-flex;
         align-items: center;

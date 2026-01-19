@@ -7,11 +7,14 @@
         </ng-template>
 
         <ng-template pTemplate="end">
-            <div class="account">
-                <p-menu #accountMenu [model]="accountItems" [popup]="true"></p-menu>
-                <button class="icon-button" type="button" (click)="toggleAccountMenu($event)" aria-label="Account menu">
-                    <i class="pi pi-user"></i>
-                </button>
+            <div class="header-actions">
+                <attn-notifications-button />
+                <div class="account">
+                    <p-menu #accountMenu [model]="accountItems" [popup]="true"></p-menu>
+                    <button class="icon-button" type="button" (click)="toggleAccountMenu($event)" aria-label="Account menu">
+                        <i class="pi pi-user"></i>
+                    </button>
+                </div>
             </div>
         </ng-template>
     </p-menubar>

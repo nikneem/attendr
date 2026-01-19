@@ -20,18 +20,13 @@ public sealed record ProcessNotificationTriggerCommand(
 /// <summary>
 /// Handler for processing notification trigger commands.
 /// </summary>
-public sealed class ProcessNotificationTriggerCommandHandler : ICommandHandler<ProcessNotificationTriggerCommand>
+public sealed class ProcessNotificationTriggerCommandHandler(
+    INotificationService notificationService,
+    ILogger<ProcessNotificationTriggerCommandHandler> logger)
+    : ICommandHandler<ProcessNotificationTriggerCommand>
 {
-    private readonly INotificationService _notificationService;
-    private readonly ILogger<ProcessNotificationTriggerCommandHandler> _logger;
-
-    public ProcessNotificationTriggerCommandHandler(
-        INotificationService notificationService,
-        ILogger<ProcessNotificationTriggerCommandHandler> logger)
-    {
-        _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly INotificationService _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+    private readonly ILogger<ProcessNotificationTriggerCommandHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task Handle(ProcessNotificationTriggerCommand command, CancellationToken cancellationToken)
     {
