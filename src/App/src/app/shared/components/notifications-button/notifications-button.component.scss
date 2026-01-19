@@ -58,7 +58,7 @@
     display: flex;
     flex-direction: column;
     max-height: 600px;
-    
+
     .notifications-header {
         display: flex;
         justify-content: space-between;
@@ -66,7 +66,7 @@
         padding: 1rem;
         border-bottom: 1px solid var(--surface-border);
         background: var(--surface-ground);
-        
+
         h3 {
             margin: 0;
             font-size: 1.1rem;
@@ -82,7 +82,7 @@
         justify-content: center;
         padding: 2rem;
         gap: 1rem;
-        
+
         p {
             color: var(--text-color-secondary);
             margin: 0;

@@ -39,6 +39,13 @@ public static class EventHandlersEndpoints
             .Produces(StatusCodes.Status200OK)
             .AllowAnonymous();
 
+        group.MapPost("/GroupAccessRequestedHandler", HandleGroupAccessRequested)
+            .WithName("HandleGroupAccessRequested")
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.GroupAccessRequested)
+            .Accepts<GroupAccessRequestedEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .AllowAnonymous();
+
         // Profile events
         group.MapPost("/ProfileFollowedConferenceHandler", HandleProfileFollowedConference)
             .WithName("HandleProfileFollowedConference")
@@ -116,6 +123,54 @@ public static class EventHandlersEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to process GroupMemberRemoved event");
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> HandleGroupAccessRequested(
+        [FromBody] GroupAccessRequestedEvent @event,
+        ICommandHandler<ProcessNotificationTriggerCommand> handler,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            logger.LogInformation(
+                "Processing GroupAccessRequested event for group {GroupId} from profile {ProfileId}",
+                @event.GroupId, @event.ProfileId);
+
+            // Notify all group owners and administrators about the access request
+            foreach (var target in @event.NotificationTargets)
+            {
+                var command = new ProcessNotificationTriggerCommand(
+                    ProfileId: target.ProfileId,
+                    TypeKey: NotificationTypeKeys.GroupAccessRequested,
+                    Title: "Group Access Request",
+                    Message: $"{@event.ProfileName} has requested to join {@event.GroupName}",
+                    Url: $"/groups/{@event.GroupId}",
+                    ActorId: @event.ProfileId,
+                    EntityRefs: new Dictionary<string, string>
+                    {
+                        ["groupId"] = @event.GroupId.ToString(),
+                        ["requesterId"] = @event.ProfileId.ToString()
+                    },
+                    StackKey: $"group:{@event.GroupId}:access-requested:{@event.ProfileId}"
+                );
+
+                await handler.Handle(command, cancellationToken);
+
+                logger.LogInformation(
+                    "Created notification for {TargetProfileId} about access request from {RequesterId} to group {GroupId}",
+                    target.ProfileId, @event.ProfileId, @event.GroupId);
+            }
+
+            return Results.Ok();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, 
+                "Failed to process GroupAccessRequested event for group {GroupId}", 
+                @event.GroupId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

@@ -4,77 +4,59 @@
             <div class="notifications-header">
                 <h3>Notifications</h3>
                 @if (unreadCount() > 0) {
-                    <button 
-                        pButton 
-                        type="button" 
-                        label="Mark all read" 
-                        class="p-button-text p-button-sm"
-                        (click)="markAllAsRead()">
-                    </button>
+                <button pButton type="button" label="Mark all read" class="p-button-text p-button-sm"
+                    (click)="markAllAsRead()">
+                </button>
                 }
             </div>
 
             @if (loading()) {
-                <div class="notifications-loading">
-                    <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="6" animationDuration=".5s" />
-                    <p>Loading notifications...</p>
-                </div>
+            <div class="notifications-loading">
+                <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="6" animationDuration=".5s" />
+                <p>Loading notifications...</p>
+            </div>
             } @else if (notifications().length === 0) {
-                <div class="notifications-empty">
-                    <i class="pi pi-bell" style="font-size: 3rem; color: var(--surface-400);"></i>
-                    <p>No new notifications</p>
-                </div>
+            <div class="notifications-empty">
+                <i class="pi pi-bell" style="font-size: 3rem; color: var(--surface-400);"></i>
+                <p>No new notifications</p>
+            </div>
             } @else {
-                <div class="notifications-list">
-                    @for (notification of notifications(); track notification.id) {
-                        <div class="notification-item" [class.unread]="!notification.isRead">
-                            <div class="notification-content" (click)="handleNotificationClick(notification)">
-                                <div class="notification-header-item">
-                                    <span class="notification-title">{{ notification.title }}</span>
-                                    @if (!notification.isRead) {
-                                        <span class="unread-indicator"></span>
-                                    }
-                                </div>
-                                <p class="notification-message">{{ notification.message }}</p>
-                                <span class="notification-time">{{ formatTime(notification.createdAt) }}</span>
-                            </div>
-                            <div class="notification-actions">
-                                @if (!notification.isRead) {
-                                    <button 
-                                        pButton 
-                                        type="button" 
-                                        icon="pi pi-check" 
-                                        class="p-button-text p-button-sm"
-                                        pTooltip="Mark as read"
-                                        (click)="markAsRead(notification.id)">
-                                    </button>
-                                }
-                                <button 
-                                    pButton 
-                                    type="button" 
-                                    icon="pi pi-trash" 
-                                    class="p-button-text p-button-sm p-button-danger"
-                                    pTooltip="Delete"
-                                    (click)="deleteNotification(notification.id)">
-                                </button>
-                            </div>
+            <div class="notifications-list">
+                @for (notification of notifications(); track notification.id) {
+                <div class="notification-item" [class.unread]="!notification.isRead">
+                    <div class="notification-content" (click)="handleNotificationClick(notification)">
+                        <div class="notification-header-item">
+                            <span class="notification-title">{{ notification.title }}</span>
+                            @if (!notification.isRead) {
+                            <span class="unread-indicator"></span>
+                            }
                         </div>
-                    }
+                        <p class="notification-message">{{ notification.message }}</p>
+                        <span class="notification-time">{{ formatTime(notification.createdAt) }}</span>
+                    </div>
+                    <div class="notification-actions">
+                        @if (!notification.isRead) {
+                        <button pButton type="button" icon="pi pi-check" class="p-button-text p-button-sm"
+                            pTooltip="Mark as read" (click)="markAsRead(notification.id)">
+                        </button>
+                        }
+                        <button pButton type="button" icon="pi pi-trash"
+                            class="p-button-text p-button-sm p-button-danger" pTooltip="Delete"
+                            (click)="deleteNotification(notification.id)">
+                        </button>
+                    </div>
                 </div>
+                }
+            </div>
             }
         </div>
     </p-popover>
 
-    <button 
-        class="icon-button notifications-button" 
-        type="button" 
-        (click)="toggleNotifications($event)" 
-        aria-label="Notifications"
-        pTooltip="Notifications"
-        tooltipPosition="bottom">
+    <button class="icon-button notifications-button" type="button" (click)="toggleNotifications($event)"
+        aria-label="Notifications" pTooltip="Notifications" tooltipPosition="bottom">
         <i class="pi pi-bell"></i>
         @if (unreadCount() > 0) {
-            <p-badge [value]="unreadCount().toString()" severity="danger" />
+        <p-badge [value]="unreadCount().toString()" severity="danger" />
         }
     </button>
 </div>

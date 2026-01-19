@@ -48,8 +48,6 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
-
 // Map notification endpoints
 app.MapNotificationsEndpoints();
 app.MapNotificationPreferencesEndpoints();
