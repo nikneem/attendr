@@ -6,7 +6,6 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { NotificationPreferencesService } from '@services/notification-preferences.service';
 import { NotificationSubscriptionsService } from '@services/notification-subscriptions.service';
 import { PushNotificationService } from '@services/push-notification.service';
@@ -22,7 +21,6 @@ import { environment } from '../../../../environments/environment';
         ButtonModule,
         CardModule,
         ProgressSpinnerModule,
-        ToastModule,
     ],
     templateUrl: './notification-preferences-page.component.html',
     styleUrl: './notification-preferences-page.component.scss',
