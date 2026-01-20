@@ -1,30 +1,90 @@
 <div class="system-info-container">
     <div class="page-header">
-        <h1>System Information</h1>
-        <button (click)="refreshHealth()" [disabled]="isLoading()" class="refresh-btn">
-            <span *ngIf="!isLoading()">🔄 Refresh</span>
-            <span *ngIf="isLoading()">Loading...</span>
-        </button>
+        <div>
+            <p class="eyebrow">Operational insight</p>
+            <h1>System Information</h1>
+            <p class="lede">Backend health, client context, and project links in one place.</p>
+        </div>
+        <div class="header-actions">
+            <button (click)="refreshHealth()" [disabled]="isLoading()" class="refresh-btn">
+                <span *ngIf="!isLoading()">🔄 Refresh</span>
+                <span *ngIf="isLoading()">Loading...</span>
+            </button>
+            <a class="issue-btn" [href]="githubInfo.issuesUrl" target="_blank" rel="noreferrer">Report an issue →</a>
+        </div>
     </div>
 
-    <div class="system-overview">
+    <div class="info-grid">
         <div class="info-card">
-            <h3>System Details</h3>
+            <div class="card-title">System details</div>
             <div class="info-items">
                 <div class="info-item">
-                    <span class="label">Platform:</span>
+                    <span class="label">Platform</span>
                     <span class="value">{{ systemInfo.platform }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label">Last Updated:</span>
+                    <span class="label">Frontend version</span>
+                    <span class="value">{{ systemInfo.frontendVersion }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">User agent</span>
+                    <span class="value truncate" [title]="systemInfo.osVersion">{{ systemInfo.osVersion }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Last updated</span>
                     <span class="value">{{ systemInfo.timestamp | date: 'short' }}</span>
                 </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="card-title">Client & browser</div>
+            <div class="info-items">
+                <div class="info-item">
+                    <span class="label">Browser</span>
+                    <span class="value">{{ clientInfo.browser }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Language</span>
+                    <span class="value">{{ clientInfo.language }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Timezone</span>
+                    <span class="value">{{ clientInfo.timezone }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Screen</span>
+                    <span class="value">{{ clientInfo.screen }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Online</span>
+                    <span class="value status-pill" [ngClass]="clientInfo.online ? 'online' : 'offline'">
+                        {{ clientInfo.online ? 'Yes' : 'No' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card highlight-card">
+            <div class="card-title">GitHub project</div>
+            <p class="card-subtitle">attendr is open source. Explore the repo or file an issue.</p>
+            <div class="link-group">
+                <a class="pill-link" [href]="githubInfo.repoUrl" target="_blank" rel="noreferrer">View repository</a>
+                <a class="pill-link ghost" [href]="githubInfo.issuesUrl" target="_blank" rel="noreferrer">Report an
+                    issue</a>
             </div>
         </div>
     </div>
 
     <div class="services-section">
-        <h2>Backend Services Status</h2>
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Live status</p>
+                <h2>Backend Services</h2>
+            </div>
+            <span class="timestamp">Updated {{ systemInfo.timestamp | date: 'short' }}</span>
+        </div>
+
         <div *ngIf="isLoading() && services().length === 0" class="loading-message">
             <p>Loading service health status...</p>
         </div>

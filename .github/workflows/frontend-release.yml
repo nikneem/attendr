@@ -29,6 +29,17 @@ jobs:
       - run: npm i --legacy-peer-deps
         working-directory: ${{env.APP_LOCATION}}
         name: Install packages
+      - name: Inject frontend version
+        working-directory: ${{ env.APP_LOCATION }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          CLEAN_VERSION=$(npx semver "$VERSION")
+          if [ -z "$CLEAN_VERSION" ]; then
+            echo "Invalid semver version: $VERSION" >&2
+            exit 1
+          fi
+          sed -i "s/{{VERSION}}/$CLEAN_VERSION/" src/environments/environment.prod.ts
+          echo "Using frontend version: $CLEAN_VERSION"
       - run: npm run build -- --configuration production
         working-directory: ${{env.APP_LOCATION}}
         name: Build Angular App

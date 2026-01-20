@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Subject, interval, takeUntil } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 import { SystemInformationService, ServiceInfo } from '../../../services/system-information.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'attn-system-information-page',
@@ -19,6 +20,21 @@ export class SystemInformationPageComponent implements OnInit, OnDestroy {
         platform: '',
         osVersion: '',
         timestamp: new Date(),
+        frontendVersion: environment.version ?? 'Unknown',
+    };
+
+    clientInfo = {
+        browser: '',
+        userAgent: '',
+        language: '',
+        timezone: '',
+        screen: '',
+        online: true,
+    };
+
+    githubInfo = {
+        repoUrl: 'https://github.com/nikneem/attendr',
+        issuesUrl: 'https://github.com/nikneem/attendr/issues',
     };
 
     private destroy$ = new Subject<void>();
@@ -26,40 +42,39 @@ export class SystemInformationPageComponent implements OnInit, OnDestroy {
     constructor(private systemInfoService: SystemInformationService) { }
 
     ngOnInit() {
-        // Get system info
         this.systemInfo = {
             platform: this.getPlatform(),
             osVersion: navigator.userAgent,
             timestamp: new Date(),
+            frontendVersion: environment.version ?? 'Unknown',
         };
 
-        // Auto-refresh health checks every 30 seconds
+        this.clientInfo = {
+            browser: this.getBrowserName(),
+            userAgent: navigator.userAgent,
+            language: navigator.language || 'Unknown',
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown',
+            screen: `${window.screen.width} x ${window.screen.height}`,
+            online: navigator.onLine,
+        };
+
         interval(30000)
             .pipe(
                 startWith(0),
                 switchMap(() => {
-                    console.log('Checking service health...');
                     return this.systemInfoService.checkServiceHealth();
                 }),
                 takeUntil(this.destroy$)
             )
             .subscribe({
                 next: (services) => {
-                    console.log('Received services:', services);
-                    console.log('Services array length:', services ? services.length : 'null');
-                    console.log('isLoading before:', this.isLoading());
                     this.services.set(services);
                     this.isLoading.set(false);
-                    console.log('isLoading after:', this.isLoading());
-                    console.log('services property now:', this.services());
                 },
                 error: (error) => {
                     console.error('Error fetching service health:', error);
                     this.isLoading.set(false);
                 },
-                complete: () => {
-                    console.log('Service health check completed');
-                }
             });
     }
 
@@ -91,6 +106,18 @@ export class SystemInformationPageComponent implements OnInit, OnDestroy {
     getHealthText(isHealthy: boolean | null): string {
         if (isHealthy === null) return 'Unknown';
         return isHealthy ? 'Healthy' : 'Unhealthy';
+    }
+
+    private getBrowserName(): string {
+        const ua = navigator.userAgent;
+
+        if (/Edg\//.test(ua)) return 'Microsoft Edge';
+        if (/Chrome\//.test(ua)) return 'Chrome';
+        if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) return 'Safari';
+        if (/Firefox\//.test(ua)) return 'Firefox';
+        if (/MSIE|Trident/.test(ua)) return 'Internet Explorer';
+
+        return 'Unknown';
     }
 
     private getPlatform(): string {
