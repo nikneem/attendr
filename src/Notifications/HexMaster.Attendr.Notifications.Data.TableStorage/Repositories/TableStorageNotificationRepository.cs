@@ -127,15 +127,20 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
     public async Task<int> GetUnreadCountAsync(Guid profileId, CancellationToken cancellationToken = default)
     {
         var tableClient = await GetTableClientAsync(cancellationToken);
-        var filter = $"PartitionKey eq '{profileId}' and ReadAt eq null and DeletedAt eq null";
+        // Azure Table Storage doesn't support "eq null" for nullable properties, so filter in memory
+        var filter = $"PartitionKey eq '{profileId}'";
 
         var count = 0;
-        await foreach (var _ in tableClient.QueryAsync<NotificationEntity>(
+        await foreach (var entity in tableClient.QueryAsync<NotificationEntity>(
             filter,
-            select: new[] { "RowKey" },
+            select: new[] { "ReadAt", "DeletedAt" },
             cancellationToken: cancellationToken))
         {
-            count++;
+            // Count only unread and non-deleted notifications
+            if (!entity.ReadAt.HasValue && !entity.DeletedAt.HasValue)
+            {
+                count++;
+            }
         }
 
         return count;

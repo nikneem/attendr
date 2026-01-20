@@ -5,15 +5,22 @@
       <DataCollector friendlyName="XPlat Code Coverage">
         <Configuration>
           <Format>cobertura</Format>
-          <Include>
-            <Assembly>HexMaster.Attendr.Notifications.dll</Assembly>
-            <Assembly>HexMaster.Attendr.Notifications.Abstractions.dll</Assembly>
-          </Include>
-          <Exclude>
-            <Assembly>HexMaster.Attendr.Notifications.Api.dll</Assembly>
-            <Assembly>HexMaster.Attendr.Notifications.Data.TableStorage.dll</Assembly>
-            <Assembly>HexMaster.Attendr.Notifications.Tests.dll</Assembly>
-          </Exclude>
+          <ModulePaths>
+            <Include>
+              <ModulePath>.*HexMaster\.Attendr\.Notifications\.dll$</ModulePath>
+            </Include>
+            <Exclude>
+              <ModulePath>.*Abstractions.*</ModulePath>
+              <ModulePath>.*\.Api\..*</ModulePath>
+              <ModulePath>.*\.Data\..*</ModulePath>
+              <ModulePath>.*\.Tests\..*</ModulePath>
+              <ModulePath>.*Profiles.*</ModulePath>
+              <ModulePath>.*IntegrationEvents.*</ModulePath>
+              <ModulePath>.*\.Core\..*</ModulePath>
+              <ModulePath>.*Aspire.*</ModulePath>
+            </Exclude>
+          </ModulePaths>
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
         </Configuration>
       </DataCollector>
     </DataCollectors>

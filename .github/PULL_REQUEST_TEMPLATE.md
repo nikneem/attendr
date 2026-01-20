@@ -19,6 +19,6 @@ Fixes # (issue)
 - [ ] Profiles API
 - [ ] Conferences API
 - [ ] Presence API
-- [ ] Proxy API Gateway
+- [ ] Notifications API
 - [ ] Infrastructure / Bicep
 - [ ] Documentation
