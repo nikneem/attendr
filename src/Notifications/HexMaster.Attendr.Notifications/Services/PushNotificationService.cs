@@ -114,8 +114,8 @@ public sealed class PushNotificationService : IPushNotificationService
             {
                 title,
                 body = message,
-                icon = "/logo/icon-192x192.png",
-                badge = "/logo/icon-192x192.png",
+                icon = "https://attendr.live/images/logo-192x192.png",
+                badge = "https://attendr.live/images/logo-192x192.png",
                 url
             };
 
