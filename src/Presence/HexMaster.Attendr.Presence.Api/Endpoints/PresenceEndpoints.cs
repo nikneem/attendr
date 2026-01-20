@@ -14,6 +14,7 @@ using HexMaster.Attendr.Presence.Features.UnfollowConference;
 using HexMaster.Attendr.Presence.Features.UpdateAttendance;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
 
@@ -608,9 +609,9 @@ public static class PresenceEndpoints
     private static async Task<IResult> ResetConferenceRatings(
         Guid conferenceId,
         HttpContext context,
-        ICommandHandler<ResetConferenceRatingsCommand> handler,
-        IProfilesIntegrationService profilesIntegration,
-        ILoggerFactory loggerFactory,
+        [FromServices] ICommandHandler<ResetConferenceRatingsCommand> handler,
+        [FromServices] IProfilesIntegrationService profilesIntegration,
+        [FromServices] ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("ResetConferenceRatingsEndpoint");
