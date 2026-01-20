@@ -297,7 +297,6 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
 
             this.isSubscriptionRegistered = true;
             this.registeredEndpoint = subscriptionData.endpoint;
-            console.log('Push subscription synced with backend');
         } catch (error) {
             console.error('Failed to sync push subscription:', error);
             // Don't show error to user - this is a background sync
@@ -460,7 +459,6 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
 
             // Check if this exact subscription is already registered
             if (this.isSubscriptionRegistered && this.registeredEndpoint === subscriptionData.endpoint) {
-                console.log('Subscription already registered, skipping duplicate registration');
                 return true;
             }
 

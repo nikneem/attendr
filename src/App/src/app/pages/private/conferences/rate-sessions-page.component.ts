@@ -99,10 +99,8 @@ export class RateSessionsPageComponent implements OnInit {
                     if (!hasValidCard && (hasError || allEmpty)) {
                         // Show only the first error or empty card as the top card
                         const topCard = cards.find(c => c.isError) || cards.find(c => c.isEmpty)!;
-                        console.log('Showing single card (error or empty)');
                         this.cards.set([topCard]);
                     } else {
-                        console.log('Showing all cards');
                         this.cards.set(cards);
                     }
 
@@ -118,7 +116,6 @@ export class RateSessionsPageComponent implements OnInit {
                 next: (presentation) => {
                     // Check if presentation is null or undefined (empty response)
                     if (!presentation) {
-                        console.log(`Empty response received at index ${index} - creating empty state card`);
                         resolve({
                             presentation: null,
                             rating: null,
@@ -126,7 +123,6 @@ export class RateSessionsPageComponent implements OnInit {
                             isError: false,
                         });
                     } else {
-                        console.log(`Valid presentation received at index ${index}:`, presentation.title);
                         resolve({
                             presentation,
                             rating: null,
@@ -138,7 +134,6 @@ export class RateSessionsPageComponent implements OnInit {
                 error: (err) => {
                     if (err.status === 404) {
                         // No presentation found at this index - return empty state card
-                        console.log(`404 received at index ${index} - creating empty state card`);
                         resolve({
                             presentation: null,
                             rating: null,
