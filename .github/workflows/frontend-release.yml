@@ -11,7 +11,31 @@ env:
   APP_LOCATION: "./src/App/"
 
 jobs:
+  version:
+    name: Calculate Version
+    runs-on: ubuntu-latest
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.2.0
+        with:
+          versionSpec: '6.4.x'
+
+      - name: Execute GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v4.2.0
+
+      - name: Show calculated SemVer
+        run: echo "SemVer = ${{ steps.gitversion.outputs.semVer }}"
+
   compile:
+    needs: [version]
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -32,14 +56,13 @@ jobs:
       - name: Inject frontend version
         working-directory: ${{ env.APP_LOCATION }}
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          CLEAN_VERSION=$(npx semver "$VERSION")
-          if [ -z "$CLEAN_VERSION" ]; then
-            echo "Invalid semver version: $VERSION" >&2
+          VERSION="${{ needs.version.outputs.semVer }}"
+          if [ -z "$VERSION" ]; then
+            echo "Version not provided" >&2
             exit 1
           fi
-          sed -i "s/{{VERSION}}/$CLEAN_VERSION/" src/environments/environment.prod.ts
-          echo "Using frontend version: $CLEAN_VERSION"
+          sed -i "s/{{VERSION}}/$VERSION/" src/environments/environment.prod.ts
+          echo "Using frontend version: $VERSION"
       - run: npm run build -- --configuration production
         working-directory: ${{env.APP_LOCATION}}
         name: Build Angular App
