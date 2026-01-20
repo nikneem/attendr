@@ -9,6 +9,7 @@ using HexMaster.Attendr.Presence.Features.GetConferenceWithPresentations;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.GetCurrentConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
+using HexMaster.Attendr.Presence.Features.ResetConferenceRatings;
 using HexMaster.Attendr.Presence.Features.SetPreferredPresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
 using HexMaster.Attendr.Presence.Features.UpdateAttendance;
@@ -36,6 +37,7 @@ public static class PresenceFeaturesExtensions
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateConferencePresenceCommand>, CreateConferencePresenceCommandHandler>();
         services.AddScoped<ICommandHandler<RatePresentationCommand>, RatePresentationCommandHandler>();
+        services.AddScoped<ICommandHandler<ResetConferenceRatingsCommand>, ResetConferenceRatingsCommandHandler>();
         services.AddScoped<ICommandHandler<UpdatePresentationCommand>, UpdatePresentationCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateConferenceCommand>, UpdateConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateAttendanceCommand>, UpdateAttendanceCommandHandler>();

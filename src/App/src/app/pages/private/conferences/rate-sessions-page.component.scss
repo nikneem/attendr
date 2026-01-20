@@ -397,8 +397,23 @@
             color: var(--text-color-secondary);
         }
 
-        .back-to-conferences-btn {
+        .empty-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
             margin-top: 1rem;
+            width: 100%;
+            max-width: 300px;
+
+            @media (min-width: 480px) {
+                flex-direction: row;
+                justify-content: center;
+                max-width: none;
+            }
+        }
+
+        .back-to-conferences-btn {
+            margin-top: 0;
         }
     }
 

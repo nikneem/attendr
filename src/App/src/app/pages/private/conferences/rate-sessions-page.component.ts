@@ -6,7 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { PresenceService } from '@services/presence.service';
 import { PresentationToRateDto } from '@models/presentation-to-rate-dto';
 
@@ -21,15 +22,17 @@ interface CardInStack {
 @Component({
     selector: 'attn-rate-sessions-page',
     standalone: true,
-    imports: [CommonModule, CardModule, ButtonModule, RatingModule, FormsModule, ProgressSpinnerModule],
+    imports: [CommonModule, CardModule, ButtonModule, RatingModule, FormsModule, ProgressSpinnerModule, ConfirmDialogModule],
     templateUrl: './rate-sessions-page.component.html',
     styleUrl: './rate-sessions-page.component.scss',
+    providers: [ConfirmationService],
 })
 export class RateSessionsPageComponent implements OnInit {
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly presenceService = inject(PresenceService);
     private readonly messageService = inject(MessageService);
+    private readonly confirmationService = inject(ConfirmationService);
 
     conferenceId = signal<string>('');
     cards = signal<CardInStack[]>([]);
@@ -357,6 +360,42 @@ export class RateSessionsPageComponent implements OnInit {
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
+        });
+    }
+
+    confirmResetRatings(): void {
+        this.confirmationService.confirm({
+            message: 'Are you sure you wish to remove all favorited sessions and rate all sessions again?',
+            header: 'Reset Ratings',
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonStyleClass: 'p-button-danger',
+            accept: () => {
+                this.resetRatings();
+            },
+        });
+    }
+
+    private resetRatings(): void {
+        this.loading.set(true);
+        this.presenceService.resetConferenceRatings(this.conferenceId()).subscribe({
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'All ratings have been reset',
+                });
+                // Restart the rating process by loading initial cards
+                this.loadInitialCards();
+            },
+            error: (err) => {
+                console.error('Error resetting ratings:', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to reset ratings. Please try again.',
+                });
+                this.loading.set(false);
+            },
         });
     }
 

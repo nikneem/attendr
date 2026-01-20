@@ -123,4 +123,22 @@ public sealed class PresentationPresenceRepository : IPresentationPresenceReposi
         var filter = Builders<PresentationPresenceDocument>.Filter.Eq(d => d.Id, id);
         await _collection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
     }
+
+    public async Task<int> ResetRatingsAsync(
+        Guid profileId,
+        Guid conferenceId,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<PresentationPresenceDocument>.Filter.And(
+            Builders<PresentationPresenceDocument>.Filter.Eq(d => d.ProfileId, profileId),
+            Builders<PresentationPresenceDocument>.Filter.Eq(d => d.ConferenceId, conferenceId));
+
+        var update = Builders<PresentationPresenceDocument>.Update
+            .Set(d => d.IsRated, false)
+            .Set(d => d.IsFavorite, false)
+            .Set(d => d.Rating, null);
+
+        var result = await _collection.UpdateManyAsync(filter, update, cancellationToken: cancellationToken).ConfigureAwait(false);
+        return (int)result.ModifiedCount;
+    }
 }

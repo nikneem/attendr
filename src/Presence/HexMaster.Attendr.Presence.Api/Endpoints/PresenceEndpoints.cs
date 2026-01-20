@@ -8,11 +8,13 @@ using HexMaster.Attendr.Presence.Features.GetConferenceWithPresentations;
 using HexMaster.Attendr.Presence.Features.GetMyConferences;
 using HexMaster.Attendr.Presence.Features.GetCurrentConferences;
 using HexMaster.Attendr.Presence.Features.RatePresentation;
+using HexMaster.Attendr.Presence.Features.ResetConferenceRatings;
 using HexMaster.Attendr.Presence.Features.SetPreferredPresentation;
 using HexMaster.Attendr.Presence.Features.UnfollowConference;
 using HexMaster.Attendr.Presence.Features.UpdateAttendance;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
 
@@ -79,6 +81,12 @@ public static class PresenceEndpoints
             .Accepts<RatePresentationDto>("application/json")
             .Produces(StatusCodes.Status202Accepted)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapDelete("/{conferenceId:guid}/rate", ResetConferenceRatings)
+            .WithName("ResetConferenceRatings")
+            .Produces(StatusCodes.Status202Accepted)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
@@ -594,6 +602,46 @@ public static class PresenceEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Error getting conference schedule now for conference {ConferenceId}", conferenceId);
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> ResetConferenceRatings(
+        Guid conferenceId,
+        HttpContext context,
+        [FromServices] ICommandHandler<ResetConferenceRatingsCommand> handler,
+        [FromServices] IProfilesIntegrationService profilesIntegration,
+        [FromServices] ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("ResetConferenceRatingsEndpoint");
+
+        try
+        {
+            var profile = await profilesIntegration.GetProfileFromUser(context.User, cancellationToken);
+            if (!Guid.TryParse(profile.ProfileId, out var profileId))
+            {
+                logger.LogError("Invalid profile ID format: {ProfileId}", profile.ProfileId);
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            await handler.Handle(
+                new ResetConferenceRatingsCommand(profileId, conferenceId),
+                cancellationToken);
+
+            return Results.Accepted();
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized();
+        }
+        catch (ProfileNotFoundException ex)
+        {
+            return Results.NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error resetting ratings for conference {ConferenceId}", conferenceId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

@@ -47,8 +47,12 @@
                             <i class="pi pi-check-circle"></i>
                             <h3>All Sessions Rated</h3>
                             <p>You've rated all available sessions for this conference.</p>
-                            <button pButton label="Back to My Conferences" icon="pi pi-arrow-left" (click)="goBack()"
-                                class="back-to-conferences-btn"></button>
+                            <div class="empty-card-actions">
+                                <button pButton label="Reset Ratings" icon="pi pi-refresh" severity="secondary"
+                                    [outlined]="true" (click)="confirmResetRatings()" class="reset-btn"></button>
+                                <button pButton label="Back to My Conferences" icon="pi pi-arrow-left"
+                                    (click)="goBack()" class="back-to-conferences-btn"></button>
+                            </div>
                         </div>
                     </p-card>
                     } @else if (card.isError) {
@@ -140,3 +144,4 @@
         }
     </div>
 </div>
+<p-confirmDialog />

@@ -97,4 +97,17 @@ public interface IPresentationPresenceRepository
         Guid conferenceId,
         Guid presentationId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Resets ratings for all presentations of a specific profile and conference.
+    /// Sets IsRated to false, IsFavorite to false, and Rating to null for all presentations.
+    /// </summary>
+    /// <param name="profileId">The unique identifier of the profile.</param>
+    /// <param name="conferenceId">The unique identifier of the conference.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The number of presentations affected.</returns>
+    Task<int> ResetRatingsAsync(
+        Guid profileId,
+        Guid conferenceId,
+        CancellationToken cancellationToken = default);
 }
