@@ -38,7 +38,7 @@ Update your environment configuration:
 ```typescript
 // environments/environment.ts
 export const environment = {
-  apiUrl: 'https://api.attendr.com',
+  apiUrl: 'https://api.attendr.live',
   vapidPublicKey: '<your-vapid-public-key>'  // Add this
 };
 ```
@@ -150,16 +150,16 @@ public class PushNotificationService
 {
   "title": "Conference Updated",
   "body": "The conference schedule has been updated",
-  "icon": "https://attendr.com/images/attendr-icon.png",
-  "badge": "https://attendr.com/images/badge.png",
+  "icon": "https://attendr.live/images/attendr-icon.png",
+  "badge": "https://attendr.live/images/badge.png",
   "tag": "conference-update",
   "requireInteraction": false,
-  "url": "https://attendr.com/app/conferences/123",
+  "url": "https://attendr.live/app/conferences/123",
   "actions": [
     {
       "action": "view",
       "title": "View",
-      "url": "https://attendr.com/app/conferences/123"
+      "url": "https://attendr.live/app/conferences/123"
     },
     {
       "action": "dismiss",

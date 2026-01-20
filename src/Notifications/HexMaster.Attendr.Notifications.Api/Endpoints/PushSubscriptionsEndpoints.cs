@@ -80,7 +80,7 @@ public static class PushSubscriptionsEndpoints
             profileId,
             "Test Notification",
             "This is a test push notification from Attendr!",
-            "https://attendr.com/app/groups",
+            "https://attendr.live/app/groups",
             httpContext.RequestAborted);
 
         return TypedResults.Ok(new TestNotificationResponse(sentCount, $"Test notification sent to {sentCount} subscription(s)"));

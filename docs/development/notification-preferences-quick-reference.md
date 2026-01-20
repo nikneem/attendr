@@ -124,7 +124,7 @@ Ensure the API URL is configured in your environment file:
 ```typescript
 // environments/environment.ts
 export const environment = {
-  apiUrl: 'https://api.attendr.com',
+  apiUrl: 'https://api.attendr.live',
   // ... other config
 };
 ```

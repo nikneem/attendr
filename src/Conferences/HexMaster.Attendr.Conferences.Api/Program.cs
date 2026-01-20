@@ -52,9 +52,9 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "http://localhost:4200",
             "https://localhost:4200",
-            "https://attendr.com",
-            "https://www.attendr.com",
-            "https://*.attendr.com")
+            "https://attendr.live",
+            "https://www.attendr.live",
+            "https://*.attendr.live")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();

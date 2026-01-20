@@ -29,8 +29,8 @@ param containerRegistryPassword = ''
 
 // CORS allowed origins
 param corsOrigins = [
-  'https://attendr.com'
-  'https://www.attendr.com'
+  'https://attendr.live'
+  'https://www.attendr.live'
 ]
 
 // VAPID keys (provide via GitHub secrets in workflow)

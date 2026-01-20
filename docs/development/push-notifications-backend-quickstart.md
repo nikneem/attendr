@@ -13,7 +13,7 @@
    "PushNotifications": {
      "VapidPublicKey": "YOUR_PUBLIC_KEY",
      "VapidPrivateKey": "YOUR_PRIVATE_KEY",
-     "VapidSubject": "mailto:notifications@attendr.com"
+     "VapidSubject": "mailto:notifications@attendr.live"
    }
    ```
 
@@ -59,7 +59,7 @@ Copy keys to your configuration files:
   "PushNotifications": {
     "VapidPublicKey": "BCo...",
     "VapidPrivateKey": "abc...",
-    "VapidSubject": "mailto:notifications@attendr.com"
+    "VapidSubject": "mailto:notifications@attendr.live"
   }
 }
 ```
@@ -70,7 +70,7 @@ Copy keys to your configuration files:
   "PushNotifications": {
     "VapidPublicKey": "${PUSH_VAPID_PUBLIC_KEY}",
     "VapidPrivateKey": "${PUSH_VAPID_PRIVATE_KEY}",
-    "VapidSubject": "mailto:notifications@attendr.com"
+    "VapidSubject": "mailto:notifications@attendr.live"
   }
 }
 ```
@@ -216,7 +216,7 @@ public class PushNotificationOptions
 {
     public string VapidPublicKey { get; set; }
     public string VapidPrivateKey { get; set; }
-    public string VapidSubject { get; set; } = "mailto:notifications@attendr.com";
+    public string VapidSubject { get; set; } = "mailto:notifications@attendr.live";
 }
 
 public class PushNotificationPayload

@@ -233,14 +233,14 @@ await fetch('/api/notifications/preferences/detailed', {
 ```bash
 # Get preferences
 curl -H "Authorization: Bearer <token>" \
-  https://api.attendr.com/api/notifications/preferences/detailed
+  https://api.attendr.live/api/notifications/preferences/detailed
 
 # Update preferences
 curl -X PUT \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d @preferences.json \
-  https://api.attendr.com/api/notifications/preferences/detailed
+  https://api.attendr.live/api/notifications/preferences/detailed
 ```
 
 ## Error Handling
