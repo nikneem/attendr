@@ -114,38 +114,68 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     {
         ArgumentNullException.ThrowIfNull(conference);
 
+        // If the conference hasn't been modified, skip the update
+        if (conference.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Pristine)
+        {
+            return;
+        }
+
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
         try
         {
-            // Update conference
-            var conferenceEntity = ConferenceMapper.ToEntity(conference);
-            await UpdateConferenceAsync(connection, conferenceEntity, cancellationToken).ConfigureAwait(false);
-
-            // Delete and re-insert rooms (simpler than trying to diff)
-            await DeleteRoomsAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
-            foreach (var room in conference.Rooms)
+            // Update conference only if it was actually modified (not just touched)
+            if (conference.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified)
             {
-                await InsertRoomAsync(connection, conference.Id, room, cancellationToken).ConfigureAwait(false);
+                var conferenceEntity = ConferenceMapper.ToEntity(conference);
+                await UpdateConferenceAsync(connection, conferenceEntity, cancellationToken).ConfigureAwait(false);
             }
 
-            // Delete and re-insert speakers
-            await DeleteSpeakersAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
-            foreach (var speaker in conference.Speakers)
-            {
-                await InsertSpeakerAsync(connection, conference.Id, speaker, cancellationToken).ConfigureAwait(false);
-            }
+            // Update rooms: only delete and re-insert if any room was created or modified (not just touched)
+            var modifiedRooms = conference.Rooms.Where(r => 
+                r.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created || 
+                r.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
 
-            // Delete and re-insert presentations and their speaker relationships
-            await DeletePresentationsAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
-            foreach (var presentation in conference.Presentations)
+            if (modifiedRooms.Count > 0)
             {
-                await InsertPresentationAsync(connection, conference.Id, presentation, cancellationToken).ConfigureAwait(false);
-
-                foreach (var speakerId in presentation.SpeakerIds)
+                await DeleteRoomsAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
+                foreach (var room in conference.Rooms)
                 {
-                    await InsertPresentationSpeakerAsync(connection, presentation.Id, speakerId, cancellationToken).ConfigureAwait(false);
+                    await InsertRoomAsync(connection, conference.Id, room, cancellationToken).ConfigureAwait(false);
+                }
+            }
+
+            // Update speakers: only delete and re-insert if any speaker was created or modified (not just touched)
+            var modifiedSpeakers = conference.Speakers.Where(s => 
+                s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created || 
+                s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
+
+            if (modifiedSpeakers.Count > 0)
+            {
+                await DeleteSpeakersAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
+                foreach (var speaker in conference.Speakers)
+                {
+                    await InsertSpeakerAsync(connection, conference.Id, speaker, cancellationToken).ConfigureAwait(false);
+                }
+            }
+
+            // Update presentations: only delete and re-insert if any presentation was created or modified (not just touched)
+            var modifiedPresentations = conference.Presentations.Where(p => 
+                p.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created || 
+                p.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
+
+            if (modifiedPresentations.Count > 0)
+            {
+                await DeletePresentationsAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
+                foreach (var presentation in conference.Presentations)
+                {
+                    await InsertPresentationAsync(connection, conference.Id, presentation, cancellationToken).ConfigureAwait(false);
+
+                    foreach (var speakerId in presentation.SpeakerIds)
+                    {
+                        await InsertPresentationSpeakerAsync(connection, presentation.Id, speakerId, cancellationToken).ConfigureAwait(false);
+                    }
                 }
             }
 
