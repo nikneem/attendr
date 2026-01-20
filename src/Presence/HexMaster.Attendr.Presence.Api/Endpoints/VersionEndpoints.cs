@@ -12,7 +12,6 @@ public static class VersionEndpoints
         app.MapGet("/api/presence/version", GetVersion)
             .WithName("GetPresenceVersion")
             .AllowAnonymous()
-            .WithOpenApi()
             .Produces<VersionResponse>(StatusCodes.Status200OK);
 
         return app;

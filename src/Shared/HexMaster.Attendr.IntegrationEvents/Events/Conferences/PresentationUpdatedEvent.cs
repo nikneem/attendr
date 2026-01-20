@@ -58,7 +58,7 @@ public sealed class PresentationUpdatedEvent : IntegrationEvent
     /// <summary>
     /// Gets the external ID from the source system (e.g., Sessionize).
     /// </summary>
-    public string ExternalId { get; init; } = string.Empty;
+    public string? ExternalId { get; init; } = string.Empty;
 
     /// <summary>
     /// Gets a value indicating whether the schedule (time or room) has changed.

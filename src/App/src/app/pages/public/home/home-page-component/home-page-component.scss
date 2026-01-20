@@ -679,3 +679,44 @@
         }
     }
 }
+
+// Footer Section
+.footer {
+    background-color: $background-secondary;
+    color: $text-secondary;
+    padding: $spacing-lg;
+    border-top: 1px solid rgba($primary-color, 0.1);
+
+    .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+
+        p {
+            margin: 0;
+            font-size: $font-size-sm;
+        }
+
+        .system-info-link {
+            color: $primary-color;
+            text-decoration: none;
+            font-size: $font-size-sm;
+            transition: color 0.3s ease;
+
+            &:hover {
+                color: $primary-light;
+                text-decoration: underline;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .footer-content {
+            flex-direction: column;
+            gap: $spacing-md;
+            text-align: center;
+        }
+    }
+}

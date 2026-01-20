@@ -12,7 +12,6 @@ public static class VersionEndpoints
         app.MapGet("/api/profiles/version", GetVersion)
             .WithName("GetProfilesVersion")
             .AllowAnonymous()
-            .WithOpenApi()
             .Produces<VersionResponse>(StatusCodes.Status200OK);
 
         return app;
