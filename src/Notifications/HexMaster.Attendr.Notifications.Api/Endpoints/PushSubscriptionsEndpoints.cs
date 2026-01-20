@@ -115,4 +115,4 @@ public static class PushSubscriptionsEndpoints
 
     public record UnsubscribeFromPushRequest(string Endpoint);
 }
-}
+
