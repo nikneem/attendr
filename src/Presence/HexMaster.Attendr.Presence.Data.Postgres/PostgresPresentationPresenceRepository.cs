@@ -289,6 +289,32 @@ public sealed class PostgresPresentationPresenceRepository : IPresentationPresen
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<int> ResetRatingsAsync(
+        Guid profileId,
+        Guid conferenceId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var sql = $@"
+            UPDATE {TableName}
+            SET data = jsonb_set(
+                jsonb_set(
+                    jsonb_set(data, '{{isRated}}', 'false'),
+                    '{{isFavorite}}', 'false'),
+                '{{rating}}', 'null')
+            WHERE profile_id = @profile_id 
+                AND conference_id = @conference_id";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@profile_id", profileId);
+        command.Parameters.AddWithValue("@conference_id", conferenceId);
+
+        var rowsAffected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        return rowsAffected;
+    }
+
     private async Task EnsureTableExistsAsync()
     {
         await using var connection = await _dataSource.OpenConnectionAsync().ConfigureAwait(false);

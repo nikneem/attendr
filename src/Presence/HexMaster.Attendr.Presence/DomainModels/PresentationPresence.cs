@@ -165,4 +165,11 @@ public sealed class PresentationPresence
     {
         IsPreferred = false;
     }
+
+    public void ResetRating()
+    {
+        IsRated = false;
+        IsFavorite = false;
+        Rating = null;
+    }
 }

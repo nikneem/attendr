@@ -62,4 +62,8 @@ export class PresenceService {
     checkInToPresentation(conferenceId: string, presentationId: string): Observable<void> {
         return this.http.put<void>(`${this.apiUrl}/${conferenceId}/checkin/${presentationId}`, { isCheckedIn: true });
     }
+
+    resetConferenceRatings(conferenceId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${conferenceId}/rate`);
+    }
 }
