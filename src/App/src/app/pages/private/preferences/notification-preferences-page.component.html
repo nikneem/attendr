@@ -1,4 +1,34 @@
 <div class="notification-preferences-container">
+    <!-- PWA Install Banner -->
+    <div *ngIf="showPwaInstallBanner()" class="pwa-install-banner">
+        <p-message
+            [text]="'Install Attendr as an app for a better mobile experience with faster performance, offline support, and improved push notifications.'"
+            severity="info" [styleClass]="'banner-message'">
+        </p-message>
+        <div class="banner-actions">
+            <p-button label="Install App" icon="pi pi-download" (onClick)="installApp()" [loading]="isInstallingApp()"
+                [disabled]="isInstallingApp()">
+            </p-button>
+            <p-button label="Dismiss" (onClick)="dismissInstallBanner()" severity="secondary" text>
+            </p-button>
+        </div>
+    </div>
+
+    <!-- Push Permission Banner -->
+    <div *ngIf="showPermissionBanner()" class="permission-banner">
+        <p-message
+            [text]="'You have enabled push notifications, but Attendr does not have push notification permissions on this device yet.'"
+            severity="warn" [styleClass]="'banner-message'">
+        </p-message>
+        <div class="banner-actions">
+            <p-button label="Allow" icon="pi pi-check" (onClick)="requestPushPermission()"
+                [loading]="isRequestingPermission()" [disabled]="isRequestingPermission()">
+            </p-button>
+            <p-button label="Dismiss" (onClick)="dismissPermissionBanner()" severity="secondary" text>
+            </p-button>
+        </div>
+    </div>
+
     <div class="preferences-header">
         <h1>Notification Preferences</h1>
         <p>Manage how and when you receive notifications</p>

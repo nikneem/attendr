@@ -4,6 +4,68 @@
     margin: 0 auto;
 }
 
+.pwa-install-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--blue-50);
+    border-left: 4px solid var(--primary-color);
+
+    .banner-message {
+        margin: 0;
+    }
+
+    .banner-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 640px) {
+        .banner-actions {
+            flex-direction: column;
+        }
+
+        .banner-actions>* {
+            width: 100%;
+        }
+    }
+}
+
+.permission-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--yellow-50);
+    border-left: 4px solid var(--yellow-500);
+
+    .banner-message {
+        margin: 0;
+    }
+
+    .banner-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 640px) {
+        .banner-actions {
+            flex-direction: column;
+        }
+
+        .banner-actions>* {
+            width: 100%;
+        }
+    }
+}
+
 .preferences-header {
     margin-bottom: 2rem;
 
