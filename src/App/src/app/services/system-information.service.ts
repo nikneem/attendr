@@ -41,9 +41,6 @@ export class SystemInformationService {
         console.log('Creating forkJoin with', healthChecks.length, 'health checks');
         return forkJoin(healthChecks).pipe(
             map((results) => {
-                console.log('Health check results:', results);
-                console.log('Results length:', results.length);
-                console.log('Results details:', results.map(r => ({ name: r.name, version: r.version, isHealthy: r.isHealthy })));
                 return results;
             })
         );
