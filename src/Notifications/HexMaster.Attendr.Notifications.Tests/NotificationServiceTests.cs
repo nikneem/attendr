@@ -184,4 +184,246 @@ public sealed class NotificationServiceTests
         [NotificationChannel.Email] = new ChannelDeliveryInfo { Enabled = true, Status = DeliveryStatus.Pending },
         [NotificationChannel.Push] = new ChannelDeliveryInfo { Enabled = true, Status = DeliveryStatus.Pending }
     };
+
+    [Fact]
+    public async Task GetNotificationsAsync_ReturnsNotificationsFromRepository()
+    {
+        var profileId = Guid.NewGuid();
+        var expectedNotifications = new List<INotification>
+        {
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                ProfileId = profileId,
+                TypeKey = "test.type",
+                Severity = NotificationSeverity.Info,
+                Title = "Test 1",
+                Message = "Message 1",
+                CreatedAt = DateTime.UtcNow,
+                ChannelDeliveries = BuildChannelDeliveries()
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                ProfileId = profileId,
+                TypeKey = "test.type",
+                Severity = NotificationSeverity.Info,
+                Title = "Test 2",
+                Message = "Message 2",
+                CreatedAt = DateTime.UtcNow,
+                ChannelDeliveries = BuildChannelDeliveries()
+            }
+        };
+
+        var notificationRepository = new Mock<INotificationRepository>();
+        notificationRepository
+            .Setup(r => r.GetByProfileIdAsync(profileId, true, false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedNotifications);
+
+        var preferencesRepository = new Mock<INotificationPreferencesRepository>();
+        var typeService = new Mock<INotificationTypeService>();
+
+        var sut = new NotificationService(notificationRepository.Object, preferencesRepository.Object, typeService.Object, NullLogger<NotificationService>.Instance);
+
+        var result = await sut.GetNotificationsAsync(profileId, includeRead: true, includeDeleted: false);
+
+        Assert.Equal(2, result.Count);
+        Assert.Same(expectedNotifications, result);
+        notificationRepository.Verify(r => r.GetByProfileIdAsync(profileId, true, false, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetNotificationByIdAsync_ReturnsNotificationFromRepository()
+    {
+        var notificationId = Guid.NewGuid();
+        var expectedNotification = new Notification
+        {
+            Id = notificationId,
+            ProfileId = Guid.NewGuid(),
+            TypeKey = "test.type",
+            Severity = NotificationSeverity.Info,
+            Title = "Test Notification",
+            Message = "Test Message",
+            CreatedAt = DateTime.UtcNow,
+            ChannelDeliveries = BuildChannelDeliveries()
+        };
+
+        var notificationRepository = new Mock<INotificationRepository>();
+        notificationRepository
+            .Setup(r => r.GetByIdAsync(notificationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedNotification);
+
+        var preferencesRepository = new Mock<INotificationPreferencesRepository>();
+        var typeService = new Mock<INotificationTypeService>();
+
+        var sut = new NotificationService(notificationRepository.Object, preferencesRepository.Object, typeService.Object, NullLogger<NotificationService>.Instance);
+
+        var result = await sut.GetNotificationByIdAsync(notificationId);
+
+        Assert.NotNull(result);
+        Assert.Same(expectedNotification, result);
+        notificationRepository.Verify(r => r.GetByIdAsync(notificationId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetNotificationByIdAsync_ReturnsNullWhenNotFound()
+    {
+        var notificationId = Guid.NewGuid();
+
+        var notificationRepository = new Mock<INotificationRepository>();
+        notificationRepository
+            .Setup(r => r.GetByIdAsync(notificationId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((INotification?)null);
+
+        var preferencesRepository = new Mock<INotificationPreferencesRepository>();
+        var typeService = new Mock<INotificationTypeService>();
+
+        var sut = new NotificationService(notificationRepository.Object, preferencesRepository.Object, typeService.Object, NullLogger<NotificationService>.Instance);
+
+        var result = await sut.GetNotificationByIdAsync(notificationId);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetUnreadCountAsync_ReturnsCountFromRepository()
+    {
+        var profileId = Guid.NewGuid();
+        const int expectedCount = 5;
+
+        var notificationRepository = new Mock<INotificationRepository>();
+        notificationRepository
+            .Setup(r => r.GetUnreadCountAsync(profileId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedCount);
+
+        var preferencesRepository = new Mock<INotificationPreferencesRepository>();
+        var typeService = new Mock<INotificationTypeService>();
+
+        var sut = new NotificationService(notificationRepository.Object, preferencesRepository.Object, typeService.Object, NullLogger<NotificationService>.Instance);
+
+        var result = await sut.GetUnreadCountAsync(profileId);
+
+        Assert.Equal(expectedCount, result);
+        notificationRepository.Verify(r => r.GetUnreadCountAsync(profileId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task MarkAsReadAsync_CallsRepositoryMarkAsRead()
+    {
+        var notificationId = Guid.NewGuid();
+
+        var notificationRepository = new Mock<INotificationRepository>();
+        notificationRepository
+            .Setup(r => r.MarkAsReadAsync(notificationId, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var preferencesRepository = new Mock<INotificationPreferencesRepository>();
+        var typeService = new Mock<INotificationTypeService>();
+
+        var sut = new NotificationService(notificationRepository.Object, preferencesRepository.Object, typeService.Object, NullLogger<NotificationService>.Instance);
+
+        await sut.MarkAsReadAsync(notificationId);
+
+        notificationRepository.Verify(r => r.MarkAsReadAsync(notificationId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task MarkAllAsReadAsync_MarksAllUnreadNotifications()
+    {
+        var profileId = Guid.NewGuid();
+        var unreadNotifications = new List<INotification>
+        {
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                ProfileId = profileId,
+                TypeKey = "test.type",
+                Severity = NotificationSeverity.Info,
+                Title = "Test 1",
+                Message = "Message 1",
+                CreatedAt = DateTime.UtcNow,
+                ChannelDeliveries = BuildChannelDeliveries()
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                ProfileId = profileId,
+                TypeKey = "test.type",
+                Severity = NotificationSeverity.Info,
+                Title = "Test 2",
+                Message = "Message 2",
+                CreatedAt = DateTime.UtcNow,
+                ChannelDeliveries = BuildChannelDeliveries()
+            },
+            new Notification
+            {
+                Id = Guid.NewGuid(),
+                ProfileId = profileId,
+                TypeKey = "test.type",
+                Severity = NotificationSeverity.Info,
+                Title = "Test 3",
+                Message = "Message 3",
+                CreatedAt = DateTime.UtcNow,
+                ChannelDeliveries = BuildChannelDeliveries()
+            }
+        };
+
+        var notificationRepository = new Mock<INotificationRepository>();
+        notificationRepository
+            .Setup(r => r.GetByProfileIdAsync(profileId, false, false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(unreadNotifications);
+        notificationRepository
+            .Setup(r => r.MarkAsReadAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var preferencesRepository = new Mock<INotificationPreferencesRepository>();
+        var typeService = new Mock<INotificationTypeService>();
+
+        var sut = new NotificationService(notificationRepository.Object, preferencesRepository.Object, typeService.Object, NullLogger<NotificationService>.Instance);
+
+        await sut.MarkAllAsReadAsync(profileId);
+
+        foreach (var notification in unreadNotifications)
+        {
+            notificationRepository.Verify(r => r.MarkAsReadAsync(notification.Id, It.IsAny<CancellationToken>()), Times.Once);
+        }
+    }
+
+    [Fact]
+    public async Task MarkAsDeletedAsync_CallsRepositoryMarkAsDeleted()
+    {
+        var notificationId = Guid.NewGuid();
+
+        var notificationRepository = new Mock<INotificationRepository>();
+        notificationRepository
+            .Setup(r => r.MarkAsDeletedAsync(notificationId, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var preferencesRepository = new Mock<INotificationPreferencesRepository>();
+        var typeService = new Mock<INotificationTypeService>();
+
+        var sut = new NotificationService(notificationRepository.Object, preferencesRepository.Object, typeService.Object, NullLogger<NotificationService>.Instance);
+
+        await sut.MarkAsDeletedAsync(notificationId);
+
+        notificationRepository.Verify(r => r.MarkAsDeletedAsync(notificationId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteExpiredNotificationsAsync_CallsRepositoryDeleteExpired()
+    {
+        var notificationRepository = new Mock<INotificationRepository>();
+        notificationRepository
+            .Setup(r => r.DeleteExpiredAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var preferencesRepository = new Mock<INotificationPreferencesRepository>();
+        var typeService = new Mock<INotificationTypeService>();
+
+        var sut = new NotificationService(notificationRepository.Object, preferencesRepository.Object, typeService.Object, NullLogger<NotificationService>.Instance);
+
+        await sut.DeleteExpiredNotificationsAsync();
+
+        notificationRepository.Verify(r => r.DeleteExpiredAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
 }
