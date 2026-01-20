@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'src/App/**'
+      - '.github/workflows/frontend-release.yml'
 
 env:
   APP_LOCATION: "./src/App/"
