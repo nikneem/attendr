@@ -16,14 +16,14 @@ self.addEventListener('push', (event) => {
         notificationData = {
             title: 'Attendr Notification',
             body: event.data.text(),
-            icon: '/logo/icon-192x192.png'
+            icon: '/images/logo-192x192.png'
         };
     }
 
     const options = {
         body: notificationData.body,
-        icon: notificationData.icon || '/logo/icon-192x192.png',
-        badge: notificationData.badge || '/logo/icon-192x192.png',
+        icon: notificationData.icon || '/images/logo-192x192.png',
+        badge: notificationData.badge || '/images/logo-192x192.png',
         tag: notificationData.tag || 'attendr-notification',
         requireInteraction: notificationData.requireInteraction || false,
         data: {}
