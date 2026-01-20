@@ -18,7 +18,7 @@
         </div>
         } @else if (cards().length > 0) {
         <div class="presentation-container">
-            <div class="swipe-indicators">
+            <div class="swipe-indicators" [class.active]="swipeDirection() === 'left' || swipeDirection() === 'right'">
                 <div class="indicator left" [class.active]="swipeDirection() === 'left'">
                     <i class="pi pi-times"></i>
                     <span>Not Favorite</span>
