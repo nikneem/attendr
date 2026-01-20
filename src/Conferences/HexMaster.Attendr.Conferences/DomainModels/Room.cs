@@ -70,4 +70,39 @@ public sealed class Room : StatefulDomainModel<Guid>
     {
         return new Room(id, name, capacity, externalId);
     }
+
+    /// <summary>
+    /// Sets the name of the room.
+    /// </summary>
+    /// <param name="name">The new name of the room.</param>
+    /// <exception cref="ArgumentException">Thrown when name is null or whitespace.</exception>
+    public void SetName(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
+
+        if (ShouldUpdateProperty(Name, name))
+        {
+            Name = name;
+            UpdateModifiedOn();
+        }
+    }
+
+    /// <summary>
+    /// Sets the capacity of the room.
+    /// </summary>
+    /// <param name="capacity">The new capacity of the room.</param>
+    /// <exception cref="ArgumentException">Thrown when capacity is not positive.</exception>
+    public void SetCapacity(int capacity)
+    {
+        if (capacity <= 0)
+        {
+            throw new ArgumentException("Room capacity must be greater than zero.", nameof(capacity));
+        }
+
+        if (ShouldUpdateProperty(Capacity, capacity))
+        {
+            Capacity = capacity;
+            UpdateModifiedOn();
+        }
+    }
 }

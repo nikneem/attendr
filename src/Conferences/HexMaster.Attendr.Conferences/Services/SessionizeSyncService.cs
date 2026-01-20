@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Conferences.DomainModels;
+using HexMaster.Attendr.Core.DomainModels;
 using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
@@ -74,7 +75,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                 var speaker = Speaker.FromPersisted(existingSpeaker.Id, existingSpeaker.Name, existingSpeaker.Company,
                     existingSpeaker.ProfilePictureUrl, existingSpeaker.ExternalId);
 
-                speaker.SetName(sessionizeSpeaker.FullName);
+                speaker.SetName(sessionizeSpeaker.FullName ?? "Unknown");
                 speaker.SetCompany(sessionizeSpeaker.TagLine);
                 speaker.SetProfilePictureUrl(sessionizeSpeaker.ProfilePicture);
                 conference.UpdateSpeaker(speaker);
@@ -105,7 +106,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
         var scheduleGrid = await _sessionizeApiClient.GetScheduleGridAsync(conference.SynchronizationSource.SourceLocationOrApiKey, cancellationToken);
         var roomIdMapping = new Dictionary<string, Guid>(); // Maps room ID (as external ID) to local GUID
 
-        // First pass: collect all unique rooms
+        // First pass: collect all unique rooms and update/add them
         foreach (var day in scheduleGrid)
         {
             foreach (var room in day.Rooms)
@@ -117,18 +118,25 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
 
                 if (existingRoom != null)
                 {
+                    // Update existing room with new data
+                    var updatedRoom = Room.FromPersisted(existingRoom.Id, existingRoom.Name, existingRoom.Capacity, existingRoom.ExternalId);
+                    updatedRoom.SetName(room.Name);
+                    updatedRoom.SetCapacity(100); // Default capacity from Sessionize doesn't provide this, so keep existing or use default
+                    conference.UpdateRoom(updatedRoom);
+
                     roomIdMapping[roomId] = existingRoom.Id;
-                    _logger.LogDebug("Room {RoomName} already exists as {RoomId}", roomId, existingRoom.Id);
+                    _logger.LogDebug("Updated room {RoomId} (ExternalId: {ExternalId}) - {RoomName}", existingRoom.Id, roomId, room.Name);
                 }
                 else if (!roomIdMapping.ContainsKey(roomId))
                 {
-                    var roomEntity = Room.FromPersisted(Guid.NewGuid(), room.Name, 100, roomId); // Default capacity, using ID as externalId
+                    // Create new room
+                    var newRoom = Room.Create(room.Name, 100, roomId); // Default capacity, using ID as externalId
 
                     try
                     {
-                        conference.AddRoom(roomEntity);
-                        roomIdMapping[roomId] = roomEntity.Id;
-                        _logger.LogDebug("Added room {RoomId} (ExternalId: {ExternalId}) - {RoomName}", roomEntity.Id, roomId, roomEntity.Name);
+                        conference.AddRoom(newRoom);
+                        roomIdMapping[roomId] = newRoom.Id;
+                        _logger.LogDebug("Added room {RoomId} (ExternalId: {ExternalId}) - {RoomName}", newRoom.Id, roomId, newRoom.Name);
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -208,8 +216,11 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                             }
                         }
 
-                        if (existingPresentation.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified)
+
+
+                        if (existingPresentation.State == DomainModelState.Modified)
                         {
+                            conference.UpdatePresentation(existingPresentation);
                             updatedPresentations.Add((existingPresentation, isScheduleChanged));
                             _logger.LogDebug("Updated presentation {PresentationId} - {PresentationTitle} (ExternalId: {ExternalId}), ScheduleChanged: {IsScheduleChanged}",
                                 existingPresentation.Id,

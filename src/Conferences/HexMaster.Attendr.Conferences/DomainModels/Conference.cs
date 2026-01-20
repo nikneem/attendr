@@ -339,4 +339,28 @@ public sealed class Conference : StatefulDomainModel<Guid>
             SetState(DomainModelState.Touched);
         }
     }
+
+    /// <summary>
+    /// Updates an existing room in the conference, tracking state changes.
+    /// </summary>
+    /// <param name="room">The room with updated properties.</param>
+    public void UpdateRoom(Room room)
+    {
+        if (room.State != DomainModelState.Pristine && room.State != DomainModelState.Touched)
+        {
+            SetState(DomainModelState.Touched);
+        }
+    }
+
+    /// <summary>
+    /// Updates an existing presentation in the conference, tracking state changes.
+    /// </summary>
+    /// <param name="presentation">The presentation with updated properties.</param>
+    public void UpdatePresentation(Presentation presentation)
+    {
+        if (presentation.State != DomainModelState.Pristine && presentation.State != DomainModelState.Touched)
+        {
+            SetState(DomainModelState.Touched);
+        }
+    }
 }
