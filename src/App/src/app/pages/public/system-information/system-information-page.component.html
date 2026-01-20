@@ -19,20 +19,21 @@
             <div class="card-title">System details</div>
             <div class="info-items">
                 <div class="info-item">
-                    <span class="label">Platform</span>
-                    <span class="value">{{ systemInfo.platform }}</span>
+                    <span class="label nowrap">Platform</span>
+                    <span class="value nowrap">{{ systemInfo.platform }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label">Frontend version</span>
-                    <span class="value">{{ systemInfo.frontendVersion }}</span>
+                    <span class="label nowrap">Frontend version</span>
+                    <span class="value nowrap">{{ systemInfo.frontendVersion }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label">User agent</span>
-                    <span class="value truncate" [title]="systemInfo.osVersion">{{ systemInfo.osVersion }}</span>
+                    <span class="label nowrap">User agent</span>
+                    <span class="value truncate nowrap" [pTooltip]="systemInfo.osVersion" tooltipPosition="top">{{
+                        systemInfo.osVersion }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label">Last updated</span>
-                    <span class="value">{{ systemInfo.timestamp | date: 'short' }}</span>
+                    <span class="label nowrap">Last updated</span>
+                    <span class="value nowrap">{{ systemInfo.timestamp | date: 'short' }}</span>
                 </div>
             </div>
         </div>
@@ -41,24 +42,24 @@
             <div class="card-title">Client & browser</div>
             <div class="info-items">
                 <div class="info-item">
-                    <span class="label">Browser</span>
-                    <span class="value">{{ clientInfo.browser }}</span>
+                    <span class="label nowrap">Browser</span>
+                    <span class="value nowrap">{{ clientInfo.browser }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label">Language</span>
-                    <span class="value">{{ clientInfo.language }}</span>
+                    <span class="label nowrap">Language</span>
+                    <span class="value nowrap">{{ clientInfo.language }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label">Timezone</span>
-                    <span class="value">{{ clientInfo.timezone }}</span>
+                    <span class="label nowrap">Timezone</span>
+                    <span class="value nowrap">{{ clientInfo.timezone }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label">Screen</span>
-                    <span class="value">{{ clientInfo.screen }}</span>
+                    <span class="label nowrap">Screen</span>
+                    <span class="value nowrap">{{ clientInfo.screen }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label">Online</span>
-                    <span class="value status-pill" [ngClass]="clientInfo.online ? 'online' : 'offline'">
+                    <span class="label nowrap">Online</span>
+                    <span class="value status-pill nowrap" [ngClass]="clientInfo.online ? 'online' : 'offline'">
                         {{ clientInfo.online ? 'Yes' : 'No' }}
                     </span>
                 </div>

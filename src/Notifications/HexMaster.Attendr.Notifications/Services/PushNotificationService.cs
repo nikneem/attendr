@@ -132,8 +132,12 @@ public sealed class PushNotificationService : IPushNotificationService
                 }
             };
 
-            // Create PushMessage with the payload
-            var pushMessage = new PushMessage(payloadJson);
+            // Create PushMessage with the payload and high urgency to wake devices from idle/doze
+            var pushMessage = new PushMessage(payloadJson)
+            {
+                Urgency = PushMessageUrgency.High,
+                TimeToLive = 60 * 60 // 1 hour TTL to allow delivery after brief offline periods
+            };
 
             // Send the notification using PushServiceClient
             await _pushClient.RequestPushMessageDeliveryAsync(pushSubscription, pushMessage, cancellationToken);
