@@ -47,6 +47,15 @@ public interface IConferenceRepository
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Lists conference IDs for conferences that have not ended and have a synchronization source configured.
+    /// Useful for periodic background synchronization jobs.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>Collection of conference IDs.</returns>
+    Task<IReadOnlyCollection<Guid>> ListActiveConferenceIdsWithSyncSourceAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Lists conferences with optional search and pagination.
     /// Only returns conferences that have not ended (EndDate >= today).
     /// </summary>

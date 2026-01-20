@@ -199,6 +199,34 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     }
 
     /// <inheritdoc />
+    public async Task<IReadOnlyCollection<Guid>> ListActiveConferenceIdsWithSyncSourceAsync(
+        CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        const string sql = @"
+            SELECT id
+            FROM conferences
+            WHERE end_date >= @today
+              AND sync_source_type IS NOT NULL
+              AND sync_source_location_or_api_key IS NOT NULL";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@today", today);
+
+        var conferenceIds = new List<Guid>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            conferenceIds.Add(reader.GetGuid(0));
+        }
+
+        return conferenceIds;
+    }
+
+    /// <inheritdoc />
     public async Task<(List<Conference> Conferences, int TotalCount)> ListConferencesAsync(
         string? searchQuery,
         int pageNumber,

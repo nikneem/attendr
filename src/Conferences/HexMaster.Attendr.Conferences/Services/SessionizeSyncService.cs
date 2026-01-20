@@ -71,30 +71,32 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
 
             if (existingSpeaker != null)
             {
-                // Speaker exists - update would go here if Speaker had update methods
-                speakerIdMapping[externalId] = existingSpeaker.Id;
+                var speaker = Speaker.FromPersisted(existingSpeaker.Id, existingSpeaker.Name, existingSpeaker.Company,
+                    existingSpeaker.ProfilePictureUrl, existingSpeaker.ExternalId);
+
+                speaker.SetName(sessionizeSpeaker.FullName);
+                speaker.SetCompany(sessionizeSpeaker.TagLine);
+                speaker.SetProfilePictureUrl(sessionizeSpeaker.ProfilePicture);
+                conference.UpdateSpeaker(speaker);
+
                 _logger.LogDebug("Speaker with ExternalId {ExternalId} already exists as {SpeakerId}", externalId, existingSpeaker.Id);
             }
             else
             {
-                // Create new speaker with local GUID
-                var localSpeakerId = Guid.NewGuid();
-                var speaker = Speaker.FromPersisted(
-                    localSpeakerId,
-                    sessionizeSpeaker.FullName ?? "Unknown",
+                var newSpeaker = Speaker.Create(sessionizeSpeaker.FullName ?? "Unknown",
                     sessionizeSpeaker.TagLine,
                     sessionizeSpeaker.ProfilePicture,
                     externalId);
 
                 try
                 {
-                    conference.AddSpeaker(speaker);
-                    speakerIdMapping[externalId] = localSpeakerId;
-                    _logger.LogDebug("Added speaker {SpeakerId} (ExternalId: {ExternalId}) - {SpeakerName}", speaker.Id, externalId, speaker.Name);
+                    conference.AddSpeaker(newSpeaker);
+                    speakerIdMapping[externalId] = newSpeaker.Id;
+                    _logger.LogDebug("Added speaker {SpeakerId} (ExternalId: {ExternalId}) - {SpeakerName}", newSpeaker.Id, externalId, newSpeaker.Name);
                 }
                 catch (InvalidOperationException ex)
                 {
-                    _logger.LogWarning(ex, "Failed to add speaker {SpeakerId}, skipping", localSpeakerId);
+                    _logger.LogWarning(ex, "Failed to add speaker {SpeakerId}, skipping", newSpeaker.Id);
                 }
             }
         }

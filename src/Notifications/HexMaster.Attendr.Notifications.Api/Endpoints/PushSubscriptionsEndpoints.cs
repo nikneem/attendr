@@ -4,6 +4,7 @@ using HexMaster.Attendr.Notifications.DomainModels;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HexMaster.Attendr.Notifications.Api.Endpoints;
 
@@ -40,7 +41,7 @@ public static class PushSubscriptionsEndpoints
         IProfilesIntegrationService profilesIntegration,
         HttpContext httpContext,
         IPushSubscriptionRepository repository,
-        RegisterPushSubscriptionRequest request)
+        [FromBody] RegisterPushSubscriptionRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Endpoint)
             || string.IsNullOrWhiteSpace(request.P256dh)
@@ -90,7 +91,7 @@ public static class PushSubscriptionsEndpoints
         IProfilesIntegrationService profilesIntegration,
         HttpContext httpContext,
         IPushSubscriptionRepository repository,
-        UnsubscribeFromPushRequest request)
+        [FromBody] UnsubscribeFromPushRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Endpoint))
         {

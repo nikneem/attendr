@@ -73,4 +73,46 @@ public sealed class Speaker : StatefulDomainModel<Guid>
     {
         return new Speaker(id, name, company, profilePictureUrl, externalId);
     }
+
+    /// <summary>
+    /// Sets the name of the speaker.
+    /// </summary>
+    /// <param name="name">The new name of the speaker.</param>
+    /// <exception cref="ArgumentException">Thrown when name is null or whitespace.</exception>
+    public void SetName(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
+
+        if (ShouldUpdateProperty(Name, name))
+        {
+            Name = name;
+            UpdateModifiedOn();
+        }
+    }
+
+    /// <summary>
+    /// Sets the company or organization the speaker represents.
+    /// </summary>
+    /// <param name="company">The company or organization name.</param>
+    public void SetCompany(string? company)
+    {
+        if (ShouldUpdateProperty(Company, company))
+        {
+            Company = company;
+            UpdateModifiedOn();
+        }
+    }
+
+    /// <summary>
+    /// Sets the URL to the speaker's profile picture.
+    /// </summary>
+    /// <param name="profilePictureUrl">The URL to the profile picture.</param>
+    public void SetProfilePictureUrl(string? profilePictureUrl)
+    {
+        if (ShouldUpdateProperty(ProfilePictureUrl, profilePictureUrl))
+        {
+            ProfilePictureUrl = profilePictureUrl;
+            UpdateModifiedOn();
+        }
+    }
 }

@@ -7,6 +7,7 @@ using HexMaster.Attendr.Notifications.Models;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HexMaster.Attendr.Notifications.Api.Endpoints;
 
@@ -86,9 +87,9 @@ public static class NotificationPreferencesDetailEndpoints
     private static async Task<NoContent> UpdateDetailedPreferences(
         IProfilesIntegrationService profilesIntegration,
         HttpContext httpContext,
-        UpdateDetailedPreferencesRequest request,
         INotificationPreferencesRepository preferencesRepository,
-        INotificationTypeService typeService)
+        INotificationTypeService typeService,
+        [FromBody] UpdateDetailedPreferencesRequest request)
     {
         var resolvedProfile = await profilesIntegration.GetProfileFromUser(httpContext.User, httpContext.RequestAborted);
         var profileId = Guid.Parse(resolvedProfile.ProfileId);

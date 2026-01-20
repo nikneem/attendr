@@ -208,6 +208,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         }
 
         _speakers.Add(speaker);
+        SetState(DomainModelState.Touched);
     }
 
     /// <summary>
@@ -328,6 +329,14 @@ public sealed class Conference : StatefulDomainModel<Guid>
         {
             IsVisible = isVisible;
             UpdateModifiedOn();
+        }
+    }
+
+    public void UpdateSpeaker(Speaker speaker)
+    {
+        if (speaker.State != DomainModelState.Pristine && speaker.State != DomainModelState.Touched)
+        {
+            SetState(DomainModelState.Touched);
         }
     }
 }

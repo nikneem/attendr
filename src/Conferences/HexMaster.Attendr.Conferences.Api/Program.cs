@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Conferences.Api.Authorization;
+using HexMaster.Attendr.Conferences.Api.BackgroundServices;
 using HexMaster.Attendr.Conferences.Api.Endpoints;
 using HexMaster.Attendr.Conferences.Data.Postgres.Extensions;
 using HexMaster.Attendr.Conferences.Extensions;
@@ -73,6 +74,9 @@ builder.Services.AddIntegrationEvents(builder.Configuration);
 builder.Services.AddProfilesIntegration(builder.Configuration);
 builder.Services.AddAttendrCache(builder.Configuration);
 builder.Services.AddDaprClient();
+
+// Register the background sync service
+builder.Services.AddHostedService<ConferenceSyncBackgroundService>();
 
 var app = builder.Build();
 
