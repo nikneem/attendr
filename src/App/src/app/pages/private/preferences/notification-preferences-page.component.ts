@@ -55,6 +55,10 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
     isInstallingApp = signal(false);
     isRequestingPermission = signal(false);
 
+    // Track if the current browser subscription is registered on backend
+    private isSubscriptionRegistered = false;
+    private registeredEndpoint: string | null = null;
+    
     private deferredPrompt: BeforeInstallPromptEvent | null = null;
 
     ngOnInit(): void {
@@ -232,10 +236,14 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
     loadPreferences(): void {
         this.isLoading.set(true);
         this.preferencesService.getDetailedPreferences().subscribe({
-            next: (data) => {
+            next: async (data) => {
                 this.preferences.set(data);
                 this.isLoading.set(false);
                 this.updatePermissionBannerVisibility();
+                
+                // Sync subscription if needed: if push is enabled and we have a browser subscription
+                // but haven't registered it yet (e.g., after browser refresh or login)
+                await this.syncSubscriptionIfNeeded();
             },
             error: (error) => {
                 console.error('Failed to load preferences:', error);
@@ -247,6 +255,53 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                 this.isLoading.set(false);
             },
         });
+    }
+
+    private async syncSubscriptionIfNeeded(): Promise<void> {
+        // Only sync if:
+        // 1. Push notifications are enabled in preferences
+        // 2. Browser has an active subscription
+        // 3. We haven't registered this subscription yet
+        if (!this.hasAnyPushNotificationsEnabled()) {
+            return;
+        }
+
+        const subscription = this.pushService.subscription();
+        if (!subscription) {
+            return;
+        }
+
+        const subscriptionData = this.pushService.getSubscriptionData();
+        if (!subscriptionData) {
+            return;
+        }
+
+        // If already registered with the same endpoint, skip
+        if (this.isSubscriptionRegistered && this.registeredEndpoint === subscriptionData.endpoint) {
+            return;
+        }
+
+        // Silently register/update the subscription on the backend
+        try {
+            await firstValueFrom(
+                this.subscriptionsService.registerSubscription({
+                    endpoint: subscriptionData.endpoint,
+                    p256dh: subscriptionData.keys.p256dh,
+                    auth: subscriptionData.keys.auth,
+                    userAgent: navigator.userAgent,
+                    expirationTimeUtc: subscription.expirationTime
+                        ? new Date(subscription.expirationTime).toISOString()
+                        : null,
+                })
+            );
+            
+            this.isSubscriptionRegistered = true;
+            this.registeredEndpoint = subscriptionData.endpoint;
+            console.log('Push subscription synced with backend');
+        } catch (error) {
+            console.error('Failed to sync push subscription:', error);
+            // Don't show error to user - this is a background sync
+        }
     }
 
     async onChannelToggle(notificationType: NotificationTypePreferenceDto, channel: string): Promise<void> {
@@ -296,6 +351,11 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                     await firstValueFrom(
                         this.subscriptionsService.unsubscribe(subscriptionData.endpoint)
                     );
+                    
+                    // Clear registration tracking
+                    this.isSubscriptionRegistered = false;
+                    this.registeredEndpoint = null;
+                    
                     this.messageService.add({
                         severity: 'info',
                         summary: 'Unsubscribed',
@@ -398,6 +458,12 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                 return false;
             }
 
+            // Check if this exact subscription is already registered
+            if (this.isSubscriptionRegistered && this.registeredEndpoint === subscriptionData.endpoint) {
+                console.log('Subscription already registered, skipping duplicate registration');
+                return true;
+            }
+
             await firstValueFrom(
                 this.subscriptionsService.registerSubscription({
                     endpoint: subscriptionData.endpoint,
@@ -409,6 +475,10 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                         : null,
                 })
             );
+
+            // Mark as registered
+            this.isSubscriptionRegistered = true;
+            this.registeredEndpoint = subscriptionData.endpoint;
 
             return true;
         } catch (error) {
