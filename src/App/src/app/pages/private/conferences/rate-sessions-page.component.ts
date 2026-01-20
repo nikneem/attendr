@@ -442,7 +442,7 @@ export class RateSessionsPageComponent implements OnInit, OnDestroy {
             if (step >= steps) {
                 direction *= -1; // Reverse direction
                 step = 0;
-                
+
                 // Count cycles (when returning from left back to center)
                 if (direction === 1) {
                     cycleCount++;
