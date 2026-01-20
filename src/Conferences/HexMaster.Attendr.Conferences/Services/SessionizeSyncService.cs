@@ -79,6 +79,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                 speaker.SetCompany(sessionizeSpeaker.TagLine);
                 speaker.SetProfilePictureUrl(sessionizeSpeaker.ProfilePicture);
                 conference.UpdateSpeaker(speaker);
+                speakerIdMapping[externalId] = speaker.Id;
 
                 _logger.LogDebug("Speaker with ExternalId {ExternalId} already exists as {SpeakerId}", externalId, existingSpeaker.Id);
             }

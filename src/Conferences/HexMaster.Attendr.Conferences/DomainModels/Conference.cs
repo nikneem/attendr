@@ -325,7 +325,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
     /// <param name="isVisible">Whether the conference should be visible to users.</param>
     public void UpdateVisibility(bool isVisible)
     {
-        if (IsVisible != isVisible)
+        if (ShouldUpdateProperty(IsVisible, isVisible))
         {
             IsVisible = isVisible;
             UpdateModifiedOn();
