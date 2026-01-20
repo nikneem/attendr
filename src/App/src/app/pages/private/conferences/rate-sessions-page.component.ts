@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed, HostListener, ElementRef } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, computed, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -27,7 +27,7 @@ interface CardInStack {
     styleUrl: './rate-sessions-page.component.scss',
     providers: [ConfirmationService],
 })
-export class RateSessionsPageComponent implements OnInit {
+export class RateSessionsPageComponent implements OnInit, OnDestroy {
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly presenceService = inject(PresenceService);
@@ -41,6 +41,9 @@ export class RateSessionsPageComponent implements OnInit {
     submitting = signal(false);
     isAnimating = signal(false);
     fetchingNewCard = signal(false);
+    showTutorialAnimation = signal(false);
+    tutorialAnimationOffset = signal(0);
+    private tutorialAnimationInterval?: number;
 
     // Swipe/drag state
     private startX = 0;
@@ -105,6 +108,11 @@ export class RateSessionsPageComponent implements OnInit {
                     }
 
                     this.loading.set(false);
+
+                    // Start tutorial animation if this is the first time and we have valid cards
+                    if (hasValidCard && !this.hasSeenTutorial()) {
+                        this.startTutorialAnimation();
+                    }
                 });
             });
         });
@@ -231,6 +239,7 @@ export class RateSessionsPageComponent implements OnInit {
     }
 
     private startDrag(x: number, y: number): void {
+        this.stopTutorialAnimation();
         this.isDragging = true;
         this.startX = x;
         this.startY = y;
@@ -392,6 +401,83 @@ export class RateSessionsPageComponent implements OnInit {
                 this.loading.set(false);
             },
         });
+    }
+
+    private hasSeenTutorial(): boolean {
+        return document.cookie.split('; ').some(cookie => cookie.startsWith('ratingTutorialSeen='));
+    }
+
+    private setTutorialSeen(): void {
+        // Set cookie to expire in 1 year
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 1);
+        document.cookie = `ratingTutorialSeen=true; expires=${expires.toUTCString()}; path=/; SameSite=Strict`;
+    }
+
+    private startTutorialAnimation(): void {
+        this.showTutorialAnimation.set(true);
+        let direction = 1; // 1 for right, -1 for left
+        let step = 0;
+        let cycleCount = 0; // Track completed cycles (left + right = 1 cycle)
+        const maxOffset = 20; // Maximum offset in pixels
+        const steps = 40; // Number of steps for smooth animation
+        const pauseSteps = 120; // 3 seconds pause (3000ms / 25ms per step)
+        let pauseCounter = 0;
+        let isPaused = false;
+
+        this.tutorialAnimationInterval = window.setInterval(() => {
+            if (isPaused) {
+                pauseCounter++;
+                if (pauseCounter >= pauseSteps) {
+                    // Resume animation
+                    isPaused = false;
+                    pauseCounter = 0;
+                    step = 0;
+                    direction = 1;
+                }
+                return;
+            }
+
+            step++;
+            if (step >= steps) {
+                direction *= -1; // Reverse direction
+                step = 0;
+                
+                // Count cycles (when returning from left back to center)
+                if (direction === 1) {
+                    cycleCount++;
+                    if (cycleCount === 1) {
+                        // Completed one full cycle (right then left), pause
+                        isPaused = true;
+                        cycleCount = 0;
+                        this.tutorialAnimationOffset.set(0);
+                        return;
+                    }
+                }
+            }
+
+            // Ease in-out animation
+            const progress = step / steps;
+            const eased = progress < 0.5
+                ? 2 * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+            this.tutorialAnimationOffset.set(direction * maxOffset * eased);
+        }, 25); // Update every 25ms for smooth animation
+    }
+
+    private stopTutorialAnimation(): void {
+        if (this.tutorialAnimationInterval) {
+            window.clearInterval(this.tutorialAnimationInterval);
+            this.tutorialAnimationInterval = undefined;
+            this.showTutorialAnimation.set(false);
+            this.tutorialAnimationOffset.set(0);
+            this.setTutorialSeen();
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.stopTutorialAnimation();
     }
 
     goBack(): void {

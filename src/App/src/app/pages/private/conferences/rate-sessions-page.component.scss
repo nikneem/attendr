@@ -136,6 +136,10 @@
         user-select: none;
         will-change: transform, opacity;
 
+        &.tutorial-animation {
+            transition: none !important;
+        }
+
         &.top-card {
             cursor: grab;
             z-index: 3;
