@@ -23,7 +23,7 @@ public static class NotificationsEndpoints
             .WithName("GetNotifications")
             .Produces<IReadOnlyList<Abstractions.DTOs.NotificationDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/unread-count", GetUnreadCount)
+        group.MapGet("/unread/count", GetUnreadCount)
             .WithName("GetUnreadCount")
             .Produces<int>(StatusCodes.Status200OK);
 
