@@ -1,9 +1,9 @@
 <div class="system-info-container">
     <div class="page-header">
         <h1>System Information</h1>
-        <button (click)="refreshHealth()" [disabled]="isLoading" class="refresh-btn">
-            <span *ngIf="!isLoading">🔄 Refresh</span>
-            <span *ngIf="isLoading">Loading...</span>
+        <button (click)="refreshHealth()" [disabled]="isLoading()" class="refresh-btn">
+            <span *ngIf="!isLoading()">🔄 Refresh</span>
+            <span *ngIf="isLoading()">Loading...</span>
         </button>
     </div>
 
@@ -25,15 +25,15 @@
 
     <div class="services-section">
         <h2>Backend Services Status</h2>
-        <div *ngIf="isLoading && services.length === 0" class="loading-message">
+        <div *ngIf="isLoading() && services().length === 0" class="loading-message">
             <p>Loading service health status...</p>
         </div>
 
-        <div *ngIf="!isLoading && services.length === 0" class="no-services">
+        <div *ngIf="!isLoading() && services().length === 0" class="no-services">
             <p>No services available</p>
         </div>
 
-        <table *ngIf="services.length > 0" class="services-table">
+        <table *ngIf="services().length > 0" class="services-table">
             <thead>
                 <tr>
                     <th>Service Name</th>
@@ -43,7 +43,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let service of services" [ngClass]="service.isHealthy ? 'healthy' : 'unhealthy'">
+                <tr *ngFor="let service of services()" [ngClass]="service.isHealthy ? 'healthy' : 'unhealthy'">
                     <td class="service-name">{{ service.name }}</td>
                     <td class="version">{{ service.version || 'Unknown' }}</td>
                     <td class="status">

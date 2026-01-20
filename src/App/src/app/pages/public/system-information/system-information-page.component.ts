@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, interval, takeUntil } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
@@ -10,10 +10,11 @@ import { SystemInformationService, ServiceInfo } from '../../../services/system-
     imports: [CommonModule],
     templateUrl: './system-information-page.component.html',
     styleUrl: './system-information-page.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SystemInformationPageComponent implements OnInit, OnDestroy {
-    services: ServiceInfo[] = [];
-    isLoading = true;
+    services = signal<ServiceInfo[]>([]);
+    isLoading = signal(true);
     systemInfo = {
         platform: '',
         osVersion: '',
@@ -36,18 +37,29 @@ export class SystemInformationPageComponent implements OnInit, OnDestroy {
         interval(30000)
             .pipe(
                 startWith(0),
-                switchMap(() => this.systemInfoService.checkServiceHealth()),
+                switchMap(() => {
+                    console.log('Checking service health...');
+                    return this.systemInfoService.checkServiceHealth();
+                }),
                 takeUntil(this.destroy$)
             )
             .subscribe({
                 next: (services) => {
-                    this.services = services;
-                    this.isLoading = false;
+                    console.log('Received services:', services);
+                    console.log('Services array length:', services ? services.length : 'null');
+                    console.log('isLoading before:', this.isLoading());
+                    this.services.set(services);
+                    this.isLoading.set(false);
+                    console.log('isLoading after:', this.isLoading());
+                    console.log('services property now:', this.services());
                 },
                 error: (error) => {
                     console.error('Error fetching service health:', error);
-                    this.isLoading = false;
+                    this.isLoading.set(false);
                 },
+                complete: () => {
+                    console.log('Service health check completed');
+                }
             });
     }
 
@@ -57,16 +69,16 @@ export class SystemInformationPageComponent implements OnInit, OnDestroy {
     }
 
     refreshHealth() {
-        this.isLoading = true;
+        this.isLoading.set(true);
         this.systemInfoService.checkServiceHealth().subscribe({
             next: (services) => {
-                this.services = services;
-                this.isLoading = false;
+                this.services.set(services);
+                this.isLoading.set(false);
                 this.systemInfo.timestamp = new Date();
             },
             error: (error) => {
                 console.error('Error fetching service health:', error);
-                this.isLoading = false;
+                this.isLoading.set(false);
             },
         });
     }
