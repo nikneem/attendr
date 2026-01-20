@@ -1,0 +1,73 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.footer {
+    background: $background-secondary;
+    border-top: 1px solid $border-color;
+    padding: $spacing-xl 0;
+    color: $text-secondary;
+    margin-top: $spacing-2xl;
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 $spacing-xl;
+    }
+
+    .footer-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $spacing-md;
+        flex-wrap: wrap;
+
+        p {
+            margin: 0;
+        }
+    }
+
+    .footer-links {
+        display: flex;
+        gap: $spacing-lg;
+        flex-wrap: wrap;
+        align-items: center;
+
+        a {
+            color: $text-primary;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color $transition-base;
+
+            &:hover {
+                color: $primary-color;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: $spacing-lg 0;
+
+        .container {
+            padding: 0 $spacing-lg;
+        }
+
+        .footer-content {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: $spacing-sm;
+        }
+
+        .footer-links {
+            width: 100%;
+            justify-content: center;
+            gap: $spacing-md;
+
+            a {
+                font-size: $font-size-sm;
+            }
+        }
+    }
+}
