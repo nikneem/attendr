@@ -3,6 +3,7 @@ using '../bicep/main.bicep'
 param environmentName = 'prod'
 param location = 'northeurope'
 param baseName = 'attendr-alz'
+param frontendUrl = 'https://attendr.live'
 param tags = {
   Environment: 'Production'
   Application: 'Attendr'

@@ -12,6 +12,9 @@ param baseName string = 'attendr'
 @description('Tags to apply to all resources')
 param tags object = {}
 
+@description('Base url of the frontend application')
+param frontendUrl string
+
 @description('Container registry information')
 param containerRegistry object = {
   subscriptionId: ''
@@ -37,6 +40,7 @@ module resourceDeployment './modules/resources.bicep' = {
     baseName: baseName
     tags: tags
     containerRegistry: containerRegistry
+    frontendUrl: frontendUrl
   }
 }
 

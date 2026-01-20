@@ -58,7 +58,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
     // Track if the current browser subscription is registered on backend
     private isSubscriptionRegistered = false;
     private registeredEndpoint: string | null = null;
-    
+
     private deferredPrompt: BeforeInstallPromptEvent | null = null;
 
     ngOnInit(): void {
@@ -240,7 +240,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                 this.preferences.set(data);
                 this.isLoading.set(false);
                 this.updatePermissionBannerVisibility();
-                
+
                 // Sync subscription if needed: if push is enabled and we have a browser subscription
                 // but haven't registered it yet (e.g., after browser refresh or login)
                 await this.syncSubscriptionIfNeeded();
@@ -294,7 +294,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                         : null,
                 })
             );
-            
+
             this.isSubscriptionRegistered = true;
             this.registeredEndpoint = subscriptionData.endpoint;
             console.log('Push subscription synced with backend');
@@ -351,11 +351,11 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                     await firstValueFrom(
                         this.subscriptionsService.unsubscribe(subscriptionData.endpoint)
                     );
-                    
+
                     // Clear registration tracking
                     this.isSubscriptionRegistered = false;
                     this.registeredEndpoint = null;
-                    
+
                     this.messageService.add({
                         severity: 'info',
                         summary: 'Unsubscribed',

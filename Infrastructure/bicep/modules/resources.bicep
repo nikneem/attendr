@@ -15,6 +15,9 @@ param tags object = {}
 @description('Container registry information')
 param containerRegistry object
 
+@description('Base url of the frontend application')
+param frontendUrl string
+
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var keyVaultName = 'kv-${baseName}-${environmentName}'
 var appConfigName = 'appconfig-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
@@ -190,6 +193,17 @@ module appConfiguration './app-configuration.bicep' = {
   }
   dependsOn: [
     keyVault
+  ]
+}
+
+module appConfigurationValue './azure-app-configuration-value.bicep' = {
+  params: {
+    appConfigurationName: appConfigName
+    name: 'Frontend:BaseUrl'
+    value: frontendUrl
+  }
+  dependsOn: [
+    appConfiguration
   ]
 }
 

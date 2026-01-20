@@ -131,10 +131,14 @@ public static class EventHandlersEndpoints
         [FromBody] GroupAccessRequestedEvent @event,
         ICommandHandler<ProcessNotificationTriggerCommand> handler,
         ILogger<Program> logger,
+        IConfiguration configuration,
         CancellationToken cancellationToken)
     {
         try
         {
+
+            var frontendUrl = configuration.GetValue<string>("Frontend:BaseUrl") ?? "https://attendr.live";
+
             logger.LogInformation(
                 "Processing GroupAccessRequested event for group {GroupId} from profile {ProfileId}",
                 @event.GroupId, @event.ProfileId);
@@ -147,7 +151,7 @@ public static class EventHandlersEndpoints
                     TypeKey: NotificationTypeKeys.GroupAccessRequested,
                     Title: "Group Access Request",
                     Message: $"{@event.ProfileName} has requested to join {@event.GroupName}",
-                    Url: $"/groups/{@event.GroupId}",
+                    Url: $"{frontendUrl}/app/groups/{@event.GroupId}",
                     ActorId: @event.ProfileId,
                     EntityRefs: new Dictionary<string, string>
                     {
