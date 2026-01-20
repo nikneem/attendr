@@ -133,8 +133,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
             }
 
             // Update rooms: only delete and re-insert if any room was created or modified (not just touched)
-            var modifiedRooms = conference.Rooms.Where(r => 
-                r.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created || 
+            var modifiedRooms = conference.Rooms.Where(r =>
+                r.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created ||
                 r.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
 
             if (modifiedRooms.Count > 0)
@@ -147,8 +147,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
             }
 
             // Update speakers: only delete and re-insert if any speaker was created or modified (not just touched)
-            var modifiedSpeakers = conference.Speakers.Where(s => 
-                s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created || 
+            var modifiedSpeakers = conference.Speakers.Where(s =>
+                s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created ||
                 s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
 
             if (modifiedSpeakers.Count > 0)
@@ -161,8 +161,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
             }
 
             // Update presentations: only delete and re-insert if any presentation was created or modified (not just touched)
-            var modifiedPresentations = conference.Presentations.Where(p => 
-                p.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created || 
+            var modifiedPresentations = conference.Presentations.Where(p =>
+                p.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created ||
                 p.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
 
             if (modifiedPresentations.Count > 0)
