@@ -28,6 +28,11 @@ public static class PushSubscriptionsEndpoints
             .WithName("SendTestPushNotification")
             .Produces<TestNotificationResponse>(StatusCodes.Status200OK);
 
+        group.MapDelete("/", UnsubscribeFromPush)
+            .WithName("UnsubscribeFromPush")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<string>(StatusCodes.Status400BadRequest);
+
         return app;
     }
 
@@ -81,6 +86,24 @@ public static class PushSubscriptionsEndpoints
         return TypedResults.Ok(new TestNotificationResponse(sentCount, $"Test notification sent to {sentCount} subscription(s)"));
     }
 
+    private static async Task<Results<NoContent, BadRequest<string>>> UnsubscribeFromPush(
+        IProfilesIntegrationService profilesIntegration,
+        HttpContext httpContext,
+        IPushSubscriptionRepository repository,
+        UnsubscribeFromPushRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Endpoint))
+        {
+            return TypedResults.BadRequest("Endpoint is required");
+        }
+
+        var resolvedProfile = await profilesIntegration.GetProfileFromUser(httpContext.User, httpContext.RequestAborted);
+        var profileId = Guid.Parse(resolvedProfile.ProfileId);
+
+        await repository.DeleteAsync(profileId, request.Endpoint, httpContext.RequestAborted);
+        return TypedResults.NoContent();
+    }
+
     public record RegisterPushSubscriptionRequest(
         string Endpoint,
         string P256dh,
@@ -89,4 +112,7 @@ public static class PushSubscriptionsEndpoints
         DateTime? ExpirationTimeUtc);
 
     public record TestNotificationResponse(int SentCount, string Message);
+
+    public record UnsubscribeFromPushRequest(string Endpoint);
+}
 }

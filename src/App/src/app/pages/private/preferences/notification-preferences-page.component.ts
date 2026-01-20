@@ -79,8 +79,48 @@ export class NotificationPreferencesPageComponent implements OnInit {
         // Toggle the value
         currentPref.isEnabled = !currentPref.isEnabled;
 
+        // If disabling push, check if all available push channels are now disabled
+        if (channel === 'Push' && !currentPref.isEnabled) {
+            await this.handlePushChannelDisable();
+        }
+
         // Save to server
         this.savePreferences();
+    }
+
+    private async handlePushChannelDisable(): Promise<void> {
+        // Check if all available push channels are disabled
+        const prefs = this.preferences();
+        if (!prefs) return;
+
+        const allPushDisabled = prefs.notificationTypes.every((type) => {
+            const pushPref = type.channelPreferences['Push'];
+            return !pushPref?.isAvailable || !pushPref?.isEnabled;
+        });
+
+        if (allPushDisabled) {
+            // All push channels are disabled, unsubscribe from push
+            const subscriptionData = this.pushService.getSubscriptionData();
+            if (subscriptionData) {
+                try {
+                    await firstValueFrom(
+                        this.subscriptionsService.unsubscribe(subscriptionData.endpoint)
+                    );
+                    this.messageService.add({
+                        severity: 'info',
+                        summary: 'Unsubscribed',
+                        detail: 'You have been unsubscribed from push notifications',
+                    });
+                } catch (error) {
+                    console.error('Failed to unsubscribe from push notifications:', error);
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Unsubscribe Failed',
+                        detail: 'Could not unsubscribe from push notifications. Please try again.',
+                    });
+                }
+            }
+        }
     }
 
     private async handlePushChannelToggle(currentPref: ChannelPreferenceDto): Promise<void> {

@@ -20,6 +20,12 @@ export class NotificationSubscriptionsService {
         return this.http.post<void>(this.apiUrl, request);
     }
 
+    unsubscribe(endpoint: string): Observable<void> {
+        return this.http.delete<void>(this.apiUrl, {
+            body: { endpoint }
+        });
+    }
+
     sendTestNotification(): Observable<TestNotificationResponse> {
         return this.http.get<TestNotificationResponse>(`${this.apiUrl}/test`);
     }

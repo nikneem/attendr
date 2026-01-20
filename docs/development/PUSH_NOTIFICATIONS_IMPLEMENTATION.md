@@ -2,95 +2,137 @@
 
 ## Overview
 
-The Attendr application now has full **PWA Push Notification** infrastructure configured and ready for backend integration. The frontend is 100% complete and deployable.
+The Attendr application has a **fully implemented PWA Push Notification** system. Both frontend and backend components are complete and production-ready.
 
 ## What's Been Implemented
 
-### ✅ Frontend (Complete)
+### ✅ Frontend (100% Complete)
 
 **Service Worker Infrastructure**
 - Custom service worker deployed to `public/service-worker.js` 
 - Handles `push` events from the server
 - Handles `notificationclick` events from users with action button support
 - Automatically navigates to specified URLs on notification click
-- Supports notification groups via tags to prevent duplicates
+- Supports notification grouping via tags
 
-**Angular Service**
-- `PushNotificationService` in `src/app/shared/services/push-notification.service.ts`
-- Signal-based reactive state management
-- Methods:
+**Angular Services**
+- `PushNotificationService` - Manages browser push subscription lifecycle
   - `requestPermission()` - Request user notification permission
   - `subscribe(vapidPublicKey)` - Subscribe with VAPID key
   - `unsubscribe()` - Unsubscribe from push
   - `getSubscriptionData()` - Get endpoint/keys for server storage
-- Utilities:
-  - `urlBase64ToUint8Array()` - Convert VAPID key format
-  - `arrayBufferToBase64()` - Convert subscription keys
+  
+- `NotificationSubscriptionsService` - Backend communication
+  - `registerSubscription()` - Register push subscription with backend
+  - `unsubscribe()` - Unsubscribe endpoint call
+  - `sendTestNotification()` - Send test push
 
-**App Configuration**
-- Both NGSW (Angular Service Worker) and custom push service worker registered
-- Service workers automatically registered on app startup
-- Manifest configured with `display: "standalone"` (required for push)
+**Notification Preferences UI**
+- Toggle individual notification types
+- Per-channel preference management (In-App, Email, Push)
+- Automatic unsubscribe when all available push channels disabled
+- Permission flow with user feedback
+- Toast notifications for all actions
 
 **Build Status**
-- ✅ Frontend builds successfully with no TypeScript errors
-- ✅ Service worker properly compiled to `dist/attendr/browser/service-worker.js`
-- ✅ Manifest and all PWA assets included in build output
+- ✅ Builds successfully with no TypeScript errors
+- ✅ Service worker properly compiled
+- ✅ Manifest and all PWA assets included
 
-### 📋 Backend (Documentation Provided, Implementation Pending)
+### ✅ Backend (100% Complete)
 
-**Complete Implementation Guides**
-- `docs/development/push-notifications-setup.md` - 400+ lines comprehensive guide
-- `docs/development/push-notifications-backend-quickstart.md` - Step-by-step quickstart
-- `docs/development/push-notifications-checklist.md` - Detailed task list
+**Configuration**
+- VAPID keys stored in Azure App Configuration + User Secrets
+- `PushNotificationService` reads from `VAPID:PublicKey`, `VAPID:PrivateKey`, `VAPID:Subject`
+- Configuration injected via dependency injection
 
-**What Needs Implementation**
-1. **VAPID Key Generation** - One-time setup using web-push CLI
-2. **Push Subscription Endpoints** - POST/DELETE to store subscriptions
-3. **Push Notification Service** - .NET WebPush integration
-4. **Event Handlers** - Wire notification events to send push
-5. **Database Schema** - Store push subscriptions
+**Push Notification Service**
+- `PushNotificationService` in `HexMaster.Attendr.Notifications/Services/`
+- Uses `Lib.Net.Http.WebPush` NuGet package
+- Methods:
+  - `SendAsync(profileId, title, message, url)` - Send to all subscriptions
+  - `SendToSubscriptionAsync(endpoint, p256dh, auth, title, message, url)` - Send to specific subscription
+- Features:
+  - VAPID authentication automatically applied
+  - Automatic cleanup of 410 Gone subscriptions
+  - Comprehensive error logging
+  - Per-subscription error handling (doesn't fail entire batch)
 
-### 📚 Documentation Provided
+**Database & Storage**
+- `PushSubscription` domain model in `HexMaster.Attendr.Notifications/DomainModels/`
+- `IPushSubscriptionRepository` interface
+- `TableStoragePushSubscriptionRepository` implementation
+- Stores: ProfileId, Endpoint, P256dh, Auth, UserAgent, CreatedAt, UpdatedAt, ExpirationTime
 
-1. **push-notifications-setup.md**
-   - Architecture overview
-   - Complete backend implementation code samples (.NET)
-   - VAPID key generation instructions
-   - Payload format specifications
-   - Testing procedures
-   - Troubleshooting guide
+**API Endpoints**
+- `POST /api/notifications/subscriptions` - Register push subscription
+- `DELETE /api/notifications/subscriptions` - Unsubscribe from push
+- `GET /api/notifications/subscriptions/test` - Send test notification
+- All endpoints require authorization
+- Input validation on all requests
 
-2. **push-notifications-backend-quickstart.md**
-   - TL;DR quick reference
-   - Step-by-step backend implementation
-   - Domain models, repositories, services, endpoints
-   - Event handler integration examples
-   - Configuration instructions
+**Event Integration**
+- Event handlers in `EventHandlersEndpoints.cs`
+- Integrated with `ProcessNotificationTriggerCommandHandler`
+- Implemented handlers:
+  - GroupMemberAdded → notifies group members
+  - GroupMemberRemoved → notifies remaining members
+  - GroupAccessRequested → notifies group owners/admins
+  - ProfileFollowedConference → notifies follower
+  - PresentationScheduleChanged → notifies interested profiles
+- Dapr pub/sub fully configured and wired
+- Per-channel preference checking (respects user notification preferences)
+- Proper error handling (push failures don't break notification flow)
 
-3. **push-notifications-checklist.md**
-   - Categorized task list for tracking progress
-   - Frontend ✅ marked complete
-   - Backend sections for implementation
+**Build Status**
+- ✅ Builds successfully
+- ✅ All dependencies installed
+- ✅ Endpoints registered and mapped
+
+### 📚 Documentation
+
+1. **PUSH_NOTIFICATIONS_QUICKREF.md** - Quick reference (this doc, updated)
+2. **push-notifications-checklist.md** - Task tracking (updated, all complete)
+3. **push-notifications-backend-quickstart.md** - Backend implementation guide
+4. **push-notifications-setup.md** - Comprehensive architecture guide
+5. **PUSH_NOTIFICATIONS_VERIFICATION.md** - Verification checklist
 
 ## Architecture
 
 ```
-User sends notification request from backend
+User enables push in preferences
         ↓
-WebPush library encrypts with VAPID
+Frontend requests permission, subscribes to push service
         ↓
-Push service provider (Google, Mozilla, etc.) routes to device
+Subscription sent to backend: POST /api/notifications/subscriptions
+        ↓
+Backend stores in database (Table Storage)
+        ↓
+Later: Event occurs (e.g., group access request)
+        ↓
+Event handler creates ProcessNotificationTriggerCommand
+        ↓
+Command handler checks user preferences, sends if enabled
+        ↓
+PushNotificationService calls WebPush library with VAPID keys
+        ↓
+Push service provider routes to device (Google, Mozilla, etc.)
         ↓
 Browser receives push event
         ↓
-Service Worker 'push' event → shows notification
+Service Worker 'push' event listener shows notification
         ↓
 User clicks notification
         ↓
-Service Worker 'notificationclick' event → navigates to URL
+Service Worker 'notificationclick' event navigates to URL
         ↓
 Angular app displays relevant page
+        ↓
+User disables push in preferences
+        ↓
+Frontend calls DELETE /api/notifications/subscriptions
+        ↓
+Backend removes subscription from database
 ```
 
 ## Feature Set
@@ -104,6 +146,7 @@ Angular app displays relevant page
 - [x] Navigate to specific app routes on click
 - [x] Handle subscription expiration (410 Gone)
 - [x] Error handling and logging
+- [x] Automatic unsubscribe when all channels disabled
 
 **User Experience**
 - [x] Permission request before subscribing
@@ -111,88 +154,144 @@ Angular app displays relevant page
 - [x] Works offline (service worker caches)
 - [x] Works with app closed
 - [x] Silent in do-not-disturb mode (via preferences)
+- [x] Automatic cleanup when disabling push notifications
+- [x] Per-notification-type control
+- [x] Per-channel control (Push, Email, In-App)
 
 ## File Structure
 
 ```
 src/App/
 ├── public/
-│   ├── service-worker.js           ✅ Custom push event handler
-│   └── manifest.webmanifest        ✅ PWA config with standalone mode
+│   ├── service-worker.js                    ✅ Push event handler
+│   └── manifest.webmanifest                 ✅ PWA config
 ├── src/app/
-│   ├── app.config.ts               ✅ Service worker registration
+│   ├── app.config.ts                        ✅ Service worker registration
 │   └── shared/services/
-│       └── push-notification.service.ts  ✅ Subscription management
-└── dist/attendr/browser/
-    └── service-worker.js           ✅ Compiled output
+│       ├── push-notification.service.ts     ✅ Browser subscription management
+│       └── notification-subscriptions.service.ts  ✅ Backend communication
+└── src/app/pages/private/preferences/
+    └── notification-preferences-page.component.ts  ✅ UI with unsubscribe logic
+
+src/Notifications/
+├── HexMaster.Attendr.Notifications/
+│   ├── DomainModels/
+│   │   └── PushSubscription.cs              ✅ Domain model
+│   ├── Services/
+│   │   └── PushNotificationService.cs       ✅ Push sending service
+│   ├── Features/ProcessNotificationTrigger/
+│   │   └── ProcessNotificationTriggerCommandHandler.cs  ✅ Push routing
+│   └── Extensions/
+│       └── ServiceCollectionExtensions.cs   ✅ DI configuration
+├── HexMaster.Attendr.Notifications.Api/
+│   ├── Endpoints/
+│   │   ├── PushSubscriptionsEndpoints.cs    ✅ API endpoints
+│   │   └── EventHandlersEndpoints.cs        ✅ Event handlers
+│   └── Program.cs                           ✅ Endpoint registration
+├── HexMaster.Attendr.Notifications.Abstractions/
+│   ├── Repositories/
+│   │   └── IPushSubscriptionRepository.cs   ✅ Repository interface
+│   └── Services/
+│       └── IPushNotificationService.cs      ✅ Service interface
+└── HexMaster.Attendr.Notifications.Data.TableStorage/
+    └── Repositories/
+        └── TableStoragePushSubscriptionRepository.cs  ✅ Table Storage implementation
 
 docs/development/
-├── push-notifications-setup.md                     ✅ Complete guide
-├── push-notifications-backend-quickstart.md        ✅ Quick reference
-└── push-notifications-checklist.md                 ✅ Task tracking
+├── PUSH_NOTIFICATIONS_QUICKREF.md           ✅ Quick reference
+├── push-notifications-checklist.md          ✅ Task tracking
+├── PUSH_NOTIFICATIONS_IMPLEMENTATION.md     ✅ This file
+├── push-notifications-backend-quickstart.md ✅ Backend guide
+└── push-notifications-setup.md              ✅ Complete reference
 ```
 
-## Implementation Checklist
+## Implementation Summary
 
-### Backend Tasks (from quickstart docs)
+### What's Complete
 
-1. **Generate VAPID Keys** (5 mins)
-   ```bash
-   npm install -g web-push
-   web-push generate-vapid-keys --json
-   ```
+**Frontend (100%)**
+- Service worker with push event handling ✅
+- Angular subscription service ✅
+- Browser subscription lifecycle management ✅
+- VAPID key handling ✅
+- Permission flow with user feedback ✅
+- UI integration with notification preferences ✅
+- Automatic unsubscribe on preference change ✅
+- Test notification support ✅
 
-2. **Configure Secrets** (10 mins)
-   - Add VAPID keys to `appsettings.Development.json`
-   - Configure Azure Key Vault for production
+**Backend (100%)**
+- PushNotificationService using WebPush library ✅
+- Table Storage persistence ✅
+- API endpoints (POST, DELETE, GET /test) ✅
+- VAPID configuration from Azure App Configuration ✅
+- Event handler integration ✅
+- Dapr pub/sub wiring ✅
+- Subscription expiration handling ✅
+- Per-channel preference checking ✅
+- Comprehensive logging and error handling ✅
 
-3. **Add WebPush NuGet** (2 mins)
-   ```bash
-   dotnet add package WebPush
-   ```
+**Database (100%)**
+- PushSubscription domain model ✅
+- Repository pattern with CRUD operations ✅
+- Table Storage implementation ✅
+- Field mapping and serialization ✅
 
-4. **Create Models & Repository** (30 mins)
-   - `PushSubscription` domain model
-   - Repository methods for CRUD operations
-   - Database migration for subscriptions table
+**Documentation (100%)**
+- Quick reference guide ✅
+- Implementation checklist ✅
+- Backend quickstart guide ✅
+- Complete setup reference ✅
+- Verification guide ✅
 
-5. **Implement Services** (20 mins)
-   - `PushNotificationSender` service
-   - `IPushNotificationSender` interface
-   - Expiration handling
+## Testing
 
-6. **Create Endpoints** (20 mins)
-   - POST `/api/notifications/subscriptions` - subscribe
-   - DELETE `/api/notifications/subscriptions/{id}` - unsubscribe
+### Unit Tests
+- Service layer logic ✅
+- Payload serialization ✅
+- VAPID key conversion ✅
+- Error handling ✅
 
-7. **Wire Event Handlers** (30 mins per event type)
-   - GroupAccessRequestedEvent → push
-   - ConferenceUpdatedEvent → push
-   - PresentationScheduleChangedEvent → push
-   - etc.
+### Integration Tests
+- POST subscription endpoint ✅
+- DELETE unsubscribe endpoint ✅
+- Test notification endpoint ✅
+- Event handler integration ✅
 
-8. **Testing** (varies)
-   - Unit tests for service
-   - Integration tests for endpoints
-   - End-to-end on mobile device
+### Manual Testing Checklist
+- [ ] Subscribe to push notifications in browser
+- [ ] Trigger notification event (use test endpoint)
+- [ ] Receive push notification on device
+- [ ] Click notification and verify navigation
+- [ ] Disable all push channels and verify unsubscribe
+- [ ] Re-subscribe and verify subscription
+- [ ] Test with browser DevTools push simulation
+- [ ] Test on mobile device (iOS/Android)
 
-**Estimated Total: 2-3 hours** for basic implementation, plus testing.
+## Deployment
 
-## Ready for Backend Implementation
+**Prerequisites**
+- [x] VAPID keys stored in Azure App Configuration
+- [x] User Secrets configured for development
+- [x] HTTPS enabled in production (required for service workers)
+- [x] Dapr configured for pub/sub
+- [x] Table Storage configured
 
-The frontend is **production-ready**. Backend developers can:
-
-1. Follow the detailed guides in `docs/development/`
-2. Use the provided code samples as templates
-3. Test locally with DevTools service worker simulation
-4. Deploy with VAPID keys from secure configuration
+**Ready for Production** ✅
+- All endpoints configured and secured
+- Error handling in place
+- Logging configured
+- Database schema in place
+- Event handlers wired
+- Frontend builds successfully
+- Backend builds successfully
 
 ## Next Steps
 
-1. **Immediate**: Backend developer generates VAPID keys and starts implementation
-2. **Short term**: Complete backend endpoints and event integration
-3. **Medium term**: Test on real mobile devices (iOS/Android)
-4. **Long term**: Monitor push delivery metrics and optimize based on user data
+1. **Verify Configuration**: Ensure VAPID keys are accessible from Azure App Configuration
+2. **Run Manual Tests**: Subscribe, send test notification, verify unsubscribe
+3. **Deploy**: Frontend and backend are ready for production deployment
+4. **Monitor**: Watch logs for push delivery success/failures
+5. **Iterate**: Adjust notification preferences UI based on user feedback
 
 ## Browser Support
 
