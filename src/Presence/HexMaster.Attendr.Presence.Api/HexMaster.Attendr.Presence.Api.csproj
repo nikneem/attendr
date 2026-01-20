@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ContainerImageName>attendr/attendr-presence-api</ContainerImageName>
     <ContainerUser>app</ContainerUser>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>

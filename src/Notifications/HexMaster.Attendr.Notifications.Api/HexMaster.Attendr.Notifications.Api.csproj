@@ -7,6 +7,7 @@
 	  <ContainerImageName>attendr/attendr-notifications-api</ContainerImageName>
 	  <ContainerUser>app</ContainerUser>
     <UserSecretsId>3253e31a-8dac-4ae8-8880-2d3f9105bce4</UserSecretsId>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>

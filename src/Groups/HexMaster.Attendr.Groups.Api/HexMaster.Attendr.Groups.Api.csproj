@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ContainerImageName>attendr/attendr-groups-api</ContainerImageName>
     <ContainerUser>app</ContainerUser>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
