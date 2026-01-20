@@ -19,8 +19,8 @@ public static class VersionEndpoints
 
     private static IResult GetVersion()
     {
-        var version = typeof(Program).Assembly.GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
-        return Results.Json(new VersionResponse { Version = version });
+        var version = typeof(Program).Assembly.GetName().Version;
+        return Results.Json(new VersionResponse { Version = version?.ToString() ?? "Unknown" });
     }
 }
 
