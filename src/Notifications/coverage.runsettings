@@ -7,12 +7,16 @@
           <Format>cobertura</Format>
           <Include>
             <Assembly>HexMaster.Attendr.Notifications.dll</Assembly>
-            <Assembly>HexMaster.Attendr.Notifications.Abstractions.dll</Assembly>
           </Include>
           <Exclude>
             <Assembly>HexMaster.Attendr.Notifications.Api.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Notifications.Abstractions.dll</Assembly>
             <Assembly>HexMaster.Attendr.Notifications.Data.TableStorage.dll</Assembly>
             <Assembly>HexMaster.Attendr.Notifications.Tests.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Profiles.*.dll</Assembly>
+            <Assembly>HexMaster.Attendr.IntegrationEvents.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Core.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Aspire.*.dll</Assembly>
           </Exclude>
         </Configuration>
       </DataCollector>
