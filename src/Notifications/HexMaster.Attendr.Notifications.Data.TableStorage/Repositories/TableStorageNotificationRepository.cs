@@ -46,19 +46,20 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
         var tableClient = await GetTableClientAsync(cancellationToken);
         var filter = $"PartitionKey eq '{profileId}'";
 
-        if (!includeRead)
-        {
-            filter += " and ReadAt eq null";
-        }
-
-        if (!includeDeleted)
-        {
-            filter += " and DeletedAt eq null";
-        }
-
         var notifications = new List<Notification>();
         await foreach (var entity in tableClient.QueryAsync<NotificationEntity>(filter, cancellationToken: cancellationToken))
         {
+            // Filter in memory since Azure Table Storage doesn't support "eq null" for nullable properties
+            if (!includeRead && entity.ReadAt.HasValue)
+            {
+                continue;
+            }
+
+            if (!includeDeleted && entity.DeletedAt.HasValue)
+            {
+                continue;
+            }
+
             notifications.Add(NotificationMapper.ToDomain(entity));
         }
 
@@ -74,11 +75,15 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
         var tableClient = await GetTableClientAsync(cancellationToken);
 
         // Find unread notification with matching profile, type, and stack key
-        var filter = $"PartitionKey eq '{profileId}' and TypeKey eq '{typeKey}' and StackKey eq '{stackKey}' and ReadAt eq null";
+        var filter = $"PartitionKey eq '{profileId}' and TypeKey eq '{typeKey}' and StackKey eq '{stackKey}'";
 
         await foreach (var entity in tableClient.QueryAsync<NotificationEntity>(filter, cancellationToken: cancellationToken))
         {
-            return NotificationMapper.ToDomain(entity);
+            // Filter for unread in memory since Azure Table Storage doesn't support "eq null"
+            if (!entity.ReadAt.HasValue)
+            {
+                return NotificationMapper.ToDomain(entity);
+            }
         }
 
         return null;
