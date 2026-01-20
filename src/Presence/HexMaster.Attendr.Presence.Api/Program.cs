@@ -61,6 +61,7 @@ app.UseAuthorization();
 app.UseCors();
 app.MapPresenceEndpoints();
 app.MapEventHandlersEndpoints();
+app.MapVersionEndpoints();
 
 app.UseCloudEvents();
 app.MapSubscribeHandler();

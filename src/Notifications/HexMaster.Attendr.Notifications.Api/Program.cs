@@ -55,6 +55,7 @@ app.MapNotificationPreferencesDetailEndpoints();
 app.MapNotificationTypesEndpoints();
 app.MapEventHandlersEndpoints();
 app.MapPushSubscriptionsEndpoints();
+app.MapVersionEndpoints();
 
 // Enable Dapr pub/sub
 app.UseCloudEvents();

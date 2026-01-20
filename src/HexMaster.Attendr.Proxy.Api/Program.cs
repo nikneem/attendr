@@ -3,6 +3,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.Core.Configuration;
+using HexMaster.Attendr.Proxy.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,7 +54,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseCors("AllowFrontend");
-
+app.MapVersionEndpoints();
 app.MapReverseProxy();
 
 app.Run();

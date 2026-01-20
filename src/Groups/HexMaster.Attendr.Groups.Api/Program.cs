@@ -59,6 +59,8 @@ app.UseAuthorization();
 // Map endpoints
 app.MapGroupsEndpoints();
 app.MapEventHandlersEndpoints();
+app.MapVersionEndpoints();
+
 app.UseCloudEvents();
 app.MapSubscribeHandler();
 

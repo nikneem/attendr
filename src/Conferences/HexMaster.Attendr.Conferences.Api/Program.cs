@@ -97,6 +97,7 @@ app.UseAuthorization();
 app.MapConferencesEndpoints();
 app.MapConferencesIntegrationEndpoints();
 app.MapEventHandlersEndpoints();
+app.MapVersionEndpoints();
 app.UseCloudEvents();
 app.MapSubscribeHandler();
 
