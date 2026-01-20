@@ -56,7 +56,7 @@
         aria-label="Notifications" pTooltip="Notifications" tooltipPosition="bottom">
         <i class="pi pi-bell"></i>
         @if (unreadCount() > 0) {
-        <p-badge [value]="unreadCount().toString()" severity="danger" />
+        <p-badge [value]="unreadCount().toString()" severity="danger" badgeSize="small" />
         }
     </button>
 </div>
