@@ -2,208 +2,208 @@
 @use '../../../../styles/mixins' as *;
 
 .system-info-container {
-  padding: $spacing-2xl;
-  max-width: 1200px;
-  margin: 0 auto;
+    padding: $spacing-2xl;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-2xl;
-  border-bottom: 2px solid $border-color;
-  padding-bottom: $spacing-lg;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-2xl;
+    border-bottom: 2px solid $border-color;
+    padding-bottom: $spacing-lg;
 
-  h1 {
-    margin: 0;
-    font-size: $font-size-4xl;
-    color: $text-primary;
-    font-weight: 700;
-  }
+    h1 {
+        margin: 0;
+        font-size: $font-size-4xl;
+        color: $text-primary;
+        font-weight: 700;
+    }
 }
 
 .refresh-btn {
-  background-color: $primary-color;
-  color: white;
-  border: none;
-  padding: $spacing-md $spacing-lg;
-  border-radius: $radius-md;
-  cursor: pointer;
-  font-size: $font-size-base;
-  transition: background-color $transition-base;
-  font-weight: 600;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    padding: $spacing-md $spacing-lg;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-size: $font-size-base;
+    transition: background-color $transition-base;
+    font-weight: 600;
 
-  &:hover:not(:disabled) {
-    background-color: $primary-light;
-  }
+    &:hover:not(:disabled) {
+        background-color: $primary-light;
+    }
 
-  &:disabled {
-    background-color: $border-dark;
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
+    &:disabled {
+        background-color: $border-dark;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
 }
 
 .system-overview {
-  margin-bottom: $spacing-2xl;
+    margin-bottom: $spacing-2xl;
 }
 
 .info-card {
-  background: $background-secondary;
-  border: 1px solid $border-color;
-  border-radius: $radius-md;
-  padding: $spacing-lg;
-  box-shadow: $shadow-md;
+    background: $background-secondary;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    padding: $spacing-lg;
+    box-shadow: $shadow-md;
 
-  h3 {
-    margin: 0 0 $spacing-md 0;
-    color: $text-primary;
-    font-weight: 600;
-  }
+    h3 {
+        margin: 0 0 $spacing-md 0;
+        color: $text-primary;
+        font-weight: 600;
+    }
 }
 
 .info-items {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $spacing-lg;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
 }
 
 .info-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-sm 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-sm 0;
 
-  .label {
-    font-weight: 600;
-    color: $text-secondary;
-  }
+    .label {
+        font-weight: 600;
+        color: $text-secondary;
+    }
 
-  .value {
-    color: $text-primary;
-    margin-left: $spacing-lg;
-  }
+    .value {
+        color: $text-primary;
+        margin-left: $spacing-lg;
+    }
 }
 
 .services-section {
-  h2 {
-    margin: $spacing-2xl 0 $spacing-md 0;
-    color: $text-primary;
-    font-size: $font-size-2xl;
-    font-weight: 600;
-  }
+    h2 {
+        margin: $spacing-2xl 0 $spacing-md 0;
+        color: $text-primary;
+        font-size: $font-size-2xl;
+        font-weight: 600;
+    }
 }
 
 .loading-message,
 .no-services {
-  padding: $spacing-2xl;
-  text-align: center;
-  background-color: $background-tertiary;
-  border-radius: $radius-md;
-  color: $text-secondary;
+    padding: $spacing-2xl;
+    text-align: center;
+    background-color: $background-tertiary;
+    border-radius: $radius-md;
+    color: $text-secondary;
 }
 
 .services-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: $background-secondary;
-  box-shadow: $shadow-md;
-  border-radius: $radius-md;
-  overflow: hidden;
+    width: 100%;
+    border-collapse: collapse;
+    background: $background-secondary;
+    box-shadow: $shadow-md;
+    border-radius: $radius-md;
+    overflow: hidden;
 
-  thead {
-    background-color: $background-tertiary;
-    border-bottom: 2px solid $border-color;
-  }
-
-  th {
-    padding: $spacing-lg;
-    text-align: left;
-    font-weight: 600;
-    color: $text-primary;
-  }
-
-  td {
-    padding: $spacing-lg;
-    border-bottom: 1px solid $border-color;
-  }
-
-  tbody tr {
-    transition: background-color $transition-base;
-
-    &:hover {
-      background-color: $background-tertiary;
+    thead {
+        background-color: $background-tertiary;
+        border-bottom: 2px solid $border-color;
     }
 
-    &.healthy {
-      border-left: 4px solid $accent-success;
+    th {
+        padding: $spacing-lg;
+        text-align: left;
+        font-weight: 600;
+        color: $text-primary;
     }
 
-    &.unhealthy {
-      border-left: 4px solid $accent-error;
+    td {
+        padding: $spacing-lg;
+        border-bottom: 1px solid $border-color;
     }
-  }
+
+    tbody tr {
+        transition: background-color $transition-base;
+
+        &:hover {
+            background-color: $background-tertiary;
+        }
+
+        &.healthy {
+            border-left: 4px solid $accent-success;
+        }
+
+        &.unhealthy {
+            border-left: 4px solid $accent-error;
+        }
+    }
 }
 
 .service-name {
-  font-weight: 500;
-  color: $text-primary;
+    font-weight: 500;
+    color: $text-primary;
 }
 
 .version {
-  font-family: 'Courier New', monospace;
-  color: $text-secondary;
+    font-family: 'Courier New', monospace;
+    color: $text-secondary;
 }
 
 .status {
-  text-align: center;
+    text-align: center;
 }
 
 .badge {
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $radius-full;
-  font-size: $font-size-sm;
-  font-weight: 600;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-full;
+    font-size: $font-size-sm;
+    font-weight: 600;
 
-  &.badge-healthy {
-    background-color: rgba($accent-success, 0.2);
-    color: $accent-success;
-  }
+    &.badge-healthy {
+        background-color: rgba($accent-success, 0.2);
+        color: $accent-success;
+    }
 
-  &.badge-unhealthy {
-    background-color: rgba($accent-error, 0.2);
-    color: $accent-error;
-  }
+    &.badge-unhealthy {
+        background-color: rgba($accent-error, 0.2);
+        color: $accent-error;
+    }
 
-  &.badge-unknown {
-    background-color: rgba($text-muted, 0.2);
-    color: $text-secondary;
-  }
+    &.badge-unknown {
+        background-color: rgba($text-muted, 0.2);
+        color: $text-secondary;
+    }
 }
 
 .checked-at {
-  color: $text-muted;
-  font-size: $font-size-sm;
+    color: $text-muted;
+    font-size: $font-size-sm;
 }
 
 @media (max-width: 768px) {
-  .system-info-container {
-    padding: $spacing-lg;
-  }
-
-  .page-header {
-    flex-direction: column;
-    gap: $spacing-lg;
-    align-items: flex-start;
-  }
-
-  .services-table {
-    font-size: $font-size-sm;
-
-    th,
-    td {
-      padding: $spacing-md;
+    .system-info-container {
+        padding: $spacing-lg;
     }
-  }
+
+    .page-header {
+        flex-direction: column;
+        gap: $spacing-lg;
+        align-items: flex-start;
+    }
+
+    .services-table {
+        font-size: $font-size-sm;
+
+        th,
+        td {
+            padding: $spacing-md;
+        }
+    }
 }

@@ -1,59 +1,59 @@
 <div class="system-info-container">
-  <div class="page-header">
-    <h1>System Information</h1>
-    <button (click)="refreshHealth()" [disabled]="isLoading" class="refresh-btn">
-      <span *ngIf="!isLoading">🔄 Refresh</span>
-      <span *ngIf="isLoading">Loading...</span>
-    </button>
-  </div>
+    <div class="page-header">
+        <h1>System Information</h1>
+        <button (click)="refreshHealth()" [disabled]="isLoading" class="refresh-btn">
+            <span *ngIf="!isLoading">🔄 Refresh</span>
+            <span *ngIf="isLoading">Loading...</span>
+        </button>
+    </div>
 
-  <div class="system-overview">
-    <div class="info-card">
-      <h3>System Details</h3>
-      <div class="info-items">
-        <div class="info-item">
-          <span class="label">Platform:</span>
-          <span class="value">{{ systemInfo.platform }}</span>
+    <div class="system-overview">
+        <div class="info-card">
+            <h3>System Details</h3>
+            <div class="info-items">
+                <div class="info-item">
+                    <span class="label">Platform:</span>
+                    <span class="value">{{ systemInfo.platform }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Last Updated:</span>
+                    <span class="value">{{ systemInfo.timestamp | date: 'short' }}</span>
+                </div>
+            </div>
         </div>
-        <div class="info-item">
-          <span class="label">Last Updated:</span>
-          <span class="value">{{ systemInfo.timestamp | date: 'short' }}</span>
+    </div>
+
+    <div class="services-section">
+        <h2>Backend Services Status</h2>
+        <div *ngIf="isLoading && services.length === 0" class="loading-message">
+            <p>Loading service health status...</p>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="services-section">
-    <h2>Backend Services Status</h2>
-    <div *ngIf="isLoading && services.length === 0" class="loading-message">
-      <p>Loading service health status...</p>
-    </div>
+        <div *ngIf="!isLoading && services.length === 0" class="no-services">
+            <p>No services available</p>
+        </div>
 
-    <div *ngIf="!isLoading && services.length === 0" class="no-services">
-      <p>No services available</p>
+        <table *ngIf="services.length > 0" class="services-table">
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Version</th>
+                    <th>Health Status</th>
+                    <th>Last Checked</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let service of services" [ngClass]="service.isHealthy ? 'healthy' : 'unhealthy'">
+                    <td class="service-name">{{ service.name }}</td>
+                    <td class="version">{{ service.version || 'Unknown' }}</td>
+                    <td class="status">
+                        <span [ngClass]="getHealthBadgeClass(service.isHealthy)" class="badge">
+                            {{ getHealthText(service.isHealthy) }}
+                        </span>
+                    </td>
+                    <td class="checked-at">{{ service.lastChecked | date: 'short' }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-
-    <table *ngIf="services.length > 0" class="services-table">
-      <thead>
-        <tr>
-          <th>Service Name</th>
-          <th>Version</th>
-          <th>Health Status</th>
-          <th>Last Checked</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let service of services" [ngClass]="service.isHealthy ? 'healthy' : 'unhealthy'">
-          <td class="service-name">{{ service.name }}</td>
-          <td class="version">{{ service.version || 'Unknown' }}</td>
-          <td class="status">
-            <span [ngClass]="getHealthBadgeClass(service.isHealthy)" class="badge">
-              {{ getHealthText(service.isHealthy) }}
-            </span>
-          </td>
-          <td class="checked-at">{{ service.lastChecked | date: 'short' }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
 </div>
