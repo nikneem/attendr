@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { HomePageComponent } from './pages/public/home/home-page-component/home-page-component';
 import { SystemInformationPageComponent } from './pages/public/system-information/system-information-page.component';
+import { DisclaimerPageComponent } from './pages/public/disclaimer/disclaimer-page.component';
+import { TermsOfServicePageComponent } from './pages/public/terms-of-service/terms-of-service-page.component';
 import { DashboardPageComponent } from './pages/private/dashboard/dashboard-page-component/dashboard-page-component';
 import { ConferencesPageComponent } from './pages/private/conferences/conferences-page.component';
 import { ConferenceDetailsPageComponent } from './pages/private/conferences/conference-details-page.component';
@@ -15,6 +17,8 @@ import { PrivatePageTemplateComponent } from './templates/private/private-page-t
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
     { path: 'system-info', component: SystemInformationPageComponent },
+    { path: 'disclaimer', component: DisclaimerPageComponent },
+    { path: 'terms', component: TermsOfServicePageComponent },
     {
         path: 'app',
         canActivate: [AutoLoginAllRoutesGuard],

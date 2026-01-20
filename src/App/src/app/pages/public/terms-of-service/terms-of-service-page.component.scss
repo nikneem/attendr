@@ -1,0 +1,76 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.legal-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: $spacing-2xl;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+}
+
+.header {
+    background: linear-gradient(135deg, rgba($primary-color, 0.12), rgba($background-tertiary, 0.9));
+    border: 1px solid $border-color;
+    border-radius: $radius-lg;
+    padding: $spacing-2xl;
+    box-shadow: $shadow-md;
+
+    h1 {
+        margin: 0 0 $spacing-sm 0;
+        color: $text-primary;
+        font-size: $font-size-4xl;
+    }
+
+    .lede {
+        margin: 0;
+        color: $text-secondary;
+    }
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: $font-size-xs;
+    color: $text-secondary;
+    margin: 0 0 $spacing-xs 0;
+}
+
+.card {
+    background: $background-secondary;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    padding: $spacing-xl;
+    box-shadow: $shadow-sm;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    h2 {
+        margin: 0;
+        color: $text-primary;
+    }
+
+    p,
+    li {
+        color: $text-secondary;
+        line-height: 1.6;
+    }
+
+    ul {
+        padding-left: $spacing-xl;
+        margin: 0;
+        list-style: disc;
+    }
+}
+
+@media (max-width: 768px) {
+    .legal-page {
+        padding: $spacing-xl;
+    }
+
+    .card {
+        padding: $spacing-lg;
+    }
+}
