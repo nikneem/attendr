@@ -128,17 +128,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: $spacing-sm;
     padding: $spacing-sm 0;
 
     .label {
         font-weight: 600;
         color: $text-secondary;
+        flex-shrink: 0;
     }
 
     .value {
         color: $text-primary;
         margin-left: $spacing-lg;
         max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: right;
     }
 }
 
@@ -148,6 +154,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.nowrap {
+    white-space: nowrap;
 }
 
 .status-pill {

@@ -4,11 +4,12 @@ import { Subject, interval, takeUntil } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 import { SystemInformationService, ServiceInfo } from '../../../services/system-information.service';
 import { environment } from '../../../../environments/environment';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
     selector: 'attn-system-information-page',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, TooltipModule],
     templateUrl: './system-information-page.component.html',
     styleUrl: './system-information-page.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
