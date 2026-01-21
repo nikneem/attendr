@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject } from '@angular/core';
+import { Component, ViewChild, inject, computed } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuModule } from 'primeng/menu';
@@ -25,11 +25,21 @@ export class PrivatePageTemplateComponent {
     protected readonly profileStore = inject(ProfileStore);
     private readonly oidcSecurityService = inject(OidcSecurityService);
 
-    items: MenuItem[] = [
+    private readonly baseItems: MenuItem[] = [
         { label: 'Dashboard', routerLink: ['/app/dashboard'] },
         { label: 'Groups', routerLink: ['/app/groups'] },
         { label: 'Conferences', routerLink: ['/app/conferences'] },
     ];
+
+    // Computed signal that includes Topics menu item only for admins
+    items = computed<MenuItem[]>(() => {
+        const isAdmin = this.profileStore.isAdmin();
+        const itemsList = [...this.baseItems];
+        if (isAdmin) {
+            itemsList.push({ label: 'Topics', routerLink: ['/app/topics'] });
+        }
+        return itemsList;
+    });
 
     accountItems: MenuItem[] = [
         { label: 'Preferences', icon: 'pi pi-sliders-h', routerLink: ['/app/preferences/notifications'] },
@@ -45,3 +55,4 @@ export class PrivatePageTemplateComponent {
         this.oidcSecurityService.logoff().subscribe();
     }
 }
+

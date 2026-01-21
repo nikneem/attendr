@@ -38,4 +38,43 @@ public interface ITopicsRepository
     /// <param name="presentationId">The presentation ID.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     Task MarkPresentationAsAnalysedAsync(Guid presentationId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a topic by its ID.
+    /// </summary>
+    /// <param name="id">The unique identifier of the topic.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The topic if found; otherwise null.</returns>
+    Task<Topic?> GetTopicByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Lists all topics.
+    /// </summary>
+    /// <param name="onlyVisible">If true, only return visible topics.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>List of topics.</returns>
+    Task<List<Topic>> ListTopicsAsync(bool onlyVisible = true, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates an existing topic.
+    /// </summary>
+    /// <param name="topic">The topic to update.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    Task UpdateTopicAsync(Topic topic, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes a topic by its ID.
+    /// </summary>
+    /// <param name="id">The unique identifier of the topic to delete.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>True if the topic was deleted; otherwise false.</returns>
+    Task<bool> DeleteTopicAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes all presentation-topic references for a given topic.
+    /// Used for cascade delete when a topic is deleted.
+    /// </summary>
+    /// <param name="topicId">The unique identifier of the topic.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    Task DeleteTopicPresentationReferencesAsync(Guid topicId, CancellationToken cancellationToken = default);
 }

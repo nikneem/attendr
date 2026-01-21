@@ -1,5 +1,5 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
-using HexMaster.Attendr.Conferences.GetConference;
+using HexMaster.Attendr.Conferences.Features.GetConference;
 using HexMaster.Attendr.Conferences.Tests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -95,4 +95,25 @@ public sealed class Topic : DomainModel<Guid>
     {
         IsVisible = false;
     }
+
+    /// <summary>
+    /// Updates the topic's key and name.
+    /// </summary>
+    /// <param name="key">The new unique key of the topic.</param>
+    /// <param name="name">The new display name of the topic.</param>
+    public void UpdateDetails(string key, string name)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            throw new ArgumentException("Topic key cannot be empty.", nameof(key));
+        }
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Topic name cannot be empty.", nameof(name));
+        }
+
+        Key = key;
+        Name = name;
+    }
 }

@@ -1,0 +1,58 @@
+<div class="topics-page">
+    <div class="container">
+        <div class="header-section">
+            <h1>Topics Management</h1>
+            <p class="subtitle">Manage presentation topics and their visibility</p>
+        </div>
+
+        @if (loading()) {
+        <div class="loading-container">
+            <p-progressSpinner />
+            <p>Loading topics...</p>
+        </div>
+        } @else if (error()) {
+        <div class="error-container">
+            <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
+            <p>{{ error() }}</p>
+        </div>
+        } @else if (topics().length === 0) {
+        <div class="empty-state">
+            <i class="pi pi-inbox" style="font-size: 3rem"></i>
+            <p>No topics available</p>
+        </div>
+        } @else {
+        <div class="topics-table">
+            <p-table [value]="topics()" [tableStyle]="{ 'min-width': '50rem' }" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="key">
+                            Normalized Key
+                            <p-sortIcon field="key"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="name">
+                            Name
+                            <p-sortIcon field="name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="isVisible" style="width: 20%">
+                            Visibility
+                            <p-sortIcon field="isVisible"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-topic>
+                    <tr>
+                        <td>
+                            <code>{{ topic.key }}</code>
+                        </td>
+                        <td>{{ topic.name }}</td>
+                        <td>
+                            <p-tag [value]="getVisibilityLabel(topic.isVisible)"
+                                [severity]="getVisibilitySeverity(topic.isVisible)" />
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        }
+    </div>
+</div>

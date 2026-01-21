@@ -1,0 +1,85 @@
+using System.Diagnostics;
+using HexMaster.Attendr.Conferences.Abstractions.Dtos;
+using HexMaster.Attendr.Conferences.Observability;
+using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Observability;
+using Microsoft.Extensions.Logging;
+
+namespace HexMaster.Attendr.Conferences.Features.UpdateTopic;
+
+/// <summary>
+/// Command handler to update an existing topic.
+/// </summary>
+public sealed class UpdateTopicCommandHandler : ICommandHandler<UpdateTopicCommand, TopicDto>
+{
+    private readonly ITopicsRepository _topicsRepository;
+    private readonly ConferenceMetrics _metrics;
+    private readonly ILogger<UpdateTopicCommandHandler> _logger;
+
+    public UpdateTopicCommandHandler(
+        ITopicsRepository topicsRepository,
+        ConferenceMetrics metrics,
+        ILogger<UpdateTopicCommandHandler> logger)
+    {
+        _topicsRepository = topicsRepository ?? throw new ArgumentNullException(nameof(topicsRepository));
+        _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    public async Task<TopicDto> Handle(UpdateTopicCommand command, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        using var activity = ActivitySources.Conferences.StartActivity("UpdateTopic", ActivityKind.Internal);
+        activity?.SetTag("topic.id", command.Id);
+        activity?.SetTag("topic.key", command.Key);
+        activity?.SetTag("topic.is_visible", command.IsVisible);
+
+        var stopwatch = Stopwatch.StartNew();
+
+        try
+        {
+            _logger.LogInformation("Updating topic {TopicId}", command.Id);
+
+            var topic = await _topicsRepository.GetTopicByIdAsync(command.Id, cancellationToken);
+            if (topic == null)
+            {
+                _logger.LogWarning("Topic {TopicId} not found for update", command.Id);
+                throw new KeyNotFoundException($"Topic with ID {command.Id} not found");
+            }
+
+            // Update topic properties
+            // Key and Name are updated together to maintain consistency
+            topic.UpdateDetails(command.Key, command.Name);
+
+            // Update visibility
+            if (command.IsVisible && !topic.IsVisible)
+            {
+                topic.MakeVisible();
+            }
+            else if (!command.IsVisible && topic.IsVisible)
+            {
+                topic.Hide();
+            }
+
+            await _topicsRepository.UpdateTopicAsync(topic, cancellationToken);
+
+            activity?.SetStatus(ActivityStatusCode.Ok);
+            _metrics.RecordOperationDuration("UpdateTopic", stopwatch.Elapsed.TotalMilliseconds, success: true);
+
+            _logger.LogInformation("Topic {TopicId} updated successfully", topic.Id);
+
+            return new TopicDto(topic.Id, topic.Key, topic.Name, topic.IsVisible);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            _metrics.RecordOperationFailed("UpdateTopic", ex.GetType().Name);
+            _metrics.RecordOperationDuration("UpdateTopic", stopwatch.Elapsed.TotalMilliseconds, success: false);
+
+            _logger.LogError(ex, "Failed to update topic {TopicId}", command.Id);
+            throw;
+        }
+    }
+}
