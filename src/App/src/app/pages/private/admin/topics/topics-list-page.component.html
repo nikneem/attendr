@@ -29,12 +29,12 @@
                             Normalized Key
                             <p-sortIcon field="key"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="name">
+                        <th pSortableColumn="name" class="hide-on-mobile">
                             Name
                             <p-sortIcon field="name"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="isVisible" style="width: 20%">
-                            Visibility
+                        <th pSortableColumn="isVisible" style="width: 20%" class="visibility-header">
+                            <span class="hide-on-mobile">Visibility</span>
                             <p-sortIcon field="isVisible"></p-sortIcon>
                         </th>
                     </tr>
@@ -47,9 +47,13 @@
                                 <code>{{ topic.key }}</code>
                             </button>
                         </td>
-                        <td>{{ topic.name }}</td>
+                        <td class="hide-on-mobile">{{ topic.name }}</td>
                         <td>
-                            <p-tag class="clickable" [value]="getVisibilityLabel(topic.isVisible)"
+                            <p-tag class="clickable hide-on-desktop" [value]="getVisibilityIcon(topic.isVisible)"
+                                [severity]="getVisibilitySeverity(topic.isVisible)" (click)="toggleVisibility(topic)"
+                                [pTooltip]="topic.isVisible ? 'Click to hide' : 'Click to show'"
+                                tooltipPosition="bottom" />
+                            <p-tag class="clickable hide-on-mobile" [value]="getVisibilityLabel(topic.isVisible)"
                                 [severity]="getVisibilitySeverity(topic.isVisible)" (click)="toggleVisibility(topic)"
                                 [pTooltip]="topic.isVisible ? 'Click to hide' : 'Click to show'"
                                 tooltipPosition="bottom" />

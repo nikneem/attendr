@@ -57,6 +57,10 @@ export class TopicsListPageComponent implements OnInit {
         return isVisible ? 'Visible' : 'Hidden';
     }
 
+    getVisibilityIcon(isVisible: boolean): string {
+        return isVisible ? 'Y' : 'X';
+    }
+
     getVisibilitySeverity(isVisible: boolean): 'success' | 'warn' {
         return isVisible ? 'success' : 'warn';
     }

@@ -77,5 +77,23 @@
         .clickable {
             cursor: pointer;
         }
+
+        // Responsive behavior
+        @media (max-width: 768px) {
+            .hide-on-mobile {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .hide-on-desktop {
+                display: none !important;
+            }
+        }
+
+        // Ensure visibility column header has proper alignment
+        .visibility-header {
+            text-align: center;
+        }
     }
 }
