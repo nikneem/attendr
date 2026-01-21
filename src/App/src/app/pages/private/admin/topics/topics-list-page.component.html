@@ -23,7 +23,7 @@
         } @else {
         <div class="topics-table">
             <p-table [value]="topics()" [tableStyle]="{ 'min-width': '50rem' }" responsiveLayout="scroll">
-                <ng-template #header>
+                <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="key">
                             Normalized Key
@@ -39,7 +39,7 @@
                         </th>
                     </tr>
                 </ng-template>
-                <ng-template #body let-topic>
+                <ng-template pTemplate="body" let-topic>
                     <tr>
                         <td>
                             <code>{{ topic.key }}</code>

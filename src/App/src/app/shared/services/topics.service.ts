@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface TopicDto {
@@ -9,6 +9,11 @@ export interface TopicDto {
     key: string;
     name: string;
     isVisible: boolean;
+}
+
+interface ListTopicsResult {
+    topics: TopicDto[];
+    totalCount: number;
 }
 
 @Injectable({
@@ -23,7 +28,9 @@ export class TopicsService {
      * Get all topics
      */
     getAllTopics(): Observable<TopicDto[]> {
-        return this.http.get<TopicDto[]>(this.apiUrl);
+        return this.http.get<ListTopicsResult>(this.apiUrl).pipe(
+            map((result) => result.topics)
+        );
     }
 
     /**
