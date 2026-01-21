@@ -54,10 +54,11 @@ export class TopicsService {
     /**
      * Update an existing topic
      */
-    updateTopic(id: string, key: string, name: string): Observable<TopicDto> {
+    updateTopic(id: string, key: string, name: string, isVisible: boolean): Observable<TopicDto> {
         return this.http.put<TopicDto>(`${this.apiUrl}/${id}`, {
             key,
             name,
+            isVisible,
         });
     }
 
