@@ -71,14 +71,8 @@
             </div>
 
             <div class="header-panel visual-panel"
-                [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : 'none'">
+                [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : 'url(/images/attendr-icon.png)'">
                 <div class="panel-overlay"></div>
-                @if (!conference.imageUrl) {
-                <div class="panel-content placeholder-content">
-                    <i class="pi pi-image"></i>
-                    <span>No image</span>
-                </div>
-                }
             </div>
         </div>
     </div>

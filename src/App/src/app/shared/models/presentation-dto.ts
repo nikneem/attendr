@@ -1,4 +1,5 @@
 import { SpeakerDto } from './speaker-dto';
+import { TopicReferenceDto } from './topic-reference-dto';
 
 export interface PresentationDto {
     id: string;
@@ -8,4 +9,5 @@ export interface PresentationDto {
     endDateTime: string;
     roomName: string;
     speakers: SpeakerDto[];
+    topics: TopicReferenceDto[];
 }

@@ -1,10 +1,12 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { PresentationDto } from '@models/presentation-dto';
 
 @Component({
     selector: 'attn-presentation-details',
-    imports: [CommonModule],
+    imports: [CommonModule, TagModule, TooltipModule],
     templateUrl: './presentation-details.component.html',
     styleUrl: './presentation-details.component.scss',
 })

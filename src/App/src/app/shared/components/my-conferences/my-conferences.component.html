@@ -28,11 +28,13 @@
             <div class="conference-tile">
                 <div class="tile-visual"
                     [style.background-image]="conference.imageUrl ? 'url(' + conference.imageUrl + ')' : 'url(/images/attendr-icon.png)'">
-                    <button type="button" class="tile-action" pButton icon="pi pi-trash"
-                        (click)="confirmUnfollow(conference.conferenceId, conference.conferenceName)"
-                        [text]="true"></button>
                     <div class="tile-visual-overlay"></div>
-                    <div class="tile-visual-title">{{ conference.conferenceName }}</div>
+                    <div class="tile-visual-header">
+                        <div class="tile-visual-title">{{ conference.conferenceName }}</div>
+                        <button type="button" class="tile-action" pButton icon="pi pi-trash"
+                            (click)="confirmUnfollow(conference.conferenceId, conference.conferenceName)"
+                            [text]="true"></button>
+                    </div>
                 </div>
                 <div class="tile-info">
                     <div class="meta-row">

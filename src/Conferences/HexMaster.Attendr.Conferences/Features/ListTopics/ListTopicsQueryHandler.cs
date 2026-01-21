@@ -37,7 +37,10 @@ public sealed class ListTopicsQueryHandler : IQueryHandler<ListTopicsQuery, List
         {
             var topics = await _topicsRepository.ListTopicsAsync(query.OnlyVisible, cancellationToken);
 
-            var topicDtos = topics.Select(t => new TopicDto(t.Id, t.Key, t.Name, t.IsVisible)).ToList();
+            var topicDtos = topics
+                .OrderBy(t => t.Key)
+                .Select(t => new TopicDto(t.Id, t.Key, t.Name, t.IsVisible))
+                .ToList();
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             activity?.SetTag("topics.count", topicDtos.Count);

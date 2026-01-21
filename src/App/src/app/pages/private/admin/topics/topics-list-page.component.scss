@@ -54,8 +54,103 @@
         padding: 1.5rem;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
+        @media (max-width: 768px) {
+            padding: 0.5rem;
+            background: transparent;
+            box-shadow: none;
+        }
+
         :deep(p-table) {
             width: 100%;
+
+            .p-datatable-wrapper {
+                overflow-x: visible;
+            }
+
+            .p-datatable-table {
+                @media (min-width: 769px) {
+                    table-layout: fixed;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .p-datatable-thead {
+                    display: none;
+                }
+
+                .p-datatable-tbody>tr {
+                    display: flex;
+                    flex-direction: row;
+                    border: none;
+                    border-bottom: 1px solid var(--surface-border);
+                    padding: 0.75rem;
+                    background: var(--surface-card);
+                    border-radius: var(--border-radius);
+                    margin-bottom: 0.5rem;
+                    align-items: center;
+                }
+
+                .p-datatable-tbody>tr>td {
+                    border: none;
+                    padding: 0;
+                }
+            }
+        }
+
+        .key-column {
+            @media (min-width: 769px) {
+                max-width: 0;
+                overflow: hidden;
+            }
+
+            @media (max-width: 768px) {
+                flex: 9;
+                min-width: 0;
+                padding-right: 0.5rem;
+            }
+        }
+
+        .name-column {
+            @media (min-width: 769px) {
+                overflow: hidden;
+            }
+        }
+
+        .visibility-column {
+            @media (max-width: 768px) {
+                flex: 1;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+            }
+        }
+
+        .link-button {
+            background: none;
+            border: none;
+            padding: 0;
+            color: inherit;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            display: block;
+        }
+
+        .key-text {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+
+            @media (max-width: 768px) {
+                padding: 0.125rem 0.25rem;
+                font-size: 0.8rem;
+            }
         }
 
         code {
@@ -66,16 +161,37 @@
             color: var(--primary-color);
         }
 
-        .link-button {
-            background: none;
-            border: none;
-            padding: 0;
-            color: inherit;
+        .clickable {
             cursor: pointer;
         }
 
-        .clickable {
-            cursor: pointer;
+        // Responsive behavior
+        @media (max-width: 768px) {
+            .hide-on-mobile {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .hide-on-desktop {
+                display: none !important;
+            }
+        }
+
+        // Column width control for desktop
+        @media (min-width: 769px) {
+            .key-header {
+                width: 35%;
+            }
+
+            .name-header {
+                width: 45%;
+            }
+
+            .visibility-header {
+                width: 20%;
+                text-align: center;
+            }
         }
     }
 }
