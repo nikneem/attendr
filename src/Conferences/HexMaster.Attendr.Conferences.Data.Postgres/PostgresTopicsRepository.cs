@@ -89,7 +89,7 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         command.Parameters.AddWithValue("@batch_size", batchSize);
 
         var presentationData = new List<(Guid PresentationId, Guid ConferenceId, Guid RoomId, string Title, string Abstract, DateTime StartDateTime, DateTime EndDateTime, string? ExternalId, bool IsAnalysed)>();
-        
+
         await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
         {
             while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
@@ -109,7 +109,7 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         }
 
         var results = new List<(Guid ConferenceId, Presentation Presentation)>();
-        
+
         foreach (var data in presentationData)
         {
             var speakerIds = await LoadPresentationSpeakerIdsAsync(connection, data.PresentationId, cancellationToken).ConfigureAwait(false);
@@ -157,5 +157,98 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         }
 
         return speakerIds;
+    }
+
+    public async Task<Topic?> GetTopicByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var sql = "SELECT id, key, name, is_visible, created_on FROM topics WHERE id = @id";
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", id);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            return Topic.FromPersisted(
+                reader.GetGuid(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.GetBoolean(3),
+                reader.GetDateTime(4));
+        }
+
+        return null;
+    }
+
+    public async Task<List<Topic>> ListTopicsAsync(bool onlyVisible = true, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var sql = @"
+            SELECT id, key, name, is_visible, created_on FROM topics
+            WHERE is_visible = @is_visible OR @is_visible = false
+            ORDER BY created_on DESC";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@is_visible", onlyVisible);
+
+        var topics = new List<Topic>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            topics.Add(Topic.FromPersisted(
+                reader.GetGuid(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.GetBoolean(3),
+                reader.GetDateTime(4)));
+        }
+
+        return topics;
+    }
+
+    public async Task UpdateTopicAsync(Topic topic, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(topic);
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var sql = @"
+            UPDATE topics 
+            SET key = @key, name = @name, is_visible = @is_visible 
+            WHERE id = @id";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", topic.Id);
+        command.Parameters.AddWithValue("@key", topic.Key);
+        command.Parameters.AddWithValue("@name", topic.Name);
+        command.Parameters.AddWithValue("@is_visible", topic.IsVisible);
+
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<bool> DeleteTopicAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var sql = "DELETE FROM topics WHERE id = @id";
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", id);
+
+        var rowsAffected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        return rowsAffected > 0;
+    }
+
+    public async Task DeleteTopicPresentationReferencesAsync(Guid topicId, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var sql = "DELETE FROM presentation_topics WHERE topic_id = @topic_id";
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@topic_id", topicId);
+
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 }

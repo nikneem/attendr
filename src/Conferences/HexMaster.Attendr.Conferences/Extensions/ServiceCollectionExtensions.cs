@@ -5,6 +5,11 @@ using HexMaster.Attendr.Conferences.Features.DeleteConference;
 using HexMaster.Attendr.Conferences.Features.FollowConference;
 using HexMaster.Attendr.Conferences.Features.GetConference;
 using HexMaster.Attendr.Conferences.Features.ListConferences;
+using HexMaster.Attendr.Conferences.Features.CreateTopic;
+using HexMaster.Attendr.Conferences.Features.GetTopic;
+using HexMaster.Attendr.Conferences.Features.ListTopics;
+using HexMaster.Attendr.Conferences.Features.UpdateTopic;
+using HexMaster.Attendr.Conferences.Features.DeleteTopic;
 using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Conferences.Services;
 using HexMaster.Attendr.Conferences.Features.UpdateConference;
@@ -35,9 +40,18 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICommandHandler<DeleteConferenceCommand, bool>, DeleteConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<FollowConferenceCommand>, FollowConferenceCommandHandler>();
 
+        // Register topic command handlers
+        services.AddScoped<ICommandHandler<CreateTopicCommand, TopicDto>, CreateTopicCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateTopicCommand, TopicDto>, UpdateTopicCommandHandler>();
+        services.AddScoped<ICommandHandler<DeleteTopicCommand, bool>, DeleteTopicCommandHandler>();
+
         // Register query handlers
         services.AddScoped<IQueryHandler<ListConferencesQuery, ListConferencesResult>, ListConferencesQueryHandler>();
         services.AddScoped<IQueryHandler<GetConferenceQuery, ConferenceDetailsDto?>, GetConferenceQueryHandler>();
+
+        // Register topic query handlers
+        services.AddScoped<IQueryHandler<GetTopicQuery, TopicDto?>, GetTopicQueryHandler>();
+        services.AddScoped<IQueryHandler<ListTopicsQuery, ListTopicsResult>, ListTopicsQueryHandler>();
 
         return services;
     }
