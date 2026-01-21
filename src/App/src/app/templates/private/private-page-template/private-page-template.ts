@@ -11,10 +11,11 @@ import { ProfileStore } from '@stores/profile.store';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageModule } from 'primeng/message';
 import { NotificationsButtonComponent } from '@components/notifications-button/notifications-button.component';
+import { BugReportButtonComponent } from '@components/bug-report-button/bug-report-button.component';
 
 @Component({
     selector: 'attn-private-page-template',
-    imports: [MenubarModule, MenuModule, ButtonModule, AvatarModule, RouterLink, RouterOutlet, ProgressSpinnerModule, MessageModule, NotificationsButtonComponent],
+    imports: [MenubarModule, MenuModule, ButtonModule, AvatarModule, RouterLink, RouterOutlet, ProgressSpinnerModule, MessageModule, NotificationsButtonComponent, BugReportButtonComponent],
     templateUrl: './private-page-template.html',
     styleUrl: './private-page-template.scss',
 })

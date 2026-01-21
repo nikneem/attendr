@@ -1,0 +1,24 @@
+<div class="bug-report-button-container">
+    <p-popover #bugReportPanel styleClass="bug-report-popover">
+        <div class="bug-report-panel">
+            <div class="bug-report-header">
+                <i class="pi pi-bug" style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--orange-500);"></i>
+                <h3>Report a Bug or Request a Feature</h3>
+            </div>
+
+            <div class="bug-report-content">
+                <p>Found a bug or have a feature request? We'd love to hear from you!</p>
+                <p>Help us improve Attendr by sharing your feedback on GitHub.</p>
+            </div>
+
+            <button pButton type="button" icon="pi pi-external-link" label="Create Issue" class="w-full"
+                (click)="createIssue()">
+            </button>
+        </div>
+    </p-popover>
+
+    <button class="icon-button bug-report-button" type="button" (click)="toggleBugReport($event)"
+        aria-label="Report a bug" pTooltip="Report a bug or feature request" tooltipPosition="bottom">
+        <i class="pi pi-wrench"></i>
+    </button>
+</div>
