@@ -14,3 +14,6 @@ param containerRegistry = {
   resourceGroupName: 'mvp-int-env'
   name: 'nvv54gsk4pteu'
 }
+param azureOpenAIApiKey = ''
+param azureOpenAIDeploymentName = ''
+param azureOpenAIEndpoint = ''

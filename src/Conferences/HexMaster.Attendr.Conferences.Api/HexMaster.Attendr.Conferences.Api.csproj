@@ -7,6 +7,7 @@
     <ContainerImageName>attendr/attendr-conferences-api</ContainerImageName>
     <ContainerUser>app</ContainerUser>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <UserSecretsId>4f11dddd-53a6-4296-861c-3ac8e174cf2b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

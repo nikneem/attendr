@@ -139,7 +139,9 @@ public sealed class DatabaseMigrationRunner
             var script = reader.ReadToEnd();
 
             // Extract migration name from resource name
-            var migrationName = Path.GetFileNameWithoutExtension(resourceName.Split('.').Last());
+            var parts = resourceName.Split('.');
+            var sqlIndex = Array.FindLastIndex(parts, p => p.Equals("sql", StringComparison.OrdinalIgnoreCase));
+            var migrationName = sqlIndex > 0 ? parts[sqlIndex - 1] : resourceName;
             migrations[migrationName] = script;
         }
 

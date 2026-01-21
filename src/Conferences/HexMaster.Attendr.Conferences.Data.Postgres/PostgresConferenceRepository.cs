@@ -17,8 +17,6 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         _dataSource = dataSource;
-
-        EnsureTablesExistAsync().GetAwaiter().GetResult();
     }
 
     /// <inheritdoc />
@@ -410,8 +408,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     private static async Task InsertPresentationAsync(NpgsqlConnection connection, Guid conferenceId, Presentation presentation, CancellationToken cancellationToken)
     {
         var sql = @"
-            INSERT INTO presentations (id, conference_id, room_id, title, abstract, start_date_time, end_date_time, external_id)
-            VALUES (@id, @conference_id, @room_id, @title, @abstract, @start_date_time, @end_date_time, @external_id)";
+            INSERT INTO presentations (id, conference_id, room_id, title, abstract, start_date_time, end_date_time, is_analysed, external_id)
+            VALUES (@id, @conference_id, @room_id, @title, @abstract, @start_date_time, @end_date_time, @is_analysed, @external_id)";
 
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.AddWithValue("@id", presentation.Id);
@@ -421,6 +419,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         command.Parameters.AddWithValue("@abstract", presentation.Abstract);
         command.Parameters.AddWithValue("@start_date_time", presentation.StartDateTime);
         command.Parameters.AddWithValue("@end_date_time", presentation.EndDateTime);
+        command.Parameters.AddWithValue("@is_analysed", presentation.IsAnalysed);
         command.Parameters.AddWithValue("@external_id", (object?)presentation.ExternalId ?? DBNull.Value);
 
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -538,7 +537,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     private static async Task<List<PresentationEntity>> LoadPresentationsAsync(NpgsqlConnection connection, Guid conferenceId, CancellationToken cancellationToken)
     {
         var sql = @"
-            SELECT id, conference_id, room_id, title, abstract, start_date_time, end_date_time, external_id
+            SELECT id, conference_id, room_id, title, abstract, start_date_time, end_date_time, is_analysed, external_id
             FROM presentations
             WHERE conference_id = @conference_id
             ORDER BY start_date_time, title";
@@ -560,7 +559,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
                 Abstract = reader.GetString(4),
                 StartDateTime = reader.GetDateTime(5),
                 EndDateTime = reader.GetDateTime(6),
-                ExternalId = reader.IsDBNull(7) ? null : reader.GetString(7)
+                IsAnalysed = reader.GetBoolean(7),
+                ExternalId = reader.IsDBNull(8) ? null : reader.GetString(8)
             });
         }
 
@@ -667,112 +667,6 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.AddWithValue("@conference_id", conferenceId);
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    #endregion
-
-    #region Database Initialization
-
-    private async Task EnsureTablesExistAsync()
-    {
-        await using var connection = await _dataSource.OpenConnectionAsync().ConfigureAwait(false);
-
-        // Create conferences table
-        var createConferencesSql = @"
-            CREATE TABLE IF NOT EXISTS conferences (
-                id UUID PRIMARY KEY,
-                title VARCHAR(500) NOT NULL,
-                city VARCHAR(200) NOT NULL,
-                country VARCHAR(200) NOT NULL,
-                start_date DATE NOT NULL,
-                end_date DATE NOT NULL,
-                image_url VARCHAR(1000),
-                sync_source_type INTEGER,
-                sync_source_location_or_api_key VARCHAR(1000)
-            )";
-        await using (var command = new NpgsqlCommand(createConferencesSql, connection))
-        {
-            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-        }
-
-        // Create rooms table
-        var createRoomsSql = @"
-            CREATE TABLE IF NOT EXISTS rooms (
-                id UUID PRIMARY KEY,
-                conference_id UUID NOT NULL,
-                name VARCHAR(200) NOT NULL,
-                capacity INTEGER NOT NULL,
-                external_id VARCHAR(200),
-                FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE CASCADE
-            )";
-        await using (var command = new NpgsqlCommand(createRoomsSql, connection))
-        {
-            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-        }
-
-        // Create speakers table
-        var createSpeakersSql = @"
-            CREATE TABLE IF NOT EXISTS speakers (
-                id UUID PRIMARY KEY,
-                conference_id UUID NOT NULL,
-                name VARCHAR(500) NOT NULL,
-                company VARCHAR(500),
-                profile_picture_url VARCHAR(1000),
-                external_id VARCHAR(200),
-                FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE CASCADE
-            )";
-        await using (var command = new NpgsqlCommand(createSpeakersSql, connection))
-        {
-            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-        }
-
-        // Create presentations table
-        var createPresentationsSql = @"
-            CREATE TABLE IF NOT EXISTS presentations (
-                id UUID PRIMARY KEY,
-                conference_id UUID NOT NULL,
-                room_id UUID NOT NULL,
-                title VARCHAR(500) NOT NULL,
-                abstract TEXT NOT NULL,
-                start_date_time TIMESTAMP NOT NULL,
-                end_date_time TIMESTAMP NOT NULL,
-                external_id VARCHAR(200),
-                FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE CASCADE,
-                FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
-            )";
-        await using (var command = new NpgsqlCommand(createPresentationsSql, connection))
-        {
-            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-        }
-
-        // Create presentation_speakers junction table
-        var createPresentationSpeakersSql = @"
-            CREATE TABLE IF NOT EXISTS presentation_speakers (
-                presentation_id UUID NOT NULL,
-                speaker_id UUID NOT NULL,
-                PRIMARY KEY (presentation_id, speaker_id),
-                FOREIGN KEY (presentation_id) REFERENCES presentations(id) ON DELETE CASCADE,
-                FOREIGN KEY (speaker_id) REFERENCES speakers(id) ON DELETE CASCADE
-            )";
-        await using (var command = new NpgsqlCommand(createPresentationSpeakersSql, connection))
-        {
-            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-        }
-
-        // Create indexes for better query performance
-        var createIndexesSql = @"
-            CREATE INDEX IF NOT EXISTS idx_conferences_end_date ON conferences(end_date);
-            CREATE INDEX IF NOT EXISTS idx_conferences_start_date ON conferences(start_date);
-            CREATE INDEX IF NOT EXISTS idx_rooms_conference_id ON rooms(conference_id);
-            CREATE INDEX IF NOT EXISTS idx_speakers_conference_id ON speakers(conference_id);
-            CREATE INDEX IF NOT EXISTS idx_presentations_conference_id ON presentations(conference_id);
-            CREATE INDEX IF NOT EXISTS idx_presentations_start_date_time ON presentations(start_date_time);
-            CREATE INDEX IF NOT EXISTS idx_presentation_speakers_speaker_id ON presentation_speakers(speaker_id);
-        ";
-        await using (var command = new NpgsqlCommand(createIndexesSql, connection))
-        {
-            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-        }
     }
 
     #endregion
