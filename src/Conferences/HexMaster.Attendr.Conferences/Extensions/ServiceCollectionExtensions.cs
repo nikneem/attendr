@@ -9,7 +9,9 @@ using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Conferences.Services;
 using HexMaster.Attendr.Conferences.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 
 namespace HexMaster.Attendr.Conferences.Extensions;
 
@@ -22,6 +24,10 @@ public static class ServiceCollectionExtensions
 
         // Register services
         services.AddScoped<ISessionizeSyncService, SessionizeSyncService>();
+        services.AddScoped<PresentationTopicsAnalysisService>();
+
+        // Register background services
+        services.AddHostedService<PresentationAnalysisBackgroundService>();
 
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateConferenceCommand, CreateConferenceResult>, CreateConferenceCommandHandler>();
@@ -32,6 +38,29 @@ public static class ServiceCollectionExtensions
         // Register query handlers
         services.AddScoped<IQueryHandler<ListConferencesQuery, ListConferencesResult>, ListConferencesQueryHandler>();
         services.AddScoped<IQueryHandler<GetConferenceQuery, ConferenceDetailsDto?>, GetConferenceQueryHandler>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds Semantic Kernel services for AI-powered topic analysis.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="configuration">The configuration.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddSemanticKernelForConferences(this IServiceCollection services, IConfiguration configuration)
+    {
+        var endpoint = configuration["AzureOpenAI:Endpoint"];
+        var deploymentName = configuration["AzureOpenAI:DeploymentName"];
+        var apiKey = configuration["AzureOpenAI:ApiKey"];
+
+        if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(deploymentName) || string.IsNullOrEmpty(apiKey))
+        {
+            throw new InvalidOperationException("Azure OpenAI configuration is missing. Ensure AzureOpenAI:Endpoint, AzureOpenAI:DeploymentName, and AzureOpenAI:ApiKey are configured.");
+        }
+
+        services.AddKernel()
+            .AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);
 
         return services;
     }

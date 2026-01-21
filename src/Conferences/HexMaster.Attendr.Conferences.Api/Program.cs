@@ -67,6 +67,7 @@ builder.Services.AddHealthChecks();
 
 // Register repositories and services
 builder.Services.AddAttendrConferencesServices();
+builder.Services.AddSemanticKernelForConferences(builder.Configuration);
 builder.Services.AddSessionizeApiClient();
 builder.Services.AddPostgresConferenceRepository();
 builder.Services.AddDatabaseMigrations(); // Run migrations on startup
