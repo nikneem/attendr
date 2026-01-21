@@ -89,7 +89,12 @@ public sealed class PresentationTopicsAnalysisService
     private async Task<List<string>> ExtractTopicsAsync(string abstractText, CancellationToken cancellationToken)
     {
         var prompt = @$"You are an expert at analyzing technical conference presentation abstracts.
-Extract the main topics and themes from the presentation abstract.
+
+IMPORTANT: First, call the get_existing_topics function to see what topics already exist in the system.
+When existing topics are semantically similar to the content you're analyzing, STRONGLY PREFER to reuse those existing topic names.
+Only create NEW topics if they represent distinctly different concepts not adequately covered by existing topics.
+
+Your task is to extract the main topics and themes from the presentation abstract.
 Return ONLY a valid JSON object with a 'topics' property containing an array of topic strings.
 
 Topics should be:
@@ -97,6 +102,7 @@ Topics should be:
 - Relevant technical concepts, technologies, or methodologies
 - Maximum 5 topics per presentation
 - Formatted in title case
+- PREFER existing topics when semantically similar to avoid topic fragmentation
 
 Example response format:
 {{""topics"": [""Azure Functions"", ""Serverless"", ""Cloud Architecture""]}}

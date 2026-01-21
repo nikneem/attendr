@@ -11,6 +11,7 @@ using HexMaster.Attendr.Conferences.Features.ListTopics;
 using HexMaster.Attendr.Conferences.Features.UpdateTopic;
 using HexMaster.Attendr.Conferences.Features.DeleteTopic;
 using HexMaster.Attendr.Conferences.Observability;
+using HexMaster.Attendr.Conferences.Plugins;
 using HexMaster.Attendr.Conferences.Services;
 using HexMaster.Attendr.Conferences.Features.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
@@ -73,8 +74,13 @@ public static class ServiceCollectionExtensions
             throw new InvalidOperationException("Azure OpenAI configuration is missing. Ensure AzureOpenAI:Endpoint, AzureOpenAI:DeploymentName, and AzureOpenAI:ApiKey are configured.");
         }
 
+        // Register the TopicsPlugin as a singleton
+        services.AddSingleton<TopicsPlugin>();
+
+        // Add Kernel with Azure OpenAI and register the TopicsPlugin
         services.AddKernel()
-            .AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);
+            .AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey)
+            .Plugins.AddFromType<TopicsPlugin>();
 
         return services;
     }
