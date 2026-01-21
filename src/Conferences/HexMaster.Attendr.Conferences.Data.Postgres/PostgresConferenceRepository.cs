@@ -103,8 +103,9 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         var speakers = await LoadSpeakersAsync(connection, id, cancellationToken).ConfigureAwait(false);
         var presentations = await LoadPresentationsAsync(connection, id, cancellationToken).ConfigureAwait(false);
         var presentationSpeakers = await LoadPresentationSpeakersAsync(connection, id, cancellationToken).ConfigureAwait(false);
+        var presentationTopics = await LoadPresentationTopicsAsync(connection, id, cancellationToken).ConfigureAwait(false);
 
-        return ConferenceDtoMapper.ToDetailsDto(conferenceEntity, rooms, speakers, presentations, presentationSpeakers);
+        return ConferenceDtoMapper.ToDetailsDto(conferenceEntity, rooms, speakers, presentations, presentationSpeakers, presentationTopics);
     }
 
     /// <inheritdoc />
@@ -592,6 +593,40 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
             }
 
             result[presentationId].Add(speakerId);
+        }
+
+        return result;
+    }
+
+    private static async Task<Dictionary<Guid, List<(string Key, string Name)>>> LoadPresentationTopicsAsync(NpgsqlConnection connection, Guid conferenceId, CancellationToken cancellationToken)
+    {
+        var sql = @"
+            SELECT pt.presentation_id, t.key, t.name
+            FROM presentation_topics pt
+            INNER JOIN presentations p ON pt.presentation_id = p.id
+            INNER JOIN topics t ON pt.topic_id = t.id
+            WHERE p.conference_id = @conference_id
+              AND t.is_visible = true
+            ORDER BY pt.presentation_id, t.key";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@conference_id", conferenceId);
+
+        var result = new Dictionary<Guid, List<(string Key, string Name)>>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var presentationId = reader.GetGuid(0);
+            var key = reader.GetString(1);
+            var name = reader.GetString(2);
+
+            if (!result.ContainsKey(presentationId))
+            {
+                result[presentationId] = new List<(string, string)>();
+            }
+
+            result[presentationId].Add((key, name));
         }
 
         return result;

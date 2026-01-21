@@ -10,6 +10,7 @@ namespace HexMaster.Attendr.Conferences.Abstractions.Dtos;
 /// <param name="EndDateTime">The end date and time of the presentation.</param>
 /// <param name="RoomName">The name of the room where the presentation is held.</param>
 /// <param name="Speakers">The list of speakers for this presentation.</param>
+/// <param name="Topics">The list of topics for this presentation (only visible topics).</param>
 public sealed record PresentationDto(
     Guid Id,
     string Title,
@@ -17,4 +18,5 @@ public sealed record PresentationDto(
     DateTime StartDateTime,
     DateTime EndDateTime,
     string RoomName,
-    List<SpeakerDto> Speakers);
+    List<SpeakerDto> Speakers,
+    List<TopicReferenceDto> Topics);

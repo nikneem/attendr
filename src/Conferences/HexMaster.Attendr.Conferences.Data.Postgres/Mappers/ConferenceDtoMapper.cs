@@ -17,13 +17,15 @@ internal static class ConferenceDtoMapper
         List<RoomEntity> rooms,
         List<SpeakerEntity> speakers,
         List<PresentationEntity> presentations,
-        Dictionary<Guid, List<Guid>> presentationSpeakerMap)
+        Dictionary<Guid, List<Guid>> presentationSpeakerMap,
+        Dictionary<Guid, List<(string Key, string Name)>> presentationTopicsMap)
     {
         ArgumentNullException.ThrowIfNull(conferenceEntity);
         ArgumentNullException.ThrowIfNull(rooms);
         ArgumentNullException.ThrowIfNull(speakers);
         ArgumentNullException.ThrowIfNull(presentations);
         ArgumentNullException.ThrowIfNull(presentationSpeakerMap);
+        ArgumentNullException.ThrowIfNull(presentationTopicsMap);
 
         // Create a dictionary for quick room lookup
         var roomDictionary = rooms.ToDictionary(r => r.Id, r => r.Name);
@@ -50,6 +52,10 @@ internal static class ConferenceDtoMapper
 
             var roomName = roomDictionary.TryGetValue(p.RoomId, out var name) ? name : "Unknown";
 
+            var topicsList = presentationTopicsMap.ContainsKey(p.Id)
+                ? presentationTopicsMap[p.Id].Select(t => new TopicReferenceDto(t.Key, t.Name)).ToList()
+                : new List<TopicReferenceDto>();
+
             return new PresentationDto(
                 p.Id,
                 p.Title,
@@ -57,7 +63,8 @@ internal static class ConferenceDtoMapper
                 p.StartDateTime,
                 p.EndDateTime,
                 roomName,
-                presentationSpeakers
+                presentationSpeakers,
+                topicsList
             );
         }).ToList();
 
