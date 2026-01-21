@@ -1,11 +1,11 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.Api.Authorization;
-using HexMaster.Attendr.Conferences.CreateConference;
-using HexMaster.Attendr.Conferences.DeleteConference;
-using HexMaster.Attendr.Conferences.FollowConference;
-using HexMaster.Attendr.Conferences.GetConference;
-using HexMaster.Attendr.Conferences.ListConferences;
-using HexMaster.Attendr.Conferences.UpdateConference;
+using HexMaster.Attendr.Conferences.Features.CreateConference;
+using HexMaster.Attendr.Conferences.Features.DeleteConference;
+using HexMaster.Attendr.Conferences.Features.FollowConference;
+using HexMaster.Attendr.Conferences.Features.GetConference;
+using HexMaster.Attendr.Conferences.Features.ListConferences;
+using HexMaster.Attendr.Conferences.Features.UpdateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;

@@ -1,5 +1,5 @@
 using Bogus;
-using HexMaster.Attendr.Conferences.ListConferences;
+using HexMaster.Attendr.Conferences.Features.ListConferences;
 using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Conferences.Tests.Factories;
 using HexMaster.Attendr.Conferences.Tests.Helpers;

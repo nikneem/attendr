@@ -137,12 +137,15 @@ public sealed class ConferencePresenceTests
     public void Presentations_ShouldBeReadOnly()
     {
         // Arrange & Act
+        var startDate = DateOnly.FromDateTime(_faker.Date.Future());
+        var endDate = startDate.AddDays(3);
+
         var conference = new ConferencePresence(
             Guid.NewGuid(),
             _faker.Company.CompanyName(),
             _faker.Address.City(),
-            DateOnly.FromDateTime(_faker.Date.Future()),
-            DateOnly.FromDateTime(_faker.Date.Future().AddDays(3)),
+            startDate,
+            endDate,
             Guid.NewGuid());
 
         // Assert
