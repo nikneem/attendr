@@ -53,7 +53,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-10-02-
           ]
         }
         {
-          description: 'Route /conferences to SignalR'
+          description: 'Route /conferences to Conferences API'
           routes: [
             {
               match: {
@@ -61,6 +61,24 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-10-02-
               }
               action: {
                 prefixRewrite: '/api/conferences'
+              }
+            }
+          ]
+          targets: [
+            {
+              containerApp: 'ca-attendr-conf-prod'
+            }
+          ]
+        }
+        {
+          description: 'Route /topics to Topics API'
+          routes: [
+            {
+              match: {
+                pathSeparatedPrefix: '/topics'
+              }
+              action: {
+                prefixRewrite: '/api/topics'
               }
             }
           ]

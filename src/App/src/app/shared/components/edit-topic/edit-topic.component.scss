@@ -1,0 +1,22 @@
+.edit-topic-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+
+        .spacer {
+            flex: 1;
+        }
+    }
+}
