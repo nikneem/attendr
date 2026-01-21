@@ -5,24 +5,24 @@
             <p class="subtitle">Manage presentation topics and their visibility</p>
         </div>
 
-        @if (loading) {
+        @if (loading()) {
         <div class="loading-container">
             <p-progressSpinner />
             <p>Loading topics...</p>
         </div>
-        } @else if (error) {
+        } @else if (error()) {
         <div class="error-container">
             <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
-            <p>{{ error }}</p>
+            <p>{{ error() }}</p>
         </div>
-        } @else if (topics.length === 0) {
+        } @else if (topics().length === 0) {
         <div class="empty-state">
             <i class="pi pi-inbox" style="font-size: 3rem"></i>
             <p>No topics available</p>
         </div>
         } @else {
         <div class="topics-table">
-            <p-table [value]="topics" [tableStyle]="{ 'min-width': '50rem' }" responsiveLayout="scroll">
+            <p-table [value]="topics()" [tableStyle]="{ 'min-width': '50rem' }" responsiveLayout="scroll">
                 <ng-template #header>
                     <tr>
                         <th pSortableColumn="key">

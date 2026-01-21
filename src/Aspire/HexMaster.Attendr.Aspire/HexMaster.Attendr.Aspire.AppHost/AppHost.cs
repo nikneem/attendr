@@ -119,6 +119,10 @@ var gateway = builder.AddYarp("gateway")
             .WithTransformPathRemovePrefix("/conferences")
             .WithTransformPathPrefix("/api/conferences");
 
+        yarp.AddRoute("/topics/{**catch-all}", conferencesApi)
+            .WithTransformPathRemovePrefix("/topics")
+            .WithTransformPathPrefix("/api/topics");
+
         yarp.AddRoute("/presence/{**catch-all}", presenceApi)
             .WithTransformPathRemovePrefix("/presence")
             .WithTransformPathPrefix("/api/presence");

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -6,7 +6,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
 import { finalize } from 'rxjs';
-import { TopicsService, TopicDto } from '../../../../services/topics.service';
+import { TopicsService, TopicDto } from '../../../../shared/services/topics.service';
 
 @Component({
     selector: 'attn-topics-list-page',
@@ -18,27 +18,27 @@ import { TopicsService, TopicDto } from '../../../../services/topics.service';
 export class TopicsListPageComponent implements OnInit {
     private readonly topicsService = inject(TopicsService);
 
-    topics: TopicDto[] = [];
-    loading = true;
-    error: string | null = null;
+    protected readonly topics = signal<TopicDto[]>([]);
+    protected readonly loading = signal<boolean>(true);
+    protected readonly error = signal<string | null>(null);
 
     ngOnInit(): void {
         this.loadTopics();
     }
 
     private loadTopics(): void {
-        this.loading = true;
-        this.error = null;
+        this.loading.set(true);
+        this.error.set(null);
 
         this.topicsService
             .getAllTopics()
-            .pipe(finalize(() => (this.loading = false)))
+            .pipe(finalize(() => this.loading.set(false)))
             .subscribe({
                 next: (topics) => {
-                    this.topics = topics;
+                    this.topics.set(topics);
                 },
                 error: (err) => {
-                    this.error = err.message || 'Failed to load topics';
+                    this.error.set(err.message || 'Failed to load topics');
                     console.error('Error loading topics:', err);
                 },
             });
