@@ -408,8 +408,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     private static async Task InsertPresentationAsync(NpgsqlConnection connection, Guid conferenceId, Presentation presentation, CancellationToken cancellationToken)
     {
         var sql = @"
-            INSERT INTO presentations (id, conference_id, room_id, title, abstract, start_date_time, end_date_time, external_id)
-            VALUES (@id, @conference_id, @room_id, @title, @abstract, @start_date_time, @end_date_time, @external_id)";
+            INSERT INTO presentations (id, conference_id, room_id, title, abstract, start_date_time, end_date_time, is_analysed, external_id)
+            VALUES (@id, @conference_id, @room_id, @title, @abstract, @start_date_time, @end_date_time, @is_analysed, @external_id)";
 
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.AddWithValue("@id", presentation.Id);
@@ -419,6 +419,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         command.Parameters.AddWithValue("@abstract", presentation.Abstract);
         command.Parameters.AddWithValue("@start_date_time", presentation.StartDateTime);
         command.Parameters.AddWithValue("@end_date_time", presentation.EndDateTime);
+        command.Parameters.AddWithValue("@is_analysed", presentation.IsAnalysed);
         command.Parameters.AddWithValue("@external_id", (object?)presentation.ExternalId ?? DBNull.Value);
 
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -536,7 +537,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     private static async Task<List<PresentationEntity>> LoadPresentationsAsync(NpgsqlConnection connection, Guid conferenceId, CancellationToken cancellationToken)
     {
         var sql = @"
-            SELECT id, conference_id, room_id, title, abstract, start_date_time, end_date_time, external_id
+            SELECT id, conference_id, room_id, title, abstract, start_date_time, end_date_time, is_analysed, external_id
             FROM presentations
             WHERE conference_id = @conference_id
             ORDER BY start_date_time, title";
@@ -558,7 +559,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
                 Abstract = reader.GetString(4),
                 StartDateTime = reader.GetDateTime(5),
                 EndDateTime = reader.GetDateTime(6),
-                ExternalId = reader.IsDBNull(7) ? null : reader.GetString(7)
+                IsAnalysed = reader.GetBoolean(7),
+                ExternalId = reader.IsDBNull(8) ? null : reader.GetString(8)
             });
         }
 

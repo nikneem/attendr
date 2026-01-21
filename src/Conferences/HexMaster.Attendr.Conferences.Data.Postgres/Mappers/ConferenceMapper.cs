@@ -106,7 +106,8 @@ internal static class ConferenceMapper
                 presentationEntity.EndDateTime,
                 presentationEntity.RoomId,
                 speakerIds,
-                presentationEntity.ExternalId);
+                presentationEntity.ExternalId,
+                presentationEntity.IsAnalysed);
 
             conference.AddPresentation(presentation);
         }

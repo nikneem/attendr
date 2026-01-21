@@ -37,6 +37,11 @@ public sealed class Presentation : StatefulDomainModel<Guid>
     /// </summary>
     public string? ExternalId { get; private set; }
 
+    /// <summary>
+    /// Gets a value indicating whether this presentation has been analysed.
+    /// </summary>
+    public bool IsAnalysed { get; private set; }
+
     private readonly List<Guid> _speakerIds = new();
 
     /// <summary>
@@ -55,6 +60,7 @@ public sealed class Presentation : StatefulDomainModel<Guid>
     /// <param name="roomId">The ID of the room.</param>
     /// <param name="speakerIds">The collection of speaker IDs.</param>
     /// <param name="externalId">The external ID from the synchronization source.</param>
+    /// <param name="isAnalysed">Whether the presentation has been analysed.</param>
     /// <param name="initialState">The initial state of the presentation.</param>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
     private Presentation(
@@ -66,6 +72,7 @@ public sealed class Presentation : StatefulDomainModel<Guid>
         Guid roomId,
         IEnumerable<Guid> speakerIds,
         string? externalId,
+        bool isAnalysed = false,
         DomainModelState initialState = DomainModelState.Pristine)
         : base(id, initialState)
     {
@@ -113,6 +120,7 @@ public sealed class Presentation : StatefulDomainModel<Guid>
         EndDateTime = endDateTime;
         RoomId = roomId;
         ExternalId = externalId;
+        IsAnalysed = isAnalysed;
         _speakerIds.AddRange(speakerIdList);
     }
 
@@ -137,7 +145,7 @@ public sealed class Presentation : StatefulDomainModel<Guid>
         string? externalId = null)
     {
         var id = Guid.NewGuid();
-        return new Presentation(id, title, @abstract, startDateTime, endDateTime, roomId, speakerIds, externalId, DomainModelState.Created);
+        return new Presentation(id, title, @abstract, startDateTime, endDateTime, roomId, speakerIds, externalId, isAnalysed: false, DomainModelState.Created);
     }
 
     /// <summary>
@@ -151,6 +159,7 @@ public sealed class Presentation : StatefulDomainModel<Guid>
     /// <param name="roomId">The ID of the room.</param>
     /// <param name="speakerIds">The collection of speaker IDs.</param>
     /// <param name="externalId">The external ID from the synchronization source.</param>
+    /// <param name="isAnalysed">Whether the presentation has been analysed.</param>
     /// <returns>A presentation instance loaded from persistence.</returns>
     public static Presentation FromPersisted(
         Guid id,
@@ -160,9 +169,10 @@ public sealed class Presentation : StatefulDomainModel<Guid>
         DateTime endDateTime,
         Guid roomId,
         IEnumerable<Guid> speakerIds,
-        string? externalId = null)
+        string? externalId = null,
+        bool isAnalysed = false)
     {
-        return new Presentation(id, title, @abstract, startDateTime, endDateTime, roomId, speakerIds, externalId);
+        return new Presentation(id, title, @abstract, startDateTime, endDateTime, roomId, speakerIds, externalId, isAnalysed);
     }
 
     /// <summary>
@@ -191,6 +201,7 @@ public sealed class Presentation : StatefulDomainModel<Guid>
         if (ShouldUpdateProperty(Abstract, @abstract))
         {
             Abstract = @abstract;
+            IsAnalysed = false;
             UpdateModifiedOn();
         }
 
