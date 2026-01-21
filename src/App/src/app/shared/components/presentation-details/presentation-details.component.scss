@@ -54,7 +54,7 @@
 
     @media (max-width: 640px) {
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto auto auto;
+        grid-template-rows: auto auto auto auto auto auto;
         gap: 0.5rem;
     }
 }
@@ -109,6 +109,7 @@
 @media (max-width: 640px) {
     .end-field {
         grid-column: 1;
+        grid-row: 5;
         text-align: left;
         align-items: flex-start;
     }
@@ -123,7 +124,7 @@
 
     .topics-field {
         grid-column: 1;
-        grid-row: 5;
+        grid-row: 6;
     }
 }
 
