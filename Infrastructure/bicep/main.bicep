@@ -22,6 +22,16 @@ param containerRegistry object = {
   name: ''
 }
 
+@description('Azure OpenAI API Key')
+@secure()
+param azureOpenAIApiKey string = ''
+
+@description('Azure OpenAI Deployment Name')
+param azureOpenAIDeploymentName string = ''
+
+@description('Azure OpenAI Endpoint')
+param azureOpenAIEndpoint string = ''
+
 var resourceGroupName = 'rg-${baseName}-${environmentName}'
 
 // Deploy Resource Group
@@ -41,6 +51,9 @@ module resourceDeployment './modules/resources.bicep' = {
     tags: tags
     containerRegistry: containerRegistry
     frontendUrl: frontendUrl
+    azureOpenAIApiKey: azureOpenAIApiKey
+    azureOpenAIDeploymentName: azureOpenAIDeploymentName
+    azureOpenAIEndpoint: azureOpenAIEndpoint
   }
 }
 

@@ -18,6 +18,16 @@ param containerRegistry object
 @description('Base url of the frontend application')
 param frontendUrl string
 
+@description('Azure OpenAI API Key')
+@secure()
+param azureOpenAIApiKey string = ''
+
+@description('Azure OpenAI Deployment Name')
+param azureOpenAIDeploymentName string = ''
+
+@description('Azure OpenAI Endpoint')
+param azureOpenAIEndpoint string = ''
+
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var keyVaultName = 'kv-${baseName}-${environmentName}'
 var appConfigName = 'appconfig-${baseName}-${environmentName}-${take(uniqueSuffix, 6)}'
@@ -203,6 +213,21 @@ module appConfigurationValue './azure-app-configuration-value.bicep' = {
     value: frontendUrl
   }
   dependsOn: [
+    appConfiguration
+  ]
+}
+
+// Azure OpenAI Configuration (only if credentials are provided)
+module azureOpenAIConfig './azure-openai-config.bicep' = if (!empty(azureOpenAIApiKey) && !empty(azureOpenAIDeploymentName) && !empty(azureOpenAIEndpoint)) {
+  params: {
+    keyVaultName: keyVaultName
+    appConfigurationName: appConfigName
+    apiKey: azureOpenAIApiKey
+    deploymentName: azureOpenAIDeploymentName
+    endpoint: azureOpenAIEndpoint
+  }
+  dependsOn: [
+    keyVault
     appConfiguration
   ]
 }
