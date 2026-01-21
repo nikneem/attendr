@@ -11,6 +11,7 @@ import { RateSessionsPageComponent } from './pages/private/conferences/rate-sess
 import { GroupsListPageComponent } from './pages/private/groups/groups-list-page.component';
 import { GroupDetailsPageComponent } from './pages/private/groups/group-details-page.component';
 import { NotificationPreferencesPageComponent } from './pages/private/preferences/notification-preferences-page.component';
+import { TopicsListPageComponent } from './pages/private/admin/topics/topics-list-page.component';
 import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
 import { PrivatePageTemplateComponent } from './templates/private/private-page-template/private-page-template';
 
@@ -32,7 +33,8 @@ export const routes: Routes = [
             { path: 'conferences/:id/rate', component: RateSessionsPageComponent },
             { path: 'groups', component: GroupsListPageComponent },
             { path: 'groups/:id', component: GroupDetailsPageComponent },
-            { path: 'preferences/notifications', component: NotificationPreferencesPageComponent }
+            { path: 'preferences/notifications', component: NotificationPreferencesPageComponent },
+            { path: 'topics', component: TopicsListPageComponent }
         ]
     }
 ];
