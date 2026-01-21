@@ -22,18 +22,18 @@
         </div>
         } @else {
         <div class="topics-table">
-            <p-table [value]="topics()" [tableStyle]="{ 'min-width': '50rem' }" responsiveLayout="scroll">
+            <p-table [value]="topics()">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="key">
+                        <th pSortableColumn="key" class="key-header">
                             Normalized Key
                             <p-sortIcon field="key"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="name" class="hide-on-mobile">
+                        <th pSortableColumn="name" class="hide-on-mobile name-header">
                             Name
                             <p-sortIcon field="name"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="isVisible" style="width: 20%" class="visibility-header">
+                        <th pSortableColumn="isVisible" class="visibility-header">
                             <span class="hide-on-mobile">Visibility</span>
                             <p-sortIcon field="isVisible"></p-sortIcon>
                         </th>
@@ -41,14 +41,14 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-topic>
                     <tr>
-                        <td>
-                            <button class="link-button" type="button" (click)="openEdit(topic)"
-                                [pTooltip]="'Edit ' + topic.name" tooltipPosition="bottom">
-                                <code>{{ topic.key }}</code>
+                        <td class="key-column">
+                            <button class="link-button" type="button" (click)="openEdit(topic)" [pTooltip]="topic.key"
+                                tooltipPosition="bottom">
+                                <code class="key-text">{{ topic.key }}</code>
                             </button>
                         </td>
-                        <td class="hide-on-mobile">{{ topic.name }}</td>
-                        <td>
+                        <td class="hide-on-mobile name-column">{{ topic.name }}</td>
+                        <td class="visibility-column">
                             <p-tag class="clickable hide-on-desktop" [value]="getVisibilityIcon(topic.isVisible)"
                                 [severity]="getVisibilitySeverity(topic.isVisible)" (click)="toggleVisibility(topic)"
                                 [pTooltip]="topic.isVisible ? 'Click to hide' : 'Click to show'"
