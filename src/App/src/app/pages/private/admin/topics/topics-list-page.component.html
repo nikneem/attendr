@@ -42,12 +42,17 @@
                 <ng-template pTemplate="body" let-topic>
                     <tr>
                         <td>
-                            <code>{{ topic.key }}</code>
+                            <button class="link-button" type="button" (click)="openEdit(topic)"
+                                [pTooltip]="'Edit ' + topic.name" tooltipPosition="bottom">
+                                <code>{{ topic.key }}</code>
+                            </button>
                         </td>
                         <td>{{ topic.name }}</td>
                         <td>
-                            <p-tag [value]="getVisibilityLabel(topic.isVisible)"
-                                [severity]="getVisibilitySeverity(topic.isVisible)" />
+                            <p-tag class="clickable" [value]="getVisibilityLabel(topic.isVisible)"
+                                [severity]="getVisibilitySeverity(topic.isVisible)" (click)="toggleVisibility(topic)"
+                                [pTooltip]="topic.isVisible ? 'Click to hide' : 'Click to show'"
+                                tooltipPosition="bottom" />
                         </td>
                     </tr>
                 </ng-template>
@@ -56,3 +61,16 @@
         }
     </div>
 </div>
+
+<p-dialog header="Edit Topic" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
+    [visible]="editDialogVisible()" (onHide)="onEditCancel()" styleClass="edit-topic-dialog">
+    @if (selectedTopic()) {
+    <attn-edit-topic [topic]="selectedTopic()!" (save)="onEditSave($event)" (delete)="onEditDelete()"
+        (cancel)="onEditCancel()" />
+    }
+</p-dialog>
+
+<attn-confirmation-dialog [title]="'Delete Topic'"
+    [message]="'Are you sure you want to delete this topic? This action cannot be undone.'"
+    [visible]="confirmDeleteVisible()" (visibleChange)="confirmDeleteVisible.set($event)" (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()" />
