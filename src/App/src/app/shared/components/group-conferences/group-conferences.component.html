@@ -17,12 +17,14 @@
             <div class="conference-tile">
                 <div class="tile-visual"
                     [style.background-image]="'url(' + (conference.imageUrl || '/images/attendr-icon.png') + ')'">
-                    @if (isOwnerOrManager()) {
-                    <button type="button" class="tile-action" pButton icon="pi pi-trash"
-                        (click)="confirmUnfollow(conference.id, conference.name)" [text]="true"></button>
-                    }
                     <div class="tile-visual-overlay"></div>
-                    <div class="tile-visual-title">{{ conference.name }}</div>
+                    <div class="tile-visual-header">
+                        <div class="tile-visual-title">{{ conference.name }}</div>
+                        @if (isOwnerOrManager()) {
+                        <button type="button" class="tile-action" pButton icon="pi pi-trash"
+                            (click)="confirmUnfollow(conference.id, conference.name)" [text]="true"></button>
+                        }
+                    </div>
                 </div>
                 <div class="tile-info">
                     <div class="meta-row"><i class="pi pi-map-marker"></i> {{ conference.location }}</div>
