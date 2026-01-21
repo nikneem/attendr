@@ -29,9 +29,6 @@ public sealed class DatabaseMigrationRunner
 
         try
         {
-            // Ensure database exists
-            await EnsureDatabaseExistsAsync(cancellationToken);
-
             // Ensure migrations table exists
             await EnsureMigrationsTableExistsAsync(cancellationToken);
 
@@ -55,62 +52,6 @@ public sealed class DatabaseMigrationRunner
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to run database migrations");
-            throw;
-        }
-    }
-
-    private async Task EnsureDatabaseExistsAsync(CancellationToken cancellationToken)
-    {
-        try
-        {
-            // Try to get the database name from the data source connection string
-            var connectionString = _dataSource.ConnectionString;
-            var builder = new NpgsqlConnectionStringBuilder(connectionString);
-            var databaseName = builder.Database;
-
-            if (string.IsNullOrEmpty(databaseName))
-            {
-                _logger.LogWarning("Could not determine database name from connection string");
-                return;
-            }
-
-            // Create connection to 'postgres' database to check/create target database
-            var adminBuilder = new NpgsqlConnectionStringBuilder(connectionString) { Database = "postgres" };
-            var adminConnectionString = adminBuilder.ConnectionString;
-
-            await using var adminConnection = new NpgsqlConnection(adminConnectionString);
-            await adminConnection.OpenAsync(cancellationToken);
-
-            // Check if database exists
-            await using var checkCommand = new NpgsqlCommand(
-                $"SELECT 1 FROM pg_database WHERE datname = @dbname",
-                adminConnection);
-            checkCommand.Parameters.AddWithValue("@dbname", databaseName);
-
-            var exists = await checkCommand.ExecuteScalarAsync(cancellationToken) != null;
-
-            if (!exists)
-            {
-                _logger.LogInformation("Database '{DatabaseName}' does not exist. Creating...", databaseName);
-
-                // Create the database
-                await using var createCommand = new NpgsqlCommand(
-                    $"CREATE DATABASE \"{databaseName}\"",
-                    adminConnection);
-                await createCommand.ExecuteNonQueryAsync(cancellationToken);
-
-                _logger.LogInformation("Database '{DatabaseName}' created successfully", databaseName);
-            }
-            else
-            {
-                _logger.LogDebug("Database '{DatabaseName}' already exists", databaseName);
-            }
-
-            await adminConnection.CloseAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to ensure database exists");
             throw;
         }
     }
@@ -198,7 +139,9 @@ public sealed class DatabaseMigrationRunner
             var script = reader.ReadToEnd();
 
             // Extract migration name from resource name
-            var migrationName = Path.GetFileNameWithoutExtension(resourceName.Split('.').Last());
+            var parts = resourceName.Split('.');
+            var sqlIndex = Array.FindLastIndex(parts, p => p.Equals("sql", StringComparison.OrdinalIgnoreCase));
+            var migrationName = sqlIndex > 0 ? parts[sqlIndex - 1] : resourceName;
             migrations[migrationName] = script;
         }
 

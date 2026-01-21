@@ -88,29 +88,44 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.AddWithValue("@batch_size", batchSize);
 
-        var results = new List<(Guid ConferenceId, Presentation Presentation)>();
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-
-        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        var presentationData = new List<(Guid PresentationId, Guid ConferenceId, Guid RoomId, string Title, string Abstract, DateTime StartDateTime, DateTime EndDateTime, string? ExternalId, bool IsAnalysed)>();
+        
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
         {
-            var presentationId = reader.GetGuid(0);
-            var conferenceId = reader.GetGuid(1);
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                presentationData.Add((
+                    reader.GetGuid(0),  // presentation_id
+                    reader.GetGuid(1),  // conference_id
+                    reader.GetGuid(2),  // room_id
+                    reader.GetString(3),  // title
+                    reader.GetString(4),  // abstract
+                    reader.GetDateTime(5),  // start_date_time
+                    reader.GetDateTime(6),  // end_date_time
+                    reader.IsDBNull(8) ? null : reader.GetString(8),  // external_id
+                    reader.GetBoolean(7)  // is_analysed
+                ));
+            }
+        }
 
-            // Load speaker IDs for this presentation
-            var speakerIds = await LoadPresentationSpeakerIdsAsync(connection, presentationId, cancellationToken).ConfigureAwait(false);
+        var results = new List<(Guid ConferenceId, Presentation Presentation)>();
+        
+        foreach (var data in presentationData)
+        {
+            var speakerIds = await LoadPresentationSpeakerIdsAsync(connection, data.PresentationId, cancellationToken).ConfigureAwait(false);
 
             var presentation = Presentation.FromPersisted(
-                presentationId,
-                reader.GetString(3),  // title
-                reader.GetString(4),  // abstract
-                reader.GetDateTime(5),  // start_date_time
-                reader.GetDateTime(6),  // end_date_time
-                reader.GetGuid(2),  // room_id
+                data.PresentationId,
+                data.Title,
+                data.Abstract,
+                data.StartDateTime,
+                data.EndDateTime,
+                data.RoomId,
                 speakerIds,
-                reader.IsDBNull(8) ? null : reader.GetString(8),  // external_id
-                reader.GetBoolean(7));  // is_analysed
+                data.ExternalId,
+                data.IsAnalysed);
 
-            results.Add((conferenceId, presentation));
+            results.Add((data.ConferenceId, presentation));
         }
 
         return results;

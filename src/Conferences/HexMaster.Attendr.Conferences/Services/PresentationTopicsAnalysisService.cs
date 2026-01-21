@@ -106,28 +106,19 @@ Presentation abstract to analyze:
 
         var executionSettings = new OpenAIPromptExecutionSettings
         {
+            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
             ResponseFormat = typeof(ConferencePresentationTopics),
-            Temperature = 0.3,
-            MaxTokens = 500
         };
 
-        try
-        {
-            var response = await _kernel.InvokePromptAsync(
-                prompt,
-                new KernelArguments(executionSettings),
-                cancellationToken: cancellationToken);
+        var response = await _kernel.InvokePromptAsync(
+            prompt,
+            new KernelArguments(executionSettings),
+            cancellationToken: cancellationToken);
 
-            var conferenceTopics =
-                JsonConvert.DeserializeObject<ConferencePresentationTopics>(response.ToString());
+        var conferenceTopics =
+            JsonConvert.DeserializeObject<ConferencePresentationTopics>(response.ToString());
 
-            return conferenceTopics?.Topics ?? new List<string>();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error calling AI service for topic extraction");
-            return new List<string>();
-        }
+        return conferenceTopics?.Topics ?? new List<string>();
     }
 
     private static string NormalizeTopicKey(string topic)
