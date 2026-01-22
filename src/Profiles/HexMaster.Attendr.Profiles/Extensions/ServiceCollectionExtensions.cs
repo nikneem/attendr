@@ -2,6 +2,7 @@ using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.CreateProfile;
+using HexMaster.Attendr.Profiles.GetProfileTopics;
 using HexMaster.Attendr.Profiles.Observability;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,9 @@ public static class ServiceCollectionExtensions
 
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateProfileCommand, CreateProfileResult>, CreateProfileCommandHandler>();
+
+        // Register query handlers
+        services.AddScoped<IQueryHandler<GetProfileTopicsQuery, IReadOnlyList<ProfileTopicDto>>, GetProfileTopicsQueryHandler>();
 
         return services;
     }

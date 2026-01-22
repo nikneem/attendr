@@ -62,6 +62,7 @@ module appResources 'resources.bicep' = {
 
     tableNames: [
       'profiles'
+      'profiletopics'
     ]
   }
 }

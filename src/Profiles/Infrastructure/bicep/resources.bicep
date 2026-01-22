@@ -32,6 +32,7 @@ param corsOrigins array = []
 
 param tableNames array = [
   'profiles'
+  'profiletopics'
 ]
 
 // Get App Configuration endpoint
