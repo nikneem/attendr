@@ -1,0 +1,111 @@
+<div class="account-preferences-container">
+    <p-card header="Account Preferences">
+        <div class="card-subtitle">
+            <p>Manage your personal information and account settings</p>
+        </div>
+
+        @if (loading()) {
+        <div class="loading-container">
+            <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" />
+            <p>Loading profile...</p>
+        </div>
+        } @else {
+        <form class="profile-form" (ngSubmit)="saveProfile()">
+            <div class="form-field">
+                <label for="displayName">Display Name *</label>
+                <input pInputText id="displayName" [ngModel]="displayName()" (ngModelChange)="displayName.set($event)"
+                    name="displayName" placeholder="Enter your display name" required />
+            </div>
+
+            <div class="form-field">
+                <label for="tagLine">Tagline</label>
+                <input pInputText id="tagLine" [ngModel]="tagLine()" (ngModelChange)="tagLine.set($event)"
+                    name="tagLine" placeholder="Enter a tagline (optional)" />
+                <small class="field-hint">A short description about yourself</small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="firstName">First Name *</label>
+                    <input pInputText id="firstName" [ngModel]="firstName()" (ngModelChange)="firstName.set($event)"
+                        name="firstName" placeholder="Enter your first name" required />
+                </div>
+
+                <div class="form-field">
+                    <label for="lastName">Last Name *</label>
+                    <input pInputText id="lastName" [ngModel]="lastName()" (ngModelChange)="lastName.set($event)"
+                        name="lastName" placeholder="Enter your last name" required />
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label for="email">Email Address</label>
+                <input pInputText id="email" [ngModel]="email()" name="email" placeholder="Email address" readonly
+                    disabled />
+                <small class="field-hint">Email address cannot be changed</small>
+            </div>
+
+            <div class="form-field checkbox-field">
+                <div class="field-content">
+                    <label for="isSearchable">Searchable Profile</label>
+                    <small class="field-hint">Allow other attendees to find your profile</small>
+                </div>
+                <div class="toggle-wrapper">
+                    <input type="checkbox" role="switch" class="toggle-switch" id="isSearchable"
+                        [checked]="isSearchable()" (change)="isSearchable.set($any($event.target).checked)"
+                        name="isSearchable" />
+                    <span class="toggle-label">{{ isSearchable() ? 'On' : 'Off' }}</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <p-button type="submit" label="Save Changes" icon="pi pi-save" [loading]="saving()"
+                    [disabled]="saving() || loading()" />
+            </div>
+        </form>
+        }
+    </p-card>
+
+    <p-card header="Your Topics" styleClass="topics-card">
+        <div class="card-subtitle">
+            <p>Topics identified from your profile and activities</p>
+        </div>
+
+        @if (topicsLoading()) {
+        <div class="loading-container">
+            <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" />
+            <p>Loading topics...</p>
+        </div>
+        } @else if (topics().length === 0) {
+        <div class="empty-state">
+            <p>No topics found yet. Topics will be added as you interact with the system.</p>
+        </div>
+        } @else {
+        <div class="topics-table">
+            <div class="table-header">
+                <div class="col-topic">Topic</div>
+                <div class="col-weight">Weight</div>
+                <div class="col-updated">Last Updated</div>
+            </div>
+            @for (topic of topics(); track topic.id) {
+            <div class="topic-row">
+                <div class="col-topic">
+                    <span class="topic-name">{{ topic.topicName }}</span>
+                    <span class="topic-badge" [class.manual]="topic.isManual" [class.ai]="!topic.isManual">
+                        {{ topic.isManual ? 'Manual' : 'AI' }}
+                    </span>
+                </div>
+                <div class="col-weight">
+                    <span class="weight-value">{{ topic.weight }}%</span>
+                    <p-progressBar [value]="topic.weight" [showValue]="false"
+                        styleClass="inline-progress"></p-progressBar>
+                </div>
+                <div class="col-updated">
+                    <span class="updated-time">{{ getRelativeTime(topic.createdOn) }}</span>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </p-card>
+</div>

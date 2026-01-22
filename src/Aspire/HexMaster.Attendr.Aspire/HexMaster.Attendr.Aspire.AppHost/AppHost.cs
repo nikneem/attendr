@@ -42,6 +42,7 @@ var postgres = builder.AddPostgres(AspireConstants.Postgres.Name)
 
 // ## The profiles service ##
 var profilesTable = storage.AddTables(AspireConstants.TableStorage.Profiles);
+var profileTopicsTable = storage.AddTables(AspireConstants.TableStorage.ProfileTopics);
 var profilesApi = builder.AddProject<HexMaster_Attendr_Profiles_Api>(AspireConstants.ProfilesApiName)
     .WithDaprSidecar(opts =>
     {
@@ -49,6 +50,8 @@ var profilesApi = builder.AddProject<HexMaster_Attendr_Profiles_Api>(AspireConst
             .WithReference(stateStore);
     })
     .WithReference(profilesTable)
+    .WithReference(profileTopicsTable)
+    .WaitFor(profileTopicsTable)
     .WaitFor(profilesTable);
 
 // ## The groups service ##

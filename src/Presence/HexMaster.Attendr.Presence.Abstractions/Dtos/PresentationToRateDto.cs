@@ -10,6 +10,7 @@ namespace HexMaster.Attendr.Presence.Abstractions.Dtos;
 /// <param name="StartDateTime">The start date and time of the presentation.</param>
 /// <param name="EndDateTime">The end date and time of the presentation.</param>
 /// <param name="Speakers">The collection of speakers for the presentation.</param>
+/// <param name="Topics">The collection of topics associated with the presentation.</param>
 public record PresentationToRateDto(
     Guid PresentationId,
     string Title,
@@ -17,5 +18,6 @@ public record PresentationToRateDto(
     string Room,
     DateTime StartDateTime,
     DateTime EndDateTime,
-    IReadOnlyCollection<PresentationSpeakerDto> Speakers
+    IReadOnlyCollection<PresentationSpeakerDto> Speakers,
+    IReadOnlyCollection<PresentationTopicDto> Topics
 );

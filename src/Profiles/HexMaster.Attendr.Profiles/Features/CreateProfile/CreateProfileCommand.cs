@@ -1,6 +1,6 @@
 using HexMaster.Attendr.Core.CommandHandlers;
 
-namespace HexMaster.Attendr.Profiles.CreateProfile;
+namespace HexMaster.Attendr.Profiles.Features.CreateProfile;
 
 /// <summary>
 /// Command to create a new user profile.

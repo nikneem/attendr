@@ -16,8 +16,9 @@ public static class ServiceCollectionExtensions
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddTableStorageProfileRepository(this IServiceCollection services)
     {
-        // Register repository
+        // Register repositories
         services.AddScoped<IProfileRepository, TableStorageProfileRepository>();
+        services.AddScoped<IProfileTopicRepository, TableStorageProfileTopicRepository>();
 
         return services;
     }

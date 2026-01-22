@@ -10,6 +10,7 @@ public static class AspireConstants
     public static class TableStorage
     {
         public const string Profiles = "profiles";
+        public const string ProfileTopics = "profiletopics";
         public const string Notifications = "notifications";
         public const string NotificationPreferences = "notificationpreferences";
         public const string Subscriptions = "subscriptions";

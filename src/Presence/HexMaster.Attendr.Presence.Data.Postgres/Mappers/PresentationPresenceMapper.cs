@@ -29,6 +29,11 @@ internal static class PresentationPresenceMapper
             s.ProfilePictureUrl
         )).ToList();
 
+        var topics = presence.Topics.Select(t => new PresentationTopicEmbedded(
+            t.Key,
+            t.Name
+        )).ToList();
+
         return new PresentationPresenceEntity(
             presence.ProfileId,
             presence.ConferenceId,
@@ -38,6 +43,7 @@ internal static class PresentationPresenceMapper
             presence.Room,
             presence.StartDateTime,
             presence.EndDateTime,
+            topics,
             speakers,
             presence.IsRated,
             presence.IsFavorite,
@@ -62,6 +68,8 @@ internal static class PresentationPresenceMapper
             s.ProfilePictureUrl
         )).ToList();
 
+        var topics = entity.Topics.Select(t => new PresentationTopic(t.Key, t.Name)).ToList();
+
         return new PresentationPresence(
             entity.ProfileId,
             entity.ConferenceId,
@@ -72,6 +80,7 @@ internal static class PresentationPresenceMapper
             entity.StartDateTime,
             entity.EndDateTime,
             speakers,
+            topics,
             entity.IsRated,
             entity.IsFavorite,
             entity.IsCheckedIn,

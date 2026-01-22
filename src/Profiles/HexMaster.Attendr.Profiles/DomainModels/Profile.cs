@@ -300,6 +300,12 @@ public class Profile : StatefulDomainModel<string>
     public void SetTagLine(string? tagLine)
     {
         var newValue = string.IsNullOrWhiteSpace(tagLine) ? string.Empty : tagLine.Trim();
+
+        if (newValue.Length > 280)
+        {
+            throw new ArgumentException("Tag line cannot exceed 280 characters.", nameof(tagLine));
+        }
+
         if (ShouldUpdateProperty(TagLine, newValue))
         {
             TagLine = newValue;

@@ -1,15 +1,15 @@
 using Bogus;
 using HexMaster.Attendr.Core.Cache;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
-using HexMaster.Attendr.Profiles.CreateProfile;
 using HexMaster.Attendr.Profiles.DomainModels;
+using HexMaster.Attendr.Profiles.Features.CreateProfile;
 using HexMaster.Attendr.Profiles.Observability;
 using HexMaster.Attendr.Profiles.Repositories;
 using HexMaster.Attendr.Profiles.Tests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace HexMaster.Attendr.Profiles.Tests.CreateProfile;
+namespace HexMaster.Attendr.Profiles.Tests.Features.CreateProfile;
 
 public class CreateProfileCommandHandlerTests
 {
@@ -33,7 +33,6 @@ public class CreateProfileCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldCreateNewProfile_WhenProfileDoesNotExist()
     {
-        // Arrange
         var command = new CreateProfileCommand(
             _faker.Random.Guid().ToString(),
             _faker.Person.FullName,
@@ -50,10 +49,8 @@ public class CreateProfileCommandHandlerTests
             .Setup(r => r.AddAsync(It.IsAny<Profile>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         Assert.NotNull(result);
         Assert.NotNull(result.ProfileId);
         Assert.NotEmpty(result.ProfileId);
@@ -72,7 +69,6 @@ public class CreateProfileCommandHandlerTests
             ), It.IsAny<CancellationToken>()),
             Times.Once);
 
-        // Verify cache priming on newly created profile
         _mockCache.Verify(
             c => c.SetAsync(
                 It.Is<string>(k => k == CacheKeys.Profiles.Subject(command.SubjectId)),
@@ -85,7 +81,6 @@ public class CreateProfileCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnExistingProfileId_WhenProfileAlreadyExists()
     {
-        // Arrange
         var existingProfileId = _faker.Random.Guid().ToString();
         var subjectId = _faker.Random.Guid().ToString();
 
@@ -114,10 +109,8 @@ public class CreateProfileCommandHandlerTests
             .Setup(r => r.GetBySubjectIdAsync(command.SubjectId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingProfile);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         Assert.NotNull(result);
         Assert.Equal(existingProfileId, result.ProfileId);
 
@@ -129,7 +122,6 @@ public class CreateProfileCommandHandlerTests
             r => r.AddAsync(It.IsAny<Profile>(), It.IsAny<CancellationToken>()),
             Times.Never);
 
-        // Verify cache priming on existing profile
         _mockCache.Verify(
             c => c.SetAsync(
                 It.Is<string>(k => k == CacheKeys.Profiles.Subject(command.SubjectId)),
@@ -142,7 +134,6 @@ public class CreateProfileCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldThrowArgumentNullException_WhenCommandIsNull()
     {
-        // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(
             () => _handler.Handle(null!, CancellationToken.None));
     }
@@ -150,7 +141,6 @@ public class CreateProfileCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldThrowArgumentException_WhenSubjectIdIsEmpty()
     {
-        // Arrange
         var command = new CreateProfileCommand(
             string.Empty,
             _faker.Person.FullName,
@@ -159,7 +149,6 @@ public class CreateProfileCommandHandlerTests
             _faker.Person.Email
         );
 
-        // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(
             () => _handler.Handle(command, CancellationToken.None));
     }
@@ -167,7 +156,6 @@ public class CreateProfileCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldThrowArgumentException_WhenSubjectIdIsWhitespace()
     {
-        // Arrange
         var command = new CreateProfileCommand(
             "   ",
             _faker.Person.FullName,
@@ -176,7 +164,6 @@ public class CreateProfileCommandHandlerTests
             _faker.Person.Email
         );
 
-        // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(
             () => _handler.Handle(command, CancellationToken.None));
     }
@@ -184,10 +171,8 @@ public class CreateProfileCommandHandlerTests
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenRepositoryIsNull()
     {
-        // Arrange
         var metrics = TestMetricsFactory.CreateProfileMetrics();
 
-        // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(
             null!,
             new Mock<IAttendrCacheClient>().Object,
@@ -198,10 +183,8 @@ public class CreateProfileCommandHandlerTests
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenCacheIsNull()
     {
-        // Arrange
         var metrics = TestMetricsFactory.CreateProfileMetrics();
 
-        // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(
             new Mock<IProfileRepository>().Object,
             null!,

@@ -1,14 +1,14 @@
 using Bogus;
 using HexMaster.Attendr.Core.Cache;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
-using HexMaster.Attendr.Profiles.CreateProfile;
 using HexMaster.Attendr.Profiles.DomainModels;
+using HexMaster.Attendr.Profiles.Features.CreateProfile;
 using HexMaster.Attendr.Profiles.Repositories;
 using HexMaster.Attendr.Profiles.Tests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace HexMaster.Attendr.Profiles.Tests.CreateProfile;
+namespace HexMaster.Attendr.Profiles.Tests.Features.CreateProfile;
 
 public class CreateProfileCommandHandlerErrorTests
 {
@@ -26,7 +26,6 @@ public class CreateProfileCommandHandlerErrorTests
     [Fact]
     public async Task Handle_ShouldThrowAndRecordMetrics_WhenRepositoryGetThrows()
     {
-        // Arrange
         var metrics = TestMetricsFactory.CreateProfileMetrics();
         var mockLogger = new Mock<ILogger<CreateProfileCommandHandler>>();
         var handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object, metrics, mockLogger.Object);
@@ -43,7 +42,6 @@ public class CreateProfileCommandHandlerErrorTests
             .Setup(r => r.GetBySubjectIdAsync(command.SubjectId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Database error"));
 
-        // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Handle(command, CancellationToken.None));
 
         _mockRepository.Verify(
@@ -54,7 +52,6 @@ public class CreateProfileCommandHandlerErrorTests
     [Fact]
     public async Task Handle_ShouldThrowAndRecordMetrics_WhenRepositoryAddThrows()
     {
-        // Arrange
         var metrics = TestMetricsFactory.CreateProfileMetrics();
         var mockLogger = new Mock<ILogger<CreateProfileCommandHandler>>();
         var handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object, metrics, mockLogger.Object);
@@ -75,7 +72,6 @@ public class CreateProfileCommandHandlerErrorTests
             .Setup(r => r.AddAsync(It.IsAny<Profile>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Database insert error"));
 
-        // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Handle(command, CancellationToken.None));
 
         _mockRepository.Verify(
@@ -86,7 +82,6 @@ public class CreateProfileCommandHandlerErrorTests
     [Fact]
     public async Task Handle_ShouldCompleteSuccessfully_WhenCacheSetFails()
     {
-        // Arrange
         var metrics = TestMetricsFactory.CreateProfileMetrics();
         var mockLogger = new Mock<ILogger<CreateProfileCommandHandler>>();
         var handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object, metrics, mockLogger.Object);
@@ -115,15 +110,12 @@ public class CreateProfileCommandHandlerErrorTests
                 It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Cache error"));
 
-        // Act & Assert
-        // Cache failures should propagate up and cause the handler to fail
         await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Handle(command, CancellationToken.None));
     }
 
     [Fact]
     public async Task Handle_ShouldRespectCancellationToken()
     {
-        // Arrange
         var metrics = TestMetricsFactory.CreateProfileMetrics();
         var mockLogger = new Mock<ILogger<CreateProfileCommandHandler>>();
         var handler = new CreateProfileCommandHandler(_mockRepository.Object, _mockCache.Object, metrics, mockLogger.Object);
@@ -143,14 +135,12 @@ public class CreateProfileCommandHandlerErrorTests
             .Setup(r => r.GetBySubjectIdAsync(command.SubjectId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new OperationCanceledException());
 
-        // Act & Assert
         await Assert.ThrowsAsync<OperationCanceledException>(() => handler.Handle(command, cts.Token));
     }
 
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenMetricsIsNull()
     {
-        // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(
             new Mock<IProfileRepository>().Object,
             new Mock<IAttendrCacheClient>().Object,
@@ -161,10 +151,8 @@ public class CreateProfileCommandHandlerErrorTests
     [Fact]
     public void Constructor_ShouldThrowArgumentNullException_WhenLoggerIsNull()
     {
-        // Arrange
         var metrics = TestMetricsFactory.CreateProfileMetrics();
 
-        // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new CreateProfileCommandHandler(
             new Mock<IProfileRepository>().Object,
             new Mock<IAttendrCacheClient>().Object,
