@@ -3,8 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { MessageModule } from 'primeng/message';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MessageService } from 'primeng/api';
 import { ProfileService } from '@services/profile.service';
 import { ProfileStore } from '@stores/profile.store';
 import { ProfileDetailsDto } from '@models/profile-details-dto';
@@ -18,7 +18,6 @@ import { UpdateProfileRequest } from '@models/update-profile-request';
         CardModule,
         InputTextModule,
         ButtonModule,
-        MessageModule,
         ProgressSpinnerModule,
     ],
     templateUrl: './account-preferences-page.component.html',
@@ -26,12 +25,11 @@ import { UpdateProfileRequest } from '@models/update-profile-request';
 })
 export class AccountPreferencesPageComponent implements OnInit {
     private readonly profileService = inject(ProfileService);
+    private readonly messageService = inject(MessageService);
     protected readonly profileStore = inject(ProfileStore);
 
     protected loading = signal<boolean>(false);
     protected saving = signal<boolean>(false);
-    protected error = signal<string | null>(null);
-    protected successMessage = signal<string | null>(null);
 
     protected profileDetails = signal<ProfileDetailsDto | null>(null);
 
@@ -49,7 +47,6 @@ export class AccountPreferencesPageComponent implements OnInit {
 
     private loadProfile(): void {
         this.loading.set(true);
-        this.error.set(null);
 
         this.profileService.getProfileDetails().subscribe({
             next: (profile) => {
@@ -64,7 +61,11 @@ export class AccountPreferencesPageComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Failed to load profile', err);
-                this.error.set('Failed to load profile details. Please try again.');
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to load profile details. Please try again.',
+                });
                 this.loading.set(false);
             },
         });
@@ -72,8 +73,6 @@ export class AccountPreferencesPageComponent implements OnInit {
 
     protected saveProfile(): void {
         this.saving.set(true);
-        this.error.set(null);
-        this.successMessage.set(null);
 
         const request: UpdateProfileRequest = {
             displayName: this.displayName(),
@@ -85,14 +84,22 @@ export class AccountPreferencesPageComponent implements OnInit {
 
         this.profileService.updateProfile(request).subscribe({
             next: (result) => {
-                this.successMessage.set('Profile updated successfully!');
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Profile updated successfully!',
+                });
                 this.saving.set(false);
                 // Update the profile store with new display name
                 this.profileStore.updateProfile({ firstName: this.firstName(), lastName: this.lastName() });
             },
             error: (err) => {
                 console.error('Failed to update profile', err);
-                this.error.set('Failed to update profile. Please try again.');
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to update profile. Please try again.',
+                });
                 this.saving.set(false);
             },
         });

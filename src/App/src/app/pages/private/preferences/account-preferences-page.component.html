@@ -10,14 +10,6 @@
             <p>Loading profile...</p>
         </div>
         } @else {
-        @if (error()) {
-        <p-message severity="error" [text]="error()!" />
-        }
-
-        @if (successMessage()) {
-        <p-message severity="success" [text]="successMessage()!" />
-        }
-
         <form class="profile-form" (ngSubmit)="saveProfile()">
             <div class="form-field">
                 <label for="displayName">Display Name *</label>
