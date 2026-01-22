@@ -26,6 +26,7 @@ public sealed record PresentationPresenceEmbedded(
     [property: JsonPropertyName("startDateTime")] DateTime StartDateTime,
     [property: JsonPropertyName("endDateTime")] DateTime EndDateTime,
     [property: JsonPropertyName("speakers")] List<SpeakerEmbedded> Speakers,
+    [property: JsonPropertyName("topics")] List<PresentationTopicEmbedded> Topics,
     [property: JsonPropertyName("isRated")] bool IsRated,
     [property: JsonPropertyName("isFavorite")] bool IsFavorite,
     [property: JsonPropertyName("isCheckedIn")] bool IsCheckedIn,

@@ -31,6 +31,7 @@ internal static class ConferencePresenceMapper
             p.StartDateTime,
             p.EndDateTime,
             p.Speakers.Select(s => new SpeakerEmbedded(s.SpeakerId, s.Name, s.ProfilePictureUrl)).ToList(),
+            p.Topics.Select(t => new PresentationTopicEmbedded(t.Key, t.Name)).ToList(),
             p.IsRated,
             p.IsFavorite,
             p.IsCheckedIn,
@@ -64,6 +65,7 @@ internal static class ConferencePresenceMapper
         var presentations = entity.Presentations.Select(p =>
         {
             var speakers = p.Speakers.Select(s => new PresentationSpeaker(s.SpeakerId, s.Name, s.ProfilePictureUrl)).ToList();
+            var topics = p.Topics.Select(t => new PresentationTopic(t.Key, t.Name)).ToList();
 
             return new PresentationPresence(
                 entity.ProfileId,
@@ -75,6 +77,7 @@ internal static class ConferencePresenceMapper
                 p.StartDateTime,
                 p.EndDateTime,
                 speakers,
+                topics,
                 p.IsRated,
                 p.IsFavorite,
                 p.IsCheckedIn,
