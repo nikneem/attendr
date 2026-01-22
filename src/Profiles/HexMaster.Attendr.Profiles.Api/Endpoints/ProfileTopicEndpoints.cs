@@ -1,6 +1,6 @@
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
-using HexMaster.Attendr.Profiles.GetProfileTopics;
+using HexMaster.Attendr.Profiles.Features.GetProfileTopics;
 
 namespace HexMaster.Attendr.Profiles.Api.Endpoints;
 

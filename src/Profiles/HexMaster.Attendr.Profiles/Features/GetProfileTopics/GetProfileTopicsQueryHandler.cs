@@ -2,7 +2,7 @@ using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Repositories;
 
-namespace HexMaster.Attendr.Profiles.GetProfileTopics;
+namespace HexMaster.Attendr.Profiles.Features.GetProfileTopics;
 
 public sealed class GetProfileTopicsQueryHandler : IQueryHandler<GetProfileTopicsQuery, IReadOnlyList<ProfileTopicDto>>
 {

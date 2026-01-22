@@ -2,7 +2,8 @@ using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
-using HexMaster.Attendr.Profiles.CreateProfile;
+using HexMaster.Attendr.Profiles.Features.CreateProfile;
+using HexMaster.Attendr.Profiles.Features.UpdateProfile;
 
 namespace HexMaster.Attendr.Profiles.Api.Endpoints;
 
@@ -25,6 +26,14 @@ public static class ProfileEndpoints
             .Produces<CreateProfileResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization();
+
+        group.MapPut("/", UpdateProfile)
+            .WithName("UpdateProfile")
+            .Produces<UpdateProfileResult>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization();
 
         return app;
@@ -78,6 +87,47 @@ public static class ProfileEndpoints
         catch (ArgumentException ex)
         {
             return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> UpdateProfile(
+        UpdateProfileRequest request,
+        ICommandHandler<UpdateProfileCommand, UpdateProfileResult> handler,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? user.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrWhiteSpace(subjectId))
+            {
+                return Results.Unauthorized();
+            }
+
+            var command = new UpdateProfileCommand(
+                subjectId,
+                request.DisplayName,
+                request.FirstName,
+                request.LastName,
+                request.TagLine,
+                request.IsSearchable);
+
+            var result = await handler.Handle(command, cancellationToken);
+            return Results.Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return Results.BadRequest(new { error = ex.Message });
+        }
+        catch (InvalidOperationException)
+        {
+            return Results.NotFound();
         }
         catch (Exception)
         {
