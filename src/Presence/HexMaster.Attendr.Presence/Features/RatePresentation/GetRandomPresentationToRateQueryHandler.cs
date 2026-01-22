@@ -99,6 +99,11 @@ public sealed class GetRandomPresentationToRateQueryHandler : IQueryHandler<GetR
                 .ToList()
                 .AsReadOnly();
 
+            var topics = selectedPresentation.Topics
+                .Select(t => new PresentationTopicDto(t.Key, t.Name))
+                .ToList()
+                .AsReadOnly();
+
             return new PresentationToRateDto(
                 selectedPresentation.PresentationId,
                 selectedPresentation.Title,
@@ -106,7 +111,8 @@ public sealed class GetRandomPresentationToRateQueryHandler : IQueryHandler<GetR
                 selectedPresentation.Room,
                 selectedPresentation.StartDateTime,
                 selectedPresentation.EndDateTime,
-                speakers);
+                speakers,
+                topics);
         }
         catch (Exception ex)
         {

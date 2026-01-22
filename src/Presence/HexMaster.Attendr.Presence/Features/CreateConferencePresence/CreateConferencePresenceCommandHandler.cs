@@ -122,6 +122,11 @@ public sealed class CreateConferencePresenceCommandHandler : ICommandHandler<Cre
                         })
                         .ToList();
 
+                    // Map topic DTOs to PresentationTopic domain objects
+                    var topics = presentation.Topics
+                        .Select(topicDto => new PresentationTopic(topicDto.Key, topicDto.Name))
+                        .ToList();
+
                     var presentationPresence = new PresentationPresence(
                         profileId,
                         command.ConferenceId,
@@ -132,6 +137,7 @@ public sealed class CreateConferencePresenceCommandHandler : ICommandHandler<Cre
                         presentation.StartDateTime,
                         presentation.EndDateTime,
                         speakers,
+                        topics,
                         isRated: false,
                         isFavorite: false,
                         isCheckedIn: false,
