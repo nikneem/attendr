@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HexMaster.Attendr.Profiles\HexMaster.Attendr.Profiles.csproj" />
+    <ProjectReference Include="..\HexMaster.Attendr.Profiles.Data.TableStorage\HexMaster.Attendr.Profiles.Data.TableStorage.csproj" />
   </ItemGroup>
 
 </Project>

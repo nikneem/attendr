@@ -4,7 +4,7 @@ using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Observability;
 using HexMaster.Attendr.Profiles.Repositories;
-using HexMaster.Attendr.Profiles.UpdateProfile;
+using HexMaster.Attendr.Profiles.Features.UpdateProfile;
 using HexMaster.Attendr.Profiles.Tests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
