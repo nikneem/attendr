@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Aspire\HexMaster.Attendr.Aspire\HexMaster.Attendr.Aspire.ServiceDefaults\HexMaster.Attendr.Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.Core\HexMaster.Attendr.Core.csproj" />
+    <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Profiles.Data.TableStorage\HexMaster.Attendr.Profiles.Data.TableStorage.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Profiles\HexMaster.Attendr.Profiles.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Profiles.Abstractions\HexMaster.Attendr.Profiles.Abstractions.csproj" />

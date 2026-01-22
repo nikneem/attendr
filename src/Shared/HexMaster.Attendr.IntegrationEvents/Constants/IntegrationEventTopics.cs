@@ -67,6 +67,12 @@ public static class IntegrationEventTopics
     public const string ProfileConferenceAttendanceChanged = "profile.conference-attendance-changed";
 
     /// <summary>
+    /// Topic for profile topic interest events.
+    /// Published when a profile shows interest in a topic.
+    /// </summary>
+    public const string ProfileTopicInterest = "profile.topic-interest";
+
+    /// <summary>
     /// Topic for group member added events.
     /// Published when a member is added to a group.
     /// </summary>
