@@ -14,6 +14,7 @@ public sealed record PresentationPresenceEntity(
     [property: JsonPropertyName("room")] string Room,
     [property: JsonPropertyName("startDateTime")] DateTime StartDateTime,
     [property: JsonPropertyName("endDateTime")] DateTime EndDateTime,
+    [property: JsonPropertyName("topics")] List<PresentationTopicEmbedded> Topics,
     [property: JsonPropertyName("speakers")] List<SpeakerEmbedded> Speakers,
     [property: JsonPropertyName("isRated")] bool IsRated,
     [property: JsonPropertyName("isFavorite")] bool IsFavorite,
@@ -22,4 +23,9 @@ public sealed record PresentationPresenceEntity(
     [property: JsonPropertyName("rating")] byte? Rating,
     [property: JsonPropertyName("isRecommended")] bool IsRecommended,
     [property: JsonPropertyName("isPreferred")] bool IsPreferred
+);
+
+public sealed record PresentationTopicEmbedded(
+    [property: JsonPropertyName("key")] string Key,
+    [property: JsonPropertyName("name")] string Name
 );

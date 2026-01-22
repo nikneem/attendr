@@ -30,6 +30,11 @@ public static class PresentationPresenceMapper
                 SpeakerId = s.SpeakerId,
                 Name = s.Name,
                 ProfilePictureUrl = s.ProfilePictureUrl
+            }).ToList(),
+            Topics = domain.Topics.Select(t => new PresentationTopicDocument
+            {
+                Key = t.Key,
+                Name = t.Name
             }).ToList()
         };
     }
@@ -37,6 +42,7 @@ public static class PresentationPresenceMapper
     public static PresentationPresence ToDomain(PresentationPresenceDocument doc)
     {
         var speakers = doc.Speakers.Select(s => new PresentationSpeaker(s.SpeakerId, s.Name, s.ProfilePictureUrl));
+        var topics = doc.Topics.Select(t => new PresentationTopic(t.Key, t.Name));
 
         return new PresentationPresence(
             doc.ProfileId,
@@ -48,6 +54,7 @@ public static class PresentationPresenceMapper
             doc.StartDateTime,
             doc.EndDateTime,
             speakers,
+            topics,
             doc.IsRated,
             doc.IsFavorite,
             doc.IsCheckedIn,

@@ -59,6 +59,9 @@ public sealed class PresentationPresenceDocument
 
     [BsonElement("speakers")]
     public List<PresentationSpeakerDocument> Speakers { get; set; } = new();
+
+    [BsonElement("topics")]
+    public List<PresentationTopicDocument> Topics { get; set; } = new();
 }
 
 public sealed class PresentationSpeakerDocument
@@ -72,4 +75,13 @@ public sealed class PresentationSpeakerDocument
 
     [BsonElement("profilePictureUrl")]
     public string? ProfilePictureUrl { get; set; } = string.Empty;
+}
+
+public sealed class PresentationTopicDocument
+{
+    [BsonElement("key")]
+    public string Key { get; set; } = string.Empty;
+
+    [BsonElement("name")]
+    public string Name { get; set; } = string.Empty;
 }

@@ -1,4 +1,5 @@
 using HexMaster.Attendr.IntegrationEvents.Constants;
+using HexMaster.Attendr.IntegrationEvents.Models;
 
 namespace HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 
@@ -54,6 +55,11 @@ public sealed class PresentationUpdatedEvent : IntegrationEvent
     /// Gets the collection of speaker IDs for this presentation.
     /// </summary>
     public IReadOnlyCollection<Guid> SpeakerIds { get; init; } = Array.Empty<Guid>();
+
+    /// <summary>
+    /// Gets the topics (key/name) associated with the presentation.
+    /// </summary>
+    public IReadOnlyCollection<PresentationTopicDto> Topics { get; init; } = Array.Empty<PresentationTopicDto>();
 
     /// <summary>
     /// Gets the external ID from the source system (e.g., Sessionize).

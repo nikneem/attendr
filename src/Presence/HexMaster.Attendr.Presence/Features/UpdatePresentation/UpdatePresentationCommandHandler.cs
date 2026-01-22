@@ -90,6 +90,10 @@ public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePre
                     })
                     .ToList();
 
+                var topics = @event.Topics
+                    .Select(t => new PresentationTopic(t.Key, t.Name))
+                    .ToList();
+
                 // Update presentation info (preserves IsFavorite, IsCheckedIn, IsRated, Rating)
                 presentation.UpdatePresentationInfo(
                     @event.Title,
@@ -97,7 +101,8 @@ public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePre
                     @event.RoomName,
                     @event.StartDateTime,
                     @event.EndDateTime,
-                    speakers);
+                    speakers,
+                    topics);
 
                 // Save the updated presentation
                 await _repository.UpdateAsync(

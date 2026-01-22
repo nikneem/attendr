@@ -21,6 +21,9 @@ public sealed class PresentationPresence
     private readonly List<PresentationSpeaker> _speakers = new();
     public IReadOnlyCollection<PresentationSpeaker> Speakers => _speakers.AsReadOnly();
 
+    private readonly List<PresentationTopic> _topics = new();
+    public IReadOnlyCollection<PresentationTopic> Topics => _topics.AsReadOnly();
+
     public PresentationPresence(
         Guid profileId,
         Guid conferenceId,
@@ -31,6 +34,7 @@ public sealed class PresentationPresence
         DateTime startDateTime,
         DateTime endDateTime,
         IEnumerable<PresentationSpeaker>? speakers = null,
+        IEnumerable<PresentationTopic>? topics = null,
         bool isRated = false,
         bool isFavorite = false,
         bool isCheckedIn = false,
@@ -83,6 +87,11 @@ public sealed class PresentationPresence
         {
             _speakers.AddRange(speakers);
         }
+
+        if (topics != null)
+        {
+            _topics.AddRange(topics);
+        }
     }
 
     public void AddSpeaker(PresentationSpeaker speaker)
@@ -103,7 +112,8 @@ public sealed class PresentationPresence
         string room,
         DateTime startDateTime,
         DateTime endDateTime,
-        IEnumerable<PresentationSpeaker> speakers)
+        IEnumerable<PresentationSpeaker> speakers,
+        IEnumerable<PresentationTopic> topics)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(title, nameof(title));
         ArgumentException.ThrowIfNullOrWhiteSpace(@abstract, nameof(@abstract));
@@ -124,6 +134,12 @@ public sealed class PresentationPresence
         if (speakers != null)
         {
             _speakers.AddRange(speakers);
+        }
+
+        _topics.Clear();
+        if (topics != null)
+        {
+            _topics.AddRange(topics);
         }
     }
 
