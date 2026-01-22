@@ -31,6 +31,16 @@
         flex-direction: column;
         gap: 1.5rem;
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .form-field {
             display: flex;
             flex-direction: column;
@@ -157,6 +167,103 @@
         min-width: 30px;
         text-align: center;
         letter-spacing: 0.5px;
+    }
+
+    .topics-card {
+        margin-top: 2rem;
+    }
+
+    .topics-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .topic-item {
+        padding: 1rem;
+        border: 1px solid var(--surface-border);
+        border-radius: var(--border-radius);
+        background-color: var(--surface-section);
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+
+            .topic-info {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+
+                h4 {
+                    margin: 0;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    color: var(--text-color);
+                }
+            }
+
+            .topic-meta {
+                small {
+                    color: var(--text-color-secondary);
+                    font-size: 0.813rem;
+                }
+            }
+        }
+
+        .topic-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            &.manual {
+                background-color: rgba(33, 150, 243, 0.1);
+                color: #2196f3;
+            }
+
+            &.ai {
+                background-color: rgba(156, 39, 176, 0.1);
+                color: #9c27b0;
+            }
+        }
+
+        .topic-weight {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            .weight-label {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.875rem;
+
+                span {
+                    color: var(--text-color-secondary);
+                }
+
+                .weight-value {
+                    font-weight: 600;
+                    color: var(--text-color);
+                }
+            }
+        }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-color-secondary);
+
+        p {
+            margin: 0;
+        }
     }
 }
 

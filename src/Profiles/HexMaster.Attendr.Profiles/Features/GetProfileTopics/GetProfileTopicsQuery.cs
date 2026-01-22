@@ -1,3 +1,3 @@
 namespace HexMaster.Attendr.Profiles.Features.GetProfileTopics;
 
-public sealed record GetProfileTopicsQuery(string ProfileId);
+public sealed record GetProfileTopicsQuery(string SubjectId);

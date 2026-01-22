@@ -7,4 +7,4 @@ public sealed record ProfileTopicDto(
     string TopicName,
     bool IsManual,
     DateTimeOffset CreatedOn,
-    IReadOnlyCollection<ProfileTopicOccasionDto> Occasions);
+    int Weight);

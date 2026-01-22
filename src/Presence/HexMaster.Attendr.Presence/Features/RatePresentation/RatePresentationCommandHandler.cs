@@ -1,8 +1,10 @@
-using System.Diagnostics;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using HexMaster.Attendr.Presence.Observability;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace HexMaster.Attendr.Presence.Features.RatePresentation;
 
@@ -10,21 +12,16 @@ namespace HexMaster.Attendr.Presence.Features.RatePresentation;
 /// Command handler to rate a presentation and optionally mark it as a favorite.
 /// Applies business rules for rating (0-5) and updates the presentation presence.
 /// </summary>
-public sealed class RatePresentationCommandHandler : ICommandHandler<RatePresentationCommand>
+public sealed class RatePresentationCommandHandler(
+    IPresentationPresenceRepository repository,
+    PresenceMetrics metrics,
+    IIntegrationEventPublisher integrationEventPublisher,
+    ILogger<RatePresentationCommandHandler> logger)
+    : ICommandHandler<RatePresentationCommand>
 {
-    private readonly IPresentationPresenceRepository _repository;
-    private readonly PresenceMetrics _metrics;
-    private readonly ILogger<RatePresentationCommandHandler> _logger;
-
-    public RatePresentationCommandHandler(
-        IPresentationPresenceRepository repository,
-        PresenceMetrics metrics,
-        ILogger<RatePresentationCommandHandler> logger)
-    {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly IPresentationPresenceRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    private readonly PresenceMetrics _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
+    private readonly ILogger<RatePresentationCommandHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task Handle(RatePresentationCommand command, CancellationToken cancellationToken = default)
     {
@@ -73,6 +70,24 @@ public sealed class RatePresentationCommandHandler : ICommandHandler<RatePresent
                 "Successfully rated presentation {PresentationId} for profile {ProfileId}",
                 command.PresentationId,
                 command.ProfileId);
+
+            if (command.RatingDto.IsFavorite)
+            {
+                foreach (var topic in presentation.Topics)
+                {
+                    var topicInterestEvent = new ProfileTopicInterestEvent
+                    {
+                        ProfileId = command.ProfileId.ToString(),
+                        EventId = Guid.NewGuid(),
+                        IsManual = false,
+                        TopicKey = topic.Key,
+                        TopicName = topic.Name,
+                        OccurredAt = DateTime.UtcNow,
+                        Weight = 10
+                    };
+                    await integrationEventPublisher.PublishAsync(topicInterestEvent, cancellationToken);
+                }
+            }
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordPresentationRated(command.RatingDto.Rating ?? 0, command.RatingDto.IsFavorite);

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Features.GetProfileTopics;
@@ -8,29 +9,33 @@ public static class ProfileTopicEndpoints
 {
     public static IEndpointRouteBuilder MapProfileTopicEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/profiles/{profileId}/topics")
+        var group = app.MapGroup("/api/profiles/topics")
             .WithName("ProfileTopics");
 
         group.MapGet("/", GetProfileTopics)
             .WithName("GetProfileTopics")
             .Produces<IReadOnlyList<ProfileTopicDto>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization();
 
         return app;
     }
 
     private static async Task<IResult> GetProfileTopics(
-        string profileId,
+        ClaimsPrincipal user,
         IQueryHandler<GetProfileTopicsQuery, IReadOnlyList<ProfileTopicDto>> handler,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(profileId))
+        var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(subjectId))
         {
-            return Results.BadRequest(new { error = "profileId is required" });
+            return Results.Unauthorized();
         }
 
-        var result = await handler.Handle(new GetProfileTopicsQuery(profileId.Trim()), cancellationToken);
+        var result = await handler.Handle(new GetProfileTopicsQuery(subjectId), cancellationToken);
         return Results.Ok(result);
     }
 }

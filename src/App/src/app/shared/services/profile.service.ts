@@ -7,6 +7,7 @@ import { CreateProfileResult } from '../models/create-profile-result';
 import { ProfileDetailsDto } from '../models/profile-details-dto';
 import { UpdateProfileRequest } from '../models/update-profile-request';
 import { UpdateProfileResult } from '../models/update-profile-result';
+import { ProfileTopicDto } from '../models/profile-topic-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -25,5 +26,9 @@ export class ProfileService {
 
     updateProfile(request: UpdateProfileRequest): Observable<UpdateProfileResult> {
         return this.http.put<UpdateProfileResult>(this.apiUrl, request);
+    }
+
+    getProfileTopics(): Observable<ProfileTopicDto[]> {
+        return this.http.get<ProfileTopicDto[]>(`${this.apiUrl}/topics`);
     }
 }

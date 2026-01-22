@@ -1,24 +1,29 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ProgressBarModule } from 'primeng/progressbar';
 import { MessageService } from 'primeng/api';
 import { ProfileService } from '@services/profile.service';
 import { ProfileStore } from '@stores/profile.store';
 import { ProfileDetailsDto } from '@models/profile-details-dto';
 import { UpdateProfileRequest } from '@models/update-profile-request';
+import { ProfileTopicDto } from '@models/profile-topic-dto';
 
 @Component({
     selector: 'attn-account-preferences-page',
     standalone: true,
     imports: [
+        CommonModule,
         FormsModule,
         CardModule,
         InputTextModule,
         ButtonModule,
         ProgressSpinnerModule,
+        ProgressBarModule,
     ],
     templateUrl: './account-preferences-page.component.html',
     styleUrl: './account-preferences-page.component.scss',
@@ -30,8 +35,10 @@ export class AccountPreferencesPageComponent implements OnInit {
 
     protected loading = signal<boolean>(false);
     protected saving = signal<boolean>(false);
+    protected topicsLoading = signal<boolean>(false);
 
     protected profileDetails = signal<ProfileDetailsDto | null>(null);
+    protected topics = signal<ProfileTopicDto[]>([]);
 
     // Form fields - now writable signals
     displayName = signal<string>('');
@@ -43,6 +50,7 @@ export class AccountPreferencesPageComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadProfile();
+        this.loadTopics();
     }
 
     private loadProfile(): void {
@@ -67,6 +75,26 @@ export class AccountPreferencesPageComponent implements OnInit {
                     detail: 'Failed to load profile details. Please try again.',
                 });
                 this.loading.set(false);
+            },
+        });
+    }
+
+    private loadTopics(): void {
+        this.topicsLoading.set(true);
+
+        this.profileService.getProfileTopics().subscribe({
+            next: (topics) => {
+                this.topics.set(topics);
+                this.topicsLoading.set(false);
+            },
+            error: (err) => {
+                console.error('Failed to load topics', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to load profile topics.',
+                });
+                this.topicsLoading.set(false);
             },
         });
     }
