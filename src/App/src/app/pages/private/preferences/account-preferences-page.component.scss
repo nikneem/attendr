@@ -173,43 +173,106 @@
         margin-top: 2rem;
     }
 
-    .topics-list {
+    .topics-table {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
-    }
-
-    .topic-item {
-        padding: 1rem;
         border: 1px solid var(--surface-border);
         border-radius: var(--border-radius);
-        background-color: var(--surface-section);
+        overflow: hidden;
 
-        .topic-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
             gap: 1rem;
-            flex-wrap: wrap;
+            padding: 0.75rem 1rem;
+            background-color: var(--surface-100);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-color-secondary);
+            border-bottom: 1px solid var(--surface-border);
 
-            .topic-info {
+            .col-topic {
+                text-align: left;
+            }
+
+            .col-weight {
+                text-align: center;
+                min-width: 80px;
+            }
+
+            .col-updated {
+                text-align: right;
+                min-width: 120px;
+            }
+        }
+
+        .topic-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--surface-section);
+            border-bottom: 1px solid var(--surface-border);
+            align-items: center;
+            transition: background-color 0.2s;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background-color: var(--surface-hover);
+            }
+
+            .col-topic {
                 display: flex;
                 align-items: center;
                 gap: 0.75rem;
 
-                h4 {
-                    margin: 0;
-                    font-size: 1rem;
+                .topic-name {
                     font-weight: 600;
                     color: var(--text-color);
                 }
             }
 
-            .topic-meta {
-                small {
+            .col-weight {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.25rem;
+                min-width: 120px;
+
+                .weight-value {
+                    font-weight: 600;
+                    color: var(--text-color);
+                    font-size: 0.95rem;
+                }
+
+                ::ng-deep .inline-progress {
+                    width: 100%;
+                    height: 6px;
+                }
+
+                ::ng-deep .inline-progress .p-progressbar {
+                    height: 6px !important;
+                    background-color: var(--surface-200);
+                    border-radius: 3px;
+                }
+
+                ::ng-deep .inline-progress .p-progressbar-value {
+                    background-color: var(--primary-color);
+                    height: 100%;
+                    display: block;
+                }
+            }
+
+            .col-updated {
+                text-align: right;
+                min-width: 120px;
+
+                .updated-time {
                     color: var(--text-color-secondary);
-                    font-size: 0.813rem;
+                    font-size: 0.875rem;
                 }
             }
         }
@@ -233,24 +296,32 @@
             }
         }
 
-        .topic-weight {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        @media (max-width: 768px) {
+            .table-header {
+                display: none;
+            }
 
-            .weight-label {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                font-size: 0.875rem;
+            .topic-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                padding: 1rem;
 
-                span {
-                    color: var(--text-color-secondary);
+                .col-topic,
+                .col-weight,
+                .col-updated {
+                    text-align: left;
                 }
 
-                .weight-value {
-                    font-weight: 600;
-                    color: var(--text-color);
+                .col-weight::before {
+                    content: 'Weight: ';
+                    color: var(--text-color-secondary);
+                    font-weight: normal;
+                }
+
+                .col-updated::before {
+                    content: 'Updated: ';
+                    color: var(--text-color-secondary);
+                    font-weight: normal;
                 }
             }
         }

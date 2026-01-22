@@ -56,5 +56,9 @@ app.MapProfileTopicEndpoints();
 app.MapProfilesIntegrationEndpoints();
 app.MapVersionEndpoints();
 
+app.UseCloudEvents();
+app.MapSubscribeHandler();
+
+
 app.Run();
 
