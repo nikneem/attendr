@@ -8,12 +8,13 @@ namespace HexMaster.Attendr.Profiles.Tests.Features.GetProfileTopics;
 
 public class GetProfileTopicsQueryHandlerTests
 {
-    private readonly Mock<IProfileTopicRepository> _repository = new();
+    private readonly Mock<IProfileTopicRepository> _topicRepository = new();
+    private readonly Mock<IProfileRepository> _profileRepository = new();
     private readonly GetProfileTopicsQueryHandler _handler;
 
     public GetProfileTopicsQueryHandlerTests()
     {
-        _handler = new GetProfileTopicsQueryHandler(_repository.Object);
+        _handler = new GetProfileTopicsQueryHandler(_topicRepository.Object, _profileRepository.Object);
     }
 
     [Fact]
@@ -26,9 +27,13 @@ public class GetProfileTopicsQueryHandlerTests
     [Fact]
     public async Task Handle_ShouldMapTopics_WhenFound()
     {
+        var subjectId = Guid.NewGuid().ToString();
         var profileId = Guid.NewGuid().ToString();
         var topicId = Guid.NewGuid().ToString();
         var occasions = new[] { new Occasion(10, DateTimeOffset.UtcNow) };
+
+        var profile = Profile.FromPersisted(profileId, subjectId, "John Doe", "John", "Doe", "john@example.com", null, null, true, false);
+
         var topics = new List<ProfileTopic>
         {
             ProfileTopic.FromPersisted(
@@ -42,10 +47,13 @@ public class GetProfileTopicsQueryHandlerTests
                 DateTimeOffset.UtcNow)
         };
 
-        _repository.Setup(r => r.GetByProfileIdAsync(profileId, It.IsAny<CancellationToken>()))
+        _profileRepository.Setup(r => r.GetBySubjectIdAsync(subjectId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(profile);
+
+        _topicRepository.Setup(r => r.GetByProfileIdAsync(profileId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(topics);
 
-        var result = await _handler.Handle(new GetProfileTopicsQuery(profileId), CancellationToken.None);
+        var result = await _handler.Handle(new GetProfileTopicsQuery(subjectId), CancellationToken.None);
 
         Assert.Single(result);
         var item = result[0];
@@ -54,7 +62,6 @@ public class GetProfileTopicsQueryHandlerTests
         Assert.Equal("topic-key", item.TopicKey);
         Assert.Equal("Topic Name", item.TopicName);
         Assert.True(item.IsManual);
-        Assert.Single(item.Occasions);
-        Assert.Equal(10, item.Occasions.First().Weight);
+        Assert.Equal(10, item.Weight);
     }
 }

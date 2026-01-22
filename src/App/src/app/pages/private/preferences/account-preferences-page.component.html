@@ -97,7 +97,8 @@
                 </div>
                 <div class="col-weight">
                     <span class="weight-value">{{ topic.weight }}%</span>
-                    <p-progressBar [value]="topic.weight" [showValue]="false" styleClass="inline-progress"></p-progressBar>
+                    <p-progressBar [value]="topic.weight" [showValue]="false"
+                        styleClass="inline-progress"></p-progressBar>
                 </div>
                 <div class="col-updated">
                     <span class="updated-time">{{ getRelativeTime(topic.createdOn) }}</span>
