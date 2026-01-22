@@ -4,6 +4,7 @@ using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Features.CreateProfile;
 using HexMaster.Attendr.Profiles.Features.UpdateProfile;
+using HexMaster.Attendr.Profiles.Repositories;
 
 namespace HexMaster.Attendr.Profiles.Api.Endpoints;
 
@@ -21,6 +22,13 @@ public static class ProfileEndpoints
         var group = app.MapGroup("/api/profiles")
             .WithName("Profiles");
 
+        group.MapGet("/", GetProfile)
+            .WithName("GetProfile")
+            .Produces<ProfileDetailsDto>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
         group.MapPost("/", CreateProfile)
             .WithName("CreateProfile")
             .Produces<CreateProfileResult>(StatusCodes.Status201Created)
@@ -37,6 +45,45 @@ public static class ProfileEndpoints
             .RequireAuthorization();
 
         return app;
+    }
+
+    private static async Task<IResult> GetProfile(
+        ClaimsPrincipal user,
+        IProfileRepository repository,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var subjectId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? user.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrWhiteSpace(subjectId))
+            {
+                return Results.Unauthorized();
+            }
+
+            var profile = await repository.GetBySubjectIdAsync(subjectId, cancellationToken);
+            if (profile is null)
+            {
+                return Results.NotFound();
+            }
+
+            var result = new ProfileDetailsDto(
+                profile.Id,
+                profile.DisplayName,
+                profile.FirstName,
+                profile.LastName,
+                profile.Email,
+                null,
+                profile.TagLine,
+                profile.IsSearchable);
+
+            return Results.Ok(result);
+        }
+        catch (Exception)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 
     private static async Task<IResult> CreateProfile(

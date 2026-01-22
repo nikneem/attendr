@@ -87,7 +87,9 @@ public static class ProfilesIntegrationEndpoints
                 profile.FirstName,
                 profile.LastName,
                 profile.Email,
-                null); // ProfilePictureUrl not yet implemented
+                null,
+                profile.TagLine,
+                profile.IsSearchable); // ProfilePictureUrl not yet implemented
 
             return Results.Ok(result);
         }

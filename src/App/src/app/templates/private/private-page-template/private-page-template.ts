@@ -42,7 +42,8 @@ export class PrivatePageTemplateComponent {
     });
 
     accountItems: MenuItem[] = [
-        { label: 'Preferences', icon: 'pi pi-sliders-h', routerLink: ['/app/preferences/notifications'] },
+        { label: 'Preferences', icon: 'pi pi-user-edit', routerLink: ['/app/preferences/account'] },
+        { label: 'Notifications', icon: 'pi pi-bell', routerLink: ['/app/preferences/notifications'] },
         { separator: true },
         { label: 'Log out', icon: 'pi pi-sign-out', command: () => this.logout() },
     ];

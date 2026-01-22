@@ -99,7 +99,7 @@ public sealed class ProcessNotificationTriggerCommandHandlerTests
 
         var profileService = new Mock<IProfilesIntegrationService>();
         profileService.Setup(s => s.GetProfileDetails(profileId.ToString(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ProfileDetailsDto(profileId.ToString(), "Display", "First", "Last", "user@test.local", null));
+            .ReturnsAsync(new ProfileDetailsDto(profileId.ToString(), "Display", "First", "Last", "user@test.local", null, null, false));
 
         var emailService = new Mock<IEmailNotificationService>();
         var pushService = new Mock<IPushNotificationService>();

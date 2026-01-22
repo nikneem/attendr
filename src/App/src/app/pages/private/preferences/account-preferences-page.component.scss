@@ -1,0 +1,172 @@
+.account-preferences-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+
+    .card-subtitle {
+        margin-bottom: 1.5rem;
+        color: var(--text-color-secondary);
+
+        p {
+            margin: 0;
+        }
+    }
+
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 0;
+        gap: 1rem;
+
+        p {
+            color: var(--text-color-secondary);
+            margin: 0;
+        }
+    }
+
+    .profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            label {
+                font-weight: 600;
+                color: var(--text-color);
+            }
+
+            input[pInputText] {
+                width: 100%;
+            }
+
+            input[disabled] {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            .field-hint {
+                color: var(--text-color-secondary);
+                font-size: 0.875rem;
+            }
+
+            &.checkbox-field {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1rem;
+                border: 1px solid var(--surface-border);
+                border-radius: var(--border-radius);
+                background-color: var(--surface-section);
+
+                .field-content {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                }
+
+                label {
+                    margin: 0;
+                }
+
+                .field-hint {
+                    display: block;
+                }
+            }
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--surface-border);
+        }
+    }
+
+    .toggle-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .toggle-switch {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 48px;
+        height: 28px;
+        background-color: #d0d0d0;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+
+        &::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background-color: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        &:checked {
+            background-color: #4caf50;
+
+            &::after {
+                left: 23px;
+                box-shadow: 0 2px 4px rgba(76, 175, 80, 0.4);
+            }
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+            background-color: #e0e0e0;
+        }
+
+        &:not(:disabled):hover {
+            background-color: #b0b0b0;
+        }
+
+        &:not(:disabled):checked:hover {
+            background-color: #45a049;
+        }
+
+        &:focus-visible {
+            outline: 2px solid #4caf50;
+            outline-offset: 2px;
+        }
+    }
+
+    .toggle-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-color-secondary);
+        min-width: 30px;
+        text-align: center;
+        letter-spacing: 0.5px;
+    }
+
+    p-message {
+        margin-bottom: 1rem;
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .account-preferences-container {
+        padding: 1rem;
+    }
+}
