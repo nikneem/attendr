@@ -1,0 +1,25 @@
+<div class="preferences-layout">
+    <div class="preferences-header">
+        <h1>Preferences</h1>
+        <p>Manage your account settings and preferences</p>
+    </div>
+
+    <div class="preferences-tabs">
+        <a routerLink="/app/preferences/account" class="tab-link" [class.active]="isActive('account')">
+            <i class="pi pi-user"></i>
+            <span>Account</span>
+        </a>
+        <a routerLink="/app/preferences/topics" class="tab-link" [class.active]="isActive('topics')">
+            <i class="pi pi-tags"></i>
+            <span>Focus Areas</span>
+        </a>
+        <a routerLink="/app/preferences/notifications" class="tab-link" [class.active]="isActive('notifications')">
+            <i class="pi pi-bell"></i>
+            <span>Notifications</span>
+        </a>
+    </div>
+
+    <div class="preferences-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

@@ -1,42 +1,43 @@
-<div class="focus-areas-container">
-    <p-card header="Focus Areas">
-        <div class="card-subtitle">
+<p-card>
+    <ng-template pTemplate="header">
+        <div class="card-header-content">
+            <h2>Focus Areas</h2>
             <p>Topics identified from your profile and activities</p>
         </div>
+    </ng-template>
 
-        @if (topicsLoading()) {
-        <div class="loading-container">
-            <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" />
-            <p>Loading focus areas...</p>
+    @if (topicsLoading()) {
+    <div class="loading-container">
+        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" />
+        <p>Loading focus areas...</p>
+    </div>
+    } @else if (topics().length === 0) {
+    <div class="empty-state">
+        <p>No focus areas found yet. Focus areas will be added as you interact with the system.</p>
+    </div>
+    } @else {
+    <div class="topics-table">
+        <div class="table-header">
+            <div class="col-topic">Topic</div>
+            <div class="col-weight">Weight</div>
+            <div class="col-updated">Last Updated</div>
         </div>
-        } @else if (topics().length === 0) {
-        <div class="empty-state">
-            <p>No focus areas found yet. Focus areas will be added as you interact with the system.</p>
-        </div>
-        } @else {
-        <div class="topics-table">
-            <div class="table-header">
-                <div class="col-topic">Topic</div>
-                <div class="col-weight">Weight</div>
-                <div class="col-updated">Last Updated</div>
+        @for (topic of topics(); track topic.id) {
+        <div class="topic-row">
+            <div class="col-topic">
+                <span class="topic-name">{{ topic.topicName }}</span>
+                <span class="topic-badge" [class.manual]="topic.isManual" [class.ai]="!topic.isManual">
+                    {{ topic.isManual ? 'Manual' : 'AI' }}
+                </span>
             </div>
-            @for (topic of topics(); track topic.id) {
-            <div class="topic-row">
-                <div class="col-topic">
-                    <span class="topic-name">{{ topic.topicName }}</span>
-                    <span class="topic-badge" [class.manual]="topic.isManual" [class.ai]="!topic.isManual">
-                        {{ topic.isManual ? 'Manual' : 'AI' }}
-                    </span>
-                </div>
-                <div class="col-weight">
-                    <p-progressBar [value]="topic.weight" showValue="true"></p-progressBar>
-                </div>
-                <div class="col-updated">
-                    <span class="updated-time">{{ topic.relativeTime }}</span>
-                </div>
+            <div class="col-weight">
+                <p-progressBar [value]="topic.weight" showValue="true"></p-progressBar>
             </div>
-            }
+            <div class="col-updated">
+                <span class="updated-time">{{ topic.relativeTime }}</span>
+            </div>
         </div>
         }
-    </p-card>
-</div>
+    </div>
+    }
+</p-card>

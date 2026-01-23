@@ -1,40 +1,46 @@
-<div class="notification-preferences-container">
-    <!-- PWA Install Banner -->
-    <div *ngIf="showPwaInstallBanner()" class="pwa-install-banner">
-        <p-message
-            [text]="'Install Attendr as an app for a better mobile experience with faster performance, offline support, and improved push notifications.'"
-            severity="info" [styleClass]="'banner-message'">
-        </p-message>
-        <div class="banner-actions">
-            <p-button label="Install App" icon="pi pi-download" (onClick)="installApp()" [loading]="isInstallingApp()"
-                [disabled]="isInstallingApp()">
-            </p-button>
-            <p-button label="Dismiss" (onClick)="dismissInstallBanner()" severity="secondary" text>
-            </p-button>
-        </div>
+<!-- PWA Install Banner -->
+<div *ngIf="showPwaInstallBanner()" class="pwa-install-banner">
+    <p-message
+        [text]="'Install Attendr as an app for a better mobile experience with faster performance, offline support, and improved push notifications.'"
+        severity="info" [styleClass]="'banner-message'">
+    </p-message>
+    <div class="banner-actions">
+        <p-button label="Install App" icon="pi pi-download" (onClick)="installApp()" [loading]="isInstallingApp()"
+            [disabled]="isInstallingApp()">
+        </p-button>
+        <p-button label="Dismiss" (onClick)="dismissInstallBanner()" severity="secondary" text>
+        </p-button>
     </div>
+</div>
 
-    <!-- Push Permission Banner -->
-    <div *ngIf="showPermissionBanner()" class="permission-banner">
-        <p-message
-            [text]="'You have enabled push notifications, but Attendr does not have push notification permissions on this device yet.'"
-            severity="warn" [styleClass]="'banner-message'">
-        </p-message>
-        <div class="banner-actions">
-            <p-button label="Allow" icon="pi pi-check" (onClick)="requestPushPermission()"
-                [loading]="isRequestingPermission()" [disabled]="isRequestingPermission()">
-            </p-button>
-            <p-button label="Dismiss" (onClick)="dismissPermissionBanner()" severity="secondary" text>
-            </p-button>
-        </div>
+<!-- Push Permission Banner -->
+<div *ngIf="showPermissionBanner()" class="permission-banner">
+    <p-message
+        [text]="'You have enabled push notifications, but Attendr does not have push notification permissions on this device yet.'"
+        severity="warn" [styleClass]="'banner-message'">
+    </p-message>
+    <div class="banner-actions">
+        <p-button label="Allow" icon="pi pi-check" (onClick)="requestPushPermission()"
+            [loading]="isRequestingPermission()" [disabled]="isRequestingPermission()">
+        </p-button>
+        <p-button label="Dismiss" (onClick)="dismissPermissionBanner()" severity="secondary" text>
+        </p-button>
     </div>
+</div>
 
-    <div class="preferences-header">
-        <h1>Notification Preferences</h1>
-        <p>Manage how and when you receive notifications</p>
-        <p-button label="Send Test Notification" icon="pi pi-send" [loading]="isSendingTest()" [disabled]="isLoading()"
-            (onClick)="sendTestNotification()" severity="secondary" size="small"></p-button>
-    </div>
+<p-card>
+    <ng-template pTemplate="header">
+        <div class="card-header-content">
+            <div class="header-main">
+                <div>
+                    <h2>Notification Preferences</h2>
+                    <p>Manage how and when you receive notifications</p>
+                </div>
+                <p-button label="Send Test" icon="pi pi-send" [loading]="isSendingTest()" [disabled]="isLoading()"
+                    (onClick)="sendTestNotification()" severity="secondary" size="small"></p-button>
+            </div>
+        </div>
+    </ng-template>
 
     <!-- Loading State -->
     <div *ngIf="isLoading()" class="loading-container">
@@ -81,4 +87,4 @@
     <div *ngIf="!isLoading() && (!preferences() || preferences()!.notificationTypes.length === 0)" class="empty-state">
         <p>No notification types available</p>
     </div>
-</div>
+</p-card>

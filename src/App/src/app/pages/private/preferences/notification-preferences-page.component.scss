@@ -1,7 +1,40 @@
-.notification-preferences-container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+:host {
+    display: block;
+}
+
+::ng-deep .p-card {
+    .p-card-header {
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+        border-bottom: 1px solid var(--surface-border);
+    }
+
+    .p-card-body {
+        padding: 1.5rem;
+    }
+}
+
+.card-header-content {
+    h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    p {
+        margin: 0;
+        color: var(--text-color-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .header-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
 }
 
 .pwa-install-banner {
@@ -63,22 +96,6 @@
         .banner-actions>* {
             width: 100%;
         }
-    }
-}
-
-.preferences-header {
-    margin-bottom: 2rem;
-
-    h1 {
-        margin: 0 0 0.5rem 0;
-        font-size: 2rem;
-        font-weight: 600;
-    }
-
-    p {
-        margin: 0;
-        color: var(--text-color-secondary);
-        font-size: 1rem;
     }
 }
 
