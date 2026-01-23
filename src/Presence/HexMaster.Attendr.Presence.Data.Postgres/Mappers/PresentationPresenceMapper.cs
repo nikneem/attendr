@@ -62,13 +62,13 @@ internal static class PresentationPresenceMapper
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var speakers = entity.Speakers.Select(s => new PresentationSpeaker(
+        var speakers = entity.Speakers?.Select(s => new PresentationSpeaker(
             s.SpeakerId,
             s.Name,
             s.ProfilePictureUrl
-        )).ToList();
+        )).ToList() ?? [];
 
-        var topics = entity.Topics.Select(t => new PresentationTopic(t.Key, t.Name)).ToList();
+        var topics = entity.Topics?.Select(t => new PresentationTopic(t.Key, t.Name)).ToList() ?? [];
 
         return new PresentationPresence(
             entity.ProfileId,
