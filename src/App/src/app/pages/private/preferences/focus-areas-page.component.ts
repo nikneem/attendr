@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TagModule } from 'primeng/tag';
 import { MessageService } from 'primeng/api';
 import { ProfileService } from '@services/profile.service';
 import { ProfileTopicDto } from '@models/profile-topic-dto';
@@ -19,6 +20,7 @@ interface TopicWithRelativeTime extends ProfileTopicDto {
         CardModule,
         ProgressSpinnerModule,
         ProgressBarModule,
+        TagModule,
     ],
     templateUrl: './focus-areas-page.component.html',
     styleUrl: './focus-areas-page.component.scss',
@@ -31,10 +33,12 @@ export class FocusAreasPageComponent implements OnInit {
     private rawTopics = signal<ProfileTopicDto[]>([]);
 
     protected topics = computed<TopicWithRelativeTime[]>(() => {
-        return this.rawTopics().map(topic => ({
-            ...topic,
-            relativeTime: this.getRelativeTime(topic.createdOn)
-        }));
+        return this.rawTopics()
+            .map(topic => ({
+                ...topic,
+                relativeTime: this.getRelativeTime(topic.createdOn)
+            }))
+            .sort((a, b) => b.weight - a.weight);
     });
 
     ngOnInit(): void {

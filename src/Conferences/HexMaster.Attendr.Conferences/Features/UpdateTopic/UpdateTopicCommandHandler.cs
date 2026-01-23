@@ -110,7 +110,7 @@ public sealed class UpdateTopicCommandHandler : ICommandHandler<UpdateTopicComma
                 _logger.LogInformation(
                     "Published PresentationUpdatedEvent for presentation {PresentationId} due to topic {TopicId} update",
                     presentationId,
-                    .Id);
+                    command.Id);
             }
 
             activity?.SetStatus(ActivityStatusCode.Ok);
