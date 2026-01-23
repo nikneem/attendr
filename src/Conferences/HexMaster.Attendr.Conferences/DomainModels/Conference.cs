@@ -227,17 +227,17 @@ public sealed class Conference : StatefulDomainModel<Guid>
         }
 
         // Validate room exists
-        if (!_rooms.Any(r => r.Id == presentation.RoomId))
+        if (!_rooms.Any(r => r.Id == presentation.Room.Id))
         {
-            throw new InvalidOperationException($"Room with ID {presentation.RoomId} does not exist in the conference.");
+            throw new InvalidOperationException($"Room with ID {presentation.Room.Id} does not exist in the conference.");
         }
 
         // Validate all speakers exist
-        foreach (var speakerId in presentation.SpeakerIds)
+        foreach (var speaker in presentation.Speakers)
         {
-            if (!_speakers.Any(s => s.Id == speakerId))
+            if (!_speakers.Any(s => s.Id == speaker.Id))
             {
-                throw new InvalidOperationException($"Speaker with ID {speakerId} does not exist in the conference.");
+                throw new InvalidOperationException($"Speaker with ID {speaker.Id} does not exist in the conference.");
             }
         }
 

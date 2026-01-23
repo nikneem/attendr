@@ -77,4 +77,12 @@ public interface ITopicsRepository
     /// <param name="topicId">The unique identifier of the topic.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     Task DeleteTopicPresentationReferencesAsync(Guid topicId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets all presentations linked to a topic that are scheduled in the future.
+    /// </summary>
+    /// <param name="topicId">The unique identifier of the topic.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>List of tuples containing conference IDs and presentation IDs.</returns>
+    Task<List<(Guid ConferenceId, Guid PresentationId)>> GetFuturePresentationsByTopicIdAsync(Guid topicId, CancellationToken cancellationToken = default);
 }

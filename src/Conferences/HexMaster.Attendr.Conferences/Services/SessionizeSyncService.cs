@@ -194,14 +194,15 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                         var isScheduleChanged =
                             existingPresentation.StartDateTime != startDateTime ||
                             existingPresentation.EndDateTime != endDateTime ||
-                            existingPresentation.RoomId != roomLocalId;
+                            existingPresentation.Room.Id != roomLocalId;
 
                         // Update existing presentation
                         existingPresentation.UpdateDetails(title, description, startDateTime, endDateTime);
-                        existingPresentation.ChangeRoom(roomLocalId);
+                        var presentationRoom = conference.Rooms.First(r => r.Id == roomLocalId);
+                        existingPresentation.ChangeRoom(presentationRoom);
 
                         // Check for speaker changes
-                        var currentSpeakerIds = existingPresentation.SpeakerIds.OrderBy(x => x).ToList();
+                        var currentSpeakerIds = existingPresentation.Speakers.Select(s => s.Id).OrderBy(x => x).ToList();
                         var newSpeakerIds = speakerIds.OrderBy(x => x).ToList();
                         if (!currentSpeakerIds.SequenceEqual(newSpeakerIds))
                         {
@@ -213,7 +214,8 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                             // Add new speakers
                             foreach (var speakerId in newSpeakerIds.Where(s => !currentSpeakerIds.Contains(s)))
                             {
-                                existingPresentation.AddSpeaker(speakerId);
+                                var speaker = conference.Speakers.First(s => s.Id == speakerId);
+                                existingPresentation.AddSpeaker(speaker);
                             }
                         }
 
@@ -238,13 +240,15 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                     else
                     {
                         // Create new presentation
+                        var presentationSpeakers = conference.Speakers.Where(s => speakerIds.Contains(s.Id)).ToList();
+                        var presentationRoom = conference.Rooms.First(r => r.Id == roomLocalId);
                         var presentation = Presentation.Create(
                             title,
                             description,
                             startDateTime,
                             endDateTime,
-                            roomLocalId,
-                            speakerIds,
+                            presentationRoom,
+                            presentationSpeakers,
                             session.Id);
 
                         try
@@ -268,9 +272,6 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
         // Publish integration events for updated presentations
         foreach (var (presentation, isScheduleChanged) in updatedPresentations)
         {
-            var room = conference.Rooms.FirstOrDefault(r => r.Id == presentation.RoomId);
-            var roomName = room?.Name ?? "Unknown";
-
             var integrationEvent = new PresentationUpdatedEvent
             {
                 ConferenceId = conference.Id,
@@ -279,9 +280,9 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                 Abstract = presentation.Abstract,
                 StartDateTime = presentation.StartDateTime,
                 EndDateTime = presentation.EndDateTime,
-                RoomId = presentation.RoomId,
-                RoomName = roomName,
-                SpeakerIds = presentation.SpeakerIds.ToList(),
+                RoomId = presentation.Room.Id,
+                RoomName = presentation.Room.Name,
+                SpeakerIds = presentation.Speakers.Select(s => s.Id).ToList(),
                 ExternalId = presentation.ExternalId,
                 IsScheduleChanged = isScheduleChanged
             };
