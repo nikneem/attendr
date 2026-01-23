@@ -8,5 +8,7 @@ public interface IProfileTopicRepository
 
     Task<ProfileTopic?> GetByProfileIdAndKeyAsync(string profileId, string topicKey, CancellationToken cancellationToken = default);
 
+    Task<ProfileTopic?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+
     Task UpsertAsync(ProfileTopic topic, CancellationToken cancellationToken = default);
 }

@@ -43,6 +43,19 @@ public sealed class GetProfileTopicsQueryHandler : IQueryHandler<GetProfileTopic
         return topics
             .Select(topic =>
             {
+                // Manual topics always have a weight of 100
+                if (topic.IsManual)
+                {
+                    return new ProfileTopicDto(
+                        topic.Id,
+                        topic.ProfileId,
+                        topic.TopicKey,
+                        topic.TopicName,
+                        topic.IsManual,
+                        topic.CreatedOn,
+                        100);
+                }
+
                 // Filter occasions within the max age timespan
                 var relevantOccasions = topic.Occasions
                     .Where(o => o.Date >= maxAgeDate)

@@ -47,6 +47,22 @@ public sealed class TableStorageProfileTopicRepository(TableServiceClient tableS
         }
     }
 
+    public async Task<ProfileTopic?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(id);
+
+        var normalizedId = id.Trim();
+        var tableClient = await GetTableClient(cancellationToken);
+        var filter = $"Id eq '{normalizedId}'";
+
+        await foreach (var entity in tableClient.QueryAsync<ProfileTopicEntity>(filter, cancellationToken: cancellationToken))
+        {
+            return ProfileTopicMapper.ToDomain(entity);
+        }
+
+        return null;
+    }
+
     public async Task UpsertAsync(ProfileTopic topic, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(topic);
