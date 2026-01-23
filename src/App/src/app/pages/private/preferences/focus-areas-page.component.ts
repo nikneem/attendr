@@ -4,6 +4,8 @@ import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { PopoverModule } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { ProfileService } from '@services/profile.service';
 import { ProfileTopicDto } from '@models/profile-topic-dto';
@@ -21,6 +23,8 @@ interface TopicWithRelativeTime extends ProfileTopicDto {
         ProgressSpinnerModule,
         ProgressBarModule,
         TagModule,
+        ButtonModule,
+        PopoverModule,
     ],
     templateUrl: './focus-areas-page.component.html',
     styleUrl: './focus-areas-page.component.scss',

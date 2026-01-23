@@ -14,6 +14,18 @@
 }
 
 .card-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .header-left {
+        flex: 1;
+    }
+
+    .header-right {
+        margin-left: 1rem;
+    }
+
     h2 {
         margin: 0 0 0.5rem 0;
         font-size: 1.5rem;
