@@ -11,7 +11,6 @@ import { ProfileService } from '@services/profile.service';
 import { ProfileStore } from '@stores/profile.store';
 import { ProfileDetailsDto } from '@models/profile-details-dto';
 import { UpdateProfileRequest } from '@models/update-profile-request';
-import { ProfileTopicDto } from '@models/profile-topic-dto';
 
 @Component({
     selector: 'attn-account-preferences-page',
@@ -35,10 +34,8 @@ export class AccountPreferencesPageComponent implements OnInit {
 
     protected loading = signal<boolean>(false);
     protected saving = signal<boolean>(false);
-    protected topicsLoading = signal<boolean>(false);
 
     protected profileDetails = signal<ProfileDetailsDto | null>(null);
-    protected topics = signal<ProfileTopicDto[]>([]);
 
     // Form fields - now writable signals
     displayName = signal<string>('');
@@ -50,7 +47,6 @@ export class AccountPreferencesPageComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadProfile();
-        this.loadTopics();
     }
 
     private loadProfile(): void {
@@ -75,26 +71,6 @@ export class AccountPreferencesPageComponent implements OnInit {
                     detail: 'Failed to load profile details. Please try again.',
                 });
                 this.loading.set(false);
-            },
-        });
-    }
-
-    private loadTopics(): void {
-        this.topicsLoading.set(true);
-
-        this.profileService.getProfileTopics().subscribe({
-            next: (topics) => {
-                this.topics.set(topics);
-                this.topicsLoading.set(false);
-            },
-            error: (err) => {
-                console.error('Failed to load topics', err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Failed to load profile topics.',
-                });
-                this.topicsLoading.set(false);
             },
         });
     }

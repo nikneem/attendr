@@ -65,47 +65,4 @@
         </form>
         }
     </p-card>
-
-    <p-card header="Your Topics" styleClass="topics-card">
-        <div class="card-subtitle">
-            <p>Topics identified from your profile and activities</p>
-        </div>
-
-        @if (topicsLoading()) {
-        <div class="loading-container">
-            <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" />
-            <p>Loading topics...</p>
-        </div>
-        } @else if (topics().length === 0) {
-        <div class="empty-state">
-            <p>No topics found yet. Topics will be added as you interact with the system.</p>
-        </div>
-        } @else {
-        <div class="topics-table">
-            <div class="table-header">
-                <div class="col-topic">Topic</div>
-                <div class="col-weight">Weight</div>
-                <div class="col-updated">Last Updated</div>
-            </div>
-            @for (topic of topics(); track topic.id) {
-            <div class="topic-row">
-                <div class="col-topic">
-                    <span class="topic-name">{{ topic.topicName }}</span>
-                    <span class="topic-badge" [class.manual]="topic.isManual" [class.ai]="!topic.isManual">
-                        {{ topic.isManual ? 'Manual' : 'AI' }}
-                    </span>
-                </div>
-                <div class="col-weight">
-                    <span class="weight-value">{{ topic.weight }}%</span>
-                    <p-progressBar [value]="topic.weight" [showValue]="false"
-                        styleClass="inline-progress"></p-progressBar>
-                </div>
-                <div class="col-updated">
-                    <span class="updated-time">{{ getRelativeTime(topic.createdOn) }}</span>
-                </div>
-            </div>
-            }
-        </div>
-        }
-    </p-card>
 </div>
