@@ -12,7 +12,7 @@
         <p>Loading profile...</p>
     </div>
     } @else {
-    <form class="profile-form" (ngSubmit)="saveProfile()">
+    <div class="profile-form">
         <div class="form-field">
             <label for="displayName">Display Name *</label>
             <input pInputText id="displayName" [ngModel]="displayName()" (ngModelChange)="displayName.set($event)"
@@ -58,11 +58,6 @@
                 <span class="toggle-label">{{ isSearchable() ? 'On' : 'Off' }}</span>
             </div>
         </div>
-
-        <div class="form-actions">
-            <p-button type="submit" label="Save Changes" icon="pi pi-save" [loading]="saving()"
-                [disabled]="saving() || loading()" />
-        </div>
-    </form>
+    </div>
     }
 </p-card>
