@@ -64,6 +64,6 @@ public class GetProfileTopicsQueryHandlerTests
         Assert.Equal("topic-key", item.TopicKey);
         Assert.Equal("Topic Name", item.TopicName);
         Assert.True(item.IsManual);
-        Assert.Equal(10, item.Weight);
+        Assert.Equal(100, item.Weight); // Manual topics always return 100
     }
 }

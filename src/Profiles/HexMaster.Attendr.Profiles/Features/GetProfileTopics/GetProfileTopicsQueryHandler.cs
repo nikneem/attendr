@@ -44,30 +44,26 @@ public sealed class GetProfileTopicsQueryHandler : IQueryHandler<GetProfileTopic
             .Select(topic =>
             {
                 // Manual topics always have a weight of 100
+                int totalDecayWeight = 0;
                 if (topic.IsManual)
                 {
-                    return new ProfileTopicDto(
-                        topic.Id,
-                        topic.ProfileId,
-                        topic.TopicKey,
-                        topic.TopicName,
-                        topic.IsManual,
-                        topic.CreatedOn,
-                        100);
+                    totalDecayWeight = 100;
                 }
+                else
+                {
 
-                // Filter occasions within the max age timespan
-                var relevantOccasions = topic.Occasions
-                    .Where(o => o.Date >= maxAgeDate)
-                    .ToList();
+                    // Filter occasions within the max age timespan
+                    var relevantOccasions = topic.Occasions
+                        .Where(o => o.Date >= maxAgeDate)
+                        .ToList();
 
-                // Calculate total weight with exponential decay applied to each occasion
-                var totalDecayedWeight = relevantOccasions
-                    .Sum(o => _decayService.CalculateDecayedWeight(o.Weight, o.Date, now));
+                    // Calculate total weight with exponential decay applied to each occasion
+                    var totalDecayedWeight = relevantOccasions
+                        .Sum(o => _decayService.CalculateDecayedWeight(o.Weight, o.Date, now));
 
-                // Cap the total weight at 100
-                var cappedWeight = Math.Min(totalDecayedWeight, 100);
-
+                    // Cap the total weight at 100
+                    totalDecayedWeight = Math.Min(totalDecayedWeight, 100);
+                }
                 return new ProfileTopicDto(
                     topic.Id,
                     topic.ProfileId,
@@ -75,7 +71,7 @@ public sealed class GetProfileTopicsQueryHandler : IQueryHandler<GetProfileTopic
                     topic.TopicName,
                     topic.IsManual,
                     topic.CreatedOn,
-                    cappedWeight);
+                    totalDecayWeight);
             })
             .ToArray();
     }

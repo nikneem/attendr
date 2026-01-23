@@ -3,6 +3,7 @@ using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Features.SetTopicManualStatus;
 using HexMaster.Attendr.Profiles.Observability;
 using HexMaster.Attendr.Profiles.Repositories;
+using HexMaster.Attendr.Profiles.Tests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -12,16 +13,16 @@ public class SetTopicManualStatusCommandHandlerTests
 {
     private readonly Faker _faker = new();
     private readonly Mock<IProfileTopicRepository> _repository;
-    private readonly Mock<ProfileMetrics> _metrics;
+    private readonly ProfileMetrics _metrics;
     private readonly Mock<ILogger<SetTopicManualStatusCommandHandler>> _logger;
     private readonly SetTopicManualStatusCommandHandler _handler;
 
     public SetTopicManualStatusCommandHandlerTests()
     {
         _repository = new Mock<IProfileTopicRepository>();
-        _metrics = new Mock<ProfileMetrics>();
+        _metrics = TestMetricsFactory.CreateProfileMetrics();
         _logger = new Mock<ILogger<SetTopicManualStatusCommandHandler>>();
-        _handler = new SetTopicManualStatusCommandHandler(_repository.Object, _metrics.Object, _logger.Object);
+        _handler = new SetTopicManualStatusCommandHandler(_repository.Object, _metrics, _logger.Object);
     }
 
     [Fact]
