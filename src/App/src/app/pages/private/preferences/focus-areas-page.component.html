@@ -26,8 +26,8 @@
         <div class="topic-row">
             <div class="col-topic">
                 <span class="topic-name">{{ topic.topicName }}</span>
-                <p-tag [value]="topic.isManual ? 'Manual' : 'AI'" 
-                       [severity]="topic.isManual ? 'info' : 'success'"></p-tag>
+                <p-tag [value]="topic.isManual ? 'Manual' : 'AI'"
+                    [severity]="topic.isManual ? 'info' : 'success'"></p-tag>
             </div>
             <div class="col-weight">
                 <p-progressBar [value]="topic.weight" showValue="true"></p-progressBar>
