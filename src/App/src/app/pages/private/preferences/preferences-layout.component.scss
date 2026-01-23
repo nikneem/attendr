@@ -1,0 +1,99 @@
+.preferences-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+
+    .preferences-header {
+        margin-bottom: 1.5rem;
+
+        h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        p {
+            margin: 0;
+            color: var(--text-color-secondary);
+            font-size: 0.95rem;
+        }
+    }
+
+    .preferences-tabs {
+        display: flex;
+        gap: 0.5rem;
+        border-bottom: 2px solid var(--surface-border);
+        margin-bottom: 2rem;
+
+        .tab-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.25rem;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            background: transparent;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+
+            i {
+                font-size: 1rem;
+                color: var(--text-color-secondary);
+                transition: color 0.2s;
+            }
+
+            &:hover {
+                background: var(--surface-hover);
+            }
+
+            &.active {
+                border-bottom-color: var(--primary-color);
+
+                i {
+                    color: var(--primary-color);
+                }
+
+                span {
+                    color: var(--primary-color);
+                }
+            }
+        }
+    }
+
+    .preferences-content {
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .preferences-layout {
+        padding: 1rem;
+
+        .preferences-header {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.875rem;
+            }
+        }
+
+        .preferences-tabs {
+            .tab-link {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+
+                i {
+                    font-size: 0.875rem;
+                }
+            }
+        }
+    }
+}

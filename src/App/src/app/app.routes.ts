@@ -12,6 +12,8 @@ import { GroupsListPageComponent } from './pages/private/groups/groups-list-page
 import { GroupDetailsPageComponent } from './pages/private/groups/group-details-page.component';
 import { NotificationPreferencesPageComponent } from './pages/private/preferences/notification-preferences-page.component';
 import { AccountPreferencesPageComponent } from './pages/private/preferences/account-preferences-page.component';
+import { FocusAreasPageComponent } from './pages/private/preferences/focus-areas-page.component';
+import { PreferencesLayoutComponent } from './pages/private/preferences/preferences-layout.component';
 import { TopicsListPageComponent } from './pages/private/admin/topics/topics-list-page.component';
 import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
 import { PrivatePageTemplateComponent } from './templates/private/private-page-template/private-page-template';
@@ -34,8 +36,16 @@ export const routes: Routes = [
             { path: 'conferences/:id/rate', component: RateSessionsPageComponent },
             { path: 'groups', component: GroupsListPageComponent },
             { path: 'groups/:id', component: GroupDetailsPageComponent },
-            { path: 'preferences/account', component: AccountPreferencesPageComponent },
-            { path: 'preferences/notifications', component: NotificationPreferencesPageComponent },
+            {
+                path: 'preferences',
+                component: PreferencesLayoutComponent,
+                children: [
+                    { path: '', pathMatch: 'full', redirectTo: 'account' },
+                    { path: 'account', component: AccountPreferencesPageComponent },
+                    { path: 'topics', component: FocusAreasPageComponent },
+                    { path: 'notifications', component: NotificationPreferencesPageComponent }
+                ]
+            },
             { path: 'topics', component: TopicsListPageComponent }
         ]
     }
