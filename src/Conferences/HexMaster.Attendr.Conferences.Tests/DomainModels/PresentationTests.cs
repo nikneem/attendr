@@ -5,6 +5,9 @@ namespace HexMaster.Attendr.Conferences.Tests.DomainModels;
 
 public class PresentationTests
 {
+    private static Speaker CreateTestSpeaker() => Speaker.Create("Test Speaker");
+    private static Room CreateTestRoom() => Room.Create("Test Room", 100);
+
     [Fact]
     public void Create_WithValidData_ShouldCreatePresentation()
     {
@@ -13,11 +16,11 @@ public class PresentationTests
         var abstractText = "Learn about .NET fundamentals";
         var startDateTime = DateTime.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
-        var roomId = Guid.NewGuid();
-        var speakerIds = new[] { Guid.NewGuid() };
+        var room = CreateTestRoom();
+        var speakers = new[] { CreateTestSpeaker() };
 
         // Act
-        var presentation = Presentation.Create(title, abstractText, startDateTime, endDateTime, roomId, speakerIds);
+        var presentation = Presentation.Create(title, abstractText, startDateTime, endDateTime, room, speakers);
 
         // Assert
         Assert.NotNull(presentation);
@@ -26,8 +29,8 @@ public class PresentationTests
         Assert.Equal(abstractText, presentation.Abstract);
         Assert.Equal(startDateTime, presentation.StartDateTime);
         Assert.Equal(endDateTime, presentation.EndDateTime);
-        Assert.Equal(roomId, presentation.RoomId);
-        Assert.Equal(speakerIds, presentation.SpeakerIds);
+        Assert.Equal(room.Id, presentation.Room.Id);
+        Assert.Single(presentation.Speakers);
         Assert.Equal(DomainModelState.Created, presentation.State);
     }
 
@@ -39,12 +42,12 @@ public class PresentationTests
         var abstractText = "Learn about .NET fundamentals";
         var startDateTime = DateTime.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
-        var roomId = Guid.NewGuid();
-        var speakerIds = new[] { Guid.NewGuid() };
+        var room = CreateTestRoom();
+        var speakers = new[] { CreateTestSpeaker() };
         var externalId = "ext-789";
 
         // Act
-        var presentation = Presentation.Create(title, abstractText, startDateTime, endDateTime, roomId, speakerIds, externalId);
+        var presentation = Presentation.Create(title, abstractText, startDateTime, endDateTime, room, speakers, externalId);
 
         // Assert
         Assert.Equal(externalId, presentation.ExternalId);
@@ -59,7 +62,7 @@ public class PresentationTests
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            Presentation.Create(null!, "Abstract", startDateTime, endDateTime, Guid.NewGuid(), new[] { Guid.NewGuid() }));
+            Presentation.Create(null!, "Abstract", startDateTime, endDateTime, CreateTestRoom(), new[] { CreateTestSpeaker() }));
         Assert.Contains("title", exception.Message.ToLower());
     }
 
@@ -72,7 +75,7 @@ public class PresentationTests
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            Presentation.Create(string.Empty, "Abstract", startDateTime, endDateTime, Guid.NewGuid(), new[] { Guid.NewGuid() }));
+            Presentation.Create(string.Empty, "Abstract", startDateTime, endDateTime, CreateTestRoom(), new[] { CreateTestSpeaker() }));
         Assert.Contains("title", exception.Message.ToLower());
     }
 
@@ -85,7 +88,7 @@ public class PresentationTests
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            Presentation.Create("Title", null!, startDateTime, endDateTime, Guid.NewGuid(), new[] { Guid.NewGuid() }));
+            Presentation.Create("Title", null!, startDateTime, endDateTime, CreateTestRoom(), new[] { CreateTestSpeaker() }));
         Assert.Contains("abstract", exception.Message.ToLower());
     }
 
@@ -98,7 +101,7 @@ public class PresentationTests
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            Presentation.Create("Title", string.Empty, startDateTime, endDateTime, Guid.NewGuid(), new[] { Guid.NewGuid() }));
+            Presentation.Create("Title", string.Empty, startDateTime, endDateTime, CreateTestRoom(), new[] { CreateTestSpeaker() }));
         Assert.Contains("abstract", exception.Message.ToLower());
     }
 
@@ -111,25 +114,12 @@ public class PresentationTests
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            Presentation.Create("Title", "Abstract", startDateTime, endDateTime, Guid.NewGuid(), new[] { Guid.NewGuid() }));
+            Presentation.Create("Title", "Abstract", startDateTime, endDateTime, CreateTestRoom(), new[] { CreateTestSpeaker() }));
         Assert.Contains("end", exception.Message.ToLower());
     }
 
     [Fact]
-    public void Create_WithEmptyRoomId_ShouldThrowArgumentException()
-    {
-        // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
-        var endDateTime = startDateTime.AddHours(1);
-
-        // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() =>
-            Presentation.Create("Title", "Abstract", startDateTime, endDateTime, Guid.Empty, new[] { Guid.NewGuid() }));
-        Assert.Contains("room", exception.Message.ToLower());
-    }
-
-    [Fact]
-    public void Create_WithNullSpeakerIds_ShouldThrowArgumentNullException()
+    public void Create_WithNullRoom_ShouldThrowArgumentNullException()
     {
         // Arrange
         var startDateTime = DateTime.UtcNow.AddDays(1);
@@ -137,12 +127,25 @@ public class PresentationTests
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            Presentation.Create("Title", "Abstract", startDateTime, endDateTime, Guid.NewGuid(), null!));
-        Assert.Equal("speakerIds", exception.ParamName);
+            Presentation.Create("Title", "Abstract", startDateTime, endDateTime, null!, new[] { CreateTestSpeaker() }));
+        Assert.Equal("room", exception.ParamName);
     }
 
     [Fact]
-    public void Create_WithEmptySpeakerIds_ShouldThrowArgumentException()
+    public void Create_WithNullSpeakers_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var endDateTime = startDateTime.AddHours(1);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            Presentation.Create("Title", "Abstract", startDateTime, endDateTime, CreateTestRoom(), null!));
+        Assert.Equal("speakers", exception.ParamName);
+    }
+
+    [Fact]
+    public void Create_WithEmptySpeakers_ShouldThrowArgumentException()
     {
         // Arrange
         var startDateTime = DateTime.UtcNow.AddDays(1);
@@ -150,7 +153,7 @@ public class PresentationTests
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() =>
-            Presentation.Create("Title", "Abstract", startDateTime, endDateTime, Guid.NewGuid(), Array.Empty<Guid>()));
+            Presentation.Create("Title", "Abstract", startDateTime, endDateTime, CreateTestRoom(), Array.Empty<Speaker>()));
         Assert.Contains("speaker", exception.Message.ToLower());
     }
 
@@ -162,14 +165,14 @@ public class PresentationTests
         var abstractText = "Discussion about technology";
         var startDateTime = DateTime.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
-        var roomId = Guid.NewGuid();
-        var speakerIds = new[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+        var room = CreateTestRoom();
+        var speakers = new[] { CreateTestSpeaker(), CreateTestSpeaker(), CreateTestSpeaker() };
 
         // Act
-        var presentation = Presentation.Create(title, abstractText, startDateTime, endDateTime, roomId, speakerIds);
+        var presentation = Presentation.Create(title, abstractText, startDateTime, endDateTime, room, speakers);
 
         // Assert
-        Assert.Equal(3, presentation.SpeakerIds.Count());
+        Assert.Equal(3, presentation.Speakers.Count);
     }
 
     [Fact]
@@ -181,11 +184,11 @@ public class PresentationTests
         var abstractText = "Learn about .NET fundamentals";
         var startDateTime = DateTime.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
-        var roomId = Guid.NewGuid();
-        var speakerIds = new[] { Guid.NewGuid() };
+        var room = CreateTestRoom();
+        var speakers = new[] { CreateTestSpeaker() };
 
         // Act
-        var presentation = Presentation.FromPersisted(id, title, abstractText, startDateTime, endDateTime, roomId, speakerIds, null);
+        var presentation = Presentation.FromPersisted(id, title, abstractText, startDateTime, endDateTime, room, speakers, null);
 
         // Assert
         Assert.NotNull(presentation);
@@ -203,12 +206,12 @@ public class PresentationTests
         var abstractText = "Learn about .NET fundamentals";
         var startDateTime = DateTime.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
-        var roomId = Guid.NewGuid();
-        var speakerIds = new[] { Guid.NewGuid() };
+        var room = CreateTestRoom();
+        var speakers = new[] { CreateTestSpeaker() };
         var externalId = "ext-789";
 
         // Act
-        var presentation = Presentation.FromPersisted(id, title, abstractText, startDateTime, endDateTime, roomId, speakerIds, externalId);
+        var presentation = Presentation.FromPersisted(id, title, abstractText, startDateTime, endDateTime, room, speakers, externalId);
 
         // Assert
         Assert.Equal(externalId, presentation.ExternalId);

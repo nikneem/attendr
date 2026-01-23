@@ -213,8 +213,8 @@ public class ConferenceTests
         var presentation = ConferenceFactory.CreatePresentation(
             startDateTime: presentationStart,
             endDateTime: presentationEnd,
-            roomId: room.Id,
-            speakerIds: new[] { speaker.Id });
+            room: room,
+            speakers: new[] { speaker });
 
         // Act
         conference.AddPresentation(presentation);
@@ -239,7 +239,8 @@ public class ConferenceTests
     {
         // Arrange
         var conference = ConferenceFactory.CreateConference();
-        var presentation = ConferenceFactory.CreatePresentation(roomId: Guid.NewGuid());
+        var nonExistentRoom = ConferenceFactory.CreateRoom();
+        var presentation = ConferenceFactory.CreatePresentation(room: nonExistentRoom);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => conference.AddPresentation(presentation));
@@ -254,9 +255,10 @@ public class ConferenceTests
         var room = ConferenceFactory.CreateRoom();
         conference.AddRoom(room);
 
+        var nonExistentSpeaker = ConferenceFactory.CreateSpeaker();
         var presentation = ConferenceFactory.CreatePresentation(
-            roomId: room.Id,
-            speakerIds: new[] { Guid.NewGuid() });
+            room: room,
+            speakers: new[] { nonExistentSpeaker });
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => conference.AddPresentation(presentation));

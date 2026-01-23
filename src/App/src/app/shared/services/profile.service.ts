@@ -31,4 +31,8 @@ export class ProfileService {
     getProfileTopics(): Observable<ProfileTopicDto[]> {
         return this.http.get<ProfileTopicDto[]>(`${this.apiUrl}/topics`);
     }
+
+    setTopicManualStatus(topicId: string, isManual: boolean): Observable<ProfileTopicDto> {
+        return this.http.put<ProfileTopicDto>(`${this.apiUrl}/topics/${topicId}`, { isManual });
+    }
 }

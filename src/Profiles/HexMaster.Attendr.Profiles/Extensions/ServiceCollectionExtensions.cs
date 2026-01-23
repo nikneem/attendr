@@ -3,8 +3,10 @@ using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Features.CreateProfile;
 using HexMaster.Attendr.Profiles.Features.GetProfileTopics;
+using HexMaster.Attendr.Profiles.Features.SetTopicManualStatus;
 using HexMaster.Attendr.Profiles.Features.UpdateProfile;
 using HexMaster.Attendr.Profiles.Observability;
+using HexMaster.Attendr.Profiles.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,11 +28,15 @@ public static class ServiceCollectionExtensions
         // Register metrics
         services.AddSingleton<ProfileMetrics>();
 
+        // Register services
+        services.AddSingleton<TopicWeightDecayService>();
+
         services.AddAttendrCache(configuration);
 
         // Register command handlers
         services.AddScoped<ICommandHandler<CreateProfileCommand, CreateProfileResult>, CreateProfileCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateProfileCommand, UpdateProfileResult>, UpdateProfileCommandHandler>();
+        services.AddScoped<ICommandHandler<SetTopicManualStatusCommand, ProfileTopicDto>, SetTopicManualStatusCommandHandler>();
 
         // Register query handlers
         services.AddScoped<IQueryHandler<GetProfileTopicsQuery, IReadOnlyList<ProfileTopicDto>>, GetProfileTopicsQueryHandler>();

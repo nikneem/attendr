@@ -3,6 +3,9 @@ using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
+using HexMaster.Attendr.IntegrationEvents.Models;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 
 namespace HexMaster.Attendr.Conferences.Features.UpdateTopic;
@@ -13,15 +16,21 @@ namespace HexMaster.Attendr.Conferences.Features.UpdateTopic;
 public sealed class UpdateTopicCommandHandler : ICommandHandler<UpdateTopicCommand, TopicDto>
 {
     private readonly ITopicsRepository _topicsRepository;
+    private readonly IConferenceRepository _conferenceRepository;
+    private readonly IIntegrationEventPublisher _eventPublisher;
     private readonly ConferenceMetrics _metrics;
     private readonly ILogger<UpdateTopicCommandHandler> _logger;
 
     public UpdateTopicCommandHandler(
         ITopicsRepository topicsRepository,
+        IConferenceRepository conferenceRepository,
+        IIntegrationEventPublisher eventPublisher,
         ConferenceMetrics metrics,
         ILogger<UpdateTopicCommandHandler> logger)
     {
         _topicsRepository = topicsRepository ?? throw new ArgumentNullException(nameof(topicsRepository));
+        _conferenceRepository = conferenceRepository ?? throw new ArgumentNullException(nameof(conferenceRepository));
+        _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -63,6 +72,46 @@ public sealed class UpdateTopicCommandHandler : ICommandHandler<UpdateTopicComma
             }
 
             await _topicsRepository.UpdateTopicAsync(topic, cancellationToken);
+
+            // Find all future presentations with this topic and publish PresentationUpdatedEvent
+            var affectedPresentations = await _topicsRepository.GetFuturePresentationsByTopicIdAsync(command.Id, cancellationToken);
+
+            _logger.LogInformation("Found {Count} future presentations affected by topic update", affectedPresentations.Count);
+
+            foreach (var (conferenceId, presentationId) in affectedPresentations)
+            {
+                // Load presentation with speakers and topics using the new method
+                var presentation = await _conferenceRepository.GetPresentationByIdAsync(conferenceId, presentationId, cancellationToken);
+                if (presentation == null)
+                {
+                    _logger.LogWarning("Presentation {PresentationId} not found in conference {ConferenceId}", presentationId, conferenceId);
+                    continue;
+                }
+
+                // Publish PresentationUpdatedEvent with updated topics
+                var integrationEvent = new PresentationUpdatedEvent
+                {
+                    ConferenceId = conferenceId,
+                    PresentationId = presentationId,
+                    Title = presentation.Title,
+                    Abstract = presentation.Abstract,
+                    StartDateTime = presentation.StartDateTime,
+                    EndDateTime = presentation.EndDateTime,
+                    RoomId = presentation.Room.Id,
+                    RoomName = presentation.Room.Name,
+                    SpeakerIds = presentation.Speakers.Select(s => s.Id).ToList(),
+                    Topics = presentation.Topics.Select(t => new PresentationTopicDto(t.Key, t.Name)).ToList(),
+                    ExternalId = presentation.ExternalId,
+                    IsScheduleChanged = false  // Topic update doesn't change schedule
+                };
+
+                await _eventPublisher.PublishAsync(integrationEvent, cancellationToken);
+
+                _logger.LogInformation(
+                    "Published PresentationUpdatedEvent for presentation {PresentationId} due to topic {TopicId} update",
+                    presentationId,
+                    command.Id);
+            }
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordOperationDuration("UpdateTopic", stopwatch.Elapsed.TotalMilliseconds, success: true);

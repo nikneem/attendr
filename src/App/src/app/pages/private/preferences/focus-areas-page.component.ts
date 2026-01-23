@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { PopoverModule } from 'primeng/popover';
+import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
 import { ProfileService } from '@services/profile.service';
 import { ProfileTopicDto } from '@models/profile-topic-dto';
@@ -19,6 +23,10 @@ interface TopicWithRelativeTime extends ProfileTopicDto {
         CardModule,
         ProgressSpinnerModule,
         ProgressBarModule,
+        TagModule,
+        ButtonModule,
+        PopoverModule,
+        TooltipModule,
     ],
     templateUrl: './focus-areas-page.component.html',
     styleUrl: './focus-areas-page.component.scss',
@@ -31,10 +39,12 @@ export class FocusAreasPageComponent implements OnInit {
     private rawTopics = signal<ProfileTopicDto[]>([]);
 
     protected topics = computed<TopicWithRelativeTime[]>(() => {
-        return this.rawTopics().map(topic => ({
-            ...topic,
-            relativeTime: this.getRelativeTime(topic.createdOn)
-        }));
+        return this.rawTopics()
+            .map(topic => ({
+                ...topic,
+                relativeTime: this.getRelativeTime(topic.createdOn)
+            }))
+            .sort((a, b) => b.weight - a.weight);
     });
 
     ngOnInit(): void {
@@ -74,5 +84,37 @@ export class FocusAreasPageComponent implements OnInit {
         if (hours < 24) return `${hours}h ago`;
         if (days < 7) return `${days}d ago`;
         return date.toLocaleDateString();
+    }
+
+    protected toggleTopicManualStatus(topic: ProfileTopicDto, event: Event): void {
+        event.stopPropagation();
+        const newStatus = !topic.isManual;
+
+        this.profileService.setTopicManualStatus(topic.id, newStatus).subscribe({
+            next: (updatedTopic) => {
+                // Update the topic in the list
+                const currentTopics = this.rawTopics();
+                const index = currentTopics.findIndex(t => t.id === topic.id);
+                if (index !== -1) {
+                    const updatedTopics = [...currentTopics];
+                    updatedTopics[index] = updatedTopic;
+                    this.rawTopics.set(updatedTopics);
+                }
+
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: `Topic marked as ${newStatus ? 'Manual' : 'AI'}.`,
+                });
+            },
+            error: (err) => {
+                console.error('Failed to update topic status', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to update topic status.',
+                });
+            },
+        });
     }
 }

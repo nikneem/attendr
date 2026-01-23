@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Conferences.Data.Postgres.Entities;
 using HexMaster.Attendr.Conferences.DomainModels;
 using Npgsql;
 
@@ -112,7 +113,10 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
 
         foreach (var data in presentationData)
         {
-            var speakerIds = await LoadPresentationSpeakerIdsAsync(connection, data.PresentationId, cancellationToken).ConfigureAwait(false);
+            var speakers = await LoadPresentationSpeakersAsync(connection, data.PresentationId, cancellationToken).ConfigureAwait(false);
+            var topics = await LoadPresentationTopicsAsync(connection, data.PresentationId, cancellationToken).ConfigureAwait(false);
+            var roomEntity = await LoadRoomAsync(connection, data.RoomId, cancellationToken).ConfigureAwait(false);
+            var room = Room.FromPersisted(roomEntity.Id, roomEntity.Name, roomEntity.Capacity, roomEntity.ExternalId);
 
             var presentation = Presentation.FromPersisted(
                 data.PresentationId,
@@ -120,9 +124,10 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
                 data.Abstract,
                 data.StartDateTime,
                 data.EndDateTime,
-                data.RoomId,
-                speakerIds,
+                room,
+                speakers,
                 data.ExternalId,
+                topics.Select(t => new PresentationTopic(t.Key, t.Name)).ToList(),
                 data.IsAnalysed);
 
             results.Add((data.ConferenceId, presentation));
@@ -142,21 +147,31 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task<List<Guid>> LoadPresentationSpeakerIdsAsync(NpgsqlConnection connection, Guid presentationId, CancellationToken cancellationToken)
+    private static async Task<List<Speaker>> LoadPresentationSpeakersAsync(NpgsqlConnection connection, Guid presentationId, CancellationToken cancellationToken)
     {
-        var sql = "SELECT speaker_id FROM presentation_speakers WHERE presentation_id = @presentation_id";
+        var sql = @"
+            SELECT s.id, s.name, s.company, s.profile_picture_url, s.external_id
+            FROM presentation_speakers ps
+            INNER JOIN speakers s ON ps.speaker_id = s.id
+            WHERE ps.presentation_id = @presentation_id";
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.AddWithValue("@presentation_id", presentationId);
 
-        var speakerIds = new List<Guid>();
+        var speakers = new List<Speaker>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
-            speakerIds.Add(reader.GetGuid(0));
+            var speaker = Speaker.FromPersisted(
+                reader.GetGuid(0),
+                reader.GetString(1),
+                reader.IsDBNull(2) ? null : reader.GetString(2),
+                reader.IsDBNull(3) ? null : reader.GetString(3),
+                reader.IsDBNull(4) ? null : reader.GetString(4));
+            speakers.Add(speaker);
         }
 
-        return speakerIds;
+        return speakers;
     }
 
     public async Task<Topic?> GetTopicByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -250,5 +265,84 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         command.Parameters.AddWithValue("@topic_id", topicId);
 
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<List<(Guid ConferenceId, Guid PresentationId)>> GetFuturePresentationsByTopicIdAsync(Guid topicId, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        // Get all future presentations that have this topic
+        var sql = @"
+            SELECT DISTINCT p.id, p.conference_id
+            FROM presentations p
+            INNER JOIN presentation_topics pt ON p.id = pt.presentation_id
+            WHERE pt.topic_id = @topic_id
+              AND p.start_date_time > @now
+            ORDER BY p.id";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@topic_id", topicId);
+        command.Parameters.AddWithValue("@now", DateTime.UtcNow);
+
+        var results = new List<(Guid ConferenceId, Guid PresentationId)>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            results.Add((reader.GetGuid(1), reader.GetGuid(0))); // ConferenceId, PresentationId
+        }
+
+        return results;
+    }
+
+    private static async Task<List<(string Key, string Name)>> LoadPresentationTopicsAsync(NpgsqlConnection connection, Guid presentationId, CancellationToken cancellationToken)
+    {
+        var sql = @"
+            SELECT t.key, t.name
+            FROM presentation_topics pt
+            INNER JOIN topics t ON pt.topic_id = t.id
+            WHERE pt.presentation_id = @presentation_id
+              AND t.is_visible = true
+            ORDER BY t.key";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@presentation_id", presentationId);
+
+        var topics = new List<(string Key, string Name)>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            topics.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        return topics;
+    }
+
+    private static async Task<RoomEntity> LoadRoomAsync(NpgsqlConnection connection, Guid roomId, CancellationToken cancellationToken)
+    {
+        var sql = @"
+            SELECT id, conference_id, name, capacity, external_id
+            FROM rooms
+            WHERE id = @room_id";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@room_id", roomId);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+
+        if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            return new RoomEntity
+            {
+                Id = reader.GetGuid(0),
+                ConferenceId = reader.GetGuid(1),
+                Name = reader.GetString(2),
+                Capacity = reader.GetInt32(3),
+                ExternalId = reader.IsDBNull(4) ? null : reader.GetString(4)
+            };
+        }
+
+        throw new InvalidOperationException($"Room with ID {roomId} not found");
     }
 }

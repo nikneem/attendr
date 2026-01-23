@@ -95,8 +95,8 @@ public static class ConferenceFactory
         string? abstractText = null,
         DateTime? startDateTime = null,
         DateTime? endDateTime = null,
-        Guid? roomId = null,
-        IEnumerable<Guid>? speakerIds = null)
+        Room? room = null,
+        IEnumerable<Speaker>? speakers = null)
     {
         var start = startDateTime ?? Faker.Date.Future();
         var end = endDateTime ?? start.AddHours(1);
@@ -106,8 +106,8 @@ public static class ConferenceFactory
             abstractText ?? Faker.Lorem.Paragraph(),
             start,
             end,
-            roomId ?? Guid.NewGuid(),
-            speakerIds ?? new[] { Guid.NewGuid() }
+            room ?? Room.Create(Faker.Lorem.Word(), Faker.Random.Int(50, 500)),
+            speakers ?? new[] { Speaker.Create(Faker.Name.FullName()) }
         );
     }
 }

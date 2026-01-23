@@ -40,13 +40,15 @@ internal static class ConferenceMapper
         List<RoomEntity> rooms,
         List<SpeakerEntity> speakers,
         List<PresentationEntity> presentations,
-        Dictionary<Guid, List<Guid>> presentationSpeakers)
+        Dictionary<Guid, List<Guid>> presentationSpeakers,
+        Dictionary<Guid, List<(string Key, string Name)>> presentationTopics)
     {
         ArgumentNullException.ThrowIfNull(conferenceEntity);
         ArgumentNullException.ThrowIfNull(rooms);
         ArgumentNullException.ThrowIfNull(speakers);
         ArgumentNullException.ThrowIfNull(presentations);
         ArgumentNullException.ThrowIfNull(presentationSpeakers);
+        ArgumentNullException.ThrowIfNull(presentationTopics);
 
         // Create the conference
         SynchronizationSource? syncSource = null;
@@ -98,15 +100,28 @@ internal static class ConferenceMapper
                 ? presentationSpeakers[presentationEntity.Id]
                 : new List<Guid>();
 
+            // Get speaker objects for this presentation
+            var presentationSpeakersForPresentation = speakers
+                .Where(s => speakerIds.Contains(s.Id))
+                .Select(s => Speaker.FromPersisted(s.Id, s.Name, s.Company, s.ProfilePictureUrl, s.ExternalId))
+                .ToList();
+
+            var topics = presentationTopics.ContainsKey(presentationEntity.Id)
+                ? presentationTopics[presentationEntity.Id].Select(t => new PresentationTopic(t.Key, t.Name)).ToList()
+                : new List<PresentationTopic>();
+
+            var presentationRoom = conference.Rooms.First(r => r.Id == presentationEntity.RoomId);
+
             var presentation = Presentation.FromPersisted(
                 presentationEntity.Id,
                 presentationEntity.Title,
                 presentationEntity.Abstract,
                 presentationEntity.StartDateTime,
                 presentationEntity.EndDateTime,
-                presentationEntity.RoomId,
-                speakerIds,
+                presentationRoom,
+                presentationSpeakersForPresentation,
                 presentationEntity.ExternalId,
+                topics,
                 presentationEntity.IsAnalysed);
 
             conference.AddPresentation(presentation);

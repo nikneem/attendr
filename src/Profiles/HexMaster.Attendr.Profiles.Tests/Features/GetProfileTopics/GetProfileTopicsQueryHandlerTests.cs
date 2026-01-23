@@ -2,6 +2,7 @@ using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Features.GetProfileTopics;
 using HexMaster.Attendr.Profiles.Repositories;
+using HexMaster.Attendr.Profiles.Services;
 using Moq;
 
 namespace HexMaster.Attendr.Profiles.Tests.Features.GetProfileTopics;
@@ -10,11 +11,12 @@ public class GetProfileTopicsQueryHandlerTests
 {
     private readonly Mock<IProfileTopicRepository> _topicRepository = new();
     private readonly Mock<IProfileRepository> _profileRepository = new();
+    private readonly TopicWeightDecayService _decayService = new();
     private readonly GetProfileTopicsQueryHandler _handler;
 
     public GetProfileTopicsQueryHandlerTests()
     {
-        _handler = new GetProfileTopicsQueryHandler(_topicRepository.Object, _profileRepository.Object);
+        _handler = new GetProfileTopicsQueryHandler(_topicRepository.Object, _profileRepository.Object, _decayService);
     }
 
     [Fact]
@@ -62,6 +64,6 @@ public class GetProfileTopicsQueryHandlerTests
         Assert.Equal("topic-key", item.TopicKey);
         Assert.Equal("Topic Name", item.TopicName);
         Assert.True(item.IsManual);
-        Assert.Equal(10, item.Weight);
+        Assert.Equal(100, item.Weight); // Manual topics always return 100
     }
 }

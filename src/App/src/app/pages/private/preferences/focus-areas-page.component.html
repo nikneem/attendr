@@ -1,9 +1,37 @@
 <p-card>
     <ng-template pTemplate="header">
         <div class="card-header-content">
-            <h2>Focus Areas</h2>
-            <p>Topics identified from your profile and activities</p>
+            <div class="header-left">
+                <h2>Focus Areas</h2>
+                <p>Topics identified from your profile and activities</p>
+            </div>
+            <div class="header-right">
+                <p-button icon="pi pi-info-circle" [text]="true" [rounded]="true" severity="secondary"
+                    (onClick)="infoPopover.toggle($event)" />
+            </div>
         </div>
+        <p-popover #infoPopover>
+            <div class="focus-areas-info">
+                <h3>About Focus Areas</h3>
+                <p>
+                    Focus areas are topics that are automatically identified based on your activities,
+                    such as marking presentations as favorites or checking in to sessions.
+                </p>
+                <p>
+                    <strong>Weight Over Time:</strong> Focus areas gradually lose weight over a 3-year period.
+                    Recent activities have more influence on your interests than older ones.
+                </p>
+                <p>
+                    <strong>Personalized Recommendations:</strong> These focus areas help us recommend
+                    presentations and sessions that match your interests.
+                </p>
+                <p>
+                    <strong>Confirm Your Interests:</strong> You can confirm a focus area to indicate it's
+                    truly a topic of interest. Confirmed topics will always maintain maximum weight,
+                    regardless of time.
+                </p>
+            </div>
+        </p-popover>
     </ng-template>
 
     @if (topicsLoading()) {
@@ -26,9 +54,10 @@
         <div class="topic-row">
             <div class="col-topic">
                 <span class="topic-name">{{ topic.topicName }}</span>
-                <span class="topic-badge" [class.manual]="topic.isManual" [class.ai]="!topic.isManual">
-                    {{ topic.isManual ? 'Manual' : 'AI' }}
-                </span>
+                <p-tag [value]="topic.isManual ? 'Manual' : 'AI'" [severity]="topic.isManual ? 'info' : 'success'"
+                    [pTooltip]="topic.isManual ? 'Click to mark as AI-defined' : 'Click to mark as manually confirmed'"
+                    tooltipPosition="top" [style]="{ cursor: 'pointer' }"
+                    (click)="toggleTopicManualStatus(topic, $event)"></p-tag>
             </div>
             <div class="col-weight">
                 <p-progressBar [value]="topic.weight" showValue="true"></p-progressBar>

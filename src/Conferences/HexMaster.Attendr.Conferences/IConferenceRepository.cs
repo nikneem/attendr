@@ -47,6 +47,16 @@ public interface IConferenceRepository
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves a presentation by conference ID and presentation ID.
+    /// Includes speakers and topics.
+    /// </summary>
+    /// <param name="conferenceId">The conference ID.</param>
+    /// <param name="presentationId">The presentation ID.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The presentation if found; otherwise, null.</returns>
+    Task<Presentation?> GetPresentationByIdAsync(Guid conferenceId, Guid presentationId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Lists conference IDs for conferences that have not ended and have a synchronization source configured.
     /// Useful for periodic background synchronization jobs.
     /// </summary>
