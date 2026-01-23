@@ -5,6 +5,7 @@ using HexMaster.Attendr.Profiles.Features.CreateProfile;
 using HexMaster.Attendr.Profiles.Features.GetProfileTopics;
 using HexMaster.Attendr.Profiles.Features.UpdateProfile;
 using HexMaster.Attendr.Profiles.Observability;
+using HexMaster.Attendr.Profiles.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +26,9 @@ public static class ServiceCollectionExtensions
     {
         // Register metrics
         services.AddSingleton<ProfileMetrics>();
+
+        // Register services
+        services.AddSingleton<TopicWeightDecayService>();
 
         services.AddAttendrCache(configuration);
 
