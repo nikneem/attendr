@@ -7,8 +7,10 @@ namespace HexMaster.Attendr.Presence.Abstractions.Dtos;
 /// <param name="IsFollowing">Indicates whether the profile is following this conference.</param>
 /// <param name="IsAttending">Indicates whether the profile is attending this conference.</param>
 /// <param name="FavoritePresentationIds">List of presentation IDs marked as favorites.</param>
+/// <param name="RecommendedPresentationIds">List of recommended presentation IDs based on user's interests.</param>
 public sealed record ConferenceAttendanceDto(
     Guid ConferenceId,
     bool IsFollowing,
     bool IsAttending,
-    IReadOnlyCollection<Guid> FavoritePresentationIds);
+    IReadOnlyCollection<Guid> FavoritePresentationIds,
+    IReadOnlyCollection<Guid> RecommendedPresentationIds);
