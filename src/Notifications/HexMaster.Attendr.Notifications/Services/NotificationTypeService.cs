@@ -151,7 +151,7 @@ public sealed class NotificationTypeService : INotificationTypeService
                 TypeKey = NotificationTypeKeys.ConferencePresentationsImported,
                 DisplayName = "Conference Imported",
                 Description = "Notifies when conference presentations have been successfully imported",
-                Severity = NotificationSeverity.Success,
+                Severity = NotificationSeverity.Info,
                 AllowsStacking = false,
                 DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
                 {
