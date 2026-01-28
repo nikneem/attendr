@@ -80,9 +80,9 @@ public sealed class GetConferenceAttendanceQueryHandler : IQueryHandler<GetConfe
                 .ToList()
                 .AsReadOnly();
 
-            // Get recommended presentations (top 10 recommended presentations not yet marked as favorite)
+            // Get recommended presentations (top 10 recommended presentations)
             var recommendedPresentationIds = presentations
-                .Where(p => p.IsRecommended && !p.IsFavorite)
+                .Where(p => p.IsRecommended)
                 .OrderByDescending(p => p.IsPreferred)
                 .Take(10)
                 .Select(p => p.PresentationId)
