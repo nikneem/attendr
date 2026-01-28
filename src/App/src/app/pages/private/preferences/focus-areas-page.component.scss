@@ -116,6 +116,9 @@
 
         .topic-name {
             font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .topic-badge {
@@ -146,15 +149,6 @@
             font-weight: 600;
             color: var(--primary-color);
         }
-
-        ::ng-deep .inline-progress {
-            height: 0.5rem;
-            background-color: var(--surface-100);
-
-            .p-progressbar-value {
-                background: var(--primary-color);
-            }
-        }
     }
 
     .col-updated {
@@ -181,16 +175,29 @@
         }
 
         .topic-row {
-            padding: 1.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
 
-            >div::before {
-                content: attr(data-label);
-                font-weight: 600;
-                display: block;
-                margin-bottom: 0.25rem;
-                color: var(--text-color-secondary);
-                font-size: 0.75rem;
-                text-transform: uppercase;
+            .col-topic {
+                flex: 1;
+                min-width: 0;
+
+                .topic-name {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
+
+            .col-weight {
+                width: 80px;
+                flex-shrink: 0;
+            }
+
+            .col-updated {
+                display: none;
             }
         }
     }

@@ -75,8 +75,9 @@ public sealed class SetTopicManualStatusCommandHandler : ICommandHandler<SetTopi
 
             _logger.LogInformation("Topic {TopicId} manual status set to {IsManual} successfully", command.TopicId, command.IsManual);
 
-            // Manual topics always have a weight of 100
-            var totalWeight = topic.IsManual ? 100 : topic.Occasions.Sum(o => o.Weight);
+            // Calculate total weight using decay service for consistency
+            var occasions = topic.Occasions.Select(o => (o.Weight, o.Date));
+            var totalWeight = _decayService.CalculateTopicWeight(topic.IsManual, occasions);
             return new ProfileTopicDto(
                 topic.Id,
                 topic.ProfileId,
