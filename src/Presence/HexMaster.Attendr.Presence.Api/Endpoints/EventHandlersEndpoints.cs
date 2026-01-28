@@ -216,8 +216,20 @@ public static class EventHandlersEndpoints
                 @event.ProfileId,
                 @event.Topics.Count);
 
+            // Parse profileId from string to Guid
+            if (!Guid.TryParse(@event.ProfileId, out var profileId))
+            {
+                logger.LogWarning("Invalid profile ID format: {ProfileId}", @event.ProfileId);
+                return Results.BadRequest(new { error = "Invalid profile ID format" });
+            }
+
+            // Map event topics to command topics
+            var topics = @event.Topics
+                .Select(t => new ProfileTopicWeight(t.TopicKey, t.Weight))
+                .ToList();
+
             var updatedCount = await handler.Handle(
-                new UpdateProfileTopicRecommendationsCommand(@event),
+                new UpdateProfileTopicRecommendationsCommand(profileId, topics),
                 cancellationToken);
 
             return Results.Ok(new

@@ -29,11 +29,9 @@ public sealed class UpdateProfileTopicRecommendationsCommandHandler : ICommandHa
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var @event = command.Event;
-
         using var activity = ActivitySources.Presence.StartActivity("UpdateProfileTopicRecommendations", ActivityKind.Internal);
-        activity?.SetTag("profile.id", @event.ProfileId);
-        activity?.SetTag("topics.count", @event.Topics.Count);
+        activity?.SetTag("profile.id", command.ProfileId);
+        activity?.SetTag("topics.count", command.Topics.Count);
 
         var stopwatch = Stopwatch.StartNew();
 
@@ -41,25 +39,18 @@ public sealed class UpdateProfileTopicRecommendationsCommandHandler : ICommandHa
         {
             _logger.LogInformation(
                 "Updating presentation recommendations for profile {ProfileId} with {TopicCount} topics",
-                @event.ProfileId,
-                @event.Topics.Count);
-
-            // Parse profileId from string to Guid
-            if (!Guid.TryParse(@event.ProfileId, out var profileId))
-            {
-                _logger.LogWarning("Invalid profile ID format: {ProfileId}", @event.ProfileId);
-                throw new ArgumentException($"Invalid profile ID format: {@event.ProfileId}", nameof(@event.ProfileId));
-            }
+                command.ProfileId,
+                command.Topics.Count);
 
             // Filter topics with weight >= 70
-            var highWeightTopics = @event.Topics
+            var highWeightTopics = command.Topics
                 .Where(t => t.Weight >= 70)
                 .Select(t => t.TopicKey)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             if (highWeightTopics.Count == 0)
             {
-                _logger.LogInformation("No topics with weight >= 70 found for profile {ProfileId}", profileId);
+                _logger.LogInformation("No topics with weight >= 70 found for profile {ProfileId}", command.ProfileId);
                 activity?.SetStatus(ActivityStatusCode.Ok);
                 _metrics.RecordOperationDuration("UpdateProfileTopicRecommendations", stopwatch.Elapsed.TotalMilliseconds, success: true);
                 return 0;
@@ -68,7 +59,7 @@ public sealed class UpdateProfileTopicRecommendationsCommandHandler : ICommandHa
             activity?.SetTag("topics.high_weight_count", highWeightTopics.Count);
 
             // Get all presentations for the profile
-            var presentations = await _repository.GetByProfileAsync(profileId, cancellationToken);
+            var presentations = await _repository.GetByProfileAsync(command.ProfileId, cancellationToken);
 
             var now = DateTime.UtcNow;
             var updatedCount = 0;
@@ -116,7 +107,7 @@ public sealed class UpdateProfileTopicRecommendationsCommandHandler : ICommandHa
             _logger.LogInformation(
                 "Updated {UpdatedCount} presentation recommendations for profile {ProfileId}",
                 updatedCount,
-                profileId);
+                command.ProfileId);
 
             return updatedCount;
         }
@@ -127,7 +118,7 @@ public sealed class UpdateProfileTopicRecommendationsCommandHandler : ICommandHa
             _metrics.RecordOperationFailed("UpdateProfileTopicRecommendations", ex.GetType().Name);
             _metrics.RecordOperationDuration("UpdateProfileTopicRecommendations", stopwatch.Elapsed.TotalMilliseconds, success: false);
 
-            _logger.LogError(ex, "Failed to update presentation recommendations for profile {ProfileId}", @event.ProfileId);
+            _logger.LogError(ex, "Failed to update presentation recommendations for profile {ProfileId}", command.ProfileId);
             throw;
         }
     }
