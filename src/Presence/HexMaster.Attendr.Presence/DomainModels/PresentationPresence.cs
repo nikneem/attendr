@@ -188,4 +188,9 @@ public sealed class PresentationPresence
         IsFavorite = false;
         Rating = null;
     }
+
+    public void SetRecommended(bool isRecommended)
+    {
+        IsRecommended = isRecommended;
+    }
 }

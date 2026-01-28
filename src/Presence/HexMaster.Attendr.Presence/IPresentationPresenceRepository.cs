@@ -73,6 +73,16 @@ public interface IPresentationPresenceRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves all presentation presences for a specific profile across all conferences.
+    /// </summary>
+    /// <param name="profileId">The unique identifier of the profile.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A read-only collection of presentation presences.</returns>
+    Task<IReadOnlyCollection<PresentationPresence>> GetByProfileAsync(
+        Guid profileId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Updates an existing presentation presence.
     /// </summary>
     /// <param name="profileId">The unique identifier of the profile.</param>

@@ -98,6 +98,17 @@ public sealed class PresentationPresenceRepository : IPresentationPresenceReposi
         return presentations.AsReadOnly();
     }
 
+    public async Task<IReadOnlyCollection<PresentationPresence>> GetByProfileAsync(
+        Guid profileId,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<PresentationPresenceDocument>.Filter.Eq(d => d.ProfileId, profileId);
+
+        var docs = await _collection.Find(filter).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var presentations = docs.Select(PresentationPresenceMapper.ToDomain).ToList();
+        return presentations.AsReadOnly();
+    }
+
     public async Task UpdateAsync(
         Guid profileId,
         Guid conferenceId,
