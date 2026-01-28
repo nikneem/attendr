@@ -1,8 +1,11 @@
 using Bogus;
+using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using HexMaster.Attendr.Profiles.DomainModels;
 using HexMaster.Attendr.Profiles.Features.SetTopicManualStatus;
 using HexMaster.Attendr.Profiles.Observability;
 using HexMaster.Attendr.Profiles.Repositories;
+using HexMaster.Attendr.Profiles.Services;
 using HexMaster.Attendr.Profiles.Tests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -13,6 +16,8 @@ public class SetTopicManualStatusCommandHandlerTests
 {
     private readonly Faker _faker = new();
     private readonly Mock<IProfileTopicRepository> _repository;
+    private readonly Mock<IIntegrationEventPublisher> _eventPublisher;
+    private readonly TopicWeightDecayService _decayService;
     private readonly ProfileMetrics _metrics;
     private readonly Mock<ILogger<SetTopicManualStatusCommandHandler>> _logger;
     private readonly SetTopicManualStatusCommandHandler _handler;
@@ -20,9 +25,16 @@ public class SetTopicManualStatusCommandHandlerTests
     public SetTopicManualStatusCommandHandlerTests()
     {
         _repository = new Mock<IProfileTopicRepository>();
+        _eventPublisher = new Mock<IIntegrationEventPublisher>();
+        _decayService = new TopicWeightDecayService();
         _metrics = TestMetricsFactory.CreateProfileMetrics();
         _logger = new Mock<ILogger<SetTopicManualStatusCommandHandler>>();
-        _handler = new SetTopicManualStatusCommandHandler(_repository.Object, _metrics, _logger.Object);
+        _handler = new SetTopicManualStatusCommandHandler(
+            _repository.Object,
+            _eventPublisher.Object,
+            _decayService,
+            _metrics,
+            _logger.Object);
     }
 
     [Fact]
@@ -42,6 +54,8 @@ public class SetTopicManualStatusCommandHandlerTests
 
         _repository.Setup(r => r.GetByIdAsync(topicId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(topic);
+        _repository.Setup(r => r.GetByProfileIdAsync(profileId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ProfileTopic> { topic });
 
         var command = new SetTopicManualStatusCommand(topicId, true);
 
@@ -51,6 +65,7 @@ public class SetTopicManualStatusCommandHandlerTests
         Assert.Equal(topicId, result.Id);
         Assert.True(result.IsManual);
         _repository.Verify(r => r.UpsertAsync(It.Is<ProfileTopic>(t => t.IsManual == true), It.IsAny<CancellationToken>()), Times.Once);
+        _eventPublisher.Verify(p => p.PublishAsync(It.IsAny<ProfileTopicsChangedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -70,6 +85,8 @@ public class SetTopicManualStatusCommandHandlerTests
 
         _repository.Setup(r => r.GetByIdAsync(topicId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(topic);
+        _repository.Setup(r => r.GetByProfileIdAsync(profileId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ProfileTopic> { topic });
 
         var command = new SetTopicManualStatusCommand(topicId, false);
 
@@ -79,6 +96,7 @@ public class SetTopicManualStatusCommandHandlerTests
         Assert.Equal(topicId, result.Id);
         Assert.False(result.IsManual);
         _repository.Verify(r => r.UpsertAsync(It.Is<ProfileTopic>(t => t.IsManual == false), It.IsAny<CancellationToken>()), Times.Once);
+        _eventPublisher.Verify(p => p.PublishAsync(It.IsAny<ProfileTopicsChangedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -123,6 +141,8 @@ public class SetTopicManualStatusCommandHandlerTests
 
         _repository.Setup(r => r.GetByIdAsync(topicId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(topic);
+        _repository.Setup(r => r.GetByProfileIdAsync(profileId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ProfileTopic> { topic });
 
         var command = new SetTopicManualStatusCommand(topicId, true);
 
@@ -151,6 +171,8 @@ public class SetTopicManualStatusCommandHandlerTests
 
         _repository.Setup(r => r.GetByIdAsync(topicId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(topic);
+        _repository.Setup(r => r.GetByProfileIdAsync(profileId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ProfileTopic> { topic });
 
         var command = new SetTopicManualStatusCommand(topicId, true);
 
@@ -177,6 +199,8 @@ public class SetTopicManualStatusCommandHandlerTests
 
         _repository.Setup(r => r.GetByIdAsync(topicId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(topic);
+        _repository.Setup(r => r.GetByProfileIdAsync(profileId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<ProfileTopic> { topic });
 
         var command = new SetTopicManualStatusCommand(topicId, false);
 

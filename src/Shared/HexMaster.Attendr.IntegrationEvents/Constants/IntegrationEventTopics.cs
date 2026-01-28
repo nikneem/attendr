@@ -73,6 +73,12 @@ public static class IntegrationEventTopics
     public const string ProfileTopicInterest = "profile.topic-interest";
 
     /// <summary>
+    /// Topic for profile topics changed events.
+    /// Published when profile topics have been updated (created, modified, or manually toggled).
+    /// </summary>
+    public const string ProfileTopicsChanged = "profile.topics-changed";
+
+    /// <summary>
     /// Topic for group member added events.
     /// Published when a member is added to a group.
     /// </summary>
