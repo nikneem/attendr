@@ -49,6 +49,12 @@ public static class IntegrationEventTopics
     public const string PresentationUpdated = "presentation.updated";
 
     /// <summary>
+    /// Topic for conference presentations imported events.
+    /// Published when all presentations have been successfully imported for a conference.
+    /// </summary>
+    public const string ConferencePresentationsImported = "conference.presentations-imported";
+
+    /// <summary>
     /// Topic for presentation schedule change events.
     /// Published when a presentation schedule changes and a profile has favorited it.
     /// </summary>
@@ -71,6 +77,12 @@ public static class IntegrationEventTopics
     /// Published when a profile shows interest in a topic.
     /// </summary>
     public const string ProfileTopicInterest = "profile.topic-interest";
+
+    /// <summary>
+    /// Topic for profile topics changed events.
+    /// Published when profile topics have been updated (created, modified, or manually toggled).
+    /// </summary>
+    public const string ProfileTopicsChanged = "profile.topics-changed";
 
     /// <summary>
     /// Topic for group member added events.

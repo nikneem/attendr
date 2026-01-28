@@ -237,6 +237,39 @@ public sealed class PostgresPresentationPresenceRepository : IPresentationPresen
     }
 
     /// <inheritdoc />
+    public async Task<IReadOnlyCollection<PresentationPresence>> GetByProfileAsync(
+        Guid profileId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var sql = $@"
+            SELECT data
+            FROM {TableName}
+            WHERE profile_id = @profile_id
+            ORDER BY (data->>'startDateTime')::timestamp";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@profile_id", profileId);
+
+        var presentations = new List<PresentationPresence>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var dataJson = reader.GetString(0);
+            var entity = JsonSerializer.Deserialize<PresentationPresenceEntity>(dataJson, _jsonOptions);
+
+            if (entity != null)
+            {
+                presentations.Add(PresentationPresenceMapper.ToDomain(entity));
+            }
+        }
+
+        return presentations.AsReadOnly();
+    }
+
+    /// <inheritdoc />
     public async Task UpdateAsync(
         Guid profileId,
         Guid conferenceId,

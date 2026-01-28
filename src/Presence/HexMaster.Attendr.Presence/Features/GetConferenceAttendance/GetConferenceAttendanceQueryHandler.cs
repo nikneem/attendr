@@ -64,7 +64,8 @@ public sealed class GetConferenceAttendanceQueryHandler : IQueryHandler<GetConfe
                     query.ConferenceId,
                     IsFollowing: false,
                     IsAttending: false,
-                    FavoritePresentationIds: Array.Empty<Guid>());
+                    FavoritePresentationIds: Array.Empty<Guid>(),
+                    RecommendedPresentationIds: Array.Empty<Guid>());
             }
 
             // Get favorite presentations
@@ -79,9 +80,19 @@ public sealed class GetConferenceAttendanceQueryHandler : IQueryHandler<GetConfe
                 .ToList()
                 .AsReadOnly();
 
+            // Get recommended presentations (top 10 recommended presentations)
+            var recommendedPresentationIds = presentations
+                .Where(p => p.IsRecommended)
+                .OrderByDescending(p => p.IsPreferred)
+                .Take(10)
+                .Select(p => p.PresentationId)
+                .ToList()
+                .AsReadOnly();
+
             activity?.SetTag("presence.is_following", true);
             activity?.SetTag("presence.is_attending", conferencePresence.IsAttending);
             activity?.SetTag("presence.favorites_count", favoritePresentationIds.Count);
+            activity?.SetTag("presence.recommended_count", recommendedPresentationIds.Count);
             activity?.SetStatus(ActivityStatusCode.Ok);
 
             _metrics.RecordOperationDuration("GetConferenceAttendance", stopwatch.Elapsed.TotalMilliseconds, true);
@@ -90,7 +101,8 @@ public sealed class GetConferenceAttendanceQueryHandler : IQueryHandler<GetConfe
                 query.ConferenceId,
                 IsFollowing: true,
                 IsAttending: conferencePresence.IsAttending,
-                FavoritePresentationIds: favoritePresentationIds);
+                FavoritePresentationIds: favoritePresentationIds,
+                RecommendedPresentationIds: recommendedPresentationIds);
         }
         catch (Exception ex)
         {

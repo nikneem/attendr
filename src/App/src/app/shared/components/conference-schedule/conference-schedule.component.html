@@ -40,6 +40,11 @@
                                             <div class="session-time">
                                                 {{ formatTime(session.presentation.startDateTime) }} - {{
                                                 formatTime(session.presentation.endDateTime) }}
+                                                @if (isRecommended(session.presentation.id)) {
+                                                <span class="recommended-tag" 
+                                                    pTooltip="This session matches your personal interests based on your profile topics"
+                                                    tooltipPosition="top">Match</span>
+                                                }
                                             </div>
                                         </div>
                                         @if (getSpeakerImages(session.presentation).length > 0) {
@@ -111,6 +116,11 @@
                                                     <div class="session-time">
                                                         {{ formatTime(session.presentation.startDateTime) }} - {{
                                                         formatTime(session.presentation.endDateTime) }}
+                                                        @if (isRecommended(session.presentation.id)) {
+                                                        <span class="recommended-tag" 
+                                                            pTooltip="This session matches your personal interests based on your profile topics"
+                                                            tooltipPosition="top">Match</span>
+                                                        }
                                                     </div>
                                                 </div>
                                                 @if (getSpeakerImages(session.presentation).length > 0) {

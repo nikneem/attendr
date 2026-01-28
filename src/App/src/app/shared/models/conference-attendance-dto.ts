@@ -3,4 +3,5 @@ export interface ConferenceAttendanceDto {
     isFollowing: boolean;
     isAttending: boolean;
     favoritePresentationIds: string[];
+    recommendedPresentationIds: string[];
 }

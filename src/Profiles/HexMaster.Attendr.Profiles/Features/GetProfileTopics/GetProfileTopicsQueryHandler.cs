@@ -37,33 +37,12 @@ public sealed class GetProfileTopicsQueryHandler : IQueryHandler<GetProfileTopic
 
         var topics = await _topicRepository.GetByProfileIdAsync(profile.Id, cancellationToken);
 
-        var now = DateTimeOffset.UtcNow;
-        var maxAgeDate = now.AddMonths(-TopicWeightConstants.MaxOccasionAgeMonths);
-
         return topics
             .Select(topic =>
             {
-                // Manual topics always have a weight of 100
-                int totalDecayWeight = 0;
-                if (topic.IsManual)
-                {
-                    totalDecayWeight = 100;
-                }
-                else
-                {
+                var occasions = topic.Occasions.Select(o => (o.Weight, o.Date));
+                var totalWeight = _decayService.CalculateTopicWeight(topic.IsManual, occasions);
 
-                    // Filter occasions within the max age timespan
-                    var relevantOccasions = topic.Occasions
-                        .Where(o => o.Date >= maxAgeDate)
-                        .ToList();
-
-                    // Calculate total weight with exponential decay applied to each occasion
-                    var totalDecayedWeight = relevantOccasions
-                        .Sum(o => _decayService.CalculateDecayedWeight(o.Weight, o.Date, now));
-
-                    // Cap the total weight at 100
-                    totalDecayedWeight = Math.Min(totalDecayedWeight, 100);
-                }
                 return new ProfileTopicDto(
                     topic.Id,
                     topic.ProfileId,
@@ -71,7 +50,7 @@ public sealed class GetProfileTopicsQueryHandler : IQueryHandler<GetProfileTopic
                     topic.TopicName,
                     topic.IsManual,
                     topic.CreatedOn,
-                    totalDecayWeight);
+                    totalWeight);
             })
             .ToArray();
     }

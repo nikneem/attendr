@@ -1,5 +1,6 @@
 using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.Core.Configuration;
+using HexMaster.Attendr.IntegrationEvents.Extensions;
 using HexMaster.Attendr.Profiles.Api.Endpoints;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Extensions;
 using HexMaster.Attendr.Profiles.Extensions;
@@ -33,6 +34,7 @@ builder.Services
     .AddTableStorageProfileRepository();
 
 builder.Services.AddDaprClient();
+builder.Services.AddIntegrationEvents(builder.Configuration);
 
 
 var app = builder.Build();

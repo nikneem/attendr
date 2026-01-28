@@ -148,6 +148,26 @@ public sealed class NotificationTypeService : INotificationTypeService
             },
             new()
             {
+                TypeKey = NotificationTypeKeys.ConferencePresentationsImported,
+                DisplayName = "Conference Imported",
+                Description = "Notifies when conference presentations have been successfully imported",
+                Severity = NotificationSeverity.Info,
+                AllowsStacking = false,
+                DefaultChannelSettings = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, false },
+                    { NotificationChannel.Push, false }
+                },
+                AvailableChannels = new Dictionary<NotificationChannel, bool>
+                {
+                    { NotificationChannel.InApp, true },
+                    { NotificationChannel.Email, false },
+                    { NotificationChannel.Push, false }
+                }
+            },
+            new()
+            {
                 TypeKey = NotificationTypeKeys.ProfileFollowedConference,
                 DisplayName = "Following Conference",
                 Description = "Notifies when you start following a conference",

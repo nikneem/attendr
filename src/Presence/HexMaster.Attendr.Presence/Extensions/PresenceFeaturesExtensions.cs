@@ -15,6 +15,7 @@ using HexMaster.Attendr.Presence.Features.UnfollowConference;
 using HexMaster.Attendr.Presence.Features.UpdateAttendance;
 using HexMaster.Attendr.Presence.Features.UpdateConference;
 using HexMaster.Attendr.Presence.Features.UpdatePresentation;
+using HexMaster.Attendr.Presence.Features.UpdateProfileTopicRecommendations;
 using HexMaster.Attendr.Presence.Observability;
 
 namespace HexMaster.Attendr.Presence.Extensions;
@@ -44,6 +45,7 @@ public static class PresenceFeaturesExtensions
         services.AddScoped<ICommandHandler<UnfollowConferenceCommand>, UnfollowConferenceCommandHandler>();
         services.AddScoped<ICommandHandler<CheckInCommand>, CheckInCommandHandler>();
         services.AddScoped<ICommandHandler<SetPreferredPresentationCommand>, SetPreferredPresentationCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateProfileTopicRecommendationsCommand, int>, UpdateProfileTopicRecommendationsCommandHandler>();
 
         // Register query handlers
         services.AddScoped<IQueryHandler<GetMyConferencesQuery, List<MyConferenceResponse>>, GetMyConferencesQueryHandler>();

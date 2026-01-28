@@ -54,6 +54,14 @@ public static class EventHandlersEndpoints
             .Produces(StatusCodes.Status200OK)
             .AllowAnonymous();
 
+        // Conference import events
+        group.MapPost("/ConferencePresentationsImportedHandler", HandleConferencePresentationsImported)
+            .WithName("HandleConferencePresentationsImported")
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ConferencePresentationsImported)
+            .Accepts<ConferencePresentationsImportedEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .AllowAnonymous();
+
         // Presentation events
         group.MapPost("/PresentationScheduleChangedHandler", HandlePresentationScheduleChanged)
             .WithName("HandlePresentationScheduleChanged")
@@ -172,8 +180,8 @@ public static class EventHandlersEndpoints
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, 
-                "Failed to process GroupAccessRequested event for group {GroupId}", 
+            logger.LogError(ex,
+                "Failed to process GroupAccessRequested event for group {GroupId}",
                 @event.GroupId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -210,6 +218,63 @@ public static class EventHandlersEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to process ProfileFollowedConference event");
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> HandleConferencePresentationsImported(
+        [FromBody] ConferencePresentationsImportedEvent @event,
+        ICommandHandler<ProcessNotificationTriggerCommand> handler,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            logger.LogInformation(
+                "Processing ConferencePresentationsImported event for conference {ConferenceId} with {ProfileCount} profiles and {PresentationsCount} presentations",
+                @event.ConferenceId,
+                @event.ProfileIds.Count,
+                @event.PresentationsCount);
+
+            // Send notification to all profiles following this conference
+            foreach (var profileId in @event.ProfileIds)
+            {
+                var command = new ProcessNotificationTriggerCommand(
+                    ProfileId: profileId,
+                    TypeKey: NotificationTypeKeys.ConferencePresentationsImported,
+                    Title: "Conference Imported",
+                    Message: $"Conference '{@event.ConferenceName}' was successfully imported with {@event.PresentationsCount} scheduled presentations",
+                    Url: $"/conferences/{@event.ConferenceId}",
+                    EntityRefs: new Dictionary<string, string>
+                    {
+                        ["conferenceId"] = @event.ConferenceId.ToString(),
+                        ["presentationsCount"] = @event.PresentationsCount.ToString()
+                    }
+                );
+
+                await handler.Handle(command, cancellationToken);
+
+                logger.LogDebug(
+                    "Sent notification to profile {ProfileId} for conference import {ConferenceId}",
+                    profileId,
+                    @event.ConferenceId);
+            }
+
+            logger.LogInformation(
+                "Successfully sent {NotificationCount} notifications for conference {ConferenceId} import",
+                @event.ProfileIds.Count,
+                @event.ConferenceId);
+
+            return Results.Ok(new
+            {
+                message = "Conference presentations imported notifications sent",
+                conferenceId = @event.ConferenceId,
+                notificationsSent = @event.ProfileIds.Count
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to process ConferencePresentationsImported event for conference {ConferenceId}", @event.ConferenceId);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

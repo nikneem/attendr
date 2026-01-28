@@ -46,4 +46,36 @@ public sealed class TopicWeightDecayService
 
         return (int)Math.Round(decayedWeight);
     }
+
+    /// <summary>
+    /// Calculates the total weight for a topic by summing all decayed occasion weights.
+    /// Manual topics always return 100. Non-manual topics sum all occasion weights with decay applied,
+    /// filtered by maximum age, and capped at 100.
+    /// </summary>
+    /// <param name="isManual">Whether the topic is manually confirmed.</param>
+    /// <param name="occasions">The collection of occasions for the topic.</param>
+    /// <param name="currentDate">The current date for comparison (defaults to UtcNow).</param>
+    /// <returns>The total topic weight (0-100).</returns>
+    public int CalculateTopicWeight(
+        bool isManual,
+        IEnumerable<(int Weight, DateTimeOffset Date)> occasions,
+        DateTimeOffset? currentDate = null)
+    {
+        // Manual topics always have a weight of 100
+        if (isManual)
+        {
+            return 100;
+        }
+
+        var now = currentDate ?? DateTimeOffset.UtcNow;
+        var maxAgeDate = now.AddMonths(-TopicWeightConstants.MaxOccasionAgeMonths);
+
+        // Filter occasions within the max age timespan and calculate total decayed weight
+        var totalDecayedWeight = occasions
+            .Where(o => o.Date >= maxAgeDate)
+            .Sum(o => CalculateDecayedWeight(o.Weight, o.Date, now));
+
+        // Cap the total weight at 100
+        return Math.Min(totalDecayedWeight, 100);
+    }
 }

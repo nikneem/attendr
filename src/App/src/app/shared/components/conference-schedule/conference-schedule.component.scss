@@ -137,7 +137,7 @@
     padding: 12px;
     cursor: pointer;
     transition: all 0.2s;
-    overflow: visible;
+    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
     &:hover {
@@ -157,6 +157,20 @@
             box-shadow: 0 4px 12px rgba(255, 193, 7, 0.5);
         }
     }
+}
+
+.recommended-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    background: #000000;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    vertical-align: middle;
 }
 
 .session-content {
@@ -204,6 +218,7 @@
 
 .session-time {
     font-size: 0.8125rem;
+    white-space: nowrap;
     opacity: 0.9;
     font-weight: 600;
     margin-top: auto;

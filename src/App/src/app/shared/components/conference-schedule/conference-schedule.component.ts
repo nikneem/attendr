@@ -2,6 +2,7 @@ import { Component, input, computed, signal, ElementRef, ViewChild, AfterViewIni
 import { CommonModule } from '@angular/common';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { PresentationDto } from '../../models/presentation-dto';
 import { SpeakerDto } from '../../models/speaker-dto';
 import { PresentationDetailsComponent } from '../presentation-details/presentation-details.component';
@@ -26,7 +27,7 @@ interface TimelineSession {
 
 @Component({
     selector: 'attn-conference-schedule',
-    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, DialogModule, PresentationDetailsComponent],
+    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, DialogModule, TooltipModule, PresentationDetailsComponent],
     templateUrl: './conference-schedule.component.html',
     styleUrl: './conference-schedule.component.scss',
 })
@@ -39,6 +40,7 @@ export class ConferenceScheduleComponent implements AfterViewInit {
     startDate = input.required<string>();
     endDate = input.required<string>();
     favoritePresentationIds = input<string[]>([]);
+    recommendedPresentationIds = input<string[]>([]);
     conferenceId = input.required<string>();
 
     selectedPresentation = signal<PresentationDto | null>(null);
@@ -177,6 +179,10 @@ export class ConferenceScheduleComponent implements AfterViewInit {
 
     isFavorite(presentationId: string): boolean {
         return this.favoritePresentationIds().includes(presentationId);
+    }
+
+    isRecommended(presentationId: string): boolean {
+        return this.recommendedPresentationIds().includes(presentationId);
     }
 
     openPresentationDetails(presentation: PresentationDto): void {

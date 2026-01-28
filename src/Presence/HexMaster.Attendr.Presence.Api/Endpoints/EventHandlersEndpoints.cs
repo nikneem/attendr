@@ -8,6 +8,7 @@ using HexMaster.Attendr.IntegrationEvents.Events.Groups;
 using HexMaster.Attendr.Presence.Features.CreateConferencePresence;
 using HexMaster.Attendr.Presence.Features.UpdateConference;
 using HexMaster.Attendr.Presence.Features.UpdatePresentation;
+using HexMaster.Attendr.Presence.Features.UpdateProfileTopicRecommendations;
 
 namespace HexMaster.Attendr.Presence.Api.Endpoints;
 
@@ -56,6 +57,15 @@ public static class EventHandlersEndpoints
             .WithName("HandleConferenceUpdated")
             .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ConferenceUpdated)
             .Accepts<ConferenceUpdatedEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
+
+        group.MapPost("/ProfileTopicsChangedHandler", HandleProfileTopicsChanged)
+            .WithName("HandleProfileTopicsChanged")
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ProfileTopicsChanged)
+            .Accepts<ProfileTopicsChangedEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError)
@@ -188,6 +198,51 @@ public static class EventHandlersEndpoints
         {
             logger.LogError(ex, "Error handling ConferenceUpdated for conference {ConferenceId}",
                 @event.ConferenceId);
+            return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> HandleProfileTopicsChanged(
+        ProfileTopicsChangedEvent @event,
+        ICommandHandler<UpdateProfileTopicRecommendationsCommand, int> handler,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("ProfileTopicsChangedEventHandler");
+        try
+        {
+            logger.LogInformation(
+                "Processing ProfileTopicsChanged event for profile {ProfileId} with {TopicCount} topics",
+                @event.ProfileId,
+                @event.Topics.Count);
+
+            // Parse profileId from string to Guid
+            if (!Guid.TryParse(@event.ProfileId, out var profileId))
+            {
+                logger.LogWarning("Invalid profile ID format: {ProfileId}", @event.ProfileId);
+                return Results.BadRequest(new { error = "Invalid profile ID format" });
+            }
+
+            // Map event topics to command topics
+            var topics = @event.Topics
+                .Select(t => new ProfileTopicWeight(t.TopicKey, t.Weight))
+                .ToList();
+
+            var updatedCount = await handler.Handle(
+                new UpdateProfileTopicRecommendationsCommand(profileId, topics),
+                cancellationToken);
+
+            return Results.Ok(new
+            {
+                message = "Profile topics processed",
+                profileId = @event.ProfileId,
+                updatedCount
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error handling ProfileTopicsChanged for profile {ProfileId}",
+                @event.ProfileId);
             return Results.BadRequest(new { error = "Failed to handle event", details = ex.Message });
         }
     }

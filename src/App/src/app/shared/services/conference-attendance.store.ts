@@ -21,9 +21,14 @@ export class ConferenceAttendanceStore {
     readonly isFollowing = computed(() => this.attendanceData()?.isFollowing ?? false);
     readonly isAttending = computed(() => this.attendanceData()?.isAttending ?? false);
     readonly favoritePresentationIds = computed(() => this.attendanceData()?.favoritePresentationIds ?? []);
+    readonly recommendedPresentationIds = computed(() => this.attendanceData()?.recommendedPresentationIds ?? []);
 
     isFavorite(presentationId: string): boolean {
         return this.favoritePresentationIds().includes(presentationId);
+    }
+
+    isRecommended(presentationId: string): boolean {
+        return this.recommendedPresentationIds().includes(presentationId);
     }
 
     loadAttendance(conferenceId: string): void {

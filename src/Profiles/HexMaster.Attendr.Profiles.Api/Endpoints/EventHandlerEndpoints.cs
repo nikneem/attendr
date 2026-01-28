@@ -1,6 +1,7 @@
 using Dapr;
 using HexMaster.Attendr.Aspire.AppHost;
 using HexMaster.Attendr.IntegrationEvents.Constants;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,14 @@ public static class EventHandlerEndpoints
             .WithName("HandleProfileTopicInterestEvent")
             .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ProfileTopicInterest)
             .Accepts<ProfileTopicInterestEvent>("application/cloudevents+json")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .AllowAnonymous();
+
+        group.MapPost("/conference-presentations-imported", EventHandlers.HandleConferencePresentationsImportedEvent)
+            .WithName("HandleConferencePresentationsImportedEvent")
+            .WithTopic(AspireConstants.Dapr.PubSubName, IntegrationEventTopics.ConferencePresentationsImported)
+            .Accepts<ConferencePresentationsImportedEvent>("application/cloudevents+json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .AllowAnonymous();
