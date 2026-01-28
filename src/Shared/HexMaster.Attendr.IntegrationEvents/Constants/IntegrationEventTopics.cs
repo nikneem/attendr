@@ -49,6 +49,12 @@ public static class IntegrationEventTopics
     public const string PresentationUpdated = "presentation.updated";
 
     /// <summary>
+    /// Topic for conference presentations imported events.
+    /// Published when all presentations have been successfully imported for a conference.
+    /// </summary>
+    public const string ConferencePresentationsImported = "conference.presentations-imported";
+
+    /// <summary>
     /// Topic for presentation schedule change events.
     /// Published when a presentation schedule changes and a profile has favorited it.
     /// </summary>
