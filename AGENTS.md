@@ -40,6 +40,23 @@ IMPORTANT! Aspire is designed to capture rich logs and telemetry for all resourc
 
 The playwright MCP server has also been configured in this repository and you should use it to perform functional investigations of the resources defined in the app model as you work on the codebase. To get endpoints that can be used for navigation using the playwright MCP server use the list resources tool.
 
+## Hexmaster Design Guidelines MCP server
+
+IMPORTANT! The hexmaster-design-guidelines MCP server provides access to project-specific documentation, architecture decision records (ADRs), and development guidelines. Always consult this server before making any changes to ensure compliance with project standards.
+
+Available tools:
+1. _list docs_; use this tool to get a list of all available documentation with id, title, and category.
+2. _list docs by type_; use this tool to filter documentation by category (e.g., 'adrs', 'guidelines').
+3. _search docs_; use this tool to search documents by title, id, or path (case-insensitive).
+4. _search docs by tag_; use this tool to search documents by tag.
+5. _get doc_; use this tool to get the full Markdown content of a specific document by id.
+
+Workflow:
+1. Before making architectural or significant code changes, use _list docs_ or _search docs_ to find relevant documentation.
+2. Review ADRs to understand existing architectural decisions and constraints.
+3. Consult guidelines to ensure your changes align with established patterns and practices.
+4. Use _get doc_ to retrieve the full content of relevant documents.
+
 ## Updating the app host
 The user may request that you update the Aspire apphost. You can do this using the `aspire update` command. This will update the apphost to the latest version and some of the Aspire specific packages in referenced projects, however you may need to manually update other packages in the solution to ensure compatibility. You can consider using the `dotnet-outdated` with the users consent. To install the `dotnet-outdated` tool use the following command:
 
