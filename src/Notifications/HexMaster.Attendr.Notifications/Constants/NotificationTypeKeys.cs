@@ -13,6 +13,7 @@ public static class NotificationTypeKeys
     // Conference notifications
     public const string ConferenceCreated = "conference.created";
     public const string ConferenceUpdated = "conference.updated";
+    public const string ConferencePresentationsImported = "conference.presentations-imported";
     public const string ProfileFollowedConference = "profile.followed-conference";
 
     // Presentation notifications
