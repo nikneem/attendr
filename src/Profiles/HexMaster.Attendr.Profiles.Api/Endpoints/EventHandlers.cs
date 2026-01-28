@@ -1,4 +1,5 @@
 using HexMaster.Attendr.Core.Exceptions;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Events.Profiles;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using HexMaster.Attendr.Profiles.Constants;
@@ -136,5 +137,87 @@ public static class EventHandlers
         };
 
         await eventPublisher.PublishAsync(@event, cancellationToken);
+    }
+
+    /// <summary>
+    /// Handles ConferencePresentationsImportedEvent by publishing ProfileTopicsChangedEvent for each affected profile.
+    /// </summary>
+    public static async Task<IResult> HandleConferencePresentationsImportedEvent(
+        ConferencePresentationsImportedEvent @event,
+        IProfileTopicRepository repository,
+        IIntegrationEventPublisher eventPublisher,
+        TopicWeightDecayService decayService,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (@event is null)
+            {
+                return Results.BadRequest(new { error = "Event is required" });
+            }
+
+            logger.LogInformation(
+                "Processing ConferencePresentationsImported event for conference {ConferenceId} with {ProfileCount} profiles and {PresentationsCount} presentations",
+                @event.ConferenceId,
+                @event.ProfileIds.Count,
+                @event.PresentationsCount);
+
+            var processedCount = 0;
+
+            // Process each profile that follows this conference
+            foreach (var profileId in @event.ProfileIds)
+            {
+                // Get all topics for the profile
+                var topics = await repository.GetByProfileIdAsync(profileId.ToString(), cancellationToken);
+
+                // Only publish if profile has topics
+                if (topics.Count > 0)
+                {
+                    await PublishProfileTopicsChangedEventAsync(
+                        profileId.ToString(),
+                        topics,
+                        decayService,
+                        eventPublisher,
+                        cancellationToken);
+
+                    processedCount++;
+
+                    logger.LogDebug(
+                        "Published ProfileTopicsChangedEvent for profile {ProfileId} with {TopicCount} topics",
+                        profileId,
+                        topics.Count);
+                }
+                else
+                {
+                    logger.LogDebug(
+                        "Skipping profile {ProfileId} - no topics found",
+                        profileId);
+                }
+            }
+
+            logger.LogInformation(
+                "Successfully processed ConferencePresentationsImported event for conference {ConferenceId} ({ConferenceName}). Published ProfileTopicsChangedEvent for {ProcessedCount}/{TotalCount} profiles",
+                @event.ConferenceId,
+                @event.ConferenceName,
+                processedCount,
+                @event.ProfileIds.Count);
+
+            return Results.Ok(new
+            {
+                message = "Conference presentations imported event processed",
+                conferenceId = @event.ConferenceId,
+                conferenceName = @event.ConferenceName,
+                profilesProcessed = processedCount,
+                totalProfiles = @event.ProfileIds.Count
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex,
+                "Error handling ConferencePresentationsImported for conference {ConferenceId}",
+                @event.ConferenceId);
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
