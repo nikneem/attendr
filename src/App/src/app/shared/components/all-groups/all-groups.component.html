@@ -28,23 +28,23 @@
         </div>
         } @else {
         <div class="table-container">
-            <p-table [value]="store.groups()" [tableStyle]="{ 'min-width': '50rem' }">
+            <p-table [value]="store.groups()" styleClass="groups-table">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Group Name</th>
-                        <th style="width: 120px">Type</th>
-                        <th style="width: 120px">Members</th>
+                        <th class="hide-mobile" style="width: 120px">Type</th>
+                        <th class="hide-mobile" style="width: 120px">Members</th>
                         <th style="width: 180px; text-align: center">Status</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-group>
-                    <tr>
+                    <tr class="desktop-row">
                         <td>{{ group.name }}</td>
-                        <td>
+                        <td class="hide-mobile">
                             <p-tag [value]="group.isPublic ? 'Public' : 'Private'"
                                 [severity]="group.isPublic ? 'info' : 'warn'" />
                         </td>
-                        <td>{{ group.memberCount }}</td>
+                        <td class="hide-mobile">{{ group.memberCount }}</td>
                         <td style="text-align: center">
                             @if (group.isMember) {
                             <p-tag value="Joined" severity="success" />
@@ -52,6 +52,33 @@
                             <p-button [label]="group.isPublic ? 'Join' : 'Request access'" size="small"
                                 (click)="onJoinGroup(group.id)" />
                             }
+                        </td>
+                    </tr>
+                    <tr class="mobile-row">
+                        <td colspan="2">
+                            <div class="mobile-card">
+                                <div class="mobile-card-header">
+                                    <span class="group-name">{{ group.name }}</span>
+                                    <div class="group-tags">
+                                        <p-tag [value]="group.isPublic ? 'Public' : 'Private'"
+                                            [severity]="group.isPublic ? 'info' : 'warn'" />
+                                    </div>
+                                </div>
+                                <div class="mobile-card-body">
+                                    <div class="group-info">
+                                        <i class="pi pi-users"></i>
+                                        <span>{{ group.memberCount }} {{ group.memberCount === 1 ? 'member' : 'members' }}</span>
+                                    </div>
+                                    <div class="group-action">
+                                        @if (group.isMember) {
+                                        <p-tag value="Joined" severity="success" />
+                                        } @else {
+                                        <p-button [label]="group.isPublic ? 'Join' : 'Request access'" size="small"
+                                            (click)="onJoinGroup(group.id)" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 </ng-template>
