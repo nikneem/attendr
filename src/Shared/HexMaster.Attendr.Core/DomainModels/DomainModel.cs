@@ -1,3 +1,5 @@
+using HexMaster.Attendr.Core.DomainEvents;
+
 namespace HexMaster.Attendr.Core.DomainModels;
 
 /// <summary>
@@ -6,9 +8,11 @@ namespace HexMaster.Attendr.Core.DomainModels;
 /// and validation through behavior methods.
 /// </summary>
 /// <typeparam name="TId">The type of the domain model identifier.</typeparam>
-public abstract class DomainModel<TId>
+public abstract class DomainModel<TId> : IDomainEventContainer
     where TId : notnull
 {
+    private readonly List<DomainEvent> _domainEvents = new();
+
     /// <summary>
     /// Gets the immutable unique identifier of the domain model.
     /// </summary>
@@ -23,6 +27,11 @@ public abstract class DomainModel<TId>
     /// Gets the date and time when the domain model was last modified.
     /// </summary>
     public DateTimeOffset? ModifiedOn { get; private set; }
+
+    /// <summary>
+    /// Gets the collection of domain events raised by this entity.
+    /// </summary>
+    public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DomainModel{TId}"/> class.
@@ -88,5 +97,24 @@ public abstract class DomainModel<TId>
     protected void SetModifiedOn(DateTimeOffset? modifiedOn)
     {
         ModifiedOn = modifiedOn;
+    }
+
+    /// <summary>
+    /// Adds a domain event to the entity's event collection.
+    /// </summary>
+    /// <param name="domainEvent">The domain event to add.</param>
+    protected void AddDomainEvent(DomainEvent domainEvent)
+    {
+        ArgumentNullException.ThrowIfNull(domainEvent);
+        _domainEvents.Add(domainEvent);
+    }
+
+    /// <summary>
+    /// Clears all domain events from the entity.
+    /// This is typically called after events have been dispatched.
+    /// </summary>
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
     }
 }
