@@ -60,7 +60,7 @@
                     </div>
                     <div class="rate-row">
                         <button pButton type="button" label="Rate Sessions" icon="pi pi-star"
-                            [disabled]="!(conference.isFollowing && conference.isAttending)"
+                            [disabled]="!conference.isFollowing"
                             (click)="navigateToRate(conference.conferenceId)" class="rate-btn"></button>
                     </div>
                 </div>

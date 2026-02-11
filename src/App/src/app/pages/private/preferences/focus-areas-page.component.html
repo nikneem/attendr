@@ -50,16 +50,16 @@
             <div class="col-weight">Weight</div>
             <div class="col-updated">Last Updated</div>
         </div>
-        @for (topic of topics(); track topic.id) {
-        <div class="topic-row">
+        @for (topic of topics(); track topic.id; let first = $first) {
+        <div class="topic-row" [class.tour-first-topic]="first">
             <div class="col-topic">
                 <span class="topic-name">{{ topic.topicName }}</span>
-                <p-tag [value]="topic.isManual ? 'Manual' : 'AI'" [severity]="topic.isManual ? 'info' : 'success'"
+                <p-tag class="tour-topic-tag" [value]="topic.isManual ? 'Manual' : 'AI'" [severity]="topic.isManual ? 'info' : 'success'"
                     [pTooltip]="topic.isManual ? 'Click to mark as AI-defined' : 'Click to mark as manually confirmed'"
                     tooltipPosition="top" [style]="{ cursor: 'pointer' }"
                     (click)="toggleTopicManualStatus(topic, $event)"></p-tag>
             </div>
-            <div class="col-weight">
+            <div class="col-weight" [class.tour-weight-bar]="first">
                 <p-progressBar [value]="topic.weight"></p-progressBar>
             </div>
             <div class="col-updated">

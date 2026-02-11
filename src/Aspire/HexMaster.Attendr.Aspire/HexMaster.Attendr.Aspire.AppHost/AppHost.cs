@@ -110,27 +110,27 @@ var gateway = builder.AddYarp("gateway")
     .WithConfiguration(yarp =>
     {
         // Proxy /profielen routes to the Profielen API
-        yarp.AddRoute("/profiles/{**catch-all}", profilesApi)
+        yarp.AddRoute("/profiles/{**catch-all}", profilesApi.GetEndpoint("http"))
             .WithTransformPathRemovePrefix("/profiles")
             .WithTransformPathPrefix("/api/profiles");
 
-        yarp.AddRoute("/groups/{**catch-all}", groupsApi)
+        yarp.AddRoute("/groups/{**catch-all}", groupsApi.GetEndpoint("http"))
             .WithTransformPathRemovePrefix("/groups")
             .WithTransformPathPrefix("/api/groups");
 
-        yarp.AddRoute("/conferences/{**catch-all}", conferencesApi)
+        yarp.AddRoute("/conferences/{**catch-all}", conferencesApi.GetEndpoint("http"))
             .WithTransformPathRemovePrefix("/conferences")
             .WithTransformPathPrefix("/api/conferences");
 
-        yarp.AddRoute("/topics/{**catch-all}", conferencesApi)
+        yarp.AddRoute("/topics/{**catch-all}", conferencesApi.GetEndpoint("http"))
             .WithTransformPathRemovePrefix("/topics")
             .WithTransformPathPrefix("/api/topics");
 
-        yarp.AddRoute("/presence/{**catch-all}", presenceApi)
+        yarp.AddRoute("/presence/{**catch-all}", presenceApi.GetEndpoint("http"))
             .WithTransformPathRemovePrefix("/presence")
             .WithTransformPathPrefix("/api/presence");
 
-        yarp.AddRoute("/notifications/{**catch-all}", notificationApi)
+        yarp.AddRoute("/notifications/{**catch-all}", notificationApi.GetEndpoint("http"))
             .WithTransformPathRemovePrefix("/notifications")
             .WithTransformPathPrefix("/api/notifications");
 
