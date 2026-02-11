@@ -3,7 +3,6 @@ import { JoinedGroupsComponent } from '@components/joined-groups/joined-groups.c
 import { MyConferencesComponent } from '@components/my-conferences/my-conferences.component';
 import { HereNowComponent } from '@components/here-now/here-now.component';
 import { driver } from 'driver.js';
-import 'driver.js/dist/driver.css';
 
 @Component({
     selector: 'attn-dashboard-page',
@@ -80,8 +79,6 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
         });
-
-        this.setTourCookie();
         driverObj.drive();
     }
 }

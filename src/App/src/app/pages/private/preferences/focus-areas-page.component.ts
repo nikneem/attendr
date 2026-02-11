@@ -11,7 +11,6 @@ import { MessageService } from 'primeng/api';
 import { ProfileService } from '@services/profile.service';
 import { ProfileTopicDto } from '@models/profile-topic-dto';
 import { driver } from 'driver.js';
-import 'driver.js/dist/driver.css';
 
 interface TopicWithRelativeTime extends ProfileTopicDto {
     relativeTime: string;
