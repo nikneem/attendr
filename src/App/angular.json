@@ -53,6 +53,7 @@
             ],
             "styles": [
               "node_modules/primeicons/primeicons.css",
+              "node_modules/driver.js/dist/driver.css",
               "src/styles.scss"
             ]
           },
