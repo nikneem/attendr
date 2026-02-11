@@ -184,6 +184,9 @@ export class FocusAreasPageComponent implements OnInit {
                 this.setTourCookie();
                 driverObj.destroy();
             },
+            onDestroyed: () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
         });
 
         this.setTourCookie();
