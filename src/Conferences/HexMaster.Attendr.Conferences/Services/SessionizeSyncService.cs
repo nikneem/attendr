@@ -150,6 +150,11 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
         // Second pass: add/update presentations
         var updatedPresentations = new List<(Presentation Presentation, bool IsScheduleChanged)>();
 
+        // Create a more tolerant time window for importing presentations
+        // Subtract 24 hours from start and add 24 hours to end to handle edge cases
+        var tolerantStartDateTime = conference.StartDate.ToDateTime(TimeOnly.MinValue).AddHours(-24);
+        var tolerantEndDateTime = conference.EndDate.ToDateTime(TimeOnly.MaxValue).AddHours(24);
+
         foreach (var day in scheduleGrid)
         {
             foreach (var room in day.Rooms)
@@ -181,6 +186,15 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                     // Use the datetime directly from the session
                     var startDateTime = session.StartsAt.DateTime;
                     var endDateTime = session.EndsAt.DateTime;
+                    
+                    // Only import sessions that start within the tolerant time window
+                    if (startDateTime < tolerantStartDateTime || startDateTime > tolerantEndDateTime)
+                    {
+                        _logger.LogDebug("Session {SessionId} starts at {SessionDateTime}, outside tolerant conference window ({TolerantStart} to {TolerantEnd}), skipping",
+                            session.Id, startDateTime, tolerantStartDateTime, tolerantEndDateTime);
+                        continue;
+                    }
+
                     var title = session.Title ?? "Untitled";
                     var description = session.Description ?? "No description available";
 
@@ -264,6 +278,19 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                     }
                 }
             }
+        }
+
+        // Clean up unused rooms and speakers before saving
+        var removedRooms = conference.RemoveUnusedRooms();
+        if (removedRooms > 0)
+        {
+            _logger.LogInformation("Removed {RemovedRooms} unused rooms from conference {ConferenceId}", removedRooms, conferenceId);
+        }
+
+        var removedSpeakers = conference.RemoveUnusedSpeakers();
+        if (removedSpeakers > 0)
+        {
+            _logger.LogInformation("Removed {RemovedSpeakers} unused speakers from conference {ConferenceId}", removedSpeakers, conferenceId);
         }
 
         // Save the updated conference
