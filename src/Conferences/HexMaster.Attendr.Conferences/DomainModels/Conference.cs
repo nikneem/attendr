@@ -363,4 +363,48 @@ public sealed class Conference : StatefulDomainModel<Guid>
             SetState(DomainModelState.Touched);
         }
     }
+
+    /// <summary>
+    /// Removes rooms that are not used by any presentation.
+    /// </summary>
+    /// <returns>The number of rooms removed.</returns>
+    public int RemoveUnusedRooms()
+    {
+        var usedRoomIds = _presentations.Select(p => p.Room.Id).Distinct().ToHashSet();
+        var initialCount = _rooms.Count;
+        
+        _rooms.RemoveAll(r => !usedRoomIds.Contains(r.Id));
+        
+        var removedCount = initialCount - _rooms.Count;
+        if (removedCount > 0)
+        {
+            SetState(DomainModelState.Touched);
+        }
+        
+        return removedCount;
+    }
+
+    /// <summary>
+    /// Removes speakers that are not associated with any presentation.
+    /// </summary>
+    /// <returns>The number of speakers removed.</returns>
+    public int RemoveUnusedSpeakers()
+    {
+        var usedSpeakerIds = _presentations
+            .SelectMany(p => p.Speakers.Select(s => s.Id))
+            .Distinct()
+            .ToHashSet();
+        
+        var initialCount = _speakers.Count;
+        
+        _speakers.RemoveAll(s => !usedSpeakerIds.Contains(s.Id));
+        
+        var removedCount = initialCount - _speakers.Count;
+        if (removedCount > 0)
+        {
+            SetState(DomainModelState.Touched);
+        }
+        
+        return removedCount;
+    }
 }
