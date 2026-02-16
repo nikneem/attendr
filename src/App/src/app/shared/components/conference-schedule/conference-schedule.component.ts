@@ -34,6 +34,8 @@ interface TimelineSession {
 export class ConferenceScheduleComponent implements AfterViewInit {
     private readonly attendanceStore = inject(ConferenceAttendanceStore);
     private readonly presenceService = inject(PresenceService);
+    private readonly pixelsPerHour = 300;
+    private readonly millisecondsPerHour = 60 * 60 * 1000;
 
     @ViewChild('scheduleContainer') scheduleContainer?: ElementRef<HTMLDivElement>;
     presentations = input.required<PresentationDto[]>();
@@ -68,7 +70,7 @@ export class ConferenceScheduleComponent implements AfterViewInit {
         // Group presentations by day
         const dayMap = new Map<string, PresentationDto[]>();
         presentations.forEach((pres) => {
-            const presDate = new Date(pres.startDateTime);
+            const presDate = this.parseDateTime(pres.startDateTime);
             const dateKey = presDate.toDateString();
             if (!dayMap.has(dateKey)) {
                 dayMap.set(dateKey, []);
@@ -88,8 +90,8 @@ export class ConferenceScheduleComponent implements AfterViewInit {
             const rooms = Array.from(new Set(dayPresentations.map((p) => p.roomName))).sort();
 
             // Find earliest and latest times
-            const startTimes = dayPresentations.map((p) => new Date(p.startDateTime).getTime());
-            const endTimes = dayPresentations.map((p) => new Date(p.endDateTime).getTime());
+            const startTimes = dayPresentations.map((p) => this.parseDateTime(p.startDateTime).getTime());
+            const endTimes = dayPresentations.map((p) => this.parseDateTime(p.endDateTime).getTime());
             const earliestTime = new Date(Math.min(...startTimes));
             const latestTime = new Date(Math.max(...endTimes));
 
@@ -119,12 +121,10 @@ export class ConferenceScheduleComponent implements AfterViewInit {
 
     getTimelineSessions(day: ScheduleDay): TimelineSession[] {
         const sessions: TimelineSession[] = [];
-        const PIXELS_PER_HOUR = 300;
-        const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
 
         day.presentations.forEach((pres) => {
-            const presStart = new Date(pres.startDateTime);
-            const presEnd = new Date(pres.endDateTime);
+            const presStart = this.parseDateTime(pres.startDateTime);
+            const presEnd = this.parseDateTime(pres.endDateTime);
             const roomIndex = day.rooms.indexOf(pres.roomName);
 
             // Calculate offset from day start time in milliseconds
@@ -132,8 +132,8 @@ export class ConferenceScheduleComponent implements AfterViewInit {
             const presDuration = presEnd.getTime() - presStart.getTime();
 
             // Convert milliseconds to pixels (300px per hour)
-            const startPixels = (offsetFromStart / MILLISECONDS_PER_HOUR) * PIXELS_PER_HOUR;
-            const widthPixels = (presDuration / MILLISECONDS_PER_HOUR) * PIXELS_PER_HOUR;
+            const startPixels = (offsetFromStart / this.millisecondsPerHour) * this.pixelsPerHour;
+            const widthPixels = (presDuration / this.millisecondsPerHour) * this.pixelsPerHour;
 
             sessions.push({
                 presentation: pres,
@@ -146,27 +146,41 @@ export class ConferenceScheduleComponent implements AfterViewInit {
         return sessions;
     }
 
-    formatTime(dateString: string): string {
-        const date = new Date(dateString);
+    formatTime(dateInput: string | Date): string {
+        const date = typeof dateInput === 'string' ? this.parseDateTime(dateInput) : dateInput;
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
         return `${hours}:${minutes}`;
     }
 
-    getTimeLabels(day: ScheduleDay): string[] {
-        const labels: string[] = [];
+    getTimeLabels(day: ScheduleDay): { label: string; leftPixels: number }[] {
+        const labels: { label: string; leftPixels: number }[] = [];
         const start = new Date(day.startTime);
         const end = new Date(day.endTime);
 
         let current = new Date(start);
+        let index = 0;
         while (current <= end) {
-            const hours = String(current.getHours()).padStart(2, '0');
-            const minutes = String(current.getMinutes()).padStart(2, '0');
-            labels.push(`${hours}:${minutes}`);
+            labels.push({
+                label: this.formatTime(current),
+                leftPixels: index * this.pixelsPerHour,
+            });
             current.setHours(current.getHours() + 1);
+            index += 1;
         }
 
         return labels;
+    }
+
+    getTimelineWidth(day: ScheduleDay): number {
+        const durationMs = Math.max(0, day.endTime.getTime() - day.startTime.getTime());
+        const hours = Math.max(1, Math.round(durationMs / this.millisecondsPerHour));
+        return hours * this.pixelsPerHour;
+    }
+
+    private parseDateTime(value: string): Date {
+        const hasTimeZone = /([zZ]|[+-]\d{2}:?\d{2})$/.test(value);
+        return new Date(hasTimeZone ? value : `${value}Z`);
     }
 
     getSpeakerNames(presentation: PresentationDto): string {
