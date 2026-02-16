@@ -465,7 +465,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         command.Parameters.AddWithValue("@abstract", presentation.Abstract);
         command.Parameters.AddWithValue("@start_date_time", presentation.StartDateTime);
         command.Parameters.AddWithValue("@end_date_time", presentation.EndDateTime);
-        command.Parameters.AddWithValue("@is_analysed", presentation.IsAnalysed);
+        command.Parameters.AddWithValue("@is_analysed", false);
         command.Parameters.AddWithValue("@external_id", (object?)presentation.ExternalId ?? DBNull.Value);
 
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);

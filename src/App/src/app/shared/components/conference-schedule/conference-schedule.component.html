@@ -10,9 +10,11 @@
         <div class="timeline-container">
             <div class="timeline-header">
                 <div class="timeline-time-labels">
-                    @for (timeLabel of getTimeLabels(day); track timeLabel) {
-                    <div class="time-label">{{ timeLabel }}</div>
-                    }
+                    <div class="timeline-time-labels-inner" [style.min-width.px]="getTimelineWidth(day)">
+                        @for (timeLabel of getTimeLabels(day); track timeLabel.label) {
+                        <div class="time-label" [style.left.px]="timeLabel.leftPixels">{{ timeLabel.label }}</div>
+                        }
+                    </div>
                 </div>
             </div>
             <div class="timeline-body">
@@ -20,7 +22,7 @@
                     @for (room of day.rooms; track room; let i = $index) {
                     <div class="timeline-room">
                         <div class="room-label">{{ room }}</div>
-                        <div class="room-timeline">
+                        <div class="room-timeline" [style.min-width.px]="getTimelineWidth(day)">
                             @for (session of getTimelineSessions(day); track session.presentation.id) {
                             @if (session.roomIndex === i) {
                             <div class="timeline-session" [class.favorite-session]="isFavorite(session.presentation.id)"
@@ -85,9 +87,11 @@
                 <div class="timeline-container">
                     <div class="timeline-header">
                         <div class="timeline-time-labels">
-                            @for (timeLabel of getTimeLabels(day); track timeLabel) {
-                            <div class="time-label">{{ timeLabel }}</div>
-                            }
+                            <div class="timeline-time-labels-inner" [style.min-width.px]="getTimelineWidth(day)">
+                                @for (timeLabel of getTimeLabels(day); track timeLabel.label) {
+                                <div class="time-label" [style.left.px]="timeLabel.leftPixels">{{ timeLabel.label }}</div>
+                                }
+                            </div>
                         </div>
                     </div>
                     <div class="timeline-body">
@@ -95,7 +99,7 @@
                             @for (room of day.rooms; track room; let roomIndex = $index) {
                             <div class="timeline-room">
                                 <div class="room-label">{{ room }}</div>
-                                <div class="room-timeline">
+                                <div class="room-timeline" [style.min-width.px]="getTimelineWidth(day)">
                                     @for (session of getTimelineSessions(day); track session.presentation.id) {
                                     @if (session.roomIndex === roomIndex) {
                                     <div class="timeline-session"

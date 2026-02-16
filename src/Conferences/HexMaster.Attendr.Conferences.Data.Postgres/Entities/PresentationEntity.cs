@@ -10,8 +10,8 @@ public sealed class PresentationEntity
     public Guid RoomId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Abstract { get; set; } = string.Empty;
-    public DateTime StartDateTime { get; set; }
-    public DateTime EndDateTime { get; set; }
+    public DateTimeOffset StartDateTime { get; set; }
+    public DateTimeOffset EndDateTime { get; set; }
     public bool IsAnalysed { get; set; }
     public string? ExternalId { get; set; }
 }

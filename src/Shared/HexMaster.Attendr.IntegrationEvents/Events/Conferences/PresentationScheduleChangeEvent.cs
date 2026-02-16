@@ -16,6 +16,6 @@ public sealed class PresentationScheduleChangeEvent : IntegrationEvent
     public string Title { get; set; } = string.Empty;
     public string Abstract { get; set; } = string.Empty;
     public string Room { get; set; } = string.Empty;
-    public DateTime StartDateTime { get; set; }
-    public DateTime EndDateTime { get; set; }
+    public DateTimeOffset StartDateTime { get; set; }
+    public DateTimeOffset EndDateTime { get; set; }
 }

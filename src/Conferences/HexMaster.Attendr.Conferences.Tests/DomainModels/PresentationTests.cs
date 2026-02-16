@@ -14,7 +14,7 @@ public class PresentationTests
         // Arrange
         var title = "Introduction to .NET";
         var abstractText = "Learn about .NET fundamentals";
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
         var room = CreateTestRoom();
         var speakers = new[] { CreateTestSpeaker() };
@@ -40,7 +40,7 @@ public class PresentationTests
         // Arrange
         var title = "Introduction to .NET";
         var abstractText = "Learn about .NET fundamentals";
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
         var room = CreateTestRoom();
         var speakers = new[] { CreateTestSpeaker() };
@@ -57,7 +57,7 @@ public class PresentationTests
     public void Create_WithNullTitle_ShouldThrowArgumentException()
     {
         // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
 
         // Act & Assert
@@ -70,7 +70,7 @@ public class PresentationTests
     public void Create_WithEmptyTitle_ShouldThrowArgumentException()
     {
         // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
 
         // Act & Assert
@@ -83,7 +83,7 @@ public class PresentationTests
     public void Create_WithNullAbstract_ShouldThrowArgumentException()
     {
         // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
 
         // Act & Assert
@@ -96,7 +96,7 @@ public class PresentationTests
     public void Create_WithEmptyAbstract_ShouldThrowArgumentException()
     {
         // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
 
         // Act & Assert
@@ -109,7 +109,7 @@ public class PresentationTests
     public void Create_WithEndDateBeforeStartDate_ShouldThrowArgumentException()
     {
         // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(-1);
 
         // Act & Assert
@@ -122,7 +122,7 @@ public class PresentationTests
     public void Create_WithNullRoom_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
 
         // Act & Assert
@@ -135,7 +135,7 @@ public class PresentationTests
     public void Create_WithNullSpeakers_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
 
         // Act & Assert
@@ -148,7 +148,7 @@ public class PresentationTests
     public void Create_WithEmptySpeakers_ShouldThrowArgumentException()
     {
         // Arrange
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
 
         // Act & Assert
@@ -163,7 +163,7 @@ public class PresentationTests
         // Arrange
         var title = "Panel Discussion";
         var abstractText = "Discussion about technology";
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
         var room = CreateTestRoom();
         var speakers = new[] { CreateTestSpeaker(), CreateTestSpeaker(), CreateTestSpeaker() };
@@ -182,7 +182,7 @@ public class PresentationTests
         var id = Guid.NewGuid();
         var title = "Introduction to .NET";
         var abstractText = "Learn about .NET fundamentals";
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
         var room = CreateTestRoom();
         var speakers = new[] { CreateTestSpeaker() };
@@ -204,7 +204,7 @@ public class PresentationTests
         var id = Guid.NewGuid();
         var title = "Introduction to .NET";
         var abstractText = "Learn about .NET fundamentals";
-        var startDateTime = DateTime.UtcNow.AddDays(1);
+        var startDateTime = DateTimeOffset.UtcNow.AddDays(1);
         var endDateTime = startDateTime.AddHours(1);
         var room = CreateTestRoom();
         var speakers = new[] { CreateTestSpeaker() };

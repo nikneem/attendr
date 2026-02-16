@@ -93,12 +93,12 @@ public static class ConferenceFactory
     public static Presentation CreatePresentation(
         string? title = null,
         string? abstractText = null,
-        DateTime? startDateTime = null,
-        DateTime? endDateTime = null,
+        DateTimeOffset? startDateTime = null,
+        DateTimeOffset? endDateTime = null,
         Room? room = null,
         IEnumerable<Speaker>? speakers = null)
     {
-        var start = startDateTime ?? Faker.Date.Future();
+        var start = startDateTime ?? new DateTimeOffset(Faker.Date.Future(), TimeSpan.Zero);
         var end = endDateTime ?? start.AddHours(1);
 
         return Presentation.Create(

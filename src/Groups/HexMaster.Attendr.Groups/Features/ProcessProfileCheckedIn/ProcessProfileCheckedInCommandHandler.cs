@@ -155,14 +155,12 @@ public sealed class ProcessProfileCheckedInCommandHandler : ICommandHandler<Proc
                                 presentationDto.Title,
                                 presentationDto.Abstract,
                                 presentationDto.RoomName,
-                                presentationDto.StartDateTime,
-                                presentationDto.EndDateTime,
+                                presentationDto.StartDateTime.UtcDateTime,
+                                presentationDto.EndDateTime.UtcDateTime,
                                 speakers);
 
                             // Set expiration to 10 minutes after the presentation ends (ensure UTC)
-                            var expiration = new DateTimeOffset(
-                                DateTime.SpecifyKind(presentationDto.EndDateTime, DateTimeKind.Utc))
-                                .AddMinutes(10);
+                            var expiration = presentationDto.EndDateTime.AddMinutes(10);
 
                             var newCheckIn = CheckIn.Create(
                                 group.Id,

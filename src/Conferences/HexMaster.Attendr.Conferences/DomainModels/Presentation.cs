@@ -18,14 +18,14 @@ public sealed class Presentation : StatefulDomainModel<Guid>
     public string Abstract { get; private set; }
 
     /// <summary>
-    /// Gets the start date and time of the presentation.
+    /// Gets the start date and time of the presentation in UTC.
     /// </summary>
-    public DateTime StartDateTime { get; private set; }
+    public DateTimeOffset StartDateTime { get; private set; }
 
     /// <summary>
-    /// Gets the end date and time of the presentation.
+    /// Gets the end date and time of the presentation in UTC.
     /// </summary>
-    public DateTime EndDateTime { get; private set; }
+    public DateTimeOffset EndDateTime { get; private set; }
 
     /// <summary>
     /// Gets the room where the presentation is held.
@@ -75,8 +75,8 @@ public sealed class Presentation : StatefulDomainModel<Guid>
         Guid id,
         string title,
         string @abstract,
-        DateTime startDateTime,
-        DateTime endDateTime,
+        DateTimeOffset startDateTime,
+        DateTimeOffset endDateTime,
         Room room,
         IEnumerable<Speaker> speakers,
         string? externalId,
@@ -150,8 +150,8 @@ public sealed class Presentation : StatefulDomainModel<Guid>
     public static Presentation Create(
         string title,
         string @abstract,
-        DateTime startDateTime,
-        DateTime endDateTime,
+        DateTimeOffset startDateTime,
+        DateTimeOffset endDateTime,
         Room room,
         IEnumerable<Speaker> speakers,
         string? externalId = null,
@@ -179,8 +179,8 @@ public sealed class Presentation : StatefulDomainModel<Guid>
         Guid id,
         string title,
         string @abstract,
-        DateTime startDateTime,
-        DateTime endDateTime,
+        DateTimeOffset startDateTime,
+        DateTimeOffset endDateTime,
         Room room,
         IEnumerable<Speaker> speakers,
         string? externalId = null,
@@ -195,9 +195,9 @@ public sealed class Presentation : StatefulDomainModel<Guid>
     /// </summary>
     /// <param name="title">The new title.</param>
     /// <param name="abstract">The new abstract.</param>
-    /// <param name="startDateTime">The new start date and time.</param>
-    /// <param name="endDateTime">The new end date and time.</param>
-    public void UpdateDetails(string title, string @abstract, DateTime startDateTime, DateTime endDateTime)
+    /// <param name="startDateTime">The new start date and time in UTC.</param>
+    /// <param name="endDateTime">The new end date and time in UTC.</param>
+    public void UpdateDetails(string title, string @abstract, DateTimeOffset startDateTime, DateTimeOffset endDateTime)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(title, nameof(title));
         ArgumentException.ThrowIfNullOrWhiteSpace(@abstract, nameof(@abstract));
