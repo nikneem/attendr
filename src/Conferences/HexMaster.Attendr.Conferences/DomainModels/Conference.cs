@@ -372,15 +372,15 @@ public sealed class Conference : StatefulDomainModel<Guid>
     {
         var usedRoomIds = _presentations.Select(p => p.Room.Id).Distinct().ToHashSet();
         var initialCount = _rooms.Count;
-        
+
         _rooms.RemoveAll(r => !usedRoomIds.Contains(r.Id));
-        
+
         var removedCount = initialCount - _rooms.Count;
         if (removedCount > 0)
         {
             SetState(DomainModelState.Touched);
         }
-        
+
         return removedCount;
     }
 
@@ -394,17 +394,17 @@ public sealed class Conference : StatefulDomainModel<Guid>
             .SelectMany(p => p.Speakers.Select(s => s.Id))
             .Distinct()
             .ToHashSet();
-        
+
         var initialCount = _speakers.Count;
-        
+
         _speakers.RemoveAll(s => !usedSpeakerIds.Contains(s.Id));
-        
+
         var removedCount = initialCount - _speakers.Count;
         if (removedCount > 0)
         {
             SetState(DomainModelState.Touched);
         }
-        
+
         return removedCount;
     }
 }

@@ -186,7 +186,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                     // Use the datetime directly from the session
                     var startDateTime = session.StartsAt.DateTime;
                     var endDateTime = session.EndsAt.DateTime;
-                    
+
                     // Only import sessions that start within the tolerant time window
                     if (startDateTime < tolerantStartDateTime || startDateTime > tolerantEndDateTime)
                     {
