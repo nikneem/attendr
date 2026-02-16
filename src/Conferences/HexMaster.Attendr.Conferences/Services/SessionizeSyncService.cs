@@ -152,8 +152,8 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
 
         // Create a more tolerant time window for importing presentations
         // Subtract 24 hours from start and add 24 hours to end to handle edge cases
-        var tolerantStartDateTime = conference.StartDate.ToDateTime(TimeOnly.MinValue).AddHours(-24);
-        var tolerantEndDateTime = conference.EndDate.ToDateTime(TimeOnly.MaxValue).AddHours(24);
+        var tolerantStartDateTime = new DateTimeOffset(conference.StartDate.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero).AddHours(-24);
+        var tolerantEndDateTime = new DateTimeOffset(conference.EndDate.ToDateTime(TimeOnly.MaxValue), TimeSpan.Zero).AddHours(24);
 
         foreach (var day in scheduleGrid)
         {
@@ -183,9 +183,10 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                         continue;
                     }
 
-                    // Use the datetime directly from the session
-                    var startDateTime = session.StartsAt.DateTime;
-                    var endDateTime = session.EndsAt.DateTime;
+                    // Convert session datetime from Sessionize to UTC DateTimeOffset
+                    // Sessionize returns data in UTC, so we ensure it's properly offset
+                    var startDateTime = new DateTimeOffset(session.StartsAt.DateTime, TimeSpan.Zero);
+                    var endDateTime = new DateTimeOffset(session.EndsAt.DateTime, TimeSpan.Zero);
 
                     // Only import sessions that start within the tolerant time window
                     if (startDateTime < tolerantStartDateTime || startDateTime > tolerantEndDateTime)

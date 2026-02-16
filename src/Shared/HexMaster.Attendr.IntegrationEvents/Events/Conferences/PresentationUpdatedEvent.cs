@@ -32,14 +32,14 @@ public sealed class PresentationUpdatedEvent : IntegrationEvent
     public string Abstract { get; init; } = string.Empty;
 
     /// <summary>
-    /// Gets the start date and time of the presentation.
+    /// Gets the start date and time of the presentation in UTC.
     /// </summary>
-    public DateTime StartDateTime { get; init; }
+    public DateTimeOffset StartDateTime { get; init; }
 
     /// <summary>
-    /// Gets the end date and time of the presentation.
+    /// Gets the end date and time of the presentation in UTC.
     /// </summary>
-    public DateTime EndDateTime { get; init; }
+    public DateTimeOffset EndDateTime { get; init; }
 
     /// <summary>
     /// Gets the ID of the room where the presentation is held.
