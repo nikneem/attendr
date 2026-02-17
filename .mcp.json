@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "hexmaster-design-guidelines": {
+      "command": "hexmaster-codingguidelines-mcpserver",
+      "args": []
+    },
+    "aspire": {
+      "command": "aspire",
+      "args": [
+        "mcp",
+        "start"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}

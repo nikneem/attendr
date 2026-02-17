@@ -1,68 +1,94 @@
 <div class="home-page">
-    <!-- Hero Section -->
+
+    <!-- SECTION 1: Hero -->
     <section class="hero">
-        <div class="hero-background">
-            <div class="animated-gradient"></div>
-            <div class="particles">
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
+        <div class="hero-mesh"></div>
+        <div class="hero-noise"></div>
+        <div class="hero-orb hero-orb--1"></div>
+        <div class="hero-orb hero-orb--2"></div>
+        <div class="hero-orb hero-orb--3"></div>
+
+        <div class="hero-inner">
+            <div class="hero-text">
+                <span class="hero-badge reveal">Conference Companion</span>
+                <h1 class="hero-title reveal">
+                    Elevate Your<br />
+                    <span class="hero-title--accent">Conference</span>
+                    Experience
+                </h1>
+                <p class="hero-subtitle reveal">
+                    Mark favorites, navigate schedules, network smarter,
+                    and never miss a moment at any conference.
+                </p>
+                <div class="hero-actions reveal">
+                    <button class="btn-glow" type="button" (click)="login()">
+                        Start Your Journey
+                        <span class="btn-glow__arrow">&rarr;</span>
+                    </button>
+                    <button class="btn-outline" type="button" (click)="scrollToFeatures()">
+                        Explore Features
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual reveal">
+                <div class="hero-glass-card">
+                    <img src="/images/attendr-logo-flat.svg" alt="Attendr" class="hero-logo" />
+                    <div class="hero-glass-card__shimmer"></div>
+                </div>
             </div>
         </div>
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <img src="/images/attendr-logo-flat.png" class="hero-logo" />
-                <span class="hero-tagline">Elevate Your Conference Experience</span>
-            </h1>
-            <p class="hero-subtitle">
-                Join thousands of professionals who trust <strong>Attendr</strong> to maximize their conference impact.
-                Mark favorites, explore sessions, network smarter, and never miss a moment.
-            </p>
-            <div class="hero-actions">
-                <button class="btn btn-primary btn-hero" type="button" (click)="login()">
-                    <span class="btn-icon">🚀</span>
-                    <span>Start Your Journey</span>
-                </button>
-                <button class="btn btn-secondary btn-hero" type="button" (click)="scrollToFeatures()">
-                    <span class="btn-icon">📖</span>
-                    <span>Explore Features</span>
-                </button>
+
+        <div class="scroll-indicator reveal">
+            <div class="scroll-indicator__mouse">
+                <div class="scroll-indicator__wheel"></div>
             </div>
-        </div>
-        <div class="hero-decoration">
-            <div class="decoration-circle circle-1"></div>
-            <div class="decoration-circle circle-2"></div>
-        </div>
-        <div class="scroll-indicator">
             <span>Scroll to explore</span>
-            <div class="scroll-arrow">↓</div>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- SECTION 2: Social Proof / Stats -->
+    <section class="stats-section reveal">
+        <div class="container">
+            <div class="stats-grid">
+                @for (stat of stats; track stat.label) {
+                <div class="stat-item">
+                    <span class="stat-value">{{ stat.current }}{{ stat.suffix }}</span>
+                    <span class="stat-label">{{ stat.label }}</span>
+                </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: Features (Bento Grid) -->
     <section id="features" class="features">
         <div class="container">
-            <div class="section-header">
-                <span class="section-label">POWERFUL FEATURES</span>
-                <h2 class="section-title">Everything You Need to Succeed</h2>
-                <p class="section-subtitle">Discover the tools that make Attendr the ultimate conference companion</p>
+            <div class="section-header reveal">
+                <span class="section-tag">Features</span>
+                <h2 class="section-title">Everything You Need</h2>
+                <p class="section-subtitle">
+                    Discover the tools that make Attendr the ultimate conference companion.
+                </p>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+            <div class="bento-grid">
+                <div class="bento-card bento-card--lg reveal">
+                    <div class="bento-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                         </svg>
                     </div>
                     <h3>Save Favorites</h3>
-                    <p>Bookmark your favorite sessions and never miss what matters to you.</p>
+                    <p>Bookmark sessions, speakers, and events. Build your personal conference agenda that keeps you
+                        focused on what matters most.</p>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="bento-card reveal">
+                    <div class="bento-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -71,9 +97,10 @@
                     <p>Navigate conference schedules with ease and plan your day efficiently.</p>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="bento-card reveal">
+                    <div class="bento-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
@@ -82,9 +109,10 @@
                     <p>Join groups and see what other members are attending and interested in.</p>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="bento-card reveal">
+                    <div class="bento-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
@@ -93,52 +121,101 @@
                     <p>Get real-time notifications about schedule changes and important updates.</p>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="bento-card bento-card--lg reveal">
+                    <div class="bento-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                     </div>
                     <h3>Analytics</h3>
-                    <p>Track your conference participation and discover trending sessions.</p>
+                    <p>Track your conference participation, discover trending sessions, and gain insights into your
+                        engagement patterns across events.</p>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="bento-card reveal">
+                    <div class="bento-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                     </div>
                     <h3>Mobile Ready</h3>
-                    <p>Access Attendr anywhere, anytime on any device with our responsive design.</p>
+                    <p>Access Attendr anywhere, anytime on any device.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="cta-background">
-            <div class="cta-glow"></div>
-        </div>
+    <!-- SECTION 4: How It Works -->
+    <section class="how-it-works">
         <div class="container">
-            <div class="cta-content">
-                <div class="cta-icon">🎯</div>
-                <h2>Ready to Transform Your Conference Experience?</h2>
-                <p>Join thousands of attendees who are already using Attendr to make the most of their conference
-                    visits. Start your journey to better networking, smarter scheduling, and memorable experiences.</p>
-                <div class="cta-actions">
-                    <button class="btn btn-primary btn-lg btn-cta" type="button" (click)="login()">
-                        <span>Get Started Now</span>
-                        <span class="arrow">→</span>
-                    </button>
+            <div class="section-header reveal">
+                <span class="section-tag">How It Works</span>
+                <h2 class="section-title">Get Started in Minutes</h2>
+            </div>
+
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="step__number">01</div>
+                    <div class="step__connector"></div>
+                    <h3>Sign Up</h3>
+                    <p>Create your free account in seconds. No credit card required.</p>
                 </div>
+                <div class="step reveal">
+                    <div class="step__number">02</div>
+                    <div class="step__connector"></div>
+                    <h3>Join a Conference</h3>
+                    <p>Find your conference and explore the full session schedule.</p>
+                </div>
+                <div class="step reveal">
+                    <div class="step__number">03</div>
+                    <h3>Connect &amp; Engage</h3>
+                    <p>Save favorites, join groups, and make the most of every event.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: Final CTA -->
+    <section class="cta">
+        <div class="cta-gradient"></div>
+        <div class="cta-noise"></div>
+        <div class="container">
+            <div class="cta-glass reveal">
+                <h2>Ready to Transform Your Conference Experience?</h2>
+                <p>Join thousands of attendees who are already using Attendr to make the most of every event.</p>
+                <button class="btn-glow btn-glow--lg" type="button" (click)="login()">
+                    Get Started Now
+                    <span class="btn-glow__arrow">&rarr;</span>
+                </button>
                 <div class="cta-trust">
-                    <span>✓ Free to start</span>
-                    <span>✓ No credit card required</span>
-                    <span>✓ Instant access</span>
+                    <span class="cta-trust__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
+                        Free to start
+                    </span>
+                    <span class="cta-trust__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
+                        No credit card
+                    </span>
+                    <span class="cta-trust__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
+                        Instant access
+                    </span>
                 </div>
             </div>
         </div>
