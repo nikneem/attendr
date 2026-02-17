@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
@@ -12,13 +12,16 @@ export class HomePageComponent implements AfterViewInit, OnDestroy {
   private statsAnimated = false;
 
   stats = [
-    { value: 150, suffix: '+', label: 'Conferences', current: 0 },
-    { value: 12000, suffix: '+', label: 'Attendees', current: 0 },
+    { value: 5, suffix: '+', label: 'Conferences', current: 0 },
+    { value: 35, suffix: '+', label: 'Attendees', current: 0 },
     { value: 98, suffix: '%', label: 'Satisfaction', current: 0 },
-    { value: 500, suffix: '+', label: 'Sessions Tracked', current: 0 },
+    { value: 121, suffix: '+', label: 'Sessions Tracked', current: 0 },
   ];
 
-  constructor(private oidcSecurityService: OidcSecurityService) {}
+  constructor(
+    private oidcSecurityService: OidcSecurityService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngAfterViewInit() {
     this.setupScrollReveal();
@@ -71,6 +74,8 @@ export class HomePageComponent implements AfterViewInit, OnDestroy {
       this.stats.forEach((stat) => {
         stat.current = Math.floor(eased * stat.value);
       });
+
+      this.cdr.detectChanges();
 
       if (progress < 1) {
         requestAnimationFrame(animate);
