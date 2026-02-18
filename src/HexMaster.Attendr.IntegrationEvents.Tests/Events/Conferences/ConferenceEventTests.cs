@@ -139,11 +139,11 @@ public class ConferenceEventTests
     }
 
     [Fact]
-    public void PresentationUpdatedEvent_SpeakerIds_DefaultsToEmpty()
+    public void PresentationUpdatedEvent_Speakers_DefaultsToEmpty()
     {
         var evt = new PresentationUpdatedEvent();
-        Assert.NotNull(evt.SpeakerIds);
-        Assert.Empty(evt.SpeakerIds);
+        Assert.NotNull(evt.Speakers);
+        Assert.Empty(evt.Speakers);
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public class ConferenceEventTests
         var conferenceId = Guid.NewGuid();
         var presentationId = Guid.NewGuid();
         var roomId = Guid.NewGuid();
-        var speakerIds = new List<Guid> { Guid.NewGuid() }.AsReadOnly();
+        var speakers = new List<SpeakerDto> { new SpeakerDto(Guid.NewGuid(), "Jane Doe", "https://example.com/jane.jpg") }.AsReadOnly();
         var topics = new List<PresentationTopicDto>
         {
             new("csharp", "C#"),
@@ -179,7 +179,7 @@ public class ConferenceEventTests
             EndDateTime = end,
             RoomId = roomId,
             RoomName = "Room A",
-            SpeakerIds = speakerIds,
+            Speakers = speakers,
             Topics = topics,
             ExternalId = "ext-123",
             IsScheduleChanged = true
@@ -193,7 +193,8 @@ public class ConferenceEventTests
         Assert.Equal(end, evt.EndDateTime);
         Assert.Equal(roomId, evt.RoomId);
         Assert.Equal("Room A", evt.RoomName);
-        Assert.Single(evt.SpeakerIds);
+        Assert.Single(evt.Speakers);
+        Assert.Equal("Jane Doe", evt.Speakers.First().Name);
         Assert.Equal(2, evt.Topics.Count);
         Assert.Equal("ext-123", evt.ExternalId);
         Assert.True(evt.IsScheduleChanged);

@@ -2,6 +2,7 @@ using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Core.DomainModels;
 using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
+using HexMaster.Attendr.IntegrationEvents.Models;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using Sessionize.Api.Client.Abstractions;
@@ -310,7 +311,7 @@ public sealed class SessionizeSyncService : ISessionizeSyncService
                 EndDateTime = presentation.EndDateTime,
                 RoomId = presentation.Room.Id,
                 RoomName = presentation.Room.Name,
-                SpeakerIds = presentation.Speakers.Select(s => s.Id).ToList(),
+                Speakers = presentation.Speakers.Select(s => new SpeakerDto(s.Id, s.Name, s.ProfilePictureUrl)).ToList(),
                 ExternalId = presentation.ExternalId,
                 IsScheduleChanged = isScheduleChanged
             };

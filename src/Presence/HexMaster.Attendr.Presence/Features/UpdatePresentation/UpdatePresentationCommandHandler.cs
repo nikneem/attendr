@@ -72,8 +72,8 @@ public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePre
                 return;
             }
 
-            var speakers = @event.SpeakerIds
-                .Select(id => new PresentationSpeaker(id, string.Empty, string.Empty))
+            var speakers = @event.Speakers
+                .Select(s => new PresentationSpeaker(s.Id, s.Name, s.ProfilePictureUrl ?? string.Empty))
                 .ToList();
 
             var topics = @event.Topics
@@ -118,16 +118,8 @@ public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePre
                 else
                 {
                     // Presentation already exists — preserve existing speaker info when available
-                    var currentSpeakers = presentation.Speakers.ToDictionary(s => s.SpeakerId);
-                    var updatedSpeakers = @event.SpeakerIds
-                        .Select(id =>
-                        {
-                            if (currentSpeakers.TryGetValue(id, out var existingSpeaker))
-                            {
-                                return existingSpeaker;
-                            }
-                            return new PresentationSpeaker(id, string.Empty, string.Empty);
-                        })
+                    var updatedSpeakers = @event.Speakers
+                        .Select(s => new PresentationSpeaker(s.Id, s.Name, s.ProfilePictureUrl))
                         .ToList();
 
                     // Update presentation info (preserves IsFavorite, IsCheckedIn, IsRated, Rating)

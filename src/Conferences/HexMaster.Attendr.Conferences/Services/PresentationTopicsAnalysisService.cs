@@ -78,7 +78,7 @@ public sealed class PresentationTopicsAnalysisService
                 EndDateTime = presentation.EndDateTime,
                 RoomId = presentation.Room.Id,
                 RoomName = presentation.Room.Name,
-                SpeakerIds = presentation.Speakers.Select(s => s.Id).ToList(),
+                Speakers = presentation.Speakers.Select(s => new SpeakerDto(s.Id, s.Name, s.ProfilePictureUrl)).ToList(),
                 Topics = presentation.Topics.Select(t => new PresentationTopicDto(t.Key, t.Name)).ToList(),
                 ExternalId = presentation.ExternalId,
                 IsScheduleChanged = false
