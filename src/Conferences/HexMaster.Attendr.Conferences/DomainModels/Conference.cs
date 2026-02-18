@@ -314,9 +314,18 @@ public sealed class Conference : StatefulDomainModel<Guid>
     /// Configures the synchronization source for the conference.
     /// </summary>
     /// <param name="synchronizationSource">The synchronization source configuration.</param>
-    public void ConfigureSynchronizationSource(SynchronizationSource? synchronizationSource)
+    public void SetConfigureSynchronizationSource(SynchronizationSource? synchronizationSource)
     {
-        SynchronizationSource = synchronizationSource;
+        var currentKey = SynchronizationSource?.SourceLocationOrApiKey;
+        var newKey = synchronizationSource?.SourceLocationOrApiKey;
+        var currentType = SynchronizationSource?.SourceType;
+        var newType = synchronizationSource?.SourceType;
+
+        if (currentType != newType || currentKey != newKey)
+        {
+            SynchronizationSource = synchronizationSource;
+            UpdateModifiedOn();
+        }
     }
 
     /// <summary>

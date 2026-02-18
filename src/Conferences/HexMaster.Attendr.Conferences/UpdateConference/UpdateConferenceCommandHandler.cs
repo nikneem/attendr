@@ -66,11 +66,11 @@ public sealed class UpdateConferenceCommandHandler : ICommandHandler<UpdateConfe
             {
                 var sourceType = Enum.Parse<SynchronizationSourceType>(command.SynchronizationSource.SourceType);
                 var syncSource = SynchronizationSource.CreateWithUrl(sourceType, command.SynchronizationSource.SourceUrl);
-                conference.ConfigureSynchronizationSource(syncSource);
+                conference.SetConfigureSynchronizationSource(syncSource);
             }
             else
             {
-                conference.ConfigureSynchronizationSource(null);
+                conference.SetConfigureSynchronizationSource(null);
             }
 
             await _repository.UpdateAsync(conference, cancellationToken);
