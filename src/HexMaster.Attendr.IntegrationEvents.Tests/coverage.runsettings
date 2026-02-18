@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <ExcludeByFile>**/ServiceDefaults/**/*.cs,**/obj/**/*.cs</ExcludeByFile>
+          <Exclude>[HexMaster.Attendr.Core.Tests]*,[HexMaster.Attendr.Aspire.ServiceDefaults]*</Exclude>
+          <Include>[HexMaster.Attendr.IntegrationEvents]*</Include>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

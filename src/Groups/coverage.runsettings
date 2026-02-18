@@ -7,9 +7,9 @@
           <Format>cobertura</Format>
           <Include>
             <Assembly>HexMaster.Attendr.Groups.dll</Assembly>
-            <Assembly>HexMaster.Attendr.Groups.Abstractions.dll</Assembly>
           </Include>
           <Exclude>
+            <Assembly>HexMaster.Attendr.Groups.Abstractions.dll</Assembly>
             <Assembly>HexMaster.Attendr.Groups.Api.dll</Assembly>
             <Assembly>HexMaster.Attendr.Groups.Data.Postgress.dll</Assembly>
             <Assembly>HexMaster.Attendr.Groups.Tests.dll</Assembly>
