@@ -359,20 +359,6 @@
         border-bottom: 1px solid var(--surface-200);
     }
 
-    .topic-tag {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.25rem 0.75rem;
-        background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
-        color: var(--primary-700);
-        border: 1px solid var(--primary-200);
-        border-radius: 999px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        white-space: nowrap;
-    }
-
     .abstract {
         flex: 1;
         overflow-y: auto;

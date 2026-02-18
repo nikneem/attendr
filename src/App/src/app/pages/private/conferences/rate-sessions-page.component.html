@@ -106,10 +106,10 @@
                                 }
                             </div>
 
-                            @if (card.presentation.topics && card.presentation.topics.length > 0) {
+                                        @if (card.presentation.topics && card.presentation.topics.length > 0) {
                             <div class="topics-row">
                                 @for (topic of card.presentation.topics; track topic.key) {
-                                <span class="topic-tag">{{ topic.name }}</span>
+                                <p-tag [value]="topic.name"></p-tag>
                                 }
                             </div>
                             }
