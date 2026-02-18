@@ -12,7 +12,6 @@
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Conferences.Abstractions\HexMaster.Attendr.Conferences.Abstractions.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Conferences.Integrations\HexMaster.Attendr.Conferences.Integrations.csproj" />
-    <ProjectReference Include="..\HexMaster.Attendr.Conferences.IntegrationEvents\HexMaster.Attendr.Conferences.IntegrationEvents.csproj" />
   </ItemGroup>
 
   <ItemGroup>

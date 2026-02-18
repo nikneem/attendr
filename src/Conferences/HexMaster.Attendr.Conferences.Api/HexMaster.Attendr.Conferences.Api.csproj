@@ -17,7 +17,6 @@
     <ProjectReference Include="..\..\Shared\HexMaster.Attendr.IntegrationEvents\HexMaster.Attendr.IntegrationEvents.csproj" />
     <ProjectReference Include="..\..\Profiles\HexMaster.Attendr.Profiles.Integrations\HexMaster.Attendr.Profiles.Integrations.csproj" />
     <ProjectReference Include="..\HexMaster.Attendr.Conferences.Data.Postgres\HexMaster.Attendr.Conferences.Data.Postgres.csproj" />
-    <ProjectReference Include="..\HexMaster.Attendr.Conferences.IntegrationEvents\HexMaster.Attendr.Conferences.IntegrationEvents.csproj" />
   </ItemGroup>
 
   <ItemGroup>

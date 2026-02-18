@@ -85,8 +85,8 @@ public sealed class PresentationTopicsAnalysisService
             };
             await _eventPublisher.PublishAsync(presentationUpdatedEvent, cancellationToken);
 
-            _logger.LogInformation("Successfully analyzed presentation {PresentationId} with {TopicCount} topics",
-                presentation.Id, topicKeys.Count);
+            _logger.LogInformation("Successfully analyzed presentation {PresentationId} ({PresentationTitle}) with {TopicCount} topics ({Topics})",
+                presentation.Id, presentation.Title, topicKeys.Count, string.Join(", ", topicKeys));
         }
         catch (Exception ex)
         {
