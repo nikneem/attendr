@@ -9,6 +9,8 @@ public static class CacheKeys
 
     public static class Profiles
     {
+        public const string Metrics = "profiles:metrics";
+
         public static string Subject(string subjectId)
         {
             if (string.IsNullOrWhiteSpace(subjectId))

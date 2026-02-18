@@ -50,7 +50,7 @@
     <section class="stats-section reveal">
         <div class="container">
             <div class="stats-grid">
-                @for (stat of stats; track stat.label) {
+                @for (stat of stats(); track stat.label) {
                 <div class="stat-item">
                     <span class="stat-value">{{ stat.current }}{{ stat.suffix }}</span>
                     <span class="stat-label">{{ stat.label }}</span>

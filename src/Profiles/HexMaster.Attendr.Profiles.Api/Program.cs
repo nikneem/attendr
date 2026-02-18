@@ -53,6 +53,7 @@ app.UseAuthorization();
 
 // Map endpoints
 app.MapProfileEndpoints();
+app.MapMetricsEndpoints();
 app.MapEventHandlerEndpoints();
 app.MapProfileTopicEndpoints();
 app.MapProfilesIntegrationEndpoints();

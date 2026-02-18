@@ -1,3 +1,4 @@
+using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.DomainModels;
 
 namespace HexMaster.Attendr.Profiles.Repositories;
@@ -14,4 +15,6 @@ public interface IProfileRepository
     Task AddAsync(Profile profile, CancellationToken cancellationToken = default);
 
     Task UpdateAsync(Profile profile, CancellationToken cancellationToken = default);
+
+    Task<ProfileMetricsDto> GetMetricsAsync(CancellationToken cancellationToken = default);
 }

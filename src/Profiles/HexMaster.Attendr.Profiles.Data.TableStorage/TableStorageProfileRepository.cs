@@ -1,5 +1,6 @@
 using Azure;
 using Azure.Data.Tables;
+using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Mappers;
 using HexMaster.Attendr.Profiles.Data.TableStorage.Models;
 using HexMaster.Attendr.Profiles.DomainModels;
@@ -72,6 +73,24 @@ public sealed class TableStorageProfileRepository(TableServiceClient tableServic
         {
             throw new InvalidOperationException($"Profile with ID '{profile.Id}' was not found.", ex);
         }
+    }
+
+    /// <inheritdoc />
+    public async Task<ProfileMetricsDto> GetMetricsAsync(CancellationToken cancellationToken = default)
+    {
+        var tableClient = await GetTableClient(cancellationToken);
+        var total = 0;
+        var searchable = 0;
+
+        await foreach (var entity in tableClient.QueryAsync<ProfileEntity>(
+            select: [nameof(ProfileEntity.IsSearchable)],
+            cancellationToken: cancellationToken))
+        {
+            total++;
+            if (entity.IsSearchable) searchable++;
+        }
+
+        return new ProfileMetricsDto(total, searchable);
     }
 
     private async Task<TableClient> GetTableClient(CancellationToken cancellationToken)
