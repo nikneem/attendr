@@ -81,4 +81,11 @@ public interface IConferenceRepository
         int pageSize,
         bool showHidden = false,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns aggregate metrics about visible conferences, presentations, speakers, rooms, and topics.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A DTO containing the metrics.</returns>
+    Task<ConferenceMetricsDto> GetMetricsAsync(CancellationToken cancellationToken = default);
 }

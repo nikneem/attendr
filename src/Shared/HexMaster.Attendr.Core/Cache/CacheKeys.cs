@@ -2,8 +2,15 @@ namespace HexMaster.Attendr.Core.Cache;
 
 public static class CacheKeys
 {
+    public static class Conferences
+    {
+        public const string Metrics = "conferences:metrics";
+    }
+
     public static class Profiles
     {
+        public const string Metrics = "profiles:metrics";
+
         public static string Subject(string subjectId)
         {
             if (string.IsNullOrWhiteSpace(subjectId))

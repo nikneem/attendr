@@ -10,6 +10,7 @@ using HexMaster.Attendr.Conferences.Features.GetTopic;
 using HexMaster.Attendr.Conferences.Features.ListTopics;
 using HexMaster.Attendr.Conferences.Features.UpdateTopic;
 using HexMaster.Attendr.Conferences.Features.DeleteTopic;
+using HexMaster.Attendr.Conferences.Features.GetMetrics;
 using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Conferences.Plugins;
 using HexMaster.Attendr.Conferences.Services;
@@ -49,6 +50,9 @@ public static class ServiceCollectionExtensions
         // Register query handlers
         services.AddScoped<IQueryHandler<ListConferencesQuery, ListConferencesResult>, ListConferencesQueryHandler>();
         services.AddScoped<IQueryHandler<GetConferenceQuery, ConferenceDetailsDto?>, GetConferenceQueryHandler>();
+
+        // Register metrics query handler
+        services.AddScoped<IQueryHandler<GetMetricsQuery, ConferenceMetricsDto>, GetMetricsQueryHandler>();
 
         // Register topic query handlers
         services.AddScoped<IQueryHandler<GetTopicQuery, TopicDto?>, GetTopicQueryHandler>();

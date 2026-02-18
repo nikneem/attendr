@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(aspire list-resources:*)",
+      "Bash(aspire resources:*)",
+      "Bash(echo:*)",
+      "mcp__aspire__execute_resource_command",
+      "mcp__aspire__list_resources",
+      "mcp__playwright__browser_navigate",
+      "mcp__aspire__list_console_logs",
+      "mcp__aspire__list_structured_logs",
+      "Bash(curl:*)"
+    ]
+  }
+}

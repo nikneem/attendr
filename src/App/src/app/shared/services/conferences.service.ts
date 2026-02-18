@@ -6,6 +6,7 @@ import { ListConferencesResult } from '../models/list-conferences-result';
 import { CreateConferenceRequest } from '../models/create-conference-request.model';
 import { ConferenceListItemDto } from '../models/conference-list-item-dto';
 import { ConferenceDetailsDto } from '../models/conference-details-dto';
+import { ConferenceMetricsDto } from '../models/conference-metrics-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -51,5 +52,9 @@ export class ConferencesService {
 
     deleteConference(id: string): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
+
+    getMetrics(): Observable<ConferenceMetricsDto> {
+        return this.http.get<ConferenceMetricsDto>(`${this.apiUrl}/metrics`);
     }
 }

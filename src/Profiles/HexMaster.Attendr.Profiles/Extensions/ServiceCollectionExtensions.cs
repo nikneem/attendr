@@ -2,6 +2,7 @@ using HexMaster.Attendr.Core.Cache.Extensions;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Profiles.Abstractions.Dtos;
 using HexMaster.Attendr.Profiles.Features.CreateProfile;
+using HexMaster.Attendr.Profiles.Features.GetMetrics;
 using HexMaster.Attendr.Profiles.Features.GetProfileTopics;
 using HexMaster.Attendr.Profiles.Features.SetTopicManualStatus;
 using HexMaster.Attendr.Profiles.Features.UpdateProfile;
@@ -39,6 +40,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICommandHandler<SetTopicManualStatusCommand, ProfileTopicDto>, SetTopicManualStatusCommandHandler>();
 
         // Register query handlers
+        services.AddScoped<IQueryHandler<GetMetricsQuery, ProfileMetricsDto>, GetMetricsQueryHandler>();
         services.AddScoped<IQueryHandler<GetProfileTopicsQuery, IReadOnlyList<ProfileTopicDto>>, GetProfileTopicsQueryHandler>();
 
         return services;
