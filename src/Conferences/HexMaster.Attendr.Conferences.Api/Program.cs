@@ -99,6 +99,7 @@ app.MapConferencesEndpoints();
 app.MapTopicsEndpoints();
 app.MapConferencesIntegrationEndpoints();
 app.MapEventHandlersEndpoints();
+app.MapMetricsEndpoints();
 app.MapVersionEndpoints();
 app.UseCloudEvents();
 app.MapSubscribeHandler();

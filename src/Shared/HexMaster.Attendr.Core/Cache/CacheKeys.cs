@@ -2,6 +2,11 @@ namespace HexMaster.Attendr.Core.Cache;
 
 public static class CacheKeys
 {
+    public static class Conferences
+    {
+        public const string Metrics = "conferences:metrics";
+    }
+
     public static class Profiles
     {
         public static string Subject(string subjectId)

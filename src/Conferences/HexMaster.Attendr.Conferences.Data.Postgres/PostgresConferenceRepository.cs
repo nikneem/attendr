@@ -395,6 +395,37 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         return (conferences, totalCount);
     }
 
+    /// <inheritdoc />
+    public async Task<ConferenceMetricsDto> GetMetricsAsync(CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        const string sql = @"
+            SELECT
+                (SELECT COUNT(*) FROM conferences WHERE is_visible = true) AS visible_conferences,
+                (SELECT COUNT(*) FROM conferences WHERE is_visible = true AND start_date > @today) AS upcoming_conferences,
+                (SELECT COUNT(*) FROM presentations p INNER JOIN conferences c ON p.conference_id = c.id WHERE c.is_visible = true) AS total_presentations,
+                (SELECT COUNT(DISTINCT s.id) FROM speakers s INNER JOIN conferences c ON s.conference_id = c.id WHERE c.is_visible = true) AS total_speakers,
+                (SELECT COUNT(*) FROM rooms r INNER JOIN conferences c ON r.conference_id = c.id WHERE c.is_visible = true) AS total_rooms,
+                (SELECT COUNT(*) FROM topics WHERE is_visible = true) AS total_topics";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@today", today);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+
+        return new ConferenceMetricsDto(
+            VisibleConferences: Convert.ToInt32(reader.GetInt64(0)),
+            UpcomingConferences: Convert.ToInt32(reader.GetInt64(1)),
+            TotalPresentations: Convert.ToInt32(reader.GetInt64(2)),
+            TotalSpeakers: Convert.ToInt32(reader.GetInt64(3)),
+            TotalRooms: Convert.ToInt32(reader.GetInt64(4)),
+            TotalTopics: Convert.ToInt32(reader.GetInt64(5)));
+    }
+
     #region Private Helper Methods - Insert Operations
 
     private static async Task InsertConferenceAsync(NpgsqlConnection connection, ConferenceEntity entity, CancellationToken cancellationToken)

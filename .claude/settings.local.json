@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(aspire list-resources:*)",
+      "Bash(aspire resources:*)"
+    ]
+  }
+}
