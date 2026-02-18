@@ -1,6 +1,6 @@
 using HexMaster.Attendr.Conferences.DomainModels;
-using HexMaster.Attendr.Conferences.Integrations.Events;
-using HexMaster.Attendr.IntegrationEvents.Events;
+using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
+using HexMaster.Attendr.IntegrationEvents.Models;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
@@ -58,23 +58,32 @@ public sealed class PresentationTopicsAnalysisService
             {
                 var normalizedKey = NormalizeTopicKey(topicKey);
                 var topic = await _topicsRepository.GetOrCreateTopicAsync(topicKey, cancellationToken);
+                if (topic.IsVisible)
+                {
+                    presentation.AddTopic(new PresentationTopic(topic.Key, topic.Name));
+                }
                 await _topicsRepository.LinkPresentationToTopicAsync(presentation.Id, topic.Id, cancellationToken);
             }
 
             // Mark presentation as analyzed
             await _topicsRepository.MarkPresentationAsAnalysedAsync(presentation.Id, cancellationToken);
 
-            // Publish integration event
-            var @event = new PresentationTopicsAnalysedEvent
+            var presentationUpdatedEvent = new PresentationUpdatedEvent
             {
                 ConferenceId = conferenceId,
                 PresentationId = presentation.Id,
                 Title = presentation.Title,
                 Abstract = presentation.Abstract,
-                Topics = topicKeys
+                StartDateTime = presentation.StartDateTime,
+                EndDateTime = presentation.EndDateTime,
+                RoomId = presentation.Room.Id,
+                RoomName = presentation.Room.Name,
+                SpeakerIds = presentation.Speakers.Select(s => s.Id).ToList(),
+                Topics = presentation.Topics.Select(t => new PresentationTopicDto(t.Key, t.Name)).ToList(),
+                ExternalId = presentation.ExternalId,
+                IsScheduleChanged = false
             };
-
-            await _eventPublisher.PublishAsync(@event, cancellationToken);
+            await _eventPublisher.PublishAsync(presentationUpdatedEvent, cancellationToken);
 
             _logger.LogInformation("Successfully analyzed presentation {PresentationId} with {TopicCount} topics",
                 presentation.Id, topicKeys.Count);
