@@ -14,7 +14,7 @@ public interface ITopicsRepository
     /// <param name="name">The display name of the topic.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The existing or newly created topic.</returns>
-    Task<Topic> GetOrCreateTopicAsync(string key, string name, CancellationToken cancellationToken = default);
+    Task<Topic> GetOrCreateTopicAsync(string name, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates a new topic, persisting all properties including visibility.

@@ -57,7 +57,7 @@ public sealed class PresentationTopicsAnalysisService
             foreach (var topicKey in topicKeys)
             {
                 var normalizedKey = NormalizeTopicKey(topicKey);
-                var topic = await _topicsRepository.GetOrCreateTopicAsync(normalizedKey, topicKey, cancellationToken);
+                var topic = await _topicsRepository.GetOrCreateTopicAsync(topicKey, cancellationToken);
                 await _topicsRepository.LinkPresentationToTopicAsync(presentation.Id, topic.Id, cancellationToken);
             }
 

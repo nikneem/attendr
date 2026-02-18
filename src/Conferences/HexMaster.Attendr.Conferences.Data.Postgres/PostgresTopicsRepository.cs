@@ -17,14 +17,14 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         _dataSource = dataSource;
     }
 
-    public async Task<Topic> GetOrCreateTopicAsync(string key, string name, CancellationToken cancellationToken = default)
+    public async Task<Topic> GetOrCreateTopicAsync(string name, CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
 
-        // Try to get existing topic
-        var selectSql = "SELECT id, key, name, is_visible, created_on FROM topics WHERE key = @key";
+        // Try to get existing topic by exact name match
+        var selectSql = "SELECT id, key, name, is_visible, created_on FROM topics WHERE name = @name";
         await using var selectCommand = new NpgsqlCommand(selectSql, connection);
-        selectCommand.Parameters.AddWithValue("@key", key);
+        selectCommand.Parameters.AddWithValue("@name", name);
 
         await using var reader = await selectCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
@@ -39,8 +39,17 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         await reader.CloseAsync();
 
         // Create new topic if not found (AI-created topics are hidden by default)
-        var topic = Topic.Create(key, name);
+        // Generate a normalized key from the name: lowercase, replace spaces/special chars with hyphens
+        var normalizedKey = NormalizeKey(name);
+        var topic = Topic.Create(normalizedKey, name);
         return await PersistNewTopicAsync(connection, topic, cancellationToken);
+    }
+
+    private static string NormalizeKey(string name)
+    {
+        // Lowercase, replace whitespace and non-alphanumeric characters with hyphens, collapse multiple hyphens
+        var normalized = System.Text.RegularExpressions.Regex.Replace(name.ToLowerInvariant(), @"[^a-z0-9]+", "-");
+        return normalized.Trim('-');
     }
 
     public async Task<Topic> CreateTopicAsync(Topic topic, CancellationToken cancellationToken = default)
