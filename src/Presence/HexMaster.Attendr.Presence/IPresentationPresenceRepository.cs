@@ -23,13 +23,15 @@ public interface IPresentationPresenceRepository
     Task AddManyAsync(IEnumerable<PresentationPresence> presentations, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieves all presentation presences for a specific conference and presentation.
+    /// Retrieves the presentation presence for a specific profile, conference and presentation.
     /// </summary>
+    /// <param name="profileId">The unique identifier of the profile.</param>
     /// <param name="conferenceId">The unique identifier of the conference.</param>
     /// <param name="presentationId">The unique identifier of the presentation.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A read-only collection of presentation presences.</returns>
-    Task<IReadOnlyCollection<PresentationPresence>> GetByConferenceAndPresentationAsync(
+    /// <returns>The presentation presence if found; otherwise, null.</returns>
+    Task<PresentationPresence?> GetByConferenceAndPresentationAsync(
+        Guid profileId,
         Guid conferenceId,
         Guid presentationId,
         CancellationToken cancellationToken = default);

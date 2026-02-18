@@ -78,15 +78,15 @@ public sealed class PresentationTopicsAnalysisService
                 EndDateTime = presentation.EndDateTime,
                 RoomId = presentation.Room.Id,
                 RoomName = presentation.Room.Name,
-                SpeakerIds = presentation.Speakers.Select(s => s.Id).ToList(),
+                Speakers = presentation.Speakers.Select(s => new SpeakerDto(s.Id, s.Name, s.ProfilePictureUrl)).ToList(),
                 Topics = presentation.Topics.Select(t => new PresentationTopicDto(t.Key, t.Name)).ToList(),
                 ExternalId = presentation.ExternalId,
                 IsScheduleChanged = false
             };
             await _eventPublisher.PublishAsync(presentationUpdatedEvent, cancellationToken);
 
-            _logger.LogInformation("Successfully analyzed presentation {PresentationId} with {TopicCount} topics",
-                presentation.Id, topicKeys.Count);
+            _logger.LogInformation("Successfully analyzed presentation {PresentationId} ({PresentationTitle}) with {TopicCount} topics ({Topics})",
+                presentation.Id, presentation.Title, topicKeys.Count, string.Join(", ", topicKeys));
         }
         catch (Exception ex)
         {

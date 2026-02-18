@@ -43,18 +43,13 @@ public sealed class PresentationPresenceRepository : IPresentationPresenceReposi
         await _collection.InsertManyAsync(documents, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<IReadOnlyCollection<PresentationPresence>> GetByConferenceAndPresentationAsync(
+    public Task<PresentationPresence?> GetByConferenceAndPresentationAsync(
+        Guid profileId,
         Guid conferenceId,
         Guid presentationId,
         CancellationToken cancellationToken = default)
     {
-        var filter = Builders<PresentationPresenceDocument>.Filter.And(
-            Builders<PresentationPresenceDocument>.Filter.Eq(d => d.ConferenceId, conferenceId),
-            Builders<PresentationPresenceDocument>.Filter.Eq(d => d.PresentationId, presentationId));
-
-        var docs = await _collection.Find(filter).ToListAsync(cancellationToken).ConfigureAwait(false);
-        var presentations = docs.Select(PresentationPresenceMapper.ToDomain).ToList();
-        return presentations.AsReadOnly();
+        return GetByIdAsync(profileId, conferenceId, presentationId, cancellationToken);
     }
 
     public async Task<PresentationPresence?> GetByIdAsync(

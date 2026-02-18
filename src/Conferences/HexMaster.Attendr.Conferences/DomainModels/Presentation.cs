@@ -220,13 +220,13 @@ public sealed class Presentation : StatefulDomainModel<Guid>
             UpdateModifiedOn();
         }
 
-        if (ShouldUpdateProperty(StartDateTime, startDateTime))
+        if (ShouldUpdateProperty(StartDateTime.Ticks, startDateTime.Ticks))
         {
             StartDateTime = startDateTime;
             UpdateModifiedOn();
         }
 
-        if (ShouldUpdateProperty(EndDateTime, endDateTime))
+        if (ShouldUpdateProperty(EndDateTime.Ticks, endDateTime.Ticks))
         {
             EndDateTime = endDateTime;
             UpdateModifiedOn();

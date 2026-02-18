@@ -52,9 +52,9 @@ public sealed class PresentationUpdatedEvent : IntegrationEvent
     public string RoomName { get; init; } = string.Empty;
 
     /// <summary>
-    /// Gets the collection of speaker IDs for this presentation.
+    /// Gets the collection of speakers for this presentation.
     /// </summary>
-    public IReadOnlyCollection<Guid> SpeakerIds { get; init; } = Array.Empty<Guid>();
+    public IReadOnlyCollection<SpeakerDto> Speakers { get; init; } = Array.Empty<SpeakerDto>();
 
     /// <summary>
     /// Gets the topics (key/name) associated with the presentation.

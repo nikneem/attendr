@@ -7,6 +7,7 @@ using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Events.Topics;
 using HexMaster.Attendr.IntegrationEvents.Models;
 using HexMaster.Attendr.IntegrationEvents.Services;
+using IntegrationSpeakerDto = HexMaster.Attendr.IntegrationEvents.Models.SpeakerDto;
 using Microsoft.Extensions.Logging;
 
 namespace HexMaster.Attendr.Conferences.Features.UpdateTopic;
@@ -111,7 +112,7 @@ public sealed class UpdateTopicCommandHandler : ICommandHandler<UpdateTopicComma
                     EndDateTime = presentation.EndDateTime,
                     RoomId = presentation.Room.Id,
                     RoomName = presentation.Room.Name,
-                    SpeakerIds = presentation.Speakers.Select(s => s.Id).ToList(),
+                    Speakers = presentation.Speakers.Select(s => new IntegrationSpeakerDto(s.Id, s.Name, s.ProfilePictureUrl)).ToList(),
                     Topics = presentation.Topics.Select(t => new PresentationTopicDto(t.Key, t.Name)).ToList(),
                     ExternalId = presentation.ExternalId,
                     IsScheduleChanged = false  // Topic update doesn't change schedule

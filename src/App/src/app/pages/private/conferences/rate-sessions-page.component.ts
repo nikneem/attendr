@@ -7,6 +7,7 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TagModule } from 'primeng/tag';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { PresenceService } from '@services/presence.service';
 import { PresentationToRateDto } from '@models/presentation-to-rate-dto';
@@ -22,7 +23,7 @@ interface CardInStack {
 @Component({
     selector: 'attn-rate-sessions-page',
     standalone: true,
-    imports: [CommonModule, CardModule, ButtonModule, RatingModule, FormsModule, ProgressSpinnerModule, ConfirmDialogModule],
+    imports: [CommonModule, CardModule, ButtonModule, RatingModule, FormsModule, ProgressSpinnerModule, ConfirmDialogModule, TagModule],
     templateUrl: './rate-sessions-page.component.html',
     styleUrl: './rate-sessions-page.component.scss',
     providers: [ConfirmationService],

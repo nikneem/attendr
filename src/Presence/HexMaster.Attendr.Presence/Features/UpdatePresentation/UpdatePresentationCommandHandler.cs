@@ -11,22 +11,26 @@ namespace HexMaster.Attendr.Presence.Features.UpdatePresentation;
 
 /// <summary>
 /// Command handler to update presentation information across all affected presentation presences.
+/// Creates a new presentation presence when one does not yet exist for an attending profile.
 /// Publishes PresentationScheduleChangeEvent when schedule changes affect favorited presentations.
 /// </summary>
 public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePresentationCommand>
 {
     private readonly IPresentationPresenceRepository _repository;
+    private readonly IConferencePresenceRepository _conferencePresenceRepository;
     private readonly IIntegrationEventPublisher _eventPublisher;
     private readonly PresenceMetrics _metrics;
     private readonly ILogger<UpdatePresentationCommandHandler> _logger;
 
     public UpdatePresentationCommandHandler(
         IPresentationPresenceRepository repository,
+        IConferencePresenceRepository conferencePresenceRepository,
         IIntegrationEventPublisher eventPublisher,
         PresenceMetrics metrics,
         ILogger<UpdatePresentationCommandHandler> logger)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _conferencePresenceRepository = conferencePresenceRepository ?? throw new ArgumentNullException(nameof(conferencePresenceRepository));
         _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -38,6 +42,8 @@ public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePre
 
         var stopwatch = Stopwatch.StartNew();
         var scheduleChanged = false;
+        var createdCount = 0;
+        var updatedCount = 0;
 
         try
         {
@@ -53,101 +59,127 @@ public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePre
                 @event.ConferenceId,
                 @event.PresentationId);
 
-            // Get all presentation presences for this conference and presentation
-            var presentations = await _repository.GetByConferenceAndPresentationAsync(
+            // Get all profiles attending the conference
+            var conferencePresences = await _conferencePresenceRepository.GetByConferenceIdAsync(
                 @event.ConferenceId,
-                @event.PresentationId,
                 cancellationToken);
 
-            if (presentations.Count == 0)
+            if (conferencePresences.Count == 0)
             {
                 _logger.LogInformation(
-                    "No presentation presences found for Conference {ConferenceId}, Presentation {PresentationId}",
-                    @event.ConferenceId,
-                    @event.PresentationId);
+                    "No conference attendees found for Conference {ConferenceId}, skipping presentation update",
+                    @event.ConferenceId);
                 return;
             }
 
-            _logger.LogInformation(
-                "Found {Count} presentation presence(s) to update for Conference {ConferenceId}, Presentation {PresentationId}",
-                presentations.Count,
-                @event.ConferenceId,
-                @event.PresentationId);
+            var speakers = @event.Speakers
+                .Select(s => new PresentationSpeaker(s.Id, s.Name, s.ProfilePictureUrl ?? string.Empty))
+                .ToList();
 
-            // Update each presentation presence
-            foreach (var presentation in presentations)
+            var topics = @event.Topics
+                .Select(t => new PresentationTopic(t.Key, t.Name))
+                .ToList();
+
+            foreach (var conferencePresence in conferencePresences)
             {
-                // Create speakers list (preserve existing speaker info when available)
-                var currentSpeakers = presentation.Speakers.ToDictionary(s => s.SpeakerId);
-                var speakers = @event.SpeakerIds
-                    .Select(id =>
-                    {
-                        if (currentSpeakers.TryGetValue(id, out var existingSpeaker))
-                        {
-                            return existingSpeaker;
-                        }
-                        return new PresentationSpeaker(id, string.Empty, string.Empty);
-                    })
-                    .ToList();
+                var profileId = conferencePresence.ProfileId;
 
-                var topics = @event.Topics
-                    .Select(t => new PresentationTopic(t.Key, t.Name))
-                    .ToList();
-
-                // Update presentation info (preserves IsFavorite, IsCheckedIn, IsRated, Rating)
-                presentation.UpdatePresentationInfo(
-                    @event.Title,
-                    @event.Abstract,
-                    @event.RoomName,
-                    @event.StartDateTime.UtcDateTime,
-                    @event.EndDateTime.UtcDateTime,
-                    speakers,
-                    topics);
-
-                // Save the updated presentation
-                await _repository.UpdateAsync(
-                    presentation.ProfileId,
+                // Get the existing presentation presence for this profile, or null if not yet created
+                var presentation = await _repository.GetByConferenceAndPresentationAsync(
+                    profileId,
                     @event.ConferenceId,
-                    presentation,
+                    @event.PresentationId,
                     cancellationToken);
 
-                // If schedule changed and presentation is favorited, raise schedule change event
-                if (@event.IsScheduleChanged && presentation.IsFavorite)
+                if (presentation == null)
                 {
-                    scheduleChanged = true;
-                    var scheduleChangeEvent = new PresentationScheduleChangeEvent
-                    {
-                        ConferenceId = @event.ConferenceId,
-                        PresentationId = @event.PresentationId,
-                        ProfileId = presentation.ProfileId,
-                        Title = @event.Title,
-                        Abstract = @event.Abstract,
-                        Room = @event.RoomName,
-                        StartDateTime = @event.StartDateTime,
-                        EndDateTime = @event.EndDateTime
-                    };
+                    // Presentation does not exist for this profile — create it
+                    var newPresentation = new PresentationPresence(
+                        profileId,
+                        @event.ConferenceId,
+                        @event.PresentationId,
+                        @event.Title,
+                        @event.Abstract,
+                        @event.RoomName,
+                        @event.StartDateTime.UtcDateTime,
+                        @event.EndDateTime.UtcDateTime,
+                        speakers,
+                        topics);
 
-                    await _eventPublisher.PublishAsync(scheduleChangeEvent, cancellationToken);
+                    await _repository.AddAsync(newPresentation, cancellationToken);
+                    createdCount++;
 
                     _logger.LogInformation(
-                        "Published PresentationScheduleChangeEvent for Profile {ProfileId}, Conference {ConferenceId}, Presentation {PresentationId}",
-                        scheduleChangeEvent.ProfileId,
+                        "Created new presentation presence for Profile {ProfileId}, Conference {ConferenceId}, Presentation {PresentationId}",
+                        profileId,
                         @event.ConferenceId,
                         @event.PresentationId);
+                }
+                else
+                {
+                    // Presentation already exists — preserve existing speaker info when available
+                    var updatedSpeakers = @event.Speakers
+                        .Select(s => new PresentationSpeaker(s.Id, s.Name, s.ProfilePictureUrl))
+                        .ToList();
+
+                    // Update presentation info (preserves IsFavorite, IsCheckedIn, IsRated, Rating)
+                    presentation.UpdatePresentationInfo(
+                        @event.Title,
+                        @event.Abstract,
+                        @event.RoomName,
+                        @event.StartDateTime.UtcDateTime,
+                        @event.EndDateTime.UtcDateTime,
+                        updatedSpeakers,
+                        topics);
+
+                    await _repository.UpdateAsync(
+                        profileId,
+                        @event.ConferenceId,
+                        presentation,
+                        cancellationToken);
+
+                    updatedCount++;
+
+                    // If schedule changed and presentation is favorited, raise schedule change event
+                    if (@event.IsScheduleChanged && presentation.IsFavorite)
+                    {
+                        scheduleChanged = true;
+                        var scheduleChangeEvent = new PresentationScheduleChangeEvent
+                        {
+                            ConferenceId = @event.ConferenceId,
+                            PresentationId = @event.PresentationId,
+                            ProfileId = profileId,
+                            Title = @event.Title,
+                            Abstract = @event.Abstract,
+                            Room = @event.RoomName,
+                            StartDateTime = @event.StartDateTime,
+                            EndDateTime = @event.EndDateTime
+                        };
+
+                        await _eventPublisher.PublishAsync(scheduleChangeEvent, cancellationToken);
+
+                        _logger.LogInformation(
+                            "Published PresentationScheduleChangeEvent for Profile {ProfileId}, Conference {ConferenceId}, Presentation {PresentationId}",
+                            profileId,
+                            @event.ConferenceId,
+                            @event.PresentationId);
+                    }
                 }
             }
 
             _logger.LogInformation(
-                "Successfully updated {Count} presentation presence(s) for Conference {ConferenceId}, Presentation {PresentationId}",
-                presentations.Count,
+                "Successfully processed presentation update for Conference {ConferenceId}, Presentation {PresentationId}: {CreatedCount} created, {UpdatedCount} updated",
                 @event.ConferenceId,
-                @event.PresentationId);
+                @event.PresentationId,
+                createdCount,
+                updatedCount);
 
-            activity?.SetTag("presence.affected_count", presentations.Count);
+            activity?.SetTag("presence.created_count", createdCount);
+            activity?.SetTag("presence.updated_count", updatedCount);
             activity?.SetTag("presence.schedule_changed", scheduleChanged);
             activity?.SetStatus(ActivityStatusCode.Ok);
 
-            _metrics.RecordPresentationUpdated(presentations.Count, scheduleChanged);
+            _metrics.RecordPresentationUpdated(updatedCount, scheduleChanged);
             _metrics.RecordOperationDuration("UpdatePresentation", stopwatch.Elapsed.TotalMilliseconds, true);
         }
         catch (Exception ex)
