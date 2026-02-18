@@ -98,7 +98,7 @@ public static class ConferenceFactory
         Room? room = null,
         IEnumerable<Speaker>? speakers = null)
     {
-        var start = startDateTime ?? new DateTimeOffset(Faker.Date.Future(), TimeSpan.Zero);
+        var start = startDateTime ?? new DateTimeOffset(DateTime.SpecifyKind(Faker.Date.Future(), DateTimeKind.Utc), TimeSpan.Zero);
         var end = endDateTime ?? start.AddHours(1);
 
         return Presentation.Create(
