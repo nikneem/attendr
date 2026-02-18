@@ -8,13 +8,21 @@ namespace HexMaster.Attendr.Conferences;
 public interface ITopicsRepository
 {
     /// <summary>
-    /// Gets or creates a topic by its key.
+    /// Gets or creates a topic by its key (used by the AI analysis system; created topics are hidden by default).
     /// </summary>
     /// <param name="key">The unique key of the topic.</param>
     /// <param name="name">The display name of the topic.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The existing or newly created topic.</returns>
     Task<Topic> GetOrCreateTopicAsync(string key, string name, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Creates a new topic, persisting all properties including visibility.
+    /// </summary>
+    /// <param name="topic">The topic domain model to persist.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The persisted topic.</returns>
+    Task<Topic> CreateTopicAsync(Topic topic, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Links a presentation to a topic.

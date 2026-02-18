@@ -50,15 +50,27 @@ public sealed class Topic : DomainModel<Guid>
     }
 
     /// <summary>
-    /// Factory method to create a new topic.
+    /// Factory method to create a new topic via the automated AI system (hidden by default).
     /// </summary>
     /// <param name="key">The unique key of the topic.</param>
     /// <param name="name">The display name of the topic.</param>
-    /// <returns>A new instance of <see cref="Topic"/>.</returns>
+    /// <returns>A new instance of <see cref="Topic"/> that is hidden by default.</returns>
     public static Topic Create(string key, string name)
     {
         var id = Guid.NewGuid();
         return new Topic(id, key, name, isVisible: false, DateTime.UtcNow);
+    }
+
+    /// <summary>
+    /// Factory method to create a new topic manually (visible by default).
+    /// </summary>
+    /// <param name="key">The unique key of the topic.</param>
+    /// <param name="name">The display name of the topic.</param>
+    /// <returns>A new instance of <see cref="Topic"/> that is visible by default.</returns>
+    public static Topic CreateManually(string key, string name)
+    {
+        var id = Guid.NewGuid();
+        return new Topic(id, key, name, isVisible: true, DateTime.UtcNow);
     }
 
     /// <summary>

@@ -1,8 +1,13 @@
 <div class="topics-page">
     <div class="container">
         <div class="header-section">
-            <h1>Topics Management</h1>
-            <p class="subtitle">Manage presentation topics and their visibility</p>
+            <div class="header-row">
+                <div>
+                    <h1>Topics Management</h1>
+                    <p class="subtitle">Manage presentation topics and their visibility</p>
+                </div>
+                <button pButton type="button" label="Add Topic" icon="pi pi-plus" (click)="openCreate()"></button>
+            </div>
         </div>
 
         @if (loading()) {
@@ -65,6 +70,11 @@
         }
     </div>
 </div>
+
+<p-dialog header="Add Topic" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
+    [visible]="createDialogVisible()" (onHide)="onCreateCancel()" styleClass="create-topic-dialog">
+    <attn-create-topic #createTopicRef (save)="onCreateSave($event)" (cancel)="onCreateCancel()" />
+</p-dialog>
 
 <p-dialog header="Edit Topic" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
     [visible]="editDialogVisible()" (onHide)="onEditCancel()" styleClass="edit-topic-dialog">

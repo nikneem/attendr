@@ -9,6 +9,14 @@
     .header-section {
         margin-bottom: 2rem;
 
+        .header-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
         h1 {
             margin: 0 0 0.5rem;
             font-size: 2rem;

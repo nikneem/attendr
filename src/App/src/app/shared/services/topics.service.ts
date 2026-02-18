@@ -5,7 +5,6 @@ import { environment } from '../../../environments/environment';
 
 export interface TopicDto {
     id: string;
-    conferenceId: string;
     key: string;
     name: string;
     isVisible: boolean;
@@ -41,11 +40,10 @@ export class TopicsService {
     }
 
     /**
-     * Create a new topic
+     * Create a new topic manually (visible by default)
      */
-    createTopic(conferenceId: string, key: string, name: string): Observable<TopicDto> {
+    createTopic(key: string, name: string): Observable<TopicDto> {
         return this.http.post<TopicDto>(this.apiUrl, {
-            conferenceId,
             key,
             name,
         });

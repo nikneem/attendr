@@ -38,9 +38,19 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
         }
         await reader.CloseAsync();
 
-        // Create new topic if not found
+        // Create new topic if not found (AI-created topics are hidden by default)
         var topic = Topic.Create(key, name);
+        return await PersistNewTopicAsync(connection, topic, cancellationToken);
+    }
 
+    public async Task<Topic> CreateTopicAsync(Topic topic, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        return await PersistNewTopicAsync(connection, topic, cancellationToken);
+    }
+
+    private static async Task<Topic> PersistNewTopicAsync(NpgsqlConnection connection, Topic topic, CancellationToken cancellationToken)
+    {
         var insertSql = @"
             INSERT INTO topics (id, key, name, is_visible, created_on)
             VALUES (@id, @key, @name, @is_visible, @created_on)";

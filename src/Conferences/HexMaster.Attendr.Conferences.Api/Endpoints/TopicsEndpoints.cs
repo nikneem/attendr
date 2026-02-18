@@ -82,7 +82,7 @@ public static class TopicsEndpoints
     {
         try
         {
-            var command = new CreateTopicCommand(request.Key, request.Name);
+            var command = new CreateTopicCommand(request.Key, request.Name, IsManual: true);
             var result = await handler.Handle(command, cancellationToken);
             return Results.Created($"/api/topics/{result.Id}", result);
         }

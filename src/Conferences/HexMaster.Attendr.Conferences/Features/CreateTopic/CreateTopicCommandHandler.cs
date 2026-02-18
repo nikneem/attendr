@@ -41,15 +41,11 @@ public sealed class CreateTopicCommandHandler : ICommandHandler<CreateTopicComma
         {
             _logger.LogInformation("Creating topic with key: {Key}, name: {Name}", command.Key, command.Name);
 
-            var topic = Topic.Create(command.Key, command.Name);
+            var topic = command.IsManual
+                ? Topic.CreateManually(command.Key, command.Name)
+                : Topic.Create(command.Key, command.Name);
 
-            // Note: The repository should implement adding the topic
-            // This assumes the repository has an AddAsync method or similar
-            // For now, we'll persist through GetOrCreateTopicAsync as a workaround
-            var createdTopic = await _topicsRepository.GetOrCreateTopicAsync(
-                topic.Key,
-                topic.Name,
-                cancellationToken);
+            var createdTopic = await _topicsRepository.CreateTopicAsync(topic, cancellationToken);
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             activity?.SetTag("topic.id", createdTopic.Id);

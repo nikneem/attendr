@@ -1,0 +1,21 @@
+<div class="create-topic-form">
+    <div class="form-row">
+        <label for="new-name">Display Name</label>
+        <input pInputText id="new-name" name="name" [ngModel]="name()" (ngModelChange)="onNameChange($event)"
+            placeholder="e.g. Machine Learning" [disabled]="isSaving()" />
+    </div>
+
+    <div class="form-row">
+        <label for="new-key">Normalized Key</label>
+        <input pInputText id="new-key" name="key" [ngModel]="key()" (ngModelChange)="onKeyChange($event)"
+            placeholder="e.g. machine-learning" [disabled]="isSaving()" />
+        <small class="hint">Auto-normalized: lowercase with hyphens. Manually editable.</small>
+    </div>
+
+    <div class="actions">
+        <button pButton type="button" label="Cancel" class="p-button-secondary" (click)="onCancel()"
+            [disabled]="isSaving()"></button>
+        <button pButton type="button" label="Add Topic" icon="pi pi-plus" (click)="onSave()"
+            [disabled]="!isValid || isSaving()"></button>
+    </div>
+</div>
