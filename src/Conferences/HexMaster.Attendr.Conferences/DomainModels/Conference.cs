@@ -325,6 +325,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         {
             SynchronizationSource = synchronizationSource;
             UpdateModifiedOn();
+            SetState(DomainModelState.Modified);
         }
     }
 
