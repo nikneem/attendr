@@ -75,23 +75,23 @@
                         </ng-template>
 
                         <div class="card-content">
-                            <div class="meta-info">
-                                <div class="meta-item">
-                                    <i class="pi pi-map-marker"></i>
-                                    <span>{{ card.presentation.room }}</span>
+                            <div class="meta-speakers-row">
+                                <div class="meta-info">
+                                    <div class="meta-item">
+                                        <i class="pi pi-map-marker"></i>
+                                        <span>{{ card.presentation.room }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="pi pi-calendar"></i>
+                                        <span>{{ formatDateTime(card.presentation.startDateTime) }}</span>
+                                    </div>
                                 </div>
-                                <div class="meta-item">
-                                    <i class="pi pi-clock"></i>
-                                    <span>{{ formatDateTime(card.presentation.startDateTime) }}</span>
-                                </div>
-                            </div>
 
-                            @if (card.presentation.speakers && card.presentation.speakers.length > 0) {
-                            <div class="speakers-section">
-                                <h4>Speakers</h4>
-                                <div class="speakers-list">
+                                @if (card.presentation.speakers && card.presentation.speakers.length > 0) {
+                                <div class="speakers-section">
                                     @for (speaker of card.presentation.speakers; track speaker.id || $index) {
                                     <div class="speaker-item">
+                                        <span class="speaker-name">{{ speaker.name }}</span>
                                         @if (speaker.profilePictureUrl) {
                                         <img [src]="speaker.profilePictureUrl" [alt]="speaker.name"
                                             class="speaker-avatar" />
@@ -100,10 +100,17 @@
                                             <i class="pi pi-user"></i>
                                         </div>
                                         }
-                                        <span class="speaker-name">{{ speaker.name }}</span>
                                     </div>
                                     }
                                 </div>
+                                }
+                            </div>
+
+                            @if (card.presentation.topics && card.presentation.topics.length > 0) {
+                            <div class="topics-row">
+                                @for (topic of card.presentation.topics; track topic.key) {
+                                <span class="topic-tag">{{ topic.name }}</span>
+                                }
                             </div>
                             }
 
