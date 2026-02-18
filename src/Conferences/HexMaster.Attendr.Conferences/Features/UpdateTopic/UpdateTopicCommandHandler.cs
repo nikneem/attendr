@@ -4,6 +4,7 @@ using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
+using HexMaster.Attendr.IntegrationEvents.Events.Topics;
 using HexMaster.Attendr.IntegrationEvents.Models;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
@@ -72,6 +73,17 @@ public sealed class UpdateTopicCommandHandler : ICommandHandler<UpdateTopicComma
             }
 
             await _topicsRepository.UpdateTopicAsync(topic, cancellationToken);
+
+            var topicChangedEvent = new TopicChangedEvent
+            {
+                TopicId = topic.Id,
+                Key = topic.Key,
+                Name = topic.Name,
+                IsVisible = topic.IsVisible
+            };
+            await _eventPublisher.PublishAsync(topicChangedEvent, cancellationToken);
+
+            _logger.LogInformation("Published TopicChangedEvent for topic {TopicId}", topic.Id);
 
             // Find all future presentations with this topic and publish PresentationUpdatedEvent
             var affectedPresentations = await _topicsRepository.GetFuturePresentationsByTopicIdAsync(command.Id, cancellationToken);
