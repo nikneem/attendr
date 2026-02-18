@@ -8,6 +8,8 @@ namespace HexMaster.Attendr.Conferences.Features.CreateTopic;
 /// </summary>
 /// <param name="Key">The unique key of the topic.</param>
 /// <param name="Name">The display name of the topic.</param>
+/// <param name="IsManual">When true, the topic was created manually and should be visible by default.</param>
 public sealed record CreateTopicCommand(
     string Key,
-    string Name) : IAttendrCommand;
+    string Name,
+    bool IsManual = false) : IAttendrCommand;

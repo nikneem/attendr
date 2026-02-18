@@ -42,14 +42,21 @@ var userAssignedIdentityName = 'id-${baseName}-${environmentName}'
 var serviceBusTopics = [
   'conference.created'
   'conference.updated'
+  'conference.presentations-imported'
   'profile.created'
   'profile.updated'
   'profile.followed.conference'
   'profiles.followed.conference'
-  'presentation.updated'
-  'presentation.schedule-changed'
   'profile.checked-in'
   'profile.conference-attendance-changed'
+  'profile.topic-interest'
+  'profile.topics-changed'
+  'presentation.updated'
+  'presentation.schedule-changed'
+  'group.member-added'
+  'group.member-removed'
+  'group.access-requested'
+  'topic.changed'
 ]
 
 // Key Vault

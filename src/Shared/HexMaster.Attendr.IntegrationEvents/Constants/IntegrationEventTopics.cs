@@ -101,4 +101,10 @@ public static class IntegrationEventTopics
     /// Published when a user requests access to a private group.
     /// </summary>
     public const string GroupAccessRequested = "group.access-requested";
+
+    /// <summary>
+    /// Topic for topic changed events.
+    /// Published when a topic is created or updated.
+    /// </summary>
+    public const string TopicChanged = "topic.changed";
 }

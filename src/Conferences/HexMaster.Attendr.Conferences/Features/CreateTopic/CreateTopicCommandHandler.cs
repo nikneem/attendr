@@ -4,6 +4,8 @@ using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Core.CommandHandlers;
 using HexMaster.Attendr.Core.Observability;
+using HexMaster.Attendr.IntegrationEvents.Events.Topics;
+using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 
 namespace HexMaster.Attendr.Conferences.Features.CreateTopic;
@@ -14,15 +16,18 @@ namespace HexMaster.Attendr.Conferences.Features.CreateTopic;
 public sealed class CreateTopicCommandHandler : ICommandHandler<CreateTopicCommand, TopicDto>
 {
     private readonly ITopicsRepository _topicsRepository;
+    private readonly IIntegrationEventPublisher _eventPublisher;
     private readonly ConferenceMetrics _metrics;
     private readonly ILogger<CreateTopicCommandHandler> _logger;
 
     public CreateTopicCommandHandler(
         ITopicsRepository topicsRepository,
+        IIntegrationEventPublisher eventPublisher,
         ConferenceMetrics metrics,
         ILogger<CreateTopicCommandHandler> logger)
     {
         _topicsRepository = topicsRepository ?? throw new ArgumentNullException(nameof(topicsRepository));
+        _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -41,15 +46,20 @@ public sealed class CreateTopicCommandHandler : ICommandHandler<CreateTopicComma
         {
             _logger.LogInformation("Creating topic with key: {Key}, name: {Name}", command.Key, command.Name);
 
-            var topic = Topic.Create(command.Key, command.Name);
+            var topic = command.IsManual
+                ? Topic.CreateManually(command.Key, command.Name)
+                : Topic.Create(command.Key, command.Name);
 
-            // Note: The repository should implement adding the topic
-            // This assumes the repository has an AddAsync method or similar
-            // For now, we'll persist through GetOrCreateTopicAsync as a workaround
-            var createdTopic = await _topicsRepository.GetOrCreateTopicAsync(
-                topic.Key,
-                topic.Name,
-                cancellationToken);
+            var createdTopic = await _topicsRepository.CreateTopicAsync(topic, cancellationToken);
+
+            var topicChangedEvent = new TopicChangedEvent
+            {
+                TopicId = createdTopic.Id,
+                Key = createdTopic.Key,
+                Name = createdTopic.Name,
+                IsVisible = createdTopic.IsVisible
+            };
+            await _eventPublisher.PublishAsync(topicChangedEvent, cancellationToken);
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             activity?.SetTag("topic.id", createdTopic.Id);

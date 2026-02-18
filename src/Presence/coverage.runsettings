@@ -7,9 +7,9 @@
           <Format>cobertura</Format>
           <Include>
             <Assembly>HexMaster.Attendr.Presence.dll</Assembly>
-            <Assembly>HexMaster.Attendr.Presence.Abstractions.dll</Assembly>
           </Include>
           <Exclude>
+            <Assembly>HexMaster.Attendr.Presence.Abstractions.dll</Assembly>
             <Assembly>HexMaster.Attendr.Presence.Api.dll</Assembly>
             <Assembly>HexMaster.Attendr.Presence.Data.MongoDb.dll</Assembly>
             <Assembly>HexMaster.Attendr.Presence.Data.Postgres.dll</Assembly>

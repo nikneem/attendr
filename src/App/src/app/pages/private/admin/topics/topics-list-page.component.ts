@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -10,12 +10,13 @@ import { finalize } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { TopicsService, TopicDto } from '../../../../shared/services/topics.service';
 import { EditTopicComponent } from '../../../../shared/components/edit-topic/edit-topic.component';
+import { CreateTopicComponent } from '../../../../shared/components/create-topic/create-topic.component';
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
     selector: 'attn-topics-list-page',
     standalone: true,
-    imports: [CommonModule, TableModule, ButtonModule, ProgressSpinnerModule, TooltipModule, TagModule, DialogModule, EditTopicComponent, ConfirmationDialogComponent],
+    imports: [CommonModule, TableModule, ButtonModule, ProgressSpinnerModule, TooltipModule, TagModule, DialogModule, EditTopicComponent, CreateTopicComponent, ConfirmationDialogComponent],
     templateUrl: './topics-list-page.component.html',
     styleUrl: './topics-list-page.component.scss',
 })
@@ -23,10 +24,13 @@ export class TopicsListPageComponent implements OnInit {
     private readonly topicsService = inject(TopicsService);
     private readonly messageService = inject(MessageService);
 
+    @ViewChild('createTopicRef') private createTopicRef?: CreateTopicComponent;
+
     protected readonly topics = signal<TopicDto[]>([]);
     protected readonly loading = signal<boolean>(true);
     protected readonly error = signal<string | null>(null);
 
+    protected readonly createDialogVisible = signal<boolean>(false);
     protected readonly editDialogVisible = signal<boolean>(false);
     protected readonly confirmDeleteVisible = signal<boolean>(false);
     protected readonly selectedTopic = signal<TopicDto | null>(null);
@@ -63,6 +67,28 @@ export class TopicsListPageComponent implements OnInit {
 
     getVisibilitySeverity(isVisible: boolean): 'success' | 'warn' {
         return isVisible ? 'success' : 'warn';
+    }
+
+    openCreate(): void {
+        this.createTopicRef?.reset();
+        this.createDialogVisible.set(true);
+    }
+
+    onCreateCancel(): void {
+        this.createDialogVisible.set(false);
+    }
+
+    onCreateSave(payload: { key: string; name: string }): void {
+        this.topicsService.createTopic(payload.key, payload.name).subscribe({
+            next: (created) => {
+                this.topics.set([...this.topics(), created]);
+                this.createDialogVisible.set(false);
+                this.messageService.add({ severity: 'success', summary: 'Topic created', detail: created.name });
+            },
+            error: (err) => {
+                this.messageService.add({ severity: 'error', summary: 'Create failed', detail: err.message || 'Failed to create topic' });
+            },
+        });
     }
 
     openEdit(topic: TopicDto): void {

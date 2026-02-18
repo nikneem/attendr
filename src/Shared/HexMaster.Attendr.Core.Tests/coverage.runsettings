@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <ExcludeByFile>
+            **/HexMaster.Attendr.Aspire.ServiceDefaults/**/*.cs
+          </ExcludeByFile>
+          <Exclude>
+            <Assembly>HexMaster.Attendr.Core.Tests.dll</Assembly>
+            <Assembly>HexMaster.Attendr.Aspire.ServiceDefaults.dll</Assembly>
+          </Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
