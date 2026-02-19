@@ -10,6 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+    text {
+      font-family: 'Special Elite', cursive;
+    }
+  </style>
   <defs
      id="defs1">
     <linearGradient
