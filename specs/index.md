@@ -3,6 +3,9 @@
 ## Frontend
 - [Multi-language support (i18n)](frontend/multi-language-support.md)
 
+## Conferences
+- [Manual conference content management (speakers, rooms, presentations)](conferences/manual-conference-content-management.md)
+
 ## Notifications UX
 - [Notification preferences: batch save + undo](notifications/notification-preferences-batch-save.md)
 - [Push onboarding: install → permission → subscribe → test](notifications/push-onboarding-flow.md) ✅
