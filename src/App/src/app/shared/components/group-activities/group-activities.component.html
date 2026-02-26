@@ -2,7 +2,7 @@
     <p-accordion-panel value="0">
         <p-accordion-header>
             <div class="section-header">
-                <h2>Recent Activity</h2>
+                <h2>{{ 'GROUP_ACTIVITIES.TITLE' | translate }}</h2>
                 @if (activities().length > 0) {
                 <p-tag [value]="activities().length.toString()" severity="info" />
                 }
@@ -14,10 +14,8 @@
                 <div class="empty-state-icon">
                     <i class="pi pi-inbox" style="font-size: 3rem;"></i>
                 </div>
-                <h4 class="empty-state-title">No Activity Yet</h4>
-                <p class="empty-state-text">When members join, check in to presentations, or follow conferences, you'll
-                    see
-                    their activity here.</p>
+                <h4 class="empty-state-title">{{ 'GROUP_ACTIVITIES.NO_ACTIVITY_TITLE' | translate }}</h4>
+                <p class="empty-state-text">{{ 'GROUP_ACTIVITIES.NO_ACTIVITY_DESC' | translate }}</p>
             </div>
             } @else {
             <div class="activities-list">

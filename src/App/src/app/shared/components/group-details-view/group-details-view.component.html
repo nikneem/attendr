@@ -14,7 +14,7 @@
         <div class="info-row">
             <div class="info-label">
                 <i class="pi pi-users"></i>
-                <span>Members</span>
+                <span>{{ 'GROUP_DETAILS.MEMBERS_LABEL' | translate }}</span>
             </div>
             <div class="info-value">
                 <strong>{{ group().memberCount }}</strong>
@@ -24,10 +24,10 @@
         <div class="info-row">
             <div class="info-label">
                 <i class="pi pi-lock" [class.pi-lock-open]="group().isPublic"></i>
-                <span>Access Type</span>
+                <span>{{ 'GROUP_DETAILS.ACCESS_TYPE' | translate }}</span>
             </div>
             <div class="info-value">
-                <p-tag [value]="group().isPublic ? 'Public' : 'Private'"
+                <p-tag [value]="group().isPublic ? ('GROUP_DETAILS.PUBLIC_TAG' | translate) : ('GROUP_DETAILS.PRIVATE_TAG' | translate)"
                     [severity]="group().isPublic ? 'success' : 'warn'"
                     [icon]="group().isPublic ? 'pi pi-lock-open' : 'pi pi-lock'" />
             </div>
@@ -41,23 +41,17 @@
         <div class="info-card public-info">
             <div class="info-header">
                 <i class="pi pi-info-circle"></i>
-                <h4>Public Group</h4>
+                <h4>{{ 'GROUP_DETAILS.PUBLIC_GROUP_TITLE' | translate }}</h4>
             </div>
-            <p>
-                This is a public group. Anyone can join immediately without approval. All members can see the group's
-                content and participate in activities.
-            </p>
+            <p>{{ 'GROUP_DETAILS.PUBLIC_GROUP_DESC' | translate }}</p>
         </div>
         } @else {
         <div class="info-card private-info">
             <div class="info-header">
                 <i class="pi pi-info-circle"></i>
-                <h4>Private Group</h4>
+                <h4>{{ 'GROUP_DETAILS.PRIVATE_GROUP_TITLE' | translate }}</h4>
             </div>
-            <p>
-                This is a private group. You need to request access to join. A group administrator will review your
-                request and approve or deny it. Only approved members can see the group's content.
-            </p>
+            <p>{{ 'GROUP_DETAILS.PRIVATE_GROUP_DESC' | translate }}</p>
         </div>
         }
     </div>
@@ -66,13 +60,13 @@
 
     <div class="actions-section">
         @if (group().isMember) {
-        <button pButton label="View Group" icon="pi pi-arrow-right" (click)="onViewGroup()"
+        <button pButton [label]="'GROUP_DETAILS.VIEW_GROUP' | translate" icon="pi pi-arrow-right" (click)="onViewGroup()"
             class="view-button w-full"></button>
         } @else {
         @if (group().isPublic) {
-        <button pButton label="Join Group" icon="pi pi-sign-in" (click)="onJoin()" class="join-button w-full"></button>
+        <button pButton [label]="'GROUP_DETAILS.JOIN_GROUP' | translate" icon="pi pi-sign-in" (click)="onJoin()" class="join-button w-full"></button>
         } @else {
-        <button pButton label="Request Access" icon="pi pi-send" (click)="onRequestAccess()"
+        <button pButton [label]="'GROUP_DETAILS.REQUEST_ACCESS' | translate" icon="pi pi-send" (click)="onRequestAccess()"
             class="request-button w-full"></button>
         }
         }

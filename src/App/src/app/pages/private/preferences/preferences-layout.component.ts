@@ -1,13 +1,16 @@
-import { Component, computed, signal, inject } from '@angular/core';
+﻿import { Component, computed, signal, inject } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MenuItem } from 'primeng/api';
 import { filter } from 'rxjs';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-preferences-layout',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, RouterLink],
+    imports: [CommonModule, RouterOutlet, RouterLink,
+        TranslateModule
+    ],
     templateUrl: './preferences-layout.component.html',
     styleUrl: './preferences-layout.component.scss',
 })

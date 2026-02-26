@@ -1,4 +1,4 @@
-import { Component, input, output, effect } from '@angular/core';
+﻿import { Component, input, output, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -6,10 +6,13 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { CommonModule } from '@angular/common';
 import { TopicDto } from '../../services/topics.service';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-edit-topic',
     standalone: true,
-    imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, ToggleSwitchModule],
+    imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, ToggleSwitchModule,
+        TranslateModule
+    ],
     templateUrl: './edit-topic.component.html',
     styleUrl: './edit-topic.component.scss',
 })

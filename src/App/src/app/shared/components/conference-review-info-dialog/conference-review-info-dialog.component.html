@@ -4,20 +4,17 @@
     </div>
 
     <div class="info-content">
-        <h3>Conference Created Successfully!</h3>
+        <h3>{{ 'CONFERENCE_REVIEW_INFO.TITLE' | translate }}</h3>
         <p class="conference-name">{{ conferenceTitle() }}</p>
 
         <div class="info-message">
-            <p>
-                Your conference has been created and is now pending review.
-                A content reviewer will assess the conference information to ensure it meets our community standards.
-            </p>
+            <p>{{ 'CONFERENCE_REVIEW_INFO.REVIEW_MESSAGE' | translate }}</p>
 
             <div class="notice-box">
                 <i class="pi pi-eye-slash"></i>
                 <div>
-                    <strong>Currently Hidden</strong>
-                    <p>Until the review is complete, your conference will remain hidden from public view.</p>
+                    <strong>{{ 'CONFERENCE_REVIEW_INFO.HIDDEN_NOTICE_TITLE' | translate }}</strong>
+                    <p>{{ 'CONFERENCE_REVIEW_INFO.HIDDEN_NOTICE_DESC' | translate }}</p>
                 </div>
             </div>
 
@@ -28,6 +25,6 @@
     </div>
 
     <div class="dialog-actions">
-        <button pButton label="Got It" icon="pi pi-check" (click)="onClose()" styleClass="p-button-primary"></button>
+        <button pButton [label]="'CONFERENCE_REVIEW_INFO.GOT_IT' | translate" icon="pi pi-check" (click)="onClose()" styleClass="p-button-primary"></button>
     </div>
 </div>

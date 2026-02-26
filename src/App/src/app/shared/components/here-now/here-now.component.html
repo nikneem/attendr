@@ -2,7 +2,7 @@
 <div class="here-now-container tour-here-now-content">
     <h2 class="section-title">
         <i class="pi pi-bolt"></i>
-        Here & Now
+        {{ 'HERE_NOW.TITLE' | translate }}
     </h2>
 
     <div class="conferences-list">
@@ -30,7 +30,7 @@
                 <div class="session-column">
                     <div class="column-header">
                         <i class="pi pi-angle-left"></i>
-                        Previous
+                        {{ 'HERE_NOW.PREVIOUS' | translate }}
                     </div>
                     @if (conference.schedule?.previous && conference.schedule!.previous.length > 0) {
                     @for (presentation of getSortedPresentations(conference.schedule!.previous); track
@@ -64,7 +64,7 @@
                     } @else {
                     <div class="session-placeholder">
                         <i class="pi pi-clock"></i>
-                        <span>No previous session</span>
+                        <span>{{ 'HERE_NOW.NO_PREVIOUS' | translate }}</span>
                     </div>
                     }
                 </div>
@@ -73,7 +73,7 @@
                 <div class="session-column current">
                     <div class="column-header">
                         <i class="pi pi-circle-fill"></i>
-                        Now
+                        {{ 'HERE_NOW.NOW' | translate }}
                     </div>
                     @if (conference.schedule?.now && conference.schedule!.now.length > 0) {
                     @for (presentation of getSortedPresentations(conference.schedule!.now); track
@@ -107,7 +107,7 @@
                     } @else {
                     <div class="session-placeholder">
                         <i class="pi pi-calendar"></i>
-                        <span>No current session</span>
+                        <span>{{ 'HERE_NOW.NO_CURRENT' | translate }}</span>
                     </div>
                     }
                 </div>
@@ -116,7 +116,7 @@
                 <div class="session-column">
                     <div class="column-header">
                         <i class="pi pi-angle-right"></i>
-                        Next
+                        {{ 'HERE_NOW.NEXT' | translate }}
                     </div>
                     @if (conference.schedule?.next && conference.schedule!.next.length > 0) {
                     @for (presentation of getSortedPresentations(conference.schedule!.next); track
@@ -150,7 +150,7 @@
                     } @else {
                     <div class="session-placeholder">
                         <i class="pi pi-clock"></i>
-                        <span>No upcoming session</span>
+                        <span>{{ 'HERE_NOW.NO_UPCOMING' | translate }}</span>
                     </div>
                     }
                 </div>

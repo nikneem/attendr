@@ -1,13 +1,16 @@
-import { Component, input, output } from '@angular/core';
+﻿import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { GroupListItemDto } from '../../models/group-list-item-dto';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-group-details-view',
-    imports: [CommonModule, ButtonModule, TagModule, DividerModule],
+    imports: [CommonModule, ButtonModule, TagModule, DividerModule,
+        TranslateModule
+    ],
     templateUrl: './group-details-view.component.html',
     styleUrl: './group-details-view.component.scss',
 })

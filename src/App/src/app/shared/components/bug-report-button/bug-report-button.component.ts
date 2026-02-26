@@ -1,11 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
+﻿import { Component, ViewChild } from '@angular/core';
 import { PopoverModule, Popover } from 'primeng/popover';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-bug-report-button',
-    imports: [PopoverModule, ButtonModule, TooltipModule],
+    imports: [PopoverModule, ButtonModule, TooltipModule,
+        TranslateModule
+    ],
     templateUrl: './bug-report-button.component.html',
     styleUrl: './bug-report-button.component.scss',
 })

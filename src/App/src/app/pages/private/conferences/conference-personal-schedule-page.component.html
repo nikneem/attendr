@@ -17,15 +17,14 @@
         <p-card>
             <div class="empty-message">
                 <i class="pi pi-calendar"></i>
-                <h3>No Favorite Presentations</h3>
-                <p>You haven't marked any presentations as favorites yet. Visit the conference schedule to add
-                    favorites.</p>
+                <h3>{{ 'PERSONAL_SCHEDULE.NO_FAVORITES_TITLE' | translate }}</h3>
+                <p>{{ 'PERSONAL_SCHEDULE.NO_FAVORITES_DESC' | translate }}</p>
             </div>
         </p-card>
     </div>
     } @else {
     <div class="schedule-container">
-        <h1 class="page-title">My Personal Schedule</h1>
+        <h1 class="page-title">{{ 'PERSONAL_SCHEDULE.PAGE_TITLE' | translate }}</h1>
         <h2 class="conference-name">{{ conferenceSchedule()?.conferenceName }}</h2>
 
         <p-tabs [(value)]="activeTabIndex" [scrollable]="true">
@@ -67,9 +66,9 @@
                                                 </span>
                                                 @if (info.isPreferred) {
                                                 <i class="pi pi-heart-fill preferred-icon"
-                                                    title="Preferred session"></i>
+                                                    [title]="'PERSONAL_SCHEDULE.PREFERRED_SESSION' | translate"></i>
                                                 }
-                                                <i class="pi pi-star-fill favorite-icon" title="Favorite"></i>
+                                                <i class="pi pi-star-fill favorite-icon" [title]="'PERSONAL_SCHEDULE.FAVORITE' | translate"></i>
                                             </div>
                                             <h3 class="presentation-title" [pTooltip]="info.presentation.title"
                                                 tooltipPosition="top">
@@ -116,7 +115,7 @@
 
     <p-popover #popover>
         <div class="popover-presentations">
-            <h4 class="popover-title">All Sessions in This Time Slot</h4>
+            <h4 class="popover-title">{{ 'PERSONAL_SCHEDULE.ALL_SESSIONS_IN_SLOT' | translate }}</h4>
             @for (info of popoverPresentations(); track info.presentation.presentationId) {
             <div class="popover-presentation-item" (click)="onPopoverPresentationClick($event, info.presentation)">
                 <div class="popover-presentation-header">
@@ -126,9 +125,9 @@
                     </span>
                     <div class="popover-icons">
                         @if (info.isPreferred) {
-                        <i class="pi pi-heart-fill preferred-icon" title="Preferred session"></i>
+                        <i class="pi pi-heart-fill preferred-icon" [title]="'PERSONAL_SCHEDULE.PREFERRED_SESSION' | translate"></i>
                         }
-                        <i class="pi pi-star-fill favorite-icon" title="Favorite"></i>
+                        <i class="pi pi-star-fill favorite-icon" [title]="'PERSONAL_SCHEDULE.FAVORITE' | translate"></i>
                     </div>
                 </div>
                 <h5 class="popover-presentation-title">{{ info.presentation.title }}</h5>

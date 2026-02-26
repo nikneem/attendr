@@ -1,7 +1,7 @@
 <p-card styleClass="section-card">
     <ng-template pTemplate="header">
         <div class="section-header">
-            <h2>Members</h2>
+            <h2>{{ 'GROUP_MEMBERS.TITLE' | translate }}</h2>
             <p-tag [value]="members().length.toString()" severity="info"></p-tag>
         </div>
     </ng-template>
@@ -24,7 +24,7 @@
                 </div>
                 @if (canRemoveMember(member.role)) {
                 <button pButton icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true"
-                    pTooltip="Remove member" (click)="removeMember(member.id)"></button>
+                    [pTooltip]="'GROUP_MEMBERS.REMOVE_MEMBER' | translate" (click)="removeMember(member.id)"></button>
                 }
             </div>
         </div>
@@ -33,7 +33,7 @@
     } @else {
     <div class="empty-state-small">
         <i class="pi pi-users"></i>
-        <p>No members</p>
+        <p>{{ 'GROUP_MEMBERS.NO_MEMBERS' | translate }}</p>
     </div>
     }
 </p-card>

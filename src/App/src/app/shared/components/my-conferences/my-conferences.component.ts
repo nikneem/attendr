@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+﻿import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -20,10 +20,13 @@ interface ConferenceRow {
     ratingRequired: boolean;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-my-conferences',
     standalone: true,
-    imports: [CommonModule, CardModule, ButtonModule, ConfirmationDialogComponent],
+    imports: [CommonModule, CardModule, ButtonModule, ConfirmationDialogComponent,
+        TranslateModule
+    ],
     templateUrl: './my-conferences.component.html',
     styleUrl: './my-conferences.component.scss',
 })

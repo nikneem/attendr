@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, computed, signal, ViewChild } from '@angular/core';
+﻿import { Component, inject, OnInit, computed, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
@@ -45,9 +45,12 @@ interface PresentationInfo {
     zIndex: number;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-conference-personal-schedule-page',
-    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, ProgressSpinnerModule, CardModule, TooltipModule, ContextMenuModule, PopoverModule],
+    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, ProgressSpinnerModule, CardModule, TooltipModule, ContextMenuModule, PopoverModule,
+        TranslateModule
+    ],
     templateUrl: './conference-personal-schedule-page.component.html',
     styleUrl: './conference-personal-schedule-page.component.scss',
 })

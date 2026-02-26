@@ -1,4 +1,4 @@
-import { Component, input, computed, signal, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
+﻿import { Component, input, computed, signal, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { DialogModule } from 'primeng/dialog';
@@ -25,9 +25,12 @@ interface TimelineSession {
     widthPixels: number;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-conference-schedule',
-    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, DialogModule, TooltipModule, PresentationDetailsComponent],
+    imports: [CommonModule, Tabs, TabList, Tab, TabPanels, TabPanel, DialogModule, TooltipModule, PresentationDetailsComponent,
+        TranslateModule
+    ],
     templateUrl: './conference-schedule.component.html',
     styleUrl: './conference-schedule.component.scss',
 })

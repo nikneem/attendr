@@ -7,63 +7,63 @@
     }
 
     <div class="form-field">
-        <label for="title">Conference Title *</label>
-        <input pInputText id="title" [(ngModel)]="title" name="title" placeholder="Enter conference title"
+        <label for="title">{{ 'EDIT_CONFERENCE.TITLE_LABEL' | translate }}</label>
+        <input pInputText id="title" [(ngModel)]="title" name="title" [placeholder]="'EDIT_CONFERENCE.TITLE_PLACEHOLDER' | translate"
             [disabled]="isUpdating" required />
     </div>
 
     <div class="form-row">
         <div class="form-field">
-            <label for="city">City</label>
-            <input pInputText id="city" [(ngModel)]="city" name="city" placeholder="City" [disabled]="isUpdating" />
+            <label for="city">{{ 'EDIT_CONFERENCE.CITY_LABEL' | translate }}</label>
+            <input pInputText id="city" [(ngModel)]="city" name="city" [placeholder]="'EDIT_CONFERENCE.CITY_PLACEHOLDER' | translate" [disabled]="isUpdating" />
         </div>
 
         <div class="form-field">
-            <label for="country">Country</label>
-            <input pInputText id="country" [(ngModel)]="country" name="country" placeholder="Country"
+            <label for="country">{{ 'EDIT_CONFERENCE.COUNTRY_LABEL' | translate }}</label>
+            <input pInputText id="country" [(ngModel)]="country" name="country" [placeholder]="'EDIT_CONFERENCE.COUNTRY_PLACEHOLDER' | translate"
                 [disabled]="isUpdating" />
         </div>
     </div>
 
     <div class="form-field">
-        <label for="imageUrl">Image URL</label>
+        <label for="imageUrl">{{ 'EDIT_CONFERENCE.IMAGE_URL_LABEL' | translate }}</label>
         <input pInputText id="imageUrl" [(ngModel)]="imageUrl" name="imageUrl"
-            placeholder="https://example.com/image.jpg" [disabled]="isUpdating" />
+            [placeholder]="'EDIT_CONFERENCE.IMAGE_URL_PLACEHOLDER' | translate" [disabled]="isUpdating" />
     </div>
 
     <div class="form-field">
-        <label for="dateRange">Date Range *</label>
+        <label for="dateRange">{{ 'EDIT_CONFERENCE.DATE_RANGE_LABEL' | translate }}</label>
         <p-datepicker [(ngModel)]="dateRange" name="dateRange" selectionMode="range" [readonlyInput]="true"
-            dateFormat="M dd, yy" placeholder="Select date range" [disabled]="isUpdating" appendTo="body"
+            dateFormat="M dd, yy" [placeholder]="'EDIT_CONFERENCE.DATE_RANGE_PLACEHOLDER' | translate" [disabled]="isUpdating" appendTo="body"
             [showIcon]="true" />
     </div>
 
     <div class="form-field">
-        <label for="isVisible">Conference Visibility</label>
+        <label for="isVisible">{{ 'EDIT_CONFERENCE.VISIBILITY_LABEL' | translate }}</label>
         <p-toggleSwitch [(ngModel)]="isVisible" inputId="isVisible" name="isVisible" [disabled]="isUpdating" />
-        <small class="visibility-hint">Toggle to make this conference visible to all users</small>
+        <small class="visibility-hint">{{ 'EDIT_CONFERENCE.VISIBILITY_HINT' | translate }}</small>
     </div>
 
     <div class="sync-source-section">
         <div class="checkbox-field">
             <p-checkbox [(ngModel)]="hasSyncSource" [binary]="true" inputId="hasSyncSource" name="hasSyncSource"
                 [disabled]="isUpdating" />
-            <label for="hasSyncSource">Enable synchronization source</label>
+            <label for="hasSyncSource">{{ 'EDIT_CONFERENCE.ENABLE_SYNC_SOURCE' | translate }}</label>
         </div>
 
         @if (hasSyncSource) {
         <div class="sync-fields">
             <div class="form-field">
-                <label for="syncSourceType">Source Type *</label>
+                <label for="syncSourceType">{{ 'EDIT_CONFERENCE.SOURCE_TYPE_LABEL' | translate }}</label>
                 <p-select [(ngModel)]="syncSourceType" [options]="sourceTypeOptions" optionLabel="label"
-                    optionValue="value" placeholder="Select source type" name="syncSourceType" [disabled]="isUpdating"
+                    optionValue="value" [placeholder]="'EDIT_CONFERENCE.SOURCE_TYPE_PLACEHOLDER' | translate" name="syncSourceType" [disabled]="isUpdating"
                     [style]="{ width: '100%' }" />
             </div>
 
             <div class="form-field">
-                <label for="syncSourceUrl">API Key *</label>
+                <label for="syncSourceUrl">{{ 'EDIT_CONFERENCE.API_KEY_LABEL' | translate }}</label>
                 <input pInputText id="syncSourceUrl" [(ngModel)]="syncSourceUrl" name="syncSourceUrl" type="text"
-                    placeholder="Enter your API key" [disabled]="isUpdating" maxlength="256" />
+                    [placeholder]="'EDIT_CONFERENCE.API_KEY_PLACEHOLDER' | translate" [disabled]="isUpdating" maxlength="256" />
             </div>
         </div>
         }
@@ -71,10 +71,10 @@
 
     <div class="form-actions">
         @if (isAdmin()) {
-        <p-button type="button" label="Delete Conference" icon="pi pi-trash" severity="danger" [outlined]="true"
+        <p-button type="button" [label]="'EDIT_CONFERENCE.DELETE_BUTTON' | translate" icon="pi pi-trash" severity="danger" [outlined]="true"
             (click)="onDelete()" [disabled]="isUpdating" />
         }
-        <p-button type="submit" label="Update Conference" icon="pi pi-check" [loading]="isUpdating"
+        <p-button type="submit" [label]="'EDIT_CONFERENCE.SUBMIT_BUTTON' | translate" icon="pi pi-check" [loading]="isUpdating"
             [disabled]="isUpdating" />
     </div>
 </form>

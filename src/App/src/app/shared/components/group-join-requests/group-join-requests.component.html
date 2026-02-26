@@ -1,7 +1,7 @@
 <p-card styleClass="section-card">
     <ng-template pTemplate="header">
         <div class="section-header">
-            <h3>Join Requests</h3>
+            <h3>{{ 'GROUP_JOIN_REQUESTS.TITLE' | translate }}</h3>
             <p-tag [value]="joinRequests().length.toString()" severity="warn"></p-tag>
         </div>
     </ng-template>
@@ -17,9 +17,9 @@
                 </div>
             </div>
             <div class="request-actions">
-                <button pButton icon="pi pi-check" severity="success" [text]="true" [rounded]="true" pTooltip="Approve"
+                <button pButton icon="pi pi-check" severity="success" [text]="true" [rounded]="true" [pTooltip]="'GROUP_JOIN_REQUESTS.APPROVE' | translate"
                     (click)="approveJoinRequest(request.id)"></button>
-                <button pButton icon="pi pi-times" severity="danger" [text]="true" [rounded]="true" pTooltip="Decline"
+                <button pButton icon="pi pi-times" severity="danger" [text]="true" [rounded]="true" [pTooltip]="'GROUP_JOIN_REQUESTS.DECLINE' | translate"
                     (click)="declineJoinRequest(request.id)"></button>
             </div>
         </div>
@@ -28,7 +28,7 @@
     } @else {
     <div class="empty-state-small">
         <i class="pi pi-inbox"></i>
-        <p>No pending join requests</p>
+        <p>{{ 'GROUP_JOIN_REQUESTS.NO_REQUESTS' | translate }}</p>
     </div>
     }
 </p-card>

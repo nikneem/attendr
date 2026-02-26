@@ -1,12 +1,15 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { JoinedGroupsComponent } from '@components/joined-groups/joined-groups.component';
 import { MyConferencesComponent } from '@components/my-conferences/my-conferences.component';
 import { HereNowComponent } from '@components/here-now/here-now.component';
 import { driver } from 'driver.js';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-dashboard-page',
-    imports: [JoinedGroupsComponent, MyConferencesComponent, HereNowComponent],
+    imports: [JoinedGroupsComponent, MyConferencesComponent, HereNowComponent,
+        TranslateModule
+    ],
     templateUrl: './dashboard-page-component.html',
     styleUrl: './dashboard-page-component.scss',
 })

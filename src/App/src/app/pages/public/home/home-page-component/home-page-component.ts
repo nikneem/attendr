@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, OnInit, inject, signal } from '@angular/core';
+﻿import { Component, AfterViewInit, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { forkJoin } from 'rxjs';
 import { ConferencesService } from '../../../../shared/services/conferences.service';
@@ -11,9 +11,10 @@ interface StatItem {
   current: number;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'attn-home-page-component',
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './home-page-component.html',
   styleUrl: './home-page-component.scss',
 })

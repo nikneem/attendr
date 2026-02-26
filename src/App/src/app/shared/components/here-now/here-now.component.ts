@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ContextMenu, ContextMenuModule } from 'primeng/contextmenu';
@@ -13,10 +13,13 @@ interface ConferenceWithSchedule extends CurrentConferenceDto {
     schedule?: ConferenceScheduleNowDto;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-here-now',
     standalone: true,
-    imports: [CommonModule, CardModule, ContextMenuModule, ToastModule],
+    imports: [CommonModule, CardModule, ContextMenuModule, ToastModule,
+        TranslateModule
+    ],
     providers: [MessageService],
     templateUrl: './here-now.component.html',
     styleUrl: './here-now.component.scss',

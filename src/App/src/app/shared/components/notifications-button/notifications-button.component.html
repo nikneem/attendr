@@ -2,9 +2,9 @@
     <p-popover #notificationsPanel styleClass="notifications-popover">
         <div class="notifications-panel">
             <div class="notifications-header">
-                <h3>Notifications</h3>
+                <h3>{{ 'NOTIFICATIONS.PANEL_TITLE' | translate }}</h3>
                 @if (unreadCount() > 0) {
-                <button pButton type="button" label="Mark all read" class="p-button-text p-button-sm"
+                <button pButton type="button" [label]="'NOTIFICATIONS.MARK_ALL_READ' | translate" class="p-button-text p-button-sm"
                     (click)="markAllAsRead()">
                 </button>
                 }
@@ -13,12 +13,12 @@
             @if (loading()) {
             <div class="notifications-loading">
                 <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="6" animationDuration=".5s" />
-                <p>Loading notifications...</p>
+                <p>{{ 'NOTIFICATIONS.LOADING' | translate }}</p>
             </div>
             } @else if (notifications().length === 0) {
             <div class="notifications-empty">
                 <i class="pi pi-bell" style="font-size: 3rem; color: var(--surface-400);"></i>
-                <p>No new notifications</p>
+                <p>{{ 'NOTIFICATIONS.NO_NOTIFICATIONS' | translate }}</p>
             </div>
             } @else {
             <div class="notifications-list">
@@ -37,11 +37,11 @@
                     <div class="notification-actions">
                         @if (!notification.isRead) {
                         <button pButton type="button" icon="pi pi-check" class="p-button-text p-button-sm"
-                            pTooltip="Mark as read" (click)="markAsRead(notification.id)">
+                            [pTooltip]="'NOTIFICATIONS.MARK_AS_READ' | translate" (click)="markAsRead(notification.id)">
                         </button>
                         }
                         <button pButton type="button" icon="pi pi-trash"
-                            class="p-button-text p-button-sm p-button-danger" pTooltip="Delete"
+                            class="p-button-text p-button-sm p-button-danger" [pTooltip]="'NOTIFICATIONS.DELETE' | translate"
                             (click)="deleteNotification(notification.id)">
                         </button>
                     </div>
@@ -53,7 +53,7 @@
     </p-popover>
 
     <button class="icon-button notifications-button" type="button" (click)="toggleNotifications($event)"
-        aria-label="Notifications" pTooltip="Notifications" tooltipPosition="bottom">
+        aria-label="Notifications" [pTooltip]="'NOTIFICATIONS.TOOLTIP' | translate" tooltipPosition="bottom">
         <i class="pi pi-bell"></i>
         @if (unreadCount() > 0) {
         <p-badge [value]="unreadCount().toString()" severity="danger" badgeSize="small" />

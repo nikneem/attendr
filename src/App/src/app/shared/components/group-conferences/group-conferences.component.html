@@ -1,10 +1,10 @@
 <p-card styleClass="section-card">
     <ng-template pTemplate="header">
         <div class="section-header">
-            <h2>Followed Conferences</h2>
+            <h2>{{ 'GROUP_CONFERENCES.TITLE' | translate }}</h2>
             <div class="header-actions">
                 @if (isOwnerOrManager()) {
-                <button pButton type="button" label="Select Conferences to Follow" icon="pi pi-plus"
+                <button pButton type="button" [label]="'GROUP_CONFERENCES.SELECT_CONFERENCES' | translate" icon="pi pi-plus"
                     (click)="openJoinDialog()"></button>
                 }
             </div>
@@ -38,7 +38,7 @@
                             speakers</span>
                     </div>
                     @if (isOwnerOrManager()) {
-                    <button pButton type="button" label="Unfollow" icon="pi pi-times" severity="secondary"
+                    <button pButton type="button" [label]="'GROUP_CONFERENCES.UNFOLLOW' | translate" icon="pi pi-times" severity="secondary"
                         [outlined]="true" size="small" class="unfollow-btn"
                         (click)="confirmUnfollow(conference.id, conference.name)"></button>
                     }
@@ -50,18 +50,18 @@
     } @else {
     <div class="empty-state-small">
         <i class="pi pi-calendar"></i>
-        <p>No followed conferences yet</p>
+        <p>{{ 'GROUP_CONFERENCES.NO_CONFERENCES' | translate }}</p>
     </div>
     }
 
     <p-dialog [visible]="showJoinDialog()" (visibleChange)="showJoinDialog.set($event)" [modal]="true"
-        [style]="{width: '900px', maxWidth: '95vw'}" header="Follow Conferences">
+        [style]="{width: '900px', maxWidth: '95vw'}" [header]="'GROUP_CONFERENCES.FOLLOW_HEADER' | translate">
         @if (showJoinDialog()) {
         <attn-conferences-group-join></attn-conferences-group-join>
         }
     </p-dialog>
 
-    <attn-confirmation-dialog [visible]="showUnfollowDialog()" [title]="'Remove conference'"
+    <attn-confirmation-dialog [visible]="showUnfollowDialog()" [title]="'GROUP_CONFERENCES.REMOVE_CONFERENCE' | translate"
         [message]="unfollowMessage()" (visibleChange)="onUnfollowDialogVisibilityChange($event)"
         (confirm)="onUnfollowConfirmed()" (cancel)="onUnfollowCancelled()">
     </attn-confirmation-dialog>

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+﻿import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -8,10 +8,13 @@ import { GroupDetailsStore } from '@stores/group-details.store';
 import { ConferencesGroupJoinComponent } from '../conferences-group-join/conferences-group-join.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-group-conferences',
     standalone: true,
-    imports: [CommonModule, CardModule, TagModule, ButtonModule, DialogModule, ConferencesGroupJoinComponent, ConfirmationDialogComponent],
+    imports: [CommonModule, CardModule, TagModule, ButtonModule, DialogModule, ConferencesGroupJoinComponent, ConfirmationDialogComponent,
+        TranslateModule
+    ],
     templateUrl: './group-conferences.component.html',
     styleUrl: './group-conferences.component.scss',
 })

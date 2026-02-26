@@ -1,4 +1,4 @@
-import { Component, inject, input, output, OnInit, signal, computed } from '@angular/core';
+﻿import { Component, inject, input, output, OnInit, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -7,9 +7,12 @@ import { MessageService } from 'primeng/api';
 import { JoinedGroupsService } from '../../services/joined-groups.service';
 import { GroupDetailsDto } from '../../models/group-details-dto';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-edit-group',
-    imports: [FormsModule, ButtonModule, InputTextModule, CheckboxModule],
+    imports: [FormsModule, ButtonModule, InputTextModule, CheckboxModule,
+        TranslateModule
+    ],
     templateUrl: './edit-group.component.html',
     styleUrl: './edit-group.component.scss',
 })

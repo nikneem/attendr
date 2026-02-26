@@ -1,12 +1,15 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-confirmation-dialog',
     standalone: true,
-    imports: [CommonModule, DialogModule, ButtonModule],
+    imports: [CommonModule, DialogModule, ButtonModule,
+        TranslateModule
+    ],
     templateUrl: './confirmation-dialog.component.html',
     styleUrl: './confirmation-dialog.component.scss',
 })

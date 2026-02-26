@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+﻿import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -9,9 +9,12 @@ import { ConferencesService } from '../../services/conferences.service';
 import { MessageService } from 'primeng/api';
 import { CreateConferenceRequest } from '../../models/create-conference-request.model';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-create-conference',
-    imports: [FormsModule, ButtonModule, InputTextModule, DatePickerModule, CheckboxModule, SelectModule],
+    imports: [FormsModule, ButtonModule, InputTextModule, DatePickerModule, CheckboxModule, SelectModule,
+        TranslateModule
+    ],
     templateUrl: './create-conference.component.html',
     styleUrl: './create-conference.component.scss',
 })

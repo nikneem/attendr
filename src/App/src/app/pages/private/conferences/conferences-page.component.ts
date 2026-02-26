@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+﻿import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -15,9 +15,12 @@ import { CreateConferenceComponent } from '../../../shared/components/create-con
 import { ConferenceReviewInfoDialogComponent } from '../../../shared/components/conference-review-info-dialog/conference-review-info-dialog.component';
 import { ProfileStore } from '@stores/profile.store';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-conferences-page',
-    imports: [CommonModule, ButtonModule, CardModule, DialogModule, ProgressSpinnerModule, TooltipModule, ToggleButtonModule, FormsModule, CreateConferenceComponent, ConferenceReviewInfoDialogComponent],
+    imports: [CommonModule, ButtonModule, CardModule, DialogModule, ProgressSpinnerModule, TooltipModule, ToggleButtonModule, FormsModule, CreateConferenceComponent, ConferenceReviewInfoDialogComponent,
+        TranslateModule
+    ],
     templateUrl: './conferences-page.component.html',
     styleUrl: './conferences-page.component.scss',
 })

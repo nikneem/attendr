@@ -1,7 +1,7 @@
 <p-card styleClass="section-card">
     <ng-template pTemplate="header">
         <div class="section-header">
-            <h3>Pending Invitations</h3>
+            <h3>{{ 'GROUP_INVITATIONS.TITLE' | translate }}</h3>
             <p-tag [value]="invitations().length.toString()" severity="info"></p-tag>
         </div>
     </ng-template>
@@ -13,12 +13,12 @@
                 <i class="pi pi-envelope"></i>
                 <div class="invitation-details">
                     <span class="invitation-name">{{ invitation.name }}</span>
-                    <span class="invitation-date">Expires {{ invitation.expirationDate | date: 'short' }}</span>
+                    <span class="invitation-date">{{ 'GROUP_INVITATIONS.EXPIRES' | translate }} {{ invitation.expirationDate | date: 'short' }}</span>
                 </div>
             </div>
             <div class="invitation-actions">
                 <button pButton icon="pi pi-times" severity="secondary" [text]="true" [rounded]="true"
-                    pTooltip="Cancel invitation" (click)="cancelInvitation(invitation.id)"></button>
+                    [pTooltip]="'GROUP_INVITATIONS.CANCEL_INVITATION' | translate" (click)="cancelInvitation(invitation.id)"></button>
             </div>
         </div>
         }
@@ -26,7 +26,7 @@
     } @else {
     <div class="empty-state-small">
         <i class="pi pi-inbox"></i>
-        <p>No pending invitations</p>
+        <p>{{ 'GROUP_INVITATIONS.NO_INVITATIONS' | translate }}</p>
     </div>
     }
 </p-card>

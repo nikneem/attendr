@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -15,6 +15,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AllGroupsStore } from '../../stores/all-groups.store';
 import { AllGroupsService } from '../../services/all-groups.service';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-all-groups',
     standalone: true,
@@ -29,6 +30,7 @@ import { AllGroupsService } from '../../services/all-groups.service';
         InputIconModule,
         TagModule,
         PaginatorModule,
+        TranslateModule
     ],
     templateUrl: './all-groups.component.html',
     styleUrl: './all-groups.component.scss',

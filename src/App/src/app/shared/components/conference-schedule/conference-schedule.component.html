@@ -1,7 +1,7 @@
 @if (scheduleDays().length === 0) {
 <div class="empty-schedule">
     <i class="pi pi-calendar-times"></i>
-    <p>No sessions scheduled</p>
+    <p>{{ 'SCHEDULE.NO_SESSIONS' | translate }}</p>
 </div>
 } @else if (scheduleDays().length === 1) {
 <div class="schedule-container" #scheduleContainer>
@@ -44,8 +44,8 @@
                                                 formatTime(session.presentation.endDateTime) }}
                                                 @if (isRecommended(session.presentation.id)) {
                                                 <span class="recommended-tag"
-                                                    pTooltip="This session matches your personal interests based on your profile topics"
-                                                    tooltipPosition="top">Match</span>
+                                                    [pTooltip]="'SCHEDULE.MATCH_TOOLTIP' | translate"
+                                                    tooltipPosition="top">{{ 'SCHEDULE.MATCH' | translate }}</span>
                                                 }
                                             </div>
                                         </div>
@@ -122,8 +122,8 @@
                                                         formatTime(session.presentation.endDateTime) }}
                                                         @if (isRecommended(session.presentation.id)) {
                                                         <span class="recommended-tag"
-                                                            pTooltip="This session matches your personal interests based on your profile topics"
-                                                            tooltipPosition="top">Match</span>
+                                                            [pTooltip]="'SCHEDULE.MATCH_TOOLTIP' | translate"
+                                                            tooltipPosition="top">{{ 'SCHEDULE.MATCH' | translate }}</span>
                                                         }
                                                     </div>
                                                 </div>
@@ -155,7 +155,7 @@
 </p-tabs>
 }
 
-<p-dialog [header]="selectedPresentation() ? 'Session Details' : ''" [(visible)]="showDialog" [modal]="true"
+<p-dialog [header]="selectedPresentation() ? ('SCHEDULE.SESSION_DETAILS' | translate) : ''" [(visible)]="showDialog" [modal]="true"
     [style]="{ width: '90vw', 'max-width': '800px' }" [draggable]="false" [resizable]="false">
     @if (selectedPresentation()) {
     <attn-presentation-details [presentation]="selectedPresentation()!"

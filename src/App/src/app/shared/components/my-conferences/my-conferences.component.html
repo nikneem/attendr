@@ -1,7 +1,7 @@
 <p-card class="my-conferences-card">
     <ng-template pTemplate="header">
         <div class="header-content">
-            <h3 class="title">My Conferences</h3>
+            <h3 class="title">{{ 'MY_CONFERENCES.TITLE' | translate }}</h3>
         </div>
     </ng-template>
 
@@ -10,16 +10,15 @@
     </div>
 
     <div *ngIf="loading()" class="loading-spinner">
-        <p>Loading conferences...</p>
+        <p>{{ 'MY_CONFERENCES.LOADING' | translate }}</p>
     </div>
 
     <div *ngIf="!loading() && !error() && conferences().length === 0" class="empty-state">
         <div class="empty-state-icon">
             <i class="pi pi-calendar" style="font-size: 3rem;"></i>
         </div>
-        <h4 class="empty-state-title">No Upcoming Conferences</h4>
-        <p class="empty-state-text">You don't have any upcoming conferences at the moment. Start exploring conferences
-            to attend!</p>
+        <h4 class="empty-state-title">{{ 'MY_CONFERENCES.NO_CONFERENCES_TITLE' | translate }}</h4>
+        <p class="empty-state-text">{{ 'MY_CONFERENCES.NO_CONFERENCES_DESC' | translate }}</p>
     </div>
 
     <div *ngIf="!loading() && conferences().length > 0" class="conferences-list">
@@ -45,13 +44,13 @@
                     </div>
                     <div class="action-row">
                         @if (!conference.isAttending) {
-                        <button pButton type="button" label="I'm going" icon="pi pi-check"
+                        <button pButton type="button" [label]="'MY_CONFERENCES.IM_GOING' | translate" icon="pi pi-check"
                             [disabled]="updatingConference() === conference.conferenceId"
                             [loading]="updatingConference() === conference.conferenceId"
                             (click)="updateAttendance(conference.conferenceId, true)"
                             class="attendance-btn attend-btn"></button>
                         } @else {
-                        <button pButton type="button" label="Changed my mind" icon="pi pi-times" severity="danger"
+                        <button pButton type="button" [label]="'MY_CONFERENCES.CHANGED_MIND' | translate" icon="pi pi-times" severity="danger"
                             [outlined]="true" [disabled]="updatingConference() === conference.conferenceId"
                             [loading]="updatingConference() === conference.conferenceId"
                             (click)="updateAttendance(conference.conferenceId, false)"
@@ -59,7 +58,7 @@
                         }
                     </div>
                     <div class="rate-row">
-                        <button pButton type="button" label="Rate Sessions" icon="pi pi-star"
+                        <button pButton type="button" [label]="'MY_CONFERENCES.RATE_SESSIONS' | translate" icon="pi pi-star"
                             [disabled]="!conference.isFollowing"
                             (click)="navigateToRate(conference.conferenceId)" class="rate-btn"></button>
                     </div>
@@ -69,7 +68,7 @@
         </div>
     </div>
 
-    <attn-confirmation-dialog [visible]="showUnfollowDialog()" [title]="'Remove conference'"
+    <attn-confirmation-dialog [visible]="showUnfollowDialog()" [title]="'MY_CONFERENCES.STOP_FOLLOWING' | translate"
         [message]="unfollowMessage()" (visibleChange)="onUnfollowDialogVisibilityChange($event)"
         (confirm)="onUnfollowConfirmed()" (cancel)="onUnfollowCancelled()">
     </attn-confirmation-dialog>
