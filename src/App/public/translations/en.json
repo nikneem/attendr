@@ -545,6 +545,24 @@
     "LAST_CHECKED_HEADER": "Last Checked",
     "UNKNOWN_VERSION": "Unknown"
   },
+  "TOUR": {
+    "DASHBOARD": {
+      "STEP1_TITLE": "Here & Now - Active Conference",
+      "STEP1_DESC": "When a conference is currently running, this section appears showing real-time information. It displays group member activities, your upcoming selected sessions, and allows you to check in to sessions you're attending.",
+      "STEP2_TITLE": "My Conferences",
+      "STEP2_DESC": "These are conferences you're following. You can follow conferences manually, and any conferences followed by groups you're part of are automatically added to your list.",
+      "STEP3_TITLE": "My Groups",
+      "STEP3_DESC": "Join or create groups to connect with other attendees. Group members can view each other's activities, making it easy to coordinate and share experiences at conferences."
+    },
+    "FOCUS_AREAS": {
+      "STEP1_TITLE": "Focus Area",
+      "STEP1_DESC": "Each row represents a topic identified from your activities, such as marking presentations as favorites or checking in to sessions. Topics are ranked by their weight.",
+      "STEP2_TITLE": "AI vs Manual Topics",
+      "STEP2_DESC": "Topics can be AI-generated or manually confirmed. Click the tag to toggle between AI and Manual. Manual topics maintain maximum weight over time, while AI topics gradually decrease in weight.",
+      "STEP3_TITLE": "Topic Weight",
+      "STEP3_DESC": "The weight represents how relevant this topic is to you. AI topics lose weight over a 3-year period, but manual topics maintain full weight. Higher weight topics influence your recommendations more."
+    }
+  },
   "LANGUAGES": {
     "en": "English",
     "nl": "Dutch"

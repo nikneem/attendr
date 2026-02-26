@@ -1,21 +1,21 @@
 <div class="create-topic-form">
     <div class="form-row">
-        <label for="new-name">{{ 'CREATE_TOPIC.DISPLAY_NAME_LABEL' | translate }}</label>
+        <label for="new-name">{{ 'CREATE_TOPIC.NAME_LABEL' | translate }}</label>
         <input pInputText id="new-name" name="name" [ngModel]="name()" (ngModelChange)="onNameChange($event)"
-            placeholder="e.g. Machine Learning" [disabled]="isSaving()" />
+            [placeholder]="'CREATE_TOPIC.NAME_PLACEHOLDER' | translate" [disabled]="isSaving()" />
     </div>
 
     <div class="form-row">
-        <label for="new-key">{{ 'CREATE_TOPIC.NORMALIZED_KEY_LABEL' | translate }}</label>
+        <label for="new-key">{{ 'CREATE_TOPIC.KEY_LABEL' | translate }}</label>
         <input pInputText id="new-key" name="key" [ngModel]="key()" (ngModelChange)="onKeyChange($event)"
-            placeholder="e.g. machine-learning" [disabled]="isSaving()" />
+            [placeholder]="'CREATE_TOPIC.KEY_PLACEHOLDER' | translate" [disabled]="isSaving()" />
         <small class="hint">{{ 'CREATE_TOPIC.KEY_HINT' | translate }}</small>
     </div>
 
     <div class="actions">
         <button pButton type="button" [label]="'CREATE_TOPIC.CANCEL_BUTTON' | translate" class="p-button-secondary" (click)="onCancel()"
             [disabled]="isSaving()"></button>
-        <button pButton type="button" [label]="'CREATE_TOPIC.SUBMIT_BUTTON' | translate" icon="pi pi-plus" (click)="onSave()"
+        <button pButton type="button" [label]="'CREATE_TOPIC.ADD_BUTTON' | translate" icon="pi pi-plus" (click)="onSave()"
             [disabled]="!isValid || isSaving()"></button>
     </div>
 </div>

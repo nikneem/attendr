@@ -23,8 +23,8 @@
     <p-table [value]="store.groups()" [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template pTemplate="header">
             <tr>
-                <th>Group Name</th>
-                <th style="width: 150px">Members</th>
+                <th>{{ 'JOINED_GROUPS.GROUP_NAME_HEADER' | translate }}</th>
+                <th style="width: 150px">{{ 'JOINED_GROUPS.MEMBERS_HEADER' | translate }}</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-group>
@@ -65,7 +65,7 @@
 <p-dialog [(visible)]="showJoinGroupDialog" [modal]="true" [dismissableMask]="true" [closable]="true"
     [draggable]="false" [resizable]="false" styleClass="join-group-dialog" (onHide)="onJoinDialogHide()">
     <ng-template pTemplate="header">
-        <span class="dialog-title">{{ 'JOINED_GROUPS.JOIN_GROUP_DIALOG' | translate }}</span>
+        <span class="dialog-title">{{ 'JOINED_GROUPS.JOIN_A_GROUP_DIALOG' | translate }}</span>
     </ng-template>
     <div class="dialog-content">
         @if (showJoinGroupDialog) {
