@@ -10,6 +10,7 @@
 - [Notification history: “why did I get this?”](notifications/notification-history-why.md)
 
 ## Backend hardening
+- [Date & time conventions](backend/date-time-conventions.md)
 - [Notification preferences: optimistic concurrency](backend/preferences-optimistic-concurrency.md)
 - [Notification preferences: forward-compatible updates](backend/preferences-forward-compatible-updates.md)
 - [Standardize errors with ProblemDetails](backend/problem-details-error-contract.md)
