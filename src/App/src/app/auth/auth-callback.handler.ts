@@ -3,6 +3,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { filter, switchMap, catchError, of, take, delay } from 'rxjs';
 import { ProfileService } from '@services/profile.service';
 import { ProfileStore } from '@stores/profile.store';
+import { LanguageService } from '@services/language.service';
 
 @Injectable({
     providedIn: 'root'
@@ -11,6 +12,7 @@ export class AuthCallbackHandler {
     private readonly oidcSecurityService = inject(OidcSecurityService);
     private readonly profileService = inject(ProfileService);
     private readonly profileStore = inject(ProfileStore);
+    private readonly languageService = inject(LanguageService);
 
     constructor() {
         // Listen for authentication state changes after initialization
@@ -28,6 +30,9 @@ export class AuthCallbackHandler {
             take(1), // Only handle the first authentication
             delay(100), // Small delay to ensure token data is fully populated
             switchMap(() => {
+                // Apply authenticated language (stored > browser > fallback) and persist
+                this.languageService.applyAuthenticatedLanguage();
+
                 // Set loading state
                 this.profileStore.setLoading(true);
 
