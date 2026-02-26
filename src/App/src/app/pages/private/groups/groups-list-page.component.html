@@ -1,14 +1,14 @@
 <div class="groups-list-page">
     <div class="container">
         <div class="header-section">
-            <h1>Groups</h1>
-            <button pButton label="Create Group" icon="pi pi-plus" (click)="showCreateDialog.set(true)"></button>
+            <h1>{{ 'GROUPS.PAGE_TITLE' | translate }}</h1>
+            <button pButton [label]="'GROUPS.CREATE_GROUP' | translate" icon="pi pi-plus" (click)="showCreateDialog.set(true)"></button>
         </div>
 
         <div class="search-section">
             <div class="search-input-wrapper">
                 <input type="text" pInputText [(ngModel)]="searchInput" (keyup.enter)="onSearch()"
-                    placeholder="Search groups by name..." class="search-input" />
+                    [placeholder]="'GROUPS.SEARCH_PLACEHOLDER' | translate" class="search-input" />
                 @if (searchInput) {
                 <button pButton icon="pi pi-times" [text]="true" [rounded]="true" class="clear-button"
                     (click)="onClearSearch()" pTooltip="Clear search"></button>
@@ -20,7 +20,7 @@
         @if (loading()) {
         <div class="loading-container">
             <p-progressSpinner />
-            <p>Loading groups...</p>
+            <p>{{ 'GROUPS.LOADING' | translate }}</p>
         </div>
         } @else if (error()) {
         <div class="error-container">
@@ -30,9 +30,9 @@
         } @else if (groups().length === 0) {
         <div class="empty-state">
             <i class="pi pi-users" style="font-size: 3rem"></i>
-            <p>No groups found</p>
+            <p>{{ 'GROUPS.NO_GROUPS_FOUND' | translate }}</p>
             @if (searchQuery()) {
-            <p class="suggestion">Try adjusting your search or clear the search to see all groups.</p>
+            <p class="suggestion">{{ 'GROUPS.SEARCH_SUGGESTION' | translate }}</p>
             }
         </div>
         } @else {
@@ -44,14 +44,14 @@
                         <div class="group-title-section">
                             <h3 class="group-name">{{ group.name }}</h3>
                             @if (group.isMember) {
-                            <p-tag value="Joined" severity="success" icon="pi pi-check"></p-tag>
+                            <p-tag [value]="'GROUPS.JOINED_TAG' | translate" severity="success" icon="pi pi-check"></p-tag>
                             }
                         </div>
                     </div>
                     <div class="group-info">
                         <div class="info-item">
                             <i class="pi pi-users"></i>
-                            <span>{{ group.memberCount }} {{ group.memberCount === 1 ? 'member' : 'members' }}</span>
+                            <span>{{ group.memberCount }} {{ group.memberCount === 1 ? ('COMMON.MEMBER' | translate) : ('COMMON.MEMBERS' | translate) }}</span>
                         </div>
                     </div>
                 </p-card>
@@ -63,13 +63,13 @@
             <p-paginator [rows]="pageSize()" [totalRecords]="totalCount()" [first]="(pageNumber() - 1) * pageSize()"
                 (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="[10, 25, 50, 100]"
                 [showCurrentPageReport]="true"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} groups"></p-paginator>
+                currentPageReportTemplate="{{ 'GROUPS.PAGE_REPORT' | translate }}"></p-paginator>
         </div>
         }
     </div>
 </div>
 
-<p-dialog header="Group Details" [(visible)]="showDetailsDialog" [modal]="true"
+<p-dialog [header]="'GROUPS.GROUP_DETAILS_DIALOG' | translate" [(visible)]="showDetailsDialog" [modal]="true"
     [style]="{ width: '600px', maxWidth: '95vw' }" [draggable]="false" [resizable]="false">
     @if (selectedGroup()) {
     <attn-group-details-view [group]="selectedGroup()!" (joinRequested)="onJoinGroup($event)"
@@ -78,6 +78,6 @@
 </p-dialog>
 
 <!-- Create Group Dialog -->
-<p-dialog header="Create New Group" [(visible)]="showCreateDialog" [modal]="true" [style]="{width: '450px'}">
+<p-dialog [header]="'GROUPS.CREATE_DIALOG_HEADER' | translate" [(visible)]="showCreateDialog" [modal]="true" [style]="{width: '450px'}">
     <attn-create-group (groupCreated)="onGroupCreated($event)" />
 </p-dialog>

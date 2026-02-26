@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject, signal, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, ViewChild, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { BadgeModule } from 'primeng/badge';
@@ -9,9 +9,12 @@ import { NotificationsService } from '@services/notifications.service';
 import { NotificationDto } from '@models/notification-dto';
 import { Subscription } from 'rxjs';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-notifications-button',
-    imports: [PopoverModule, BadgeModule, ButtonModule, ProgressSpinnerModule, TooltipModule],
+    imports: [PopoverModule, BadgeModule, ButtonModule, ProgressSpinnerModule, TooltipModule,
+        TranslateModule
+    ],
     templateUrl: './notifications-button.component.html',
     styleUrl: './notifications-button.component.scss',
 })

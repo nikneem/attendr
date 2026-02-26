@@ -2,7 +2,7 @@
     [style]="{width: '420px', maxWidth: '95vw'}" [draggable]="false" [resizable]="false" [header]="title">
     <div class="message">{{ message }}</div>
     <div class="actions">
-        <button pButton type="button" label="Cancel" class="p-button-text" (click)="onCancel()"></button>
-        <button pButton type="button" label="Yes" icon="pi pi-check" (click)="onConfirm()"></button>
+        <button pButton type="button" [label]="'CONFIRMATION_DIALOG.CANCEL' | translate" class="p-button-text" (click)="onCancel()"></button>
+        <button pButton type="button" [label]="'CONFIRMATION_DIALOG.YES' | translate" icon="pi pi-check" (click)="onConfirm()"></button>
     </div>
 </p-dialog>

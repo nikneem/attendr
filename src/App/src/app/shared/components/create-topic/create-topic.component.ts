@@ -1,13 +1,16 @@
-import { Component, output, signal } from '@angular/core';
+﻿import { Component, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-create-topic',
     standalone: true,
-    imports: [CommonModule, FormsModule, ButtonModule, InputTextModule],
+    imports: [CommonModule, FormsModule, ButtonModule, InputTextModule,
+        TranslateModule
+    ],
     templateUrl: './create-topic.component.html',
     styleUrl: './create-topic.component.scss',
 })

@@ -2,30 +2,30 @@
     <div class="container">
         <div class="header-section">
             <button pButton icon="pi pi-arrow-left" [text]="true" (click)="goBack()" class="back-button"></button>
-            <h1>Rate Sessions</h1>
+            <h1>{{ 'RATE_SESSIONS.TITLE' | translate }}</h1>
         </div>
 
         @if (loading()) {
         <div class="loading-container">
             <p-progressSpinner />
-            <p>Loading session...</p>
+            <p>{{ 'RATE_SESSIONS.LOADING' | translate }}</p>
         </div>
         } @else if (error()) {
         <div class="error-container">
             <i class="pi pi-exclamation-triangle"></i>
             <p>{{ error() }}</p>
-            <button pButton label="Try Again" (click)="loadInitialCards()"></button>
+            <button pButton [label]="'RATE_SESSIONS.TRY_AGAIN' | translate" (click)="loadInitialCards()"></button>
         </div>
         } @else if (cards().length > 0) {
         <div class="presentation-container">
             <div class="swipe-indicators" [class.active]="swipeDirection() === 'left' || swipeDirection() === 'right'">
                 <div class="indicator left" [class.active]="swipeDirection() === 'left'">
                     <i class="pi pi-times"></i>
-                    <span>Not Favorite</span>
+                    <span>{{ 'RATE_SESSIONS.NOT_FAVORITE' | translate }}</span>
                 </div>
                 <div class="indicator right" [class.active]="swipeDirection() === 'right'">
                     <i class="pi pi-heart"></i>
-                    <span>Favorite</span>
+                    <span>{{ 'RATE_SESSIONS.FAVORITE' | translate }}</span>
                 </div>
             </div>
 
@@ -46,12 +46,12 @@
                     <p-card>
                         <div class="empty-card-content">
                             <i class="pi pi-check-circle"></i>
-                            <h3>All Sessions Rated</h3>
-                            <p>You've rated all available sessions for this conference.</p>
+                            <h3>{{ 'RATE_SESSIONS.ALL_RATED_TITLE' | translate }}</h3>
+                            <p>{{ 'RATE_SESSIONS.ALL_RATED_DESC' | translate }}</p>
                             <div class="empty-card-actions">
-                                <button pButton label="Reset Ratings" icon="pi pi-refresh" severity="secondary"
+                                <button pButton [label]="'RATE_SESSIONS.RESET_RATINGS' | translate" icon="pi pi-refresh" severity="secondary"
                                     [outlined]="true" (click)="confirmResetRatings()" class="reset-btn"></button>
-                                <button pButton label="Back to My Conferences" icon="pi pi-arrow-left"
+                                <button pButton [label]="'RATE_SESSIONS.BACK_TO_CONFERENCES' | translate" icon="pi pi-arrow-left"
                                     (click)="goBack()" class="back-to-conferences-btn"></button>
                             </div>
                         </div>
@@ -60,9 +60,9 @@
                     <p-card>
                         <div class="error-card-content">
                             <i class="pi pi-exclamation-triangle"></i>
-                            <h3>Error Loading Session</h3>
-                            <p>{{ card.errorMessage || 'Failed to load presentation' }}</p>
-                            <button pButton label="Try Again" icon="pi pi-refresh" (click)="loadInitialCards()"
+                            <h3>{{ 'RATE_SESSIONS.ERROR_TITLE' | translate }}</h3>
+                            <p>{{ card.errorMessage || ('RATE_SESSIONS.ERROR_DEFAULT' | translate) }}</p>
+                            <button pButton [label]="'RATE_SESSIONS.TRY_AGAIN' | translate" icon="pi pi-refresh" (click)="loadInitialCards()"
                                 class="retry-btn"></button>
                         </div>
                     </p-card>
@@ -120,7 +120,7 @@
 
                             @if ($index === 0) {
                             <div class="rating-section">
-                                <label>Your Rating (Optional)</label>
+                                <label>{{ 'RATE_SESSIONS.RATING_LABEL' | translate }}</label>
                                 <p-rating [(ngModel)]="card.rating" [stars]="5"
                                     (ngModelChange)="updateRating($index, $event)"></p-rating>
                             </div>
@@ -130,9 +130,9 @@
                         @if ($index === 0) {
                         <ng-template pTemplate="footer">
                             <div class="card-footer">
-                                <button pButton label="Not Favorite" icon="pi pi-times" severity="secondary"
+                                <button pButton [label]="'RATE_SESSIONS.NOT_FAVORITE' | translate" icon="pi pi-times" severity="secondary"
                                     [outlined]="true" (click)="submitRating(false)" [disabled]="submitting()"></button>
-                                <button pButton label="Favorite" icon="pi pi-heart" (click)="submitRating(true)"
+                                <button pButton [label]="'RATE_SESSIONS.FAVORITE' | translate" icon="pi pi-heart" (click)="submitRating(true)"
                                     [disabled]="submitting()"></button>
                             </div>
                         </ng-template>
@@ -145,7 +145,7 @@
 
             @if (activeCard() && !activeCard()!.isEmpty && !activeCard()!.isError) {
             <div class="instructions">
-                <p><i class="pi pi-hand-pointer"></i> Swipe or drag the card left/right, or use the buttons below</p>
+                <p><i class="pi pi-hand-pointer"></i> {{ 'RATE_SESSIONS.INSTRUCTIONS' | translate }}</p>
             </div>
             }
         </div>

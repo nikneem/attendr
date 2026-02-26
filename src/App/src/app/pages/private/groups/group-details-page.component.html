@@ -3,7 +3,7 @@
         @if (loading()) {
         <div class="loading-container">
             <p-progressSpinner />
-            <p>Loading group details...</p>
+            <p>{{ 'GROUP_DETAILS.LOADING' | translate }}</p>
         </div>
         } @else if (error()) {
         <div class="error-container">
@@ -16,22 +16,22 @@
                 <div class="header-title-section">
                     <h1>{{ group()!.name }}</h1>
                     @if (group()!.isPublic) {
-                    <p-tag value="Public" severity="success" icon="pi pi-globe" />
+                    <p-tag [value]="'GROUP_DETAILS.PUBLIC_TAG' | translate" severity="success" icon="pi pi-globe" />
                     } @else {
-                    <p-tag value="Private" severity="warn" icon="pi pi-lock" />
+                    <p-tag [value]="'GROUP_DETAILS.PRIVATE_TAG' | translate" severity="warn" icon="pi pi-lock" />
                     }
                     @if (isOwner) {
                     <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary"
-                        (onClick)="openEditDialog()" pTooltip="Edit Group" tooltipPosition="bottom" />
+                        (onClick)="openEditDialog()" [pTooltip]="'GROUP_DETAILS.EDIT_TOOLTIP' | translate" tooltipPosition="bottom" />
                     }
                 </div>
                 <div class="header-info">
                     <div class="info-item">
                         <i class="pi pi-users"></i>
-                        <span>{{ group()!.memberCount }} {{ group()!.memberCount === 1 ? 'member' : 'members' }}</span>
+                        <span>{{ group()!.memberCount }} {{ group()!.memberCount === 1 ? ('COMMON.MEMBER' | translate) : ('COMMON.MEMBERS' | translate) }}</span>
                     </div>
                     @if (!group()!.isMember) {
-                    <button pButton [label]="group()!.isPublic ? 'Join Group' : 'Request to Join'"
+                    <button pButton [label]="group()!.isPublic ? ('GROUP_DETAILS.JOIN_GROUP' | translate) : ('GROUP_DETAILS.REQUEST_TO_JOIN' | translate)"
                         [icon]="group()!.isPublic ? 'pi pi-sign-in' : 'pi pi-send'" (click)="joinGroup()"
                         [loading]="joiningGroup()"></button>
                     }
@@ -65,7 +65,7 @@
     <p-dialog [(visible)]="showEditDialog" [modal]="true" [style]="{ width: '30rem' }" [draggable]="false"
         [resizable]="false">
         <ng-template pTemplate="header">
-            <span class="text-xl font-semibold">Edit Group</span>
+            <span class="text-xl font-semibold">{{ 'GROUP_DETAILS.EDIT_GROUP' | translate }}</span>
         </ng-template>
         @if (group()) {
         <attn-edit-group [group]="group()!" (groupUpdated)="onGroupUpdated()" (cancelled)="showEditDialog.set(false)" />

@@ -1,16 +1,16 @@
 <div class="create-group-form">
     <div class="form-field">
-        <label for="groupName">Group Name</label>
-        <input id="groupName" type="text" pInputText [(ngModel)]="groupName" placeholder="Enter group name"
+        <label for="groupName">{{ 'CREATE_GROUP.GROUP_NAME_LABEL' | translate }}</label>
+        <input id="groupName" type="text" pInputText [(ngModel)]="groupName" [placeholder]="'CREATE_GROUP.GROUP_NAME_PLACEHOLDER' | translate"
             [disabled]="isCreating" (keyup.enter)="onSubmit()" class="w-full" />
         @if (validationError) {
         <small class="error-message">{{ validationError }}</small>
         }
-        <small class="help-text">Only alphanumeric characters and spaces allowed (3-100 characters)</small>
+        <small class="help-text">{{ 'CREATE_GROUP.GROUP_NAME_HINT' | translate }}</small>
     </div>
 
     <div class="form-actions">
-        <button pButton label="Create Group" icon="pi pi-check" [loading]="isCreating"
+        <button pButton [label]="'CREATE_GROUP.CREATE_BUTTON' | translate" icon="pi pi-check" [loading]="isCreating"
             [disabled]="!groupName.trim() || isCreating" (click)="onSubmit()">
         </button>
     </div>

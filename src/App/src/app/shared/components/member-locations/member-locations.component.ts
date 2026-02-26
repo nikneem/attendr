@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
+﻿import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { TagModule } from 'primeng/tag';
@@ -9,10 +9,13 @@ import { GroupDetailsStore } from '@stores/group-details.store';
 import { JoinedGroupsService } from '@services/joined-groups.service';
 import { CheckInDto } from '@models/check-in-dto';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-member-locations',
     standalone: true,
-    imports: [CommonModule, AccordionModule, TagModule, AvatarModule, AvatarGroupModule, TooltipModule],
+    imports: [CommonModule, AccordionModule, TagModule, AvatarModule, AvatarGroupModule, TooltipModule,
+        TranslateModule
+    ],
     templateUrl: './member-locations.component.html',
     styleUrl: './member-locations.component.scss',
 })

@@ -1,13 +1,16 @@
-import { Component, inject, output } from '@angular/core';
+﻿import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { JoinedGroupsService } from '../../services/joined-groups.service';
 import { MessageService } from 'primeng/api';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-create-group',
-    imports: [FormsModule, ButtonModule, InputTextModule],
+    imports: [FormsModule, ButtonModule, InputTextModule,
+        TranslateModule
+    ],
     templateUrl: './create-group.component.html',
     styleUrl: './create-group.component.scss',
 })

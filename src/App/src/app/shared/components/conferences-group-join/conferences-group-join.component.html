@@ -1,6 +1,6 @@
 <div class="join-container">
     <div class="header">
-        <h3>Select Conferences to Follow</h3>
+        <h3>{{ 'CONFERENCES_GROUP_JOIN.TITLE' | translate }}</h3>
     </div>
 
     @if (loading()) {
@@ -25,9 +25,9 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <button pButton type="button" label="Following" [disabled]="true"
+                    <button pButton type="button" [label]="'CONFERENCES_GROUP_JOIN.FOLLOWING' | translate" [disabled]="true"
                         *ngIf="isAlreadyFollowed(c.id)"></button>
-                    <button pButton type="button" label="Follow" icon="pi pi-plus" [disabled]="isFollowing(c.id)"
+                    <button pButton type="button" [label]="'CONFERENCES_GROUP_JOIN.FOLLOW' | translate" icon="pi pi-plus" [disabled]="isFollowing(c.id)"
                         *ngIf="!isAlreadyFollowed(c.id)" (click)="follow(c.id)"></button>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
+﻿import { Component, effect, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule, KeyValue } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
@@ -22,6 +22,7 @@ interface BeforeInstallPromptEvent extends Event {
     userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-notification-preferences-page',
     imports: [
@@ -32,6 +33,7 @@ interface BeforeInstallPromptEvent extends Event {
         ProgressSpinnerModule,
         MessageModule,
         TagModule,
+        TranslateModule
     ],
     templateUrl: './notification-preferences-page.component.html',
     styleUrl: './notification-preferences-page.component.scss',

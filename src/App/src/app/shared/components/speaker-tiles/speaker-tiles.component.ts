@@ -1,10 +1,13 @@
-import { Component, input, computed } from '@angular/core';
+﻿import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SpeakerDto } from '@models/speaker-dto';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-speaker-tiles',
-    imports: [CommonModule],
+    imports: [CommonModule,
+        TranslateModule
+    ],
     templateUrl: './speaker-tiles.component.html',
     styleUrl: './speaker-tiles.component.scss',
 })

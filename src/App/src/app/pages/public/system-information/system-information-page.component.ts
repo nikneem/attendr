@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, ChangeDetectionStrategy } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, interval, takeUntil } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
@@ -6,10 +6,13 @@ import { SystemInformationService, ServiceInfo } from '../../../services/system-
 import { environment } from '../../../../environments/environment';
 import { TooltipModule } from 'primeng/tooltip';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-system-information-page',
     standalone: true,
-    imports: [CommonModule, TooltipModule],
+    imports: [CommonModule, TooltipModule,
+        TranslateModule
+    ],
     templateUrl: './system-information-page.component.html',
     styleUrl: './system-information-page.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

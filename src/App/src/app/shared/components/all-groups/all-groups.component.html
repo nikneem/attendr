@@ -2,12 +2,12 @@
     <p-card>
         <ng-template pTemplate="header">
             <div class="header-content">
-                <h3 class="title">All Groups</h3>
+                <h3 class="title">{{ 'ALL_GROUPS.TITLE' | translate }}</h3>
                 <div class="search-bar">
                     <p-iconfield>
                         <p-inputicon styleClass="pi pi-search" />
                         <input type="text" pInputText [(ngModel)]="searchQuery" (input)="onSearchInput()"
-                            (keyup)="onSearchKeyup($event)" placeholder="Search groups..." class="search-input" />
+                            (keyup)="onSearchKeyup($event)" [placeholder]="'ALL_GROUPS.SEARCH_PLACEHOLDER' | translate" class="search-input" />
                         @if (searchQuery) {
                         <p-inputicon styleClass="pi pi-times clear-icon" (click)="onSearchClear()" />
                         }
@@ -19,7 +19,7 @@
         @if (store.loading()) {
         <div class="loading-container">
             <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-            <p>Loading groups...</p>
+            <p>{{ 'ALL_GROUPS.LOADING' | translate }}</p>
         </div>
         } @else if (store.error()) {
         <div class="error-container">
@@ -31,25 +31,25 @@
             <p-table [value]="store.groups()" styleClass="groups-table">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th>Group Name</th>
-                        <th class="hide-mobile" style="width: 120px">Type</th>
-                        <th class="hide-mobile" style="width: 120px">Members</th>
-                        <th style="width: 180px; text-align: center">Status</th>
+                        <th>{{ 'ALL_GROUPS.GROUP_NAME_HEADER' | translate }}</th>
+                        <th class="hide-mobile" style="width: 120px">{{ 'ALL_GROUPS.TYPE_HEADER' | translate }}</th>
+                        <th class="hide-mobile" style="width: 120px">{{ 'ALL_GROUPS.MEMBERS_HEADER' | translate }}</th>
+                        <th style="width: 180px; text-align: center">{{ 'ALL_GROUPS.STATUS_HEADER' | translate }}</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-group>
                     <tr class="desktop-row">
                         <td>{{ group.name }}</td>
                         <td class="hide-mobile">
-                            <p-tag [value]="group.isPublic ? 'Public' : 'Private'"
+                            <p-tag [value]="group.isPublic ? ('ALL_GROUPS.PUBLIC' | translate) : ('ALL_GROUPS.PRIVATE' | translate)"
                                 [severity]="group.isPublic ? 'info' : 'warn'" />
                         </td>
                         <td class="hide-mobile">{{ group.memberCount }}</td>
                         <td style="text-align: center">
                             @if (group.isMember) {
-                            <p-tag value="Joined" severity="success" />
+                            <p-tag [value]="'ALL_GROUPS.JOINED_TAG' | translate" severity="success" />
                             } @else {
-                            <p-button [label]="group.isPublic ? 'Join' : 'Request access'" size="small"
+                            <p-button [label]="group.isPublic ? ('ALL_GROUPS.JOIN' | translate) : ('ALL_GROUPS.REQUEST_ACCESS' | translate)" size="small"
                                 (click)="onJoinGroup(group.id)" />
                             }
                         </td>
@@ -60,20 +60,20 @@
                                 <div class="mobile-card-header">
                                     <span class="group-name">{{ group.name }}</span>
                                     <div class="group-tags">
-                                        <p-tag [value]="group.isPublic ? 'Public' : 'Private'"
+                                        <p-tag [value]="group.isPublic ? ('ALL_GROUPS.PUBLIC' | translate) : ('ALL_GROUPS.PRIVATE' | translate)"
                                             [severity]="group.isPublic ? 'info' : 'warn'" />
                                     </div>
                                 </div>
                                 <div class="mobile-card-body">
                                     <div class="group-info">
                                         <i class="pi pi-users"></i>
-                                        <span>{{ group.memberCount }} {{ group.memberCount === 1 ? 'member' : 'members' }}</span>
+                                        <span>{{ group.memberCount }} {{ group.memberCount === 1 ? ('COMMON.MEMBER' | translate) : ('COMMON.MEMBERS' | translate) }}</span>
                                     </div>
                                     <div class="group-action">
                                         @if (group.isMember) {
-                                        <p-tag value="Joined" severity="success" />
+                                        <p-tag [value]="'ALL_GROUPS.JOINED_TAG' | translate" severity="success" />
                                         } @else {
-                                        <p-button [label]="group.isPublic ? 'Join' : 'Request access'" size="small"
+                                        <p-button [label]="group.isPublic ? ('ALL_GROUPS.JOIN' | translate) : ('ALL_GROUPS.REQUEST_ACCESS' | translate)" size="small"
                                             (click)="onJoinGroup(group.id)" />
                                         }
                                     </div>
@@ -87,9 +87,9 @@
                         <td colspan="4" class="text-center">
                             <div class="empty-state">
                                 <i class="pi pi-users" style="font-size: 3rem; color: var(--text-color-secondary)"></i>
-                                <p>No groups found</p>
+                                <p>{{ 'ALL_GROUPS.NO_GROUPS' | translate }}</p>
                                 @if (store.searchQuery()) {
-                                <p-button label="Clear Search" (click)="onSearchClear()" />
+                                <p-button [label]="'ALL_GROUPS.CLEAR_SEARCH' | translate" (click)="onSearchClear()" />
                                 }
                             </div>
                         </td>
@@ -103,7 +103,7 @@
             <p-paginator [rows]="store.pageSize()" [totalRecords]="store.totalCount()"
                 [first]="(store.pageNumber() - 1) * store.pageSize()" (onPageChange)="onPageChange($event)"
                 [showCurrentPageReport]="true"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} groups" />
+                currentPageReportTemplate="{{ 'ALL_GROUPS.PAGE_REPORT' | translate }}" />
         </div>
         }
         }

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+﻿import { Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -9,10 +9,13 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { GroupDetailsStore } from '@stores/group-details.store';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-group-members',
     standalone: true,
-    imports: [CommonModule, FormsModule, CardModule, TagModule, ButtonModule, SelectModule, TooltipModule],
+    imports: [CommonModule, FormsModule, CardModule, TagModule, ButtonModule, SelectModule, TooltipModule,
+        TranslateModule
+    ],
     templateUrl: './group-members.component.html',
     styleUrl: './group-members.component.scss',
 })

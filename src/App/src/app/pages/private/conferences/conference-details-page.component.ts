@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+﻿import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
@@ -18,6 +18,7 @@ import { ConferenceScheduleComponent } from '@components/conference-schedule/con
 import { SpeakerTilesComponent } from '@components/speaker-tiles/speaker-tiles.component';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-conference-details-page',
     imports: [
@@ -32,6 +33,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
         EditConferenceComponent,
         ConferenceScheduleComponent,
         SpeakerTilesComponent,
+        TranslateModule
     ],
     providers: [ConfirmationService],
     templateUrl: './conference-details-page.component.html',

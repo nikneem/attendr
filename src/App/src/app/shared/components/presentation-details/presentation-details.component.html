@@ -4,7 +4,7 @@
             <h2 class="presentation-title">{{ presentation().title }}</h2>
             <div class="header-grid">
                 <div class="header-field speakers-field">
-                    <span class="field-label">Speaker(s)</span>
+                    <span class="field-label">{{ 'PRESENTATION_DETAILS.SPEAKERS_LABEL' | translate }}</span>
                     <span class="field-value">{{ getSpeakerNames() }}</span>
                 </div>
 
@@ -17,16 +17,16 @@
                 </div>
 
                 <div class="header-field room-field">
-                    <span class="field-label">Room</span>
+                    <span class="field-label">{{ 'PRESENTATION_DETAILS.ROOM_LABEL' | translate }}</span>
                     <span class="field-value">{{ presentation().roomName }}</span>
                 </div>
 
                 <div class="header-field start-field">
-                    <span class="field-label">Start</span>
+                    <span class="field-label">{{ 'PRESENTATION_DETAILS.START_LABEL' | translate }}</span>
                     <span class="field-value">{{ formatDateTime(presentation().startDateTime) }}</span>
                 </div>
                 <div class="header-field end-field align-right">
-                    <span class="field-label">End</span>
+                    <span class="field-label">{{ 'PRESENTATION_DETAILS.END_LABEL' | translate }}</span>
                     <span class="field-value">{{ formatDateTime(presentation().endDateTime) }}</span>
                 </div>
 
@@ -44,14 +44,14 @@
         </div>
 
         <button class="favorite-button" (click)="toggleFavorite()"
-            [attr.aria-label]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'">
+            [attr.aria-label]="isFavorite() ? ('PRESENTATION_DETAILS.REMOVE_FROM_FAVORITES' | translate) : ('PRESENTATION_DETAILS.ADD_TO_FAVORITES' | translate)">
             <i [class]="isFavorite() ? 'pi pi-star-fill' : 'pi pi-star'"></i>
         </button>
     </div>
 
     @if (presentation().abstract) {
     <div class="details-abstract">
-        <h3>Abstract</h3>
+        <h3>{{ 'PRESENTATION_DETAILS.ABSTRACT_TITLE' | translate }}</h3>
         <p>{{ presentation().abstract }}</p>
     </div>
     }

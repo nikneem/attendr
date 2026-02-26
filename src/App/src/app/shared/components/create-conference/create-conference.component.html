@@ -1,60 +1,60 @@
 <div class="create-conference-form">
     <div class="form-field">
-        <label for="conferenceTitle">Conference Title <span class="required">*</span></label>
-        <input id="conferenceTitle" type="text" pInputText [(ngModel)]="title" placeholder="Enter conference title"
+        <label for="conferenceTitle">{{ 'CREATE_CONFERENCE.TITLE_LABEL' | translate }} <span class="required">*</span></label>
+        <input id="conferenceTitle" type="text" pInputText [(ngModel)]="title" [placeholder]="'CREATE_CONFERENCE.TITLE_PLACEHOLDER' | translate"
             [disabled]="isCreating" class="w-full" />
     </div>
 
     <div class="form-row">
         <div class="form-field">
-            <label for="conferenceCity">City</label>
-            <input id="conferenceCity" type="text" pInputText [(ngModel)]="city" placeholder="Enter city"
+            <label for="conferenceCity">{{ 'CREATE_CONFERENCE.CITY_LABEL' | translate }}</label>
+            <input id="conferenceCity" type="text" pInputText [(ngModel)]="city" [placeholder]="'CREATE_CONFERENCE.CITY_PLACEHOLDER' | translate"
                 [disabled]="isCreating" class="w-full" />
         </div>
 
         <div class="form-field">
-            <label for="conferenceCountry">Country</label>
-            <input id="conferenceCountry" type="text" pInputText [(ngModel)]="country" placeholder="Enter country"
+            <label for="conferenceCountry">{{ 'CREATE_CONFERENCE.COUNTRY_LABEL' | translate }}</label>
+            <input id="conferenceCountry" type="text" pInputText [(ngModel)]="country" [placeholder]="'CREATE_CONFERENCE.COUNTRY_PLACEHOLDER' | translate"
                 [disabled]="isCreating" class="w-full" />
         </div>
     </div>
 
     <div class="form-field">
-        <label for="imageUrl">Image URL</label>
-        <input id="imageUrl" type="url" pInputText [(ngModel)]="imageUrl" placeholder="https://example.com/image.jpg"
+        <label for="imageUrl">{{ 'CREATE_CONFERENCE.IMAGE_URL_LABEL' | translate }}</label>
+        <input id="imageUrl" type="url" pInputText [(ngModel)]="imageUrl" [placeholder]="'CREATE_CONFERENCE.IMAGE_URL_PLACEHOLDER' | translate"
             [disabled]="isCreating" class="w-full" />
-        <small class="help-text">Optional: URL to an image representing the conference</small>
+        <small class="help-text">{{ 'CREATE_CONFERENCE.IMAGE_URL_HINT' | translate }}</small>
     </div>
 
     <div class="form-field">
-        <label for="dateRange">Conference Dates <span class="required">*</span></label>
+        <label for="dateRange">{{ 'CREATE_CONFERENCE.DATE_RANGE_LABEL' | translate }} <span class="required">*</span></label>
         <p-datepicker id="dateRange" [(ngModel)]="dateRange" selectionMode="range" [showIcon]="true"
             [disabled]="isCreating" dateFormat="yy-mm-dd" placeholder="Select date range" styleClass="w-full"
             [readonlyInput]="true" appendTo="body">
         </p-datepicker>
-        <small class="help-text">Select start and end dates for the conference</small>
+        <small class="help-text">{{ 'CREATE_CONFERENCE.DATE_RANGE_HINT' | translate }}</small>
     </div>
 
     <div class="sync-source-section">
         <div class="form-field checkbox-field">
             <p-checkbox [(ngModel)]="hasSyncSource" [binary]="true" inputId="hasSyncSource" [disabled]="isCreating">
             </p-checkbox>
-            <label for="hasSyncSource">Add Synchronization Source</label>
+            <label for="hasSyncSource">{{ 'CREATE_CONFERENCE.ADD_SYNC_SOURCE' | translate }}</label>
         </div>
 
         @if (hasSyncSource) {
         <div class="sync-source-fields">
             <div class="form-field">
-                <label for="syncSourceType">Source Type <span class="required">*</span></label>
+                <label for="syncSourceType">{{ 'CREATE_CONFERENCE.SOURCE_TYPE_LABEL' | translate }} <span class="required">*</span></label>
                 <p-select id="syncSourceType" [(ngModel)]="syncSourceType" [options]="sourceTypeOptions"
                     placeholder="Select source type" [disabled]="isCreating" styleClass="w-full">
                 </p-select>
             </div>
 
             <div class="form-field">
-                <label for="syncSourceUrl">API Key <span class="required">*</span></label>
+                <label for="syncSourceUrl">{{ 'CREATE_CONFERENCE.API_KEY_LABEL' | translate }} <span class="required">*</span></label>
                 <input id="syncSourceUrl" type="text" pInputText [(ngModel)]="syncSourceUrl"
-                    placeholder="Enter your API key" [disabled]="isCreating" class="w-full" maxlength="256" />
+                    [placeholder]="'CREATE_CONFERENCE.API_KEY_PLACEHOLDER' | translate" [disabled]="isCreating" class="w-full" maxlength="256" />
             </div>
         </div>
         }
@@ -68,7 +68,7 @@
     }
 
     <div class="form-actions">
-        <button pButton label="Create Conference" icon="pi pi-check" [loading]="isCreating"
+        <button pButton [label]="'CREATE_CONFERENCE.SUBMIT_BUTTON' | translate" icon="pi pi-check" [loading]="isCreating"
             [disabled]="!title.trim() || !dateRange || dateRange.length < 2 || isCreating" (click)="onSubmit()">
         </button>
     </div>

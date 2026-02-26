@@ -2,8 +2,8 @@
     <ng-template pTemplate="header">
         <div class="card-header-content">
             <div class="header-left">
-                <h2>Focus Areas</h2>
-                <p>Topics identified from your profile and activities</p>
+                <h2>{{ 'FOCUS_AREAS.TITLE' | translate }}</h2>
+                <p>{{ 'FOCUS_AREAS.SUBTITLE' | translate }}</p>
             </div>
             <div class="header-right">
                 <p-button icon="pi pi-info-circle" [text]="true" [rounded]="true" severity="secondary"
@@ -12,23 +12,18 @@
         </div>
         <p-popover #infoPopover>
             <div class="focus-areas-info">
-                <h3>About Focus Areas</h3>
+                <h3>{{ 'FOCUS_AREAS.INFO_TITLE' | translate }}</h3>
                 <p>
-                    Focus areas are topics that are automatically identified based on your activities,
-                    such as marking presentations as favorites or checking in to sessions.
+                    {{ 'FOCUS_AREAS.INFO_AUTO' | translate }}
                 </p>
                 <p>
-                    <strong>Weight Over Time:</strong> Focus areas gradually lose weight over a 3-year period.
-                    Recent activities have more influence on your interests than older ones.
+                    <strong>{{ 'FOCUS_AREAS.INFO_WEIGHT' | translate }}</strong> {{ 'FOCUS_AREAS.INFO_WEIGHT_DESC' | translate }}
                 </p>
                 <p>
-                    <strong>Personalized Recommendations:</strong> These focus areas help us recommend
-                    presentations and sessions that match your interests.
+                    <strong>{{ 'FOCUS_AREAS.INFO_RECOMMENDATIONS' | translate }}</strong> {{ 'FOCUS_AREAS.INFO_RECOMMENDATIONS_DESC' | translate }}
                 </p>
                 <p>
-                    <strong>Confirm Your Interests:</strong> You can confirm a focus area to indicate it's
-                    truly a topic of interest. Confirmed topics will always maintain maximum weight,
-                    regardless of time.
+                    <strong>{{ 'FOCUS_AREAS.INFO_CONFIRM' | translate }}</strong> {{ 'FOCUS_AREAS.INFO_CONFIRM_DESC' | translate }}
                 </p>
             </div>
         </p-popover>
@@ -37,25 +32,25 @@
     @if (topicsLoading()) {
     <div class="loading-container">
         <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" />
-        <p>Loading focus areas...</p>
+        <p>{{ 'FOCUS_AREAS.LOADING' | translate }}</p>
     </div>
     } @else if (topics().length === 0) {
     <div class="empty-state">
-        <p>No focus areas found yet. Focus areas will be added as you interact with the system.</p>
+        <p>{{ 'FOCUS_AREAS.NO_FOCUS_AREAS' | translate }}</p>
     </div>
     } @else {
     <div class="topics-table">
         <div class="table-header">
-            <div class="col-topic">Topic</div>
-            <div class="col-weight">Weight</div>
-            <div class="col-updated">Last Updated</div>
+            <div class="col-topic">{{ 'FOCUS_AREAS.TOPIC_HEADER' | translate }}</div>
+            <div class="col-weight">{{ 'FOCUS_AREAS.WEIGHT_HEADER' | translate }}</div>
+            <div class="col-updated">{{ 'FOCUS_AREAS.UPDATED_HEADER' | translate }}</div>
         </div>
         @for (topic of topics(); track topic.id; let first = $first) {
         <div class="topic-row" [class.tour-first-topic]="first">
             <div class="col-topic">
                 <span class="topic-name">{{ topic.topicName }}</span>
-                <p-tag class="tour-topic-tag" [value]="topic.isManual ? 'Manual' : 'AI'" [severity]="topic.isManual ? 'info' : 'success'"
-                    [pTooltip]="topic.isManual ? 'Click to mark as AI-defined' : 'Click to mark as manually confirmed'"
+                <p-tag class="tour-topic-tag" [value]="topic.isManual ? ('FOCUS_AREAS.MANUAL_TAG' | translate) : ('FOCUS_AREAS.AI_TAG' | translate)" [severity]="topic.isManual ? 'info' : 'success'"
+                    [pTooltip]="topic.isManual ? ('FOCUS_AREAS.MARK_AS_AI' | translate) : ('FOCUS_AREAS.MARK_AS_MANUAL' | translate)"
                     tooltipPosition="top" [style]="{ cursor: 'pointer' }"
                     (click)="toggleTopicManualStatus(topic, $event)"></p-tag>
             </div>

@@ -6,9 +6,12 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { SelectModule } from 'primeng/select';
 import { MessageService } from 'primeng/api';
+import { TranslateModule } from '@ngx-translate/core';
 import { ProfileService } from '@services/profile.service';
 import { ProfileStore } from '@stores/profile.store';
+import { LanguageService, SUPPORTED_LANGUAGE_LIST } from '@services/language.service';
 import { ProfileDetailsDto } from '@models/profile-details-dto';
 import { UpdateProfileRequest } from '@models/update-profile-request';
 import { Subject } from 'rxjs';
@@ -24,6 +27,8 @@ import { debounceTime, takeUntil, filter } from 'rxjs/operators';
         InputTextModule,
         ProgressSpinnerModule,
         ProgressBarModule,
+        SelectModule,
+        TranslateModule,
     ],
     templateUrl: './account-preferences-page.component.html',
     styleUrl: './account-preferences-page.component.scss',
@@ -33,6 +38,8 @@ export class AccountPreferencesPageComponent implements OnInit, OnDestroy {
     private readonly messageService = inject(MessageService);
     protected readonly profileStore = inject(ProfileStore);
     private readonly router = inject(Router);
+    protected readonly languageService = inject(LanguageService);
+    protected readonly supportedLanguages = SUPPORTED_LANGUAGE_LIST;
 
     protected loading = signal<boolean>(false);
     protected saving = signal<boolean>(false);
@@ -149,6 +156,10 @@ export class AccountPreferencesPageComponent implements OnInit, OnDestroy {
         if (hours < 24) return `${hours}h ago`;
         if (days < 7) return `${days}d ago`;
         return date.toLocaleDateString();
+    }
+
+    protected onLanguageChange(lang: string): void {
+        this.languageService.setLanguage(lang);
     }
 
     protected saveProfile(): void {

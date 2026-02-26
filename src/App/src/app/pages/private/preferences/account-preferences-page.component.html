@@ -1,62 +1,76 @@
 <p-card>
     <ng-template pTemplate="header">
         <div class="card-header-content">
-            <h2>Account Preferences</h2>
-            <p>Manage your personal information and account settings</p>
+            <h2>{{ 'PREFERENCES.ACCOUNT.TITLE' | translate }}</h2>
+            <p>{{ 'PREFERENCES.ACCOUNT.SUBTITLE' | translate }}</p>
         </div>
     </ng-template>
 
     @if (loading()) {
     <div class="loading-container">
         <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" />
-        <p>Loading profile...</p>
+        <p>{{ 'PREFERENCES.ACCOUNT.LOADING' | translate }}</p>
     </div>
     } @else {
     <div class="profile-form">
         <div class="form-field">
-            <label for="displayName">Display Name *</label>
+            <label for="displayName">{{ 'PREFERENCES.ACCOUNT.DISPLAY_NAME' | translate }} *</label>
             <input pInputText id="displayName" [ngModel]="displayName()" (ngModelChange)="displayName.set($event)"
-                name="displayName" placeholder="Enter your display name" required />
+                name="displayName" [placeholder]="'PREFERENCES.ACCOUNT.DISPLAY_NAME_PLACEHOLDER' | translate" required />
         </div>
 
         <div class="form-field">
-            <label for="tagLine">Tagline</label>
+            <label for="tagLine">{{ 'PREFERENCES.ACCOUNT.TAGLINE' | translate }}</label>
             <input pInputText id="tagLine" [ngModel]="tagLine()" (ngModelChange)="tagLine.set($event)" name="tagLine"
-                placeholder="Enter a tagline (optional)" />
-            <small class="field-hint">A short description about yourself</small>
+                [placeholder]="'PREFERENCES.ACCOUNT.TAGLINE_PLACEHOLDER' | translate" />
+            <small class="field-hint">{{ 'PREFERENCES.ACCOUNT.TAGLINE_HINT' | translate }}</small>
         </div>
 
         <div class="form-row">
             <div class="form-field">
-                <label for="firstName">First Name *</label>
+                <label for="firstName">{{ 'PREFERENCES.ACCOUNT.FIRST_NAME' | translate }} *</label>
                 <input pInputText id="firstName" [ngModel]="firstName()" (ngModelChange)="firstName.set($event)"
-                    name="firstName" placeholder="Enter your first name" required />
+                    name="firstName" [placeholder]="'PREFERENCES.ACCOUNT.FIRST_NAME_PLACEHOLDER' | translate" required />
             </div>
 
             <div class="form-field">
-                <label for="lastName">Last Name *</label>
+                <label for="lastName">{{ 'PREFERENCES.ACCOUNT.LAST_NAME' | translate }} *</label>
                 <input pInputText id="lastName" [ngModel]="lastName()" (ngModelChange)="lastName.set($event)"
-                    name="lastName" placeholder="Enter your last name" required />
+                    name="lastName" [placeholder]="'PREFERENCES.ACCOUNT.LAST_NAME_PLACEHOLDER' | translate" required />
             </div>
         </div>
 
         <div class="form-field">
-            <label for="email">Email Address</label>
-            <input pInputText id="email" [ngModel]="email()" name="email" placeholder="Email address" readonly
+            <label for="email">{{ 'PREFERENCES.ACCOUNT.EMAIL' | translate }}</label>
+            <input pInputText id="email" [ngModel]="email()" name="email" [placeholder]="'PREFERENCES.ACCOUNT.EMAIL_PLACEHOLDER' | translate" readonly
                 disabled />
-            <small class="field-hint">Email address cannot be changed</small>
+            <small class="field-hint">{{ 'PREFERENCES.ACCOUNT.EMAIL_HINT' | translate }}</small>
         </div>
 
         <div class="form-field checkbox-field">
             <div class="field-content">
-                <label for="isSearchable">Searchable Profile</label>
-                <small class="field-hint">Allow other attendees to find your profile</small>
+                <label for="isSearchable">{{ 'PREFERENCES.ACCOUNT.SEARCHABLE' | translate }}</label>
+                <small class="field-hint">{{ 'PREFERENCES.ACCOUNT.SEARCHABLE_HINT' | translate }}</small>
             </div>
             <div class="toggle-wrapper">
                 <input type="checkbox" role="switch" class="toggle-switch" id="isSearchable" [checked]="isSearchable()"
                     (change)="isSearchable.set($any($event.target).checked)" name="isSearchable" />
-                <span class="toggle-label">{{ isSearchable() ? 'On' : 'Off' }}</span>
+                <span class="toggle-label">{{ isSearchable() ? ('COMMON.ON' | translate) : ('COMMON.OFF' | translate) }}</span>
             </div>
+        </div>
+
+        <div class="form-field">
+            <label for="language">{{ 'PREFERENCES.LANGUAGE' | translate }}</label>
+            <p-select
+                id="language"
+                [options]="supportedLanguages"
+                optionLabel="label"
+                optionValue="code"
+                [ngModel]="languageService.currentLang()"
+                (ngModelChange)="onLanguageChange($event)"
+                name="language"
+            />
+            <small class="field-hint">{{ 'PREFERENCES.LANGUAGE_HINT' | translate }}</small>
         </div>
     </div>
     }

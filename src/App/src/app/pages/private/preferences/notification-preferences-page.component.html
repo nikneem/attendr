@@ -4,8 +4,8 @@
         <div class="setup-card-header">
             <i class="pi pi-bell"></i>
             <div>
-                <h3>Push Notification Setup</h3>
-                <p>Complete these steps to receive push notifications on this device.</p>
+                <h3>{{ 'NOTIFICATIONS.PUSH_SETUP.TITLE' | translate }}</h3>
+                <p>{{ 'NOTIFICATIONS.PUSH_SETUP.SUBTITLE' | translate }}</p>
             </div>
         </div>
     </ng-template>
@@ -25,12 +25,12 @@
                 }
             </div>
             <div class="step-content">
-                <div class="step-title">Install as App</div>
-                <div class="step-description">Install Attendr as a PWA for reliable push notifications on mobile.</div>
+                <div class="step-title">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_INSTALL_TITLE' | translate }}</div>
+                <div class="step-description">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_INSTALL_DESC' | translate }}</div>
             </div>
             <div class="step-action">
                 @if (installStepStatus() === 'incomplete') {
-                <p-button label="Install" icon="pi pi-download" size="small" (onClick)="installApp()"
+                <p-button [label]="'NOTIFICATIONS.PUSH_SETUP.STEP_INSTALL_BUTTON' | translate" icon="pi pi-download" size="small" (onClick)="installApp()"
                     [loading]="isInstallingApp()" [disabled]="isInstallingApp()"></p-button>
                 }
             </div>
@@ -50,22 +50,22 @@
                 }
             </div>
             <div class="step-content">
-                <div class="step-title">Grant Permission</div>
+                <div class="step-title">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_PERMISSION_TITLE' | translate }}</div>
                 @if (permissionStepStatus() === 'blocked' && notificationPermission() === 'denied') {
                 <div class="step-description warning">
-                    Permission denied. To re-enable, open your browser settings and allow notifications for this site.
+                    {{ 'NOTIFICATIONS.PUSH_SETUP.STEP_PERMISSION_DENIED' | translate }}
                 </div>
                 } @else if (permissionStepStatus() === 'blocked') {
-                <div class="step-description muted">Waiting for previous step&hellip;</div>
+                <div class="step-description muted">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_PERMISSION_WAITING' | translate }}</div>
                 } @else if (permissionStepStatus() === 'complete') {
-                <div class="step-description">Push notifications are allowed in this browser.</div>
+                <div class="step-description">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_PERMISSION_COMPLETE' | translate }}</div>
                 } @else {
-                <div class="step-description">Allow Attendr to send push notifications to this browser.</div>
+                <div class="step-description">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_PERMISSION_PENDING' | translate }}</div>
                 }
             </div>
             <div class="step-action">
                 @if (permissionStepStatus() === 'incomplete') {
-                <p-button label="Allow" icon="pi pi-check" size="small" (onClick)="requestPushPermission()"
+                <p-button [label]="'NOTIFICATIONS.PUSH_SETUP.STEP_PERMISSION_BUTTON' | translate" icon="pi pi-check" size="small" (onClick)="requestPushPermission()"
                     [loading]="isRequestingPermission()" [disabled]="isRequestingPermission()"></p-button>
                 }
             </div>
@@ -84,13 +84,13 @@
                 }
             </div>
             <div class="step-content">
-                <div class="step-title">Register This Device</div>
+                <div class="step-title">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_REGISTER_TITLE' | translate }}</div>
                 @if (registerStepStatus() === 'blocked') {
-                <div class="step-description muted">Waiting for permission&hellip;</div>
+                <div class="step-description muted">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_REGISTER_WAITING' | translate }}</div>
                 } @else if (registerStepStatus() === 'complete') {
-                <div class="step-description">This device is registered and ready to receive push notifications.</div>
+                <div class="step-description">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_REGISTER_COMPLETE' | translate }}</div>
                 } @else {
-                <div class="step-description">Tell the server about this browser so it can deliver notifications here.
+                <div class="step-description">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_REGISTER_PENDING' | translate }}
                 </div>
                 }
                 @if (registrationError()) {
@@ -99,7 +99,7 @@
             </div>
             <div class="step-action">
                 @if (registerStepStatus() === 'incomplete') {
-                <p-button label="Register" icon="pi pi-mobile" size="small" (onClick)="registerDevice()"
+                <p-button [label]="'NOTIFICATIONS.PUSH_SETUP.STEP_REGISTER_BUTTON' | translate" icon="pi pi-mobile" size="small" (onClick)="registerDevice()"
                     [loading]="isRegistering()" [disabled]="isRegistering()"></p-button>
                 }
             </div>
@@ -118,14 +118,14 @@
                 }
             </div>
             <div class="step-content">
-                <div class="step-title">Send Test Notification</div>
+                <div class="step-title">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_TEST_TITLE' | translate }}</div>
                 @if (testStepStatus() === 'blocked') {
-                <div class="step-description muted">Waiting for device registration&hellip;</div>
+                <div class="step-description muted">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_TEST_WAITING' | translate }}</div>
                 } @else if (testSentCount() !== null) {
-                <div class="step-description">Test sent to {{ testSentCount() }} device(s). Check your notifications!
+                <div class="step-description">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_TEST_COMPLETE' | translate: { count: testSentCount() } }}
                 </div>
                 } @else {
-                <div class="step-description">Verify everything works by sending a test push notification now.</div>
+                <div class="step-description">{{ 'NOTIFICATIONS.PUSH_SETUP.STEP_TEST_PENDING' | translate }}</div>
                 }
                 @if (testSendError()) {
                 <div class="step-error">{{ testSendError() }}</div>
@@ -133,7 +133,7 @@
             </div>
             <div class="step-action">
                 @if (testStepStatus() !== 'blocked') {
-                <p-button label="Send Test" icon="pi pi-send" size="small" (onClick)="sendTestNotification()"
+                <p-button [label]="'NOTIFICATIONS.PUSH_SETUP.STEP_TEST_BUTTON' | translate" icon="pi pi-send" size="small" (onClick)="sendTestNotification()"
                     [loading]="isSendingTest()" [disabled]="isSendingTest()"></p-button>
                 }
             </div>
@@ -143,7 +143,7 @@
     <!-- Unsubscribe -->
     @if (isSubscriptionRegistered()) {
     <div class="setup-footer">
-        <p-button label="Unsubscribe This Device" icon="pi pi-times" severity="danger" [text]="true" size="small"
+        <p-button [label]="'NOTIFICATIONS.PUSH_SETUP.UNSUBSCRIBE' | translate" icon="pi pi-times" severity="danger" [text]="true" size="small"
             (onClick)="unsubscribeDevice()" [loading]="isUnsubscribing()" [disabled]="isUnsubscribing()">
         </p-button>
     </div>
@@ -155,8 +155,8 @@
         <div class="card-header-content">
             <div class="header-main">
                 <div>
-                    <h2>Notification Preferences</h2>
-                    <p>Manage how and when you receive notifications</p>
+                    <h2>{{ 'NOTIFICATIONS.PREFERENCES.TITLE' | translate }}</h2>
+                    <p>{{ 'NOTIFICATIONS.PREFERENCES.SUBTITLE' | translate }}</p>
                 </div>
             </div>
         </div>
@@ -187,7 +187,7 @@
                 @if (hasPushEnabledButNotRegistered() && notificationType.channelPreferences['Push']?.isEnabled) {
                 <p class="push-not-configured-warning">
                     <i class="pi pi-exclamation-triangle"></i>
-                    Push enabled but not configured on this device.
+                    {{ 'NOTIFICATIONS.PREFERENCES.PUSH_WARNING' | translate }}
                 </p>
                 }
             </div>
@@ -203,8 +203,8 @@
                         [checked]="notificationType.channelPreferences[channelKey]?.isEnabled ?? false"
                         [disabled]="!(notificationType.channelPreferences[channelKey]?.isAvailable) || isSaving()"
                         (change)="onChannelToggle(notificationType, channelKey)" />
-                    <span class="toggle-label">{{ notificationType.channelPreferences[channelKey]?.isEnabled ? 'On' :
-                        'Off' }}</span>
+                    <span class="toggle-label">{{ notificationType.channelPreferences[channelKey]?.isEnabled ? ('COMMON.ON' | translate) :
+                        ('COMMON.OFF' | translate) }}</span>
                 </div>
             </div>
         </div>
@@ -212,6 +212,6 @@
 
     <!-- Empty State -->
     <div *ngIf="!isLoading() && (!preferences() || preferences()!.notificationTypes.length === 0)" class="empty-state">
-        <p>No notification types available</p>
+        <p>{{ 'NOTIFICATIONS.PREFERENCES.NO_TYPES' | translate }}</p>
     </div>
 </p-card>

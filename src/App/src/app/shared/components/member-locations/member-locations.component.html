@@ -2,7 +2,7 @@
     <p-accordion-panel value="0">
         <p-accordion-header>
             <div class="section-header">
-                <h2>Member Locations</h2>
+                <h2>{{ 'MEMBER_LOCATIONS.TITLE' | translate }}</h2>
                 @if (!loading() && checkIns().length > 0) {
                 <p-tag [value]="checkIns().length.toString()" severity="info" />
                 }
@@ -12,13 +12,13 @@
             @if (loading()) {
             <div class="loading-state">
                 <i class="pi pi-spin pi-spinner"></i>
-                <p>Loading check-ins...</p>
+                <p>{{ 'MEMBER_LOCATIONS.LOADING' | translate }}</p>
             </div>
             } @else if (checkIns().length === 0) {
             <div class="empty-state">
                 <i class="pi pi-inbox"></i>
-                <p>No active check-ins</p>
-                <span class="empty-hint">Members will appear here when they check in to presentations</span>
+                <p>{{ 'MEMBER_LOCATIONS.NO_CHECKINS' | translate }}</p>
+                <span class="empty-hint">{{ 'MEMBER_LOCATIONS.NO_CHECKINS_HINT' | translate }}</span>
             </div>
             } @else {
             <div class="checkins-grid">
@@ -46,10 +46,10 @@
                         </div>
                     </div>
 
-                    <div class="checkin-members">
+                    <div class="members-section">
                         <span class="members-count">
-                            {{ checkIn.members.length }} {{ checkIn.members.length === 1 ? 'member' : 'members' }}
-                            checked in
+                            {{ checkIn.members.length }} {{ checkIn.members.length === 1 ? ('COMMON.MEMBER' | translate) : ('COMMON.MEMBERS' | translate) }}
+                            {{ 'MEMBER_LOCATIONS.CHECKED_IN' | translate }}
                         </span>
                         <div class="members-avatars">
                             @for (member of getVisibleMembers(checkIn); track member.id) {

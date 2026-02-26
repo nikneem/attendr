@@ -1,20 +1,20 @@
 <div class="conferences-page">
     <div class="container">
         <div class="header-section">
-            <h1>Upcoming Conferences</h1>
+            <h1>{{ 'CONFERENCES.PAGE_TITLE' | translate }}</h1>
             <div class="header-actions">
                 @if (profileStore.isAdmin()) {
-                <p-toggleButton [(ngModel)]="showHidden" (onChange)="onShowHiddenChange()" [onLabel]="'Show Hidden'"
-                    [offLabel]="'Hide Hidden'" [onIcon]="'pi pi-eye'" [offIcon]="'pi pi-eye-slash'" styleClass="mr-2" />
+                <p-toggleButton [(ngModel)]="showHidden" (onChange)="onShowHiddenChange()" [onLabel]="'CONFERENCES.SHOW_HIDDEN' | translate"
+                    [offLabel]="'CONFERENCES.HIDE_HIDDEN' | translate" [onIcon]="'pi pi-eye'" [offIcon]="'pi pi-eye-slash'" styleClass="mr-2" />
                 }
-                <button pButton label="Add Conference" icon="pi pi-plus" (click)="onAddConference()"></button>
+                <button pButton [label]="'CONFERENCES.ADD_CONFERENCE' | translate" icon="pi pi-plus" (click)="onAddConference()"></button>
             </div>
         </div>
 
         @if (loading) {
         <div class="loading-container">
             <p-progressSpinner />
-            <p>Loading conferences...</p>
+            <p>{{ 'CONFERENCES.LOADING' | translate }}</p>
         </div>
         } @else if (error) {
         <div class="error-container">
@@ -25,7 +25,7 @@
         <div class="empty-state">
             <i class="pi pi-calendar" style="font-size: 3rem"></i>
             <p>No conferences available</p>
-            <button pButton label="Add Your First Conference" icon="pi pi-plus" (click)="onAddConference()"></button>
+            <button pButton [label]="'CONFERENCES.ADD_FIRST_CONFERENCE' | translate" icon="pi pi-plus" (click)="onAddConference()"></button>
         </div>
         } @else {
         <div class="conferences-grid">
@@ -37,7 +37,7 @@
                         <h3 class="visual-title" [pTooltip]="conference.title" tooltipPosition="bottom">{{
                             conference.title }}</h3>
                         @if (!conference.isVisible) {
-                        <i class="pi pi-eye-slash hidden-icon" pTooltip="Hidden Conference"
+                        <i class="pi pi-eye-slash hidden-icon" [pTooltip]="'CONFERENCES.HIDDEN_TOOLTIP' | translate"
                             tooltipPosition="bottom"></i>
                         }
                     </div>
@@ -61,7 +61,7 @@
     </div>
 </div>
 
-<p-dialog header="Create New Conference" [(visible)]="showCreateDialog" [modal]="true" [style]="{ width: '600px' }"
+<p-dialog [header]="'CONFERENCES.CREATE_DIALOG_HEADER' | translate" [(visible)]="showCreateDialog" [modal]="true" [style]="{ width: '600px' }"
     [draggable]="false" [resizable]="false">
     <attn-create-conference (conferenceCreated)="onConferenceCreated($event)"></attn-create-conference>
 </p-dialog>

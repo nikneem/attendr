@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, signal, computed, HostListener, ElementRef } from '@angular/core';
+﻿import { Component, inject, OnInit, OnDestroy, signal, computed, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -20,10 +20,13 @@ interface CardInStack {
     errorMessage?: string;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-rate-sessions-page',
     standalone: true,
-    imports: [CommonModule, CardModule, ButtonModule, RatingModule, FormsModule, ProgressSpinnerModule, ConfirmDialogModule, TagModule],
+    imports: [CommonModule, CardModule, ButtonModule, RatingModule, FormsModule, ProgressSpinnerModule, ConfirmDialogModule, TagModule,
+        TranslateModule
+    ],
     templateUrl: './rate-sessions-page.component.html',
     styleUrl: './rate-sessions-page.component.scss',
     providers: [ConfirmationService],

@@ -11,7 +11,7 @@
                 <attn-notifications-button />
                 <attn-bug-report-button />
                 <div class="account">
-                    <p-menu #accountMenu [model]="accountItems" [popup]="true"></p-menu>
+                    <p-menu #accountMenu [model]="accountItems()" [popup]="true"></p-menu>
                     <button class="icon-button" type="button" (click)="toggleAccountMenu($event)"
                         aria-label="Account menu">
                         <i class="pi pi-user"></i>
@@ -24,7 +24,7 @@
     @if (profileStore.loading()) {
     <div class="loading-container">
         <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="4" animationDuration=".5s" />
-        <p>Loading your profile...</p>
+        <p>{{ 'TEMPLATE.LOADING_PROFILE' | translate }}</p>
     </div>
     } @else if (profileStore.error()) {
     <div class="error-container">

@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+﻿import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -21,10 +21,13 @@ interface ConferenceViewModel {
     roomsCount: number;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-conferences-group-join',
     standalone: true,
-    imports: [CommonModule, CardModule, ButtonModule, TagModule, ProgressSpinnerModule, TooltipModule],
+    imports: [CommonModule, CardModule, ButtonModule, TagModule, ProgressSpinnerModule, TooltipModule,
+        TranslateModule
+    ],
     templateUrl: './conferences-group-join.component.html',
     styleUrl: './conferences-group-join.component.scss',
 })

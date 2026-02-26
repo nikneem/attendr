@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef, signal } from '@angular/core';
+﻿import { Component, inject, OnInit, ChangeDetectorRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { CreateGroupComponent } from '@components/create-group/create-group.comp
 import { AllGroupsService } from '@services/all-groups.service';
 import { MessageService } from 'primeng/api';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-groups-list-page',
     imports: [
@@ -30,6 +31,7 @@ import { MessageService } from 'primeng/api';
         TagModule,
         GroupDetailsViewComponent,
         CreateGroupComponent,
+        TranslateModule
     ],
     templateUrl: './groups-list-page.component.html',
     styleUrl: './groups-list-page.component.scss',

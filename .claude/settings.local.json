@@ -9,7 +9,8 @@
       "mcp__playwright__browser_navigate",
       "mcp__aspire__list_console_logs",
       "mcp__aspire__list_structured_logs",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm test -- --no-watch)"
     ]
   }
 }

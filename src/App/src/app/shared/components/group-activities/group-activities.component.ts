@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+﻿import { Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { TimelineModule } from 'primeng/timeline';
@@ -10,10 +10,13 @@ interface EnrichedGroupActivity extends GroupActivityDto {
     memberName: string;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-group-activities',
     standalone: true,
-    imports: [CommonModule, AccordionModule, TimelineModule, TagModule],
+    imports: [CommonModule, AccordionModule, TimelineModule, TagModule,
+        TranslateModule
+    ],
     templateUrl: './group-activities.component.html',
     styleUrl: './group-activities.component.scss',
 })

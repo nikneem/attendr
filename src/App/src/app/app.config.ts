@@ -4,6 +4,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
 import { provideServiceWorker } from '@angular/service-worker';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
 import { authConfig } from './auth/auth.config';
@@ -11,6 +13,7 @@ import { OidcSecurityService, provideAuth, authInterceptor } from 'angular-auth-
 import { retryInterceptor } from './shared/interceptors/retry.interceptor';
 import { AuthCallbackHandler } from './auth/auth-callback.handler';
 import { AttendrPreset } from './theme/attendr.preset';
+import { LanguageService } from './shared/services/language.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +29,14 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
     provideAuth(authConfig),
+    provideTranslateService(),
+    provideTranslateHttpLoader({ prefix: '/translations/', suffix: '.json' }),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      deps: [LanguageService],
+      useFactory: (lang: LanguageService) => () => lang.applyPublicLanguage(),
+    },
     // Angular Service Worker disabled - using custom service worker for push notifications
     // provideServiceWorker('ngsw-worker.js', {
     //   enabled: !isDevMode(),

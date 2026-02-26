@@ -1,29 +1,29 @@
 <div class="edit-topic-form">
     <div class="form-row">
-        <label for="key">Normalized Key</label>
+        <label for="key">{{ 'EDIT_TOPIC.NORMALIZED_KEY_LABEL' | translate }}</label>
         <input pInputText id="key" name="key" [ngModel]="key" (ngModelChange)="onKeyChange($event)"
             [disabled]="isSaving" />
     </div>
 
     <div class="form-row">
-        <label for="name">Display Name</label>
+        <label for="name">{{ 'EDIT_TOPIC.DISPLAY_NAME_LABEL' | translate }}</label>
         <input pInputText id="name" name="name" [ngModel]="name" (ngModelChange)="onNameChange($event)"
             [disabled]="isSaving" />
     </div>
 
     <div class="form-row">
-        <label for="isVisible">Topic Visibility</label>
+        <label for="isVisible">{{ 'EDIT_TOPIC.VISIBILITY_LABEL' | translate }}</label>
         <p-toggleSwitch [(ngModel)]="isVisible" inputId="isVisible" name="isVisible" [disabled]="isSaving"
             (ngModelChange)="onVisibleChange($event)" />
     </div>
 
     <div class="actions">
-        <button pButton type="button" severity="danger" label="Delete" icon="pi pi-trash" (click)="onDelete()"
+        <button pButton type="button" severity="danger" [label]="'EDIT_TOPIC.DELETE_BUTTON' | translate" icon="pi pi-trash" (click)="onDelete()"
             [disabled]="isSaving"></button>
         <span class="spacer"></span>
-        <button pButton type="button" label="Cancel" class="p-button-secondary" (click)="onCancel()"
+        <button pButton type="button" [label]="'EDIT_TOPIC.CANCEL_BUTTON' | translate" class="p-button-secondary" (click)="onCancel()"
             [disabled]="isSaving"></button>
-        <button pButton type="button" label="Save" icon="pi pi-save" (click)="onSave()"
+        <button pButton type="button" [label]="'EDIT_TOPIC.SAVE_BUTTON' | translate" icon="pi pi-save" (click)="onSave()"
             [disabled]="!isDirty || isSaving"></button>
     </div>
 </div>

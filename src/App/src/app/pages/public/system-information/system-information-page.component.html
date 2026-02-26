@@ -1,78 +1,77 @@
 <div class="system-info-container">
     <div class="page-header">
         <div>
-            <p class="eyebrow">Operational insight</p>
-            <h1>System Information</h1>
-            <p class="lede">Backend health, client context, and project links in one place.</p>
+            <p class="eyebrow">{{ 'SYSTEM_INFO.EYEBROW' | translate }}</p>
+            <h1>{{ 'SYSTEM_INFO.TITLE' | translate }}</h1>
+            <p class="lede">{{ 'SYSTEM_INFO.LEDE' | translate }}</p>
         </div>
         <div class="header-actions">
             <button (click)="refreshHealth()" [disabled]="isLoading()" class="refresh-btn">
-                <span *ngIf="!isLoading()">🔄 Refresh</span>
-                <span *ngIf="isLoading()">Loading...</span>
+                <span *ngIf="!isLoading()">🔄 {{ 'SYSTEM_INFO.REFRESH' | translate }}</span>
+                <span *ngIf="isLoading()">{{ 'SYSTEM_INFO.LOADING' | translate }}</span>
             </button>
-            <a class="issue-btn" [href]="githubInfo.issuesUrl" target="_blank" rel="noreferrer">Report an issue →</a>
+            <a class="issue-btn" [href]="githubInfo.issuesUrl" target="_blank" rel="noreferrer">{{ 'SYSTEM_INFO.REPORT_ISSUE_BTN' | translate }}</a>
         </div>
     </div>
 
     <div class="info-grid">
         <div class="info-card">
-            <div class="card-title">System details</div>
+            <div class="card-title">{{ 'SYSTEM_INFO.SYSTEM_DETAILS_TITLE' | translate }}</div>
             <div class="info-items">
                 <div class="info-item">
-                    <span class="label nowrap">Platform</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.PLATFORM_LABEL' | translate }}</span>
                     <span class="value nowrap">{{ systemInfo.platform }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label nowrap">Frontend version</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.FRONTEND_VERSION_LABEL' | translate }}</span>
                     <span class="value nowrap">{{ systemInfo.frontendVersion }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label nowrap">User agent</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.USER_AGENT_LABEL' | translate }}</span>
                     <span class="value truncate nowrap" [pTooltip]="systemInfo.osVersion" tooltipPosition="top">{{
                         systemInfo.osVersion }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label nowrap">Last updated</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.LAST_UPDATED_LABEL' | translate }}</span>
                     <span class="value nowrap">{{ systemInfo.timestamp | date: 'short' }}</span>
                 </div>
             </div>
         </div>
 
         <div class="info-card">
-            <div class="card-title">Client & browser</div>
+            <div class="card-title">{{ 'SYSTEM_INFO.CLIENT_BROWSER_TITLE' | translate }}</div>
             <div class="info-items">
                 <div class="info-item">
-                    <span class="label nowrap">Browser</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.BROWSER_LABEL' | translate }}</span>
                     <span class="value nowrap">{{ clientInfo.browser }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label nowrap">Language</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.LANGUAGE_LABEL' | translate }}</span>
                     <span class="value nowrap">{{ clientInfo.language }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label nowrap">Timezone</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.TIMEZONE_LABEL' | translate }}</span>
                     <span class="value nowrap">{{ clientInfo.timezone }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label nowrap">Screen</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.SCREEN_LABEL' | translate }}</span>
                     <span class="value nowrap">{{ clientInfo.screen }}</span>
                 </div>
                 <div class="info-item">
-                    <span class="label nowrap">Online</span>
+                    <span class="label nowrap">{{ 'SYSTEM_INFO.ONLINE_LABEL' | translate }}</span>
                     <span class="value status-pill nowrap" [ngClass]="clientInfo.online ? 'online' : 'offline'">
-                        {{ clientInfo.online ? 'Yes' : 'No' }}
+                        {{ clientInfo.online ? ('SYSTEM_INFO.ONLINE_YES' | translate) : ('SYSTEM_INFO.ONLINE_NO' | translate) }}
                     </span>
                 </div>
             </div>
         </div>
 
         <div class="info-card highlight-card">
-            <div class="card-title">GitHub project</div>
-            <p class="card-subtitle">attendr is open source. Explore the repo or file an issue.</p>
+            <div class="card-title">{{ 'SYSTEM_INFO.GITHUB_TITLE' | translate }}</div>
+            <p class="card-subtitle">{{ 'SYSTEM_INFO.GITHUB_SUBTITLE' | translate }}</p>
             <div class="link-group">
-                <a class="pill-link" [href]="githubInfo.repoUrl" target="_blank" rel="noreferrer">View repository</a>
-                <a class="pill-link ghost" [href]="githubInfo.issuesUrl" target="_blank" rel="noreferrer">Report an
-                    issue</a>
+                <a class="pill-link" [href]="githubInfo.repoUrl" target="_blank" rel="noreferrer">{{ 'SYSTEM_INFO.VIEW_REPO' | translate }}</a>
+                <a class="pill-link ghost" [href]="githubInfo.issuesUrl" target="_blank" rel="noreferrer">{{ 'SYSTEM_INFO.REPORT_ISSUE_LINK' | translate }}</a>
             </div>
         </div>
     </div>
@@ -80,33 +79,33 @@
     <div class="services-section">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">Live status</p>
-                <h2>Backend Services</h2>
+                <p class="eyebrow">{{ 'SYSTEM_INFO.LIVE_STATUS' | translate }}</p>
+                <h2>{{ 'SYSTEM_INFO.BACKEND_SERVICES' | translate }}</h2>
             </div>
-            <span class="timestamp">Updated {{ systemInfo.timestamp | date: 'short' }}</span>
+            <span class="timestamp">{{ 'SYSTEM_INFO.UPDATED' | translate }} {{ systemInfo.timestamp | date: 'short' }}</span>
         </div>
 
         <div *ngIf="isLoading() && services().length === 0" class="loading-message">
-            <p>Loading service health status...</p>
+            <p>{{ 'SYSTEM_INFO.LOADING_HEALTH' | translate }}</p>
         </div>
 
         <div *ngIf="!isLoading() && services().length === 0" class="no-services">
-            <p>No services available</p>
+            <p>{{ 'SYSTEM_INFO.NO_SERVICES' | translate }}</p>
         </div>
 
         <table *ngIf="services().length > 0" class="services-table">
             <thead>
                 <tr>
-                    <th>Service Name</th>
-                    <th>Version</th>
-                    <th>Health Status</th>
-                    <th>Last Checked</th>
+                    <th>{{ 'SYSTEM_INFO.SERVICE_NAME_HEADER' | translate }}</th>
+                    <th>{{ 'SYSTEM_INFO.VERSION_HEADER' | translate }}</th>
+                    <th>{{ 'SYSTEM_INFO.HEALTH_HEADER' | translate }}</th>
+                    <th>{{ 'SYSTEM_INFO.LAST_CHECKED_HEADER' | translate }}</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let service of services()" [ngClass]="service.isHealthy ? 'healthy' : 'unhealthy'">
                     <td class="service-name">{{ service.name }}</td>
-                    <td class="version">{{ service.version || 'Unknown' }}</td>
+                    <td class="version">{{ service.version || ('SYSTEM_INFO.UNKNOWN_VERSION' | translate) }}</td>
                     <td class="status">
                         <span [ngClass]="getHealthBadgeClass(service.isHealthy)" class="badge">
                             {{ getHealthText(service.isHealthy) }}

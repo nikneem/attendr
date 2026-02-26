@@ -3,17 +3,17 @@
         <div class="header-section">
             <div class="header-row">
                 <div>
-                    <h1>Topics Management</h1>
-                    <p class="subtitle">Manage presentation topics and their visibility</p>
+                    <h1>{{ 'TOPICS.PAGE_TITLE' | translate }}</h1>
+                    <p class="subtitle">{{ 'TOPICS.PAGE_SUBTITLE' | translate }}</p>
                 </div>
-                <button pButton type="button" label="Add Topic" icon="pi pi-plus" (click)="openCreate()"></button>
+                <button pButton type="button" [label]="'TOPICS.ADD_TOPIC' | translate" icon="pi pi-plus" (click)="openCreate()"></button>
             </div>
         </div>
 
         @if (loading()) {
         <div class="loading-container">
             <p-progressSpinner />
-            <p>Loading topics...</p>
+            <p>{{ 'TOPICS.LOADING' | translate }}</p>
         </div>
         } @else if (error()) {
         <div class="error-container">
@@ -23,7 +23,7 @@
         } @else if (topics().length === 0) {
         <div class="empty-state">
             <i class="pi pi-inbox" style="font-size: 3rem"></i>
-            <p>No topics available</p>
+            <p>{{ 'TOPICS.NO_TOPICS' | translate }}</p>
         </div>
         } @else {
         <div class="topics-table">
@@ -31,15 +31,15 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="key" class="key-header">
-                            Normalized Key
+                            {{ 'TOPICS.NORMALIZED_KEY_HEADER' | translate }}
                             <p-sortIcon field="key"></p-sortIcon>
                         </th>
                         <th pSortableColumn="name" class="hide-on-mobile name-header">
-                            Name
+                            {{ 'TOPICS.NAME_HEADER' | translate }}
                             <p-sortIcon field="name"></p-sortIcon>
                         </th>
                         <th pSortableColumn="isVisible" class="visibility-header">
-                            <span class="hide-on-mobile">Visibility</span>
+                            <span class="hide-on-mobile">{{ 'TOPICS.VISIBILITY_HEADER' | translate }}</span>
                             <p-sortIcon field="isVisible"></p-sortIcon>
                         </th>
                     </tr>
@@ -56,11 +56,11 @@
                         <td class="visibility-column">
                             <p-tag class="clickable hide-on-desktop" [value]="getVisibilityIcon(topic.isVisible)"
                                 [severity]="getVisibilitySeverity(topic.isVisible)" (click)="toggleVisibility(topic)"
-                                [pTooltip]="topic.isVisible ? 'Click to hide' : 'Click to show'"
+                                [pTooltip]="topic.isVisible ? ('TOPICS.CLICK_TO_HIDE' | translate) : ('TOPICS.CLICK_TO_SHOW' | translate)"
                                 tooltipPosition="bottom" />
                             <p-tag class="clickable hide-on-mobile" [value]="getVisibilityLabel(topic.isVisible)"
                                 [severity]="getVisibilitySeverity(topic.isVisible)" (click)="toggleVisibility(topic)"
-                                [pTooltip]="topic.isVisible ? 'Click to hide' : 'Click to show'"
+                                [pTooltip]="topic.isVisible ? ('TOPICS.CLICK_TO_HIDE' | translate) : ('TOPICS.CLICK_TO_SHOW' | translate)"
                                 tooltipPosition="bottom" />
                         </td>
                     </tr>
@@ -71,12 +71,12 @@
     </div>
 </div>
 
-<p-dialog header="Add Topic" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
+<p-dialog [header]="'TOPICS.ADD_TOPIC_DIALOG' | translate" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
     [visible]="createDialogVisible()" (onHide)="onCreateCancel()" styleClass="create-topic-dialog">
     <attn-create-topic #createTopicRef (save)="onCreateSave($event)" (cancel)="onCreateCancel()" />
 </p-dialog>
 
-<p-dialog header="Edit Topic" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
+<p-dialog [header]="'TOPICS.EDIT_TOPIC_DIALOG' | translate" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
     [visible]="editDialogVisible()" (onHide)="onEditCancel()" styleClass="edit-topic-dialog">
     @if (selectedTopic()) {
     <attn-edit-topic [topic]="selectedTopic()!" (save)="onEditSave($event)" (delete)="onEditDelete()"
@@ -84,7 +84,7 @@
     }
 </p-dialog>
 
-<attn-confirmation-dialog [title]="'Delete Topic'"
-    [message]="'Are you sure you want to delete this topic? This action cannot be undone.'"
+<attn-confirmation-dialog [title]="'TOPICS.DELETE_DIALOG_TITLE' | translate"
+    [message]="'TOPICS.DELETE_DIALOG_MESSAGE' | translate"
     [visible]="confirmDeleteVisible()" (visibleChange)="confirmDeleteVisible.set($event)" (confirm)="onConfirmDelete()"
     (cancel)="onCancelDelete()" />

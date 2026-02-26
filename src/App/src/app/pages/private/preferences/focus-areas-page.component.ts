@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
+﻿import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -16,6 +16,7 @@ interface TopicWithRelativeTime extends ProfileTopicDto {
     relativeTime: string;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-focus-areas-page',
     standalone: true,
@@ -28,6 +29,7 @@ interface TopicWithRelativeTime extends ProfileTopicDto {
         ButtonModule,
         PopoverModule,
         TooltipModule,
+        TranslateModule
     ],
     templateUrl: './focus-areas-page.component.html',
     styleUrl: './focus-areas-page.component.scss',

@@ -1,12 +1,15 @@
-import { Component, input, output } from '@angular/core';
+﻿import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { PresentationDto } from '@models/presentation-dto';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-presentation-details',
-    imports: [CommonModule, TagModule, TooltipModule],
+    imports: [CommonModule, TagModule, TooltipModule,
+        TranslateModule
+    ],
     templateUrl: './presentation-details.component.html',
     styleUrl: './presentation-details.component.scss',
 })

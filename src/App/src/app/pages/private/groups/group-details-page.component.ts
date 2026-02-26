@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+﻿import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -6,6 +6,7 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { GroupDetailsStore } from '@stores/group-details.store';
 import { GroupMembersComponent } from '@components/group-members/group-members.component';
@@ -16,6 +17,7 @@ import { GroupActivitiesComponent } from '@components/group-activities/group-act
 import { MemberLocationsComponent } from '@components/member-locations/member-locations.component';
 import { EditGroupComponent } from '@components/edit-group/edit-group.component';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-group-details-page',
     imports: [
@@ -32,6 +34,8 @@ import { EditGroupComponent } from '@components/edit-group/edit-group.component'
         GroupActivitiesComponent,
         MemberLocationsComponent,
         EditGroupComponent,
+        TranslateModule,
+        TooltipModule
     ],
     providers: [ConfirmationService],
     templateUrl: './group-details-page.component.html',

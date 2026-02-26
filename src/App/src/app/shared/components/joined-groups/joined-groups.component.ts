@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -9,9 +9,12 @@ import { JoinedGroupsStore } from '@stores/joined-groups.store';
 import { AllGroupsComponent } from '@components/all-groups/all-groups.component';
 import { CreateGroupComponent } from '@components/create-group/create-group.component';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-joined-groups',
-    imports: [CommonModule, ButtonModule, TableModule, CardModule, DialogModule, AllGroupsComponent, CreateGroupComponent],
+    imports: [CommonModule, ButtonModule, TableModule, CardModule, DialogModule, AllGroupsComponent, CreateGroupComponent,
+        TranslateModule
+    ],
     templateUrl: './joined-groups.component.html',
     styleUrl: './joined-groups.component.scss',
 })

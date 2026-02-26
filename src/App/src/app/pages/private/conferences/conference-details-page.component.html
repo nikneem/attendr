@@ -3,7 +3,7 @@
     <div class="container">
         <div class="loading-container">
             <p-progressSpinner />
-            <p>Loading conference details...</p>
+            <p>{{ 'CONFERENCE_DETAILS.LOADING' | translate }}</p>
         </div>
     </div>
     } @else if (error) {
@@ -18,30 +18,30 @@
         <div class="conference-header">
             @if (profileStore.isAdmin()) {
             <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" (click)="openEditDialog()"
-                pTooltip="Edit conference" class="edit-button" />
+                [pTooltip]="'CONFERENCE_DETAILS.EDIT_TOOLTIP' | translate" class="edit-button" />
             }
 
             @if (attendanceStore.isAttending()) {
             <div class="attending-ribbon">
                 <i class="pi pi-check-circle"></i>
-                <span>Attending</span>
+                <span>{{ 'CONFERENCE_DETAILS.ATTENDING_RIBBON' | translate }}</span>
             </div>
             }
 
             <div class="header-actions">
                 @if (!attendanceStore.isFollowing()) {
-                <p-button label="Follow Conference" icon="pi pi-plus" (click)="followConference()"
+                <p-button [label]="'CONFERENCE_DETAILS.FOLLOW' | translate" icon="pi pi-plus" (click)="followConference()"
                     [loading]="followingConference" />
                 } @else {
-                <p-button label="Following" icon="pi pi-check" [outlined]="true" severity="secondary" disabled />
+                <p-button [label]="'CONFERENCE_DETAILS.FOLLOWING' | translate" icon="pi pi-check" [outlined]="true" severity="secondary" disabled />
                 }
 
                 @if (attendanceStore.isFollowing()) {
-                <p-button label="Rate Sessions" icon="pi pi-star" (click)="navigateToRate()" />
+                <p-button [label]="'CONFERENCE_DETAILS.RATE_SESSIONS' | translate" icon="pi pi-star" (click)="navigateToRate()" />
                 }
 
                 @if (attendanceStore.isAttending()) {
-                <p-button label="My Schedule" icon="pi pi-calendar" (click)="navigateToSchedule()" />
+                <p-button [label]="'CONFERENCE_DETAILS.MY_SCHEDULE' | translate" icon="pi pi-calendar" (click)="navigateToSchedule()" />
                 }
             </div>
 
@@ -63,7 +63,7 @@
                         @if (conference.synchronizationSource) {
                         <div class="meta-item">
                             <i class="pi pi-sync"></i>
-                            <span>Synced from {{ conference.synchronizationSource.sourceType }}</span>
+                            <span>{{ 'CONFERENCE_DETAILS.SYNCED_FROM' | translate }} {{ conference.synchronizationSource.sourceType }}</span>
                         </div>
                         }
                     </div>
@@ -82,7 +82,7 @@
             <p-card styleClass="section-card">
                 <ng-template pTemplate="header">
                     <div class="section-header">
-                        <h2>Schedule</h2>
+                        <h2>{{ 'CONFERENCE_DETAILS.SCHEDULE' | translate }}</h2>
                     </div>
                 </ng-template>
                 <attn-conference-schedule [presentations]="conference.presentations" [startDate]="conference.startDate"
@@ -94,7 +94,7 @@
             <p-card styleClass="section-card">
                 <ng-template pTemplate="header">
                     <div class="section-header">
-                        <h2>Speakers</h2>
+                        <h2>{{ 'CONFERENCE_DETAILS.SPEAKERS' | translate }}</h2>
                     </div>
                 </ng-template>
                 <attn-speaker-tiles [speakers]="conference.speakers" />
@@ -102,7 +102,7 @@
         </div>
     </div>
 
-    <p-dialog header="Edit Conference" [(visible)]="showEditDialog" [modal]="true"
+    <p-dialog [header]="'CONFERENCES.EDIT_DIALOG_HEADER' | translate" [(visible)]="showEditDialog" [modal]="true"
         [style]="{ width: '90vw', 'max-width': '600px' }" [draggable]="false" [resizable]="false">
         <attn-edit-conference [conference]="conference" [isAdmin]="profileStore.isAdmin()"
             (conferenceUpdated)="onConferenceUpdated()" (conferenceDeleted)="confirmDeleteConference()" />

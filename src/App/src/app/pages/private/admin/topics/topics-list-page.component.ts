@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+﻿import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -13,10 +13,13 @@ import { EditTopicComponent } from '../../../../shared/components/edit-topic/edi
 import { CreateTopicComponent } from '../../../../shared/components/create-topic/create-topic.component';
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-topics-list-page',
     standalone: true,
-    imports: [CommonModule, TableModule, ButtonModule, ProgressSpinnerModule, TooltipModule, TagModule, DialogModule, EditTopicComponent, CreateTopicComponent, ConfirmationDialogComponent],
+    imports: [CommonModule, TableModule, ButtonModule, ProgressSpinnerModule, TooltipModule, TagModule, DialogModule, EditTopicComponent, CreateTopicComponent, ConfirmationDialogComponent,
+        TranslateModule
+    ],
     templateUrl: './topics-list-page.component.html',
     styleUrl: './topics-list-page.component.scss',
 })
