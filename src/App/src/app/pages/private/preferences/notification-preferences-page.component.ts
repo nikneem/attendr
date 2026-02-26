@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule, KeyValue } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageModule } from 'primeng/message';
+import { TagModule } from 'primeng/tag';
 import { MessageService } from 'primeng/api';
 import { NotificationPreferencesService } from '@services/notification-preferences.service';
 import { NotificationSubscriptionsService } from '@services/notification-subscriptions.service';
@@ -13,6 +14,8 @@ import { PushNotificationService } from '@services/push-notification.service';
 import { NotificationPreferencesDetailDto, NotificationTypePreferenceDto, ChannelPreferenceDto } from '@models/notification-preferences-detail-dto';
 import { UpdateDetailedPreferencesRequest } from '@models/update-notification-preferences-request';
 import { environment } from '../../../../environments/environment';
+
+export type StepStatus = 'complete' | 'incomplete' | 'blocked';
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;
@@ -28,6 +31,7 @@ interface BeforeInstallPromptEvent extends Event {
         CardModule,
         ProgressSpinnerModule,
         MessageModule,
+        TagModule,
     ],
     templateUrl: './notification-preferences-page.component.html',
     styleUrl: './notification-preferences-page.component.scss',
@@ -45,19 +49,72 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
     isLoading = signal(true);
     isSaving = signal(false);
     isSendingTest = signal(false);
+    isRegistering = signal(false);
+    isUnsubscribing = signal(false);
 
     // PWA Detection signals
     isMobileDevice = signal(false);
     isPwaInstalled = signal(false);
-    pushNotificationsAllowed = signal(false);
-    showPwaInstallBanner = signal(false);
-    showPermissionBanner = signal(false);
-    isInstallingApp = signal(false);
-    isRequestingPermission = signal(false);
+    deferredPromptAvailable = signal(false);
+    notificationPermission = signal<NotificationPermission>(
+        'Notification' in window ? Notification.permission : 'default'
+    );
 
-    // Track if the current browser subscription is registered on backend
-    private isSubscriptionRegistered = false;
+    // Push setup state
+    isSubscriptionRegistered = signal(false);
     private registeredEndpoint: string | null = null;
+    registrationError = signal<string | null>(null);
+    testSentCount = signal<number | null>(null);
+    testSendError = signal<string | null>(null);
+
+    // Step status computed signals
+    showInstallStep = computed(() =>
+        this.isMobileDevice() && !this.isPwaInstalled() && this.deferredPromptAvailable()
+    );
+
+    installStepStatus = computed<StepStatus>(() => {
+        if (!this.showInstallStep()) return 'complete';
+        return this.isPwaInstalled() ? 'complete' : 'incomplete';
+    });
+
+    permissionStepStatus = computed<StepStatus>(() => {
+        if (this.installStepStatus() === 'incomplete') return 'blocked';
+        const perm = this.notificationPermission();
+        if (perm === 'granted') return 'complete';
+        if (perm === 'denied') return 'blocked';
+        return 'incomplete';
+    });
+
+    registerStepStatus = computed<StepStatus>(() => {
+        if (this.permissionStepStatus() !== 'complete') return 'blocked';
+        return this.isSubscriptionRegistered() ? 'complete' : 'incomplete';
+    });
+
+    testStepStatus = computed<StepStatus>(() => {
+        if (this.registerStepStatus() !== 'complete') return 'blocked';
+        return this.testSentCount() !== null ? 'complete' : 'incomplete';
+    });
+
+    hasPushEnabledButNotRegistered = computed(() =>
+        this.hasAnyPushNotificationsEnabled() && !this.isSubscriptionRegistered()
+    );
+
+    // Keep for backward compat (used in updatePermissionBannerVisibility)
+    pushNotificationsAllowed = computed(() => this.notificationPermission() === 'granted');
+    isRequestingPermission = signal(false);
+    isInstallingApp = signal(false);
+
+    constructor() {
+        // When the service worker subscription signal resolves (async after SW ready),
+        // automatically perform the idempotent registration if permission is already granted.
+        effect(() => {
+            const sub = this.pushService.subscription();
+            const perm = this.notificationPermission();
+            if (sub && perm === 'granted' && !this.isSubscriptionRegistered()) {
+                this.syncSubscriptionSilently();
+            }
+        });
+    }
 
     private deferredPrompt: BeforeInstallPromptEvent | null = null;
 
@@ -83,9 +140,10 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
             || (window.navigator as any).standalone === true;
         this.isPwaInstalled.set(isPwa);
 
-        // Detect if push notifications permission is granted
-        const pushAllowed = 'Notification' in window && Notification.permission === 'granted';
-        this.pushNotificationsAllowed.set(pushAllowed);
+        // Detect current permission state
+        if ('Notification' in window) {
+            this.notificationPermission.set(Notification.permission);
+        }
     }
 
     private listenForInstallPrompt(): void {
@@ -98,14 +156,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
         beforeInstallPromptEvent.preventDefault();
         // Stash the event for later use
         this.deferredPrompt = beforeInstallPromptEvent;
-
-        // Show the install banner if:
-        // - On mobile
-        // - App is not already installed
-        // - Install prompt is available
-        if (this.isMobileDevice() && !this.isPwaInstalled()) {
-            this.showPwaInstallBanner.set(true);
-        }
+        this.deferredPromptAvailable.set(true);
     };
 
     async installApp(): Promise<void> {
@@ -133,8 +184,8 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                     summary: 'Installation Started',
                     detail: 'The app is being installed. You can now use Attendr as a standalone app with better performance and offline support.',
                 });
-                this.showPwaInstallBanner.set(false);
                 this.isPwaInstalled.set(true);
+                this.deferredPromptAvailable.set(false);
             } else {
                 console.log('User dismissed the install prompt');
             }
@@ -153,12 +204,8 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
     }
 
     dismissInstallBanner(): void {
-        this.showPwaInstallBanner.set(false);
+        this.deferredPromptAvailable.set(false);
         this.deferredPrompt = null;
-    }
-
-    dismissPermissionBanner(): void {
-        this.showPermissionBanner.set(false);
     }
 
     private hasAnyPushNotificationsEnabled(): boolean {
@@ -172,14 +219,9 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
     }
 
     private updatePermissionBannerVisibility(): void {
-        // Show banner if:
-        // - Any push notification is enabled
-        // - AND push notification permission is not granted
-        const hasPushEnabled = this.hasAnyPushNotificationsEnabled();
-        const hasPermission = 'Notification' in window && Notification.permission === 'granted';
-
-        this.showPermissionBanner.set(hasPushEnabled && !hasPermission);
-        this.pushNotificationsAllowed.set(hasPermission);
+        if ('Notification' in window) {
+            this.notificationPermission.set(Notification.permission);
+        }
     }
 
     async requestPushPermission(): Promise<void> {
@@ -203,18 +245,19 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                     summary: 'Permission Granted',
                     detail: 'Push notification permission has been granted. You will now receive push notifications.',
                 });
-                this.showPermissionBanner.set(false);
-                this.pushNotificationsAllowed.set(true);
+                this.notificationPermission.set('granted');
 
                 // Register push subscription
                 await this.registerPushSubscription();
             } else if (permission === 'denied') {
+                this.notificationPermission.set('denied');
                 this.messageService.add({
                     severity: 'warn',
                     summary: 'Permission Denied',
                     detail: 'Push notification permission was denied. You can enable it later in your browser settings.',
                 });
             } else {
+                this.notificationPermission.set(permission);
                 this.messageService.add({
                     severity: 'info',
                     summary: 'Permission Not Granted',
@@ -258,14 +301,14 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
     }
 
     private async syncSubscriptionIfNeeded(): Promise<void> {
-        // Only sync if:
-        // 1. Push notifications are enabled in preferences
-        // 2. Browser has an active subscription
-        // 3. We haven't registered this subscription yet
-        if (!this.hasAnyPushNotificationsEnabled()) {
-            return;
-        }
+        await this.syncSubscriptionSilently();
+    }
 
+    /**
+     * Idempotent background registration: post the current browser subscription to the backend
+     * so the server always knows about this device. Safe to call on every page load.
+     */
+    private async syncSubscriptionSilently(): Promise<void> {
         const subscription = this.pushService.subscription();
         if (!subscription) {
             return;
@@ -276,12 +319,12 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
             return;
         }
 
-        // If already registered with the same endpoint, skip
-        if (this.isSubscriptionRegistered && this.registeredEndpoint === subscriptionData.endpoint) {
+        // If already registered with the same endpoint in this session, skip
+        if (this.isSubscriptionRegistered() && this.registeredEndpoint === subscriptionData.endpoint) {
             return;
         }
 
-        // Silently register/update the subscription on the backend
+        // Silently register/update the subscription on the backend (idempotent)
         try {
             await firstValueFrom(
                 this.subscriptionsService.registerSubscription({
@@ -295,8 +338,9 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                 })
             );
 
-            this.isSubscriptionRegistered = true;
+            this.isSubscriptionRegistered.set(true);
             this.registeredEndpoint = subscriptionData.endpoint;
+            this.registrationError.set(null);
         } catch (error) {
             console.error('Failed to sync push subscription:', error);
             // Don't show error to user - this is a background sync
@@ -352,7 +396,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
                     );
 
                     // Clear registration tracking
-                    this.isSubscriptionRegistered = false;
+                    this.isSubscriptionRegistered.set(false);
                     this.registeredEndpoint = null;
 
                     this.messageService.add({
@@ -384,7 +428,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
         }
 
         // Check current permission
-        const permission = Notification.permission;
+        const permission = this.notificationPermission();
 
         if (permission === 'granted') {
             // Permission already granted, enable push
@@ -405,6 +449,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
             // Permission not determined yet, request it
             try {
                 const newPermission = await this.pushService.requestPermission();
+                this.notificationPermission.set(newPermission);
                 if (newPermission === 'granted') {
                     const registered = await this.registerPushSubscription();
                     if (!registered) {
@@ -458,7 +503,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
             }
 
             // Check if this exact subscription is already registered
-            if (this.isSubscriptionRegistered && this.registeredEndpoint === subscriptionData.endpoint) {
+            if (this.isSubscriptionRegistered() && this.registeredEndpoint === subscriptionData.endpoint) {
                 return true;
             }
 
@@ -475,18 +520,62 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
             );
 
             // Mark as registered
-            this.isSubscriptionRegistered = true;
+            this.isSubscriptionRegistered.set(true);
             this.registeredEndpoint = subscriptionData.endpoint;
+            this.registrationError.set(null);
 
             return true;
         } catch (error) {
             console.error('Failed to register push subscription:', error);
+            this.registrationError.set('Could not register your push subscription. Please try again.');
             this.messageService.add({
                 severity: 'error',
                 summary: 'Push Registration Failed',
                 detail: 'Could not register your push subscription. Please try again.',
             });
             return false;
+        }
+    }
+
+    /** Explicit "Register this device" action triggered from the setup card. */
+    async registerDevice(): Promise<void> {
+        this.isRegistering.set(true);
+        this.registrationError.set(null);
+        try {
+            await this.registerPushSubscription();
+        } finally {
+            this.isRegistering.set(false);
+        }
+    }
+
+    /** Unsubscribe this device: calls backend DELETE then browser unsubscribe. */
+    async unsubscribeDevice(): Promise<void> {
+        this.isUnsubscribing.set(true);
+        try {
+            const subscriptionData = this.pushService.getSubscriptionData();
+            if (subscriptionData) {
+                await firstValueFrom(
+                    this.subscriptionsService.unsubscribe(subscriptionData.endpoint)
+                );
+            }
+            await this.pushService.unsubscribe();
+            this.isSubscriptionRegistered.set(false);
+            this.registeredEndpoint = null;
+            this.testSentCount.set(null);
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Unsubscribed',
+                detail: 'This device has been unsubscribed from push notifications.',
+            });
+        } catch (error) {
+            console.error('Failed to unsubscribe:', error);
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Unsubscribe Failed',
+                detail: 'Could not unsubscribe this device. Please try again.',
+            });
+        } finally {
+            this.isUnsubscribing.set(false);
         }
     }
 
@@ -546,8 +635,11 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
 
     sendTestNotification(): void {
         this.isSendingTest.set(true);
+        this.testSentCount.set(null);
+        this.testSendError.set(null);
         this.subscriptionsService.sendTestNotification().subscribe({
             next: (response) => {
+                this.testSentCount.set(response.sentCount);
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Test Sent',
@@ -557,6 +649,7 @@ export class NotificationPreferencesPageComponent implements OnInit, OnDestroy {
             },
             error: (error) => {
                 console.error('Failed to send test notification:', error);
+                this.testSendError.set('Failed to send test notification. Please try again.');
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
