@@ -1,5 +1,9 @@
 # Spec: Push Notifications — Deterministic Onboarding Flow
 
+## Status
+**Implemented** — 2026-02-26  
+Frontend-only. Push setup card with four deterministic steps (Install → Permission → Register → Test), auto-registration via `effect()` on SW subscription signal, and inline per-preference push-not-configured warning.
+
 ## Summary
 Make push notifications setup understandable and reliable by presenting a single guided flow: install PWA (when required) → grant permission → register subscription → send test. The page clearly shows current status and allows unsubscribe.
 

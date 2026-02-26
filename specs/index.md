@@ -2,7 +2,7 @@
 
 ## Notifications UX
 - [Notification preferences: batch save + undo](notifications/notification-preferences-batch-save.md)
-- [Push onboarding: install → permission → subscribe → test](notifications/push-onboarding-flow.md)
+- [Push onboarding: install → permission → subscribe → test](notifications/push-onboarding-flow.md) ✅
 - [Do Not Disturb scheduling UI](notifications/do-not-disturb-ui.md)
 - [Notification history: “why did I get this?”](notifications/notification-history-why.md)
 
