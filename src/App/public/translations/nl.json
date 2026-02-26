@@ -38,7 +38,7 @@
       "TITLE_ACCENT": "Conferentie",
       "TITLE_2": "Ervaring",
       "SUBTITLE": "Markeer favorieten, navigeer door schema's, netwerk slimmer en mis geen enkel moment op elke conferentie.",
-      "CTA_PRIMARY": "Begin Uw Reis",
+      "CTA_PRIMARY": "Start hier",
       "CTA_SECONDARY": "Ontdek Functies",
       "SCROLL": "Scroll om te verkennen"
     },
@@ -211,8 +211,8 @@
   "CONFERENCES": {
     "PAGE_TITLE": "Aankomende Conferenties",
     "ADD_CONFERENCE": "Conferentie Toevoegen",
-    "SHOW_HIDDEN": "Verborgen Tonen",
-    "HIDE_HIDDEN": "Verborgen Verbergen",
+    "SHOW_HIDDEN": "Alles tonen",
+    "HIDE_HIDDEN": "Alleen zichtbaar",
     "LOADING": "Conferenties laden...",
     "NO_CONFERENCES": "Geen conferenties beschikbaar",
     "ADD_FIRST_CONFERENCE": "Voeg Uw Eerste Conferentie Toe",
