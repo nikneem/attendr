@@ -16,7 +16,7 @@ interface TopicWithRelativeTime extends ProfileTopicDto {
     relativeTime: string;
 }
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'attn-focus-areas-page',
     standalone: true,
@@ -37,6 +37,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class FocusAreasPageComponent implements OnInit {
     private readonly profileService = inject(ProfileService);
     private readonly messageService = inject(MessageService);
+    private readonly translate = inject(TranslateService);
     private readonly TOUR_COOKIE_NAME = 'focusAreasTourCompleted';
 
     protected topicsLoading = signal<boolean>(false);
@@ -149,6 +150,7 @@ export class FocusAreasPageComponent implements OnInit {
     }
 
     private startTour(): void {
+        const t = (key: string): string => String(this.translate.instant(key));
         const driverObj = driver({
             showProgress: true,
             showButtons: ['next', 'previous', 'close'],
@@ -156,8 +158,8 @@ export class FocusAreasPageComponent implements OnInit {
                 {
                     element: '.tour-first-topic',
                     popover: {
-                        title: 'Focus Area',
-                        description: 'Each row represents a topic identified from your activities, such as marking presentations as favorites or checking in to sessions. Topics are ranked by their weight.',
+                        title: t('TOUR.FOCUS_AREAS.STEP1_TITLE'),
+                        description: t('TOUR.FOCUS_AREAS.STEP1_DESC'),
                         side: 'bottom',
                         align: 'start'
                     }
@@ -165,8 +167,8 @@ export class FocusAreasPageComponent implements OnInit {
                 {
                     element: '.tour-topic-tag',
                     popover: {
-                        title: 'AI vs Manual Topics',
-                        description: 'Topics can be AI-generated or manually confirmed. Click the tag to toggle between AI and Manual. Manual topics maintain maximum weight over time, while AI topics gradually decrease in weight.',
+                        title: t('TOUR.FOCUS_AREAS.STEP2_TITLE'),
+                        description: t('TOUR.FOCUS_AREAS.STEP2_DESC'),
                         side: 'bottom',
                         align: 'start'
                     }
@@ -174,8 +176,8 @@ export class FocusAreasPageComponent implements OnInit {
                 {
                     element: '.tour-weight-bar',
                     popover: {
-                        title: 'Topic Weight',
-                        description: 'The weight represents how relevant this topic is to you. AI topics lose weight over a 3-year period, but manual topics maintain full weight. Higher weight topics influence your recommendations more.',
+                        title: t('TOUR.FOCUS_AREAS.STEP3_TITLE'),
+                        description: t('TOUR.FOCUS_AREAS.STEP3_DESC'),
                         side: 'bottom',
                         align: 'start'
                     }

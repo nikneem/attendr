@@ -38,7 +38,7 @@
       "TITLE_ACCENT": "Conferentie",
       "TITLE_2": "Ervaring",
       "SUBTITLE": "Markeer favorieten, navigeer door schema's, netwerk slimmer en mis geen enkel moment op elke conferentie.",
-      "CTA_PRIMARY": "Begin Uw Reis",
+      "CTA_PRIMARY": "Start hier",
       "CTA_SECONDARY": "Ontdek Functies",
       "SCROLL": "Scroll om te verkennen"
     },
@@ -211,8 +211,8 @@
   "CONFERENCES": {
     "PAGE_TITLE": "Aankomende Conferenties",
     "ADD_CONFERENCE": "Conferentie Toevoegen",
-    "SHOW_HIDDEN": "Verborgen Tonen",
-    "HIDE_HIDDEN": "Verborgen Verbergen",
+    "SHOW_HIDDEN": "Alles tonen",
+    "HIDE_HIDDEN": "Alleen zichtbaar",
     "LOADING": "Conferenties laden...",
     "NO_CONFERENCES": "Geen conferenties beschikbaar",
     "ADD_FIRST_CONFERENCE": "Voeg Uw Eerste Conferentie Toe",
@@ -544,6 +544,24 @@
     "HEALTH_HEADER": "Gezondheidsstatus",
     "LAST_CHECKED_HEADER": "Laatste Controle",
     "UNKNOWN_VERSION": "Onbekend"
+  },
+  "TOUR": {
+    "DASHBOARD": {
+      "STEP1_TITLE": "Hier & Nu - Actieve Conferentie",
+      "STEP1_DESC": "Wanneer er momenteel een conferentie loopt, verschijnt dit gedeelte met realtime informatie. Het toont activiteiten van groepsleden, uw komende geselecteerde sessies en stelt u in staat in te checken bij sessies die u bijwoont.",
+      "STEP2_TITLE": "Mijn Conferenties",
+      "STEP2_DESC": "Dit zijn conferenties die u volgt. U kunt conferenties handmatig volgen, en conferenties gevolgd door groepen waarvan u deel uitmaakt worden automatisch aan uw lijst toegevoegd.",
+      "STEP3_TITLE": "Mijn Groepen",
+      "STEP3_DESC": "Sluit u aan bij of maak groepen om in contact te komen met andere deelnemers. Groepsleden kunnen elkaars activiteiten bekijken, waardoor het gemakkelijk is om te coördineren en ervaringen te delen op conferenties."
+    },
+    "FOCUS_AREAS": {
+      "STEP1_TITLE": "Focusgebied",
+      "STEP1_DESC": "Elke rij vertegenwoordigt een onderwerp dat is geïdentificeerd vanuit uw activiteiten, zoals het markeren van presentaties als favoriet of inchecken bij sessies. Onderwerpen worden gerangschikt op gewicht.",
+      "STEP2_TITLE": "AI versus Handmatige Onderwerpen",
+      "STEP2_DESC": "Onderwerpen kunnen AI-gegenereerd of handmatig bevestigd zijn. Klik op de tag om te schakelen tussen AI en Handmatig. Handmatige onderwerpen behouden maximaal gewicht over tijd, terwijl AI-onderwerpen geleidelijk in gewicht afnemen.",
+      "STEP3_TITLE": "Onderwerpgewicht",
+      "STEP3_DESC": "Het gewicht geeft aan hoe relevant dit onderwerp voor u is. AI-onderwerpen verliezen gewicht over een periode van 3 jaar, maar handmatige onderwerpen behouden volledig gewicht. Onderwerpen met meer gewicht beïnvloeden uw aanbevelingen meer."
+    }
   },
   "LANGUAGES": {
     "en": "Engels",

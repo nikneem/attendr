@@ -71,12 +71,12 @@
     </div>
 </div>
 
-<p-dialog [header]="'TOPICS.ADD_TOPIC_DIALOG' | translate" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
+<p-dialog [header]="'TOPICS.ADD_DIALOG_HEADER' | translate" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
     [visible]="createDialogVisible()" (onHide)="onCreateCancel()" styleClass="create-topic-dialog">
     <attn-create-topic #createTopicRef (save)="onCreateSave($event)" (cancel)="onCreateCancel()" />
 </p-dialog>
 
-<p-dialog [header]="'TOPICS.EDIT_TOPIC_DIALOG' | translate" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
+<p-dialog [header]="'TOPICS.EDIT_DIALOG_HEADER' | translate" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
     [visible]="editDialogVisible()" (onHide)="onEditCancel()" styleClass="edit-topic-dialog">
     @if (selectedTopic()) {
     <attn-edit-topic [topic]="selectedTopic()!" (save)="onEditSave($event)" (delete)="onEditDelete()"

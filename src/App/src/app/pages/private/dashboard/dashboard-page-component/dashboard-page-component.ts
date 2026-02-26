@@ -1,10 +1,10 @@
-﻿import { Component, OnInit, AfterViewInit } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
 import { JoinedGroupsComponent } from '@components/joined-groups/joined-groups.component';
 import { MyConferencesComponent } from '@components/my-conferences/my-conferences.component';
 import { HereNowComponent } from '@components/here-now/here-now.component';
 import { driver } from 'driver.js';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { TranslateModule } from '@ngx-translate/core';
 @Component({
     selector: 'attn-dashboard-page',
     imports: [JoinedGroupsComponent, MyConferencesComponent, HereNowComponent,
@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class DashboardPageComponent implements OnInit, AfterViewInit {
     private readonly TOUR_COOKIE_NAME = 'dashboardTourCompleted';
+    private readonly translate = inject(TranslateService);
 
     ngOnInit(): void {
         // Component initialization
@@ -42,6 +43,7 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
     }
 
     private startTour(): void {
+        const t = (key: string): string => String(this.translate.instant(key));
         const driverObj = driver({
             showProgress: true,
             showButtons: ['next', 'previous', 'close'],
@@ -49,8 +51,8 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
                 {
                     element: '.tour-here-now',
                     popover: {
-                        title: 'Here & Now - Active Conference',
-                        description: 'When a conference is currently running, this section appears showing real-time information. It displays group member activities, your upcoming selected sessions, and allows you to check in to sessions you\'re attending.',
+                        title: t('TOUR.DASHBOARD.STEP1_TITLE'),
+                        description: t('TOUR.DASHBOARD.STEP1_DESC'),
                         side: 'bottom',
                         align: 'start'
                     }
@@ -58,8 +60,8 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
                 {
                     element: '.tour-my-conferences',
                     popover: {
-                        title: 'My Conferences',
-                        description: 'These are conferences you\'re following. You can follow conferences manually, and any conferences followed by groups you\'re part of are automatically added to your list.',
+                        title: t('TOUR.DASHBOARD.STEP2_TITLE'),
+                        description: t('TOUR.DASHBOARD.STEP2_DESC'),
                         side: 'bottom',
                         align: 'start'
                     }
@@ -67,8 +69,8 @@ export class DashboardPageComponent implements OnInit, AfterViewInit {
                 {
                     element: '.tour-joined-groups',
                     popover: {
-                        title: 'My Groups',
-                        description: 'Join or create groups to connect with other attendees. Group members can view each other\'s activities, making it easy to coordinate and share experiences at conferences.',
+                        title: t('TOUR.DASHBOARD.STEP3_TITLE'),
+                        description: t('TOUR.DASHBOARD.STEP3_DESC'),
                         side: 'bottom',
                         align: 'start'
                     }
