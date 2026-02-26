@@ -16,8 +16,8 @@ public static class GroupsEndpoints
     public static IEndpointRouteBuilder MapGroupsEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/groups")
-            .WithName("Groups");
-        //.RequireAuthorization();
+            .WithName("Groups")
+            .RequireAuthorization();
 
         // Map group creation endpoint
         group.MapPost("/", CreateGroup)

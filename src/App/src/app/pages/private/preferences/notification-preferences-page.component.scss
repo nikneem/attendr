@@ -2,6 +2,137 @@
     display: block;
 }
 
+// ─── Push Setup Card ──────────────────────────────────────────────────────────
+
+::ng-deep .push-setup-card {
+    margin-bottom: 1.5rem;
+
+    .p-card-header {
+        padding: 1.25rem 1.5rem 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--surface-border);
+    }
+
+    .p-card-body {
+        padding: 1.5rem;
+    }
+}
+
+.setup-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    > .pi {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        margin-top: 0.15rem;
+        flex-shrink: 0;
+    }
+
+    h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+    }
+}
+
+.setup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.setup-step {
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--surface-border);
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &.step-blocked {
+        opacity: 0.55;
+    }
+}
+
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-icon {
+    font-size: 1.25rem;
+
+    &.complete {
+        color: #4caf50;
+    }
+
+    &.blocked {
+        color: var(--red-500, #e53935);
+    }
+
+    &.incomplete {
+        color: var(--text-color-secondary);
+    }
+}
+
+.step-content {
+    min-width: 0;
+}
+
+.step-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    margin-bottom: 0.15rem;
+}
+
+.step-description {
+    font-size: 0.825rem;
+    color: var(--text-color-secondary);
+    line-height: 1.4;
+
+    &.warning {
+        color: var(--orange-600, #e65100);
+    }
+
+    &.muted {
+        font-style: italic;
+    }
+}
+
+.step-error {
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--red-500, #e53935);
+}
+
+.step-action {
+    flex-shrink: 0;
+}
+
+.setup-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--surface-border);
+}
+
+// ─── Main Preferences Card ────────────────────────────────────────────────────
+
 ::ng-deep .p-card {
     .p-card-header {
         padding: 1.5rem 1.5rem 1rem 1.5rem;
@@ -166,6 +297,19 @@
         color: var(--text-color-secondary);
         font-size: 0.875rem;
         line-height: 1.4;
+    }
+
+    .push-not-configured-warning {
+        margin: 0.35rem 0 0;
+        font-size: 0.8rem;
+        color: var(--orange-600, #e65100);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+
+        .pi {
+            font-size: 0.8rem;
+        }
     }
 }
 

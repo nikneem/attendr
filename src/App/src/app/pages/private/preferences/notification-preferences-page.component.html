@@ -1,32 +1,154 @@
-<!-- PWA Install Banner -->
-<div *ngIf="showPwaInstallBanner()" class="pwa-install-banner">
-    <p-message
-        [text]="'Install Attendr as an app for a better mobile experience with faster performance, offline support, and improved push notifications.'"
-        severity="info" [styleClass]="'banner-message'">
-    </p-message>
-    <div class="banner-actions">
-        <p-button label="Install App" icon="pi pi-download" (onClick)="installApp()" [loading]="isInstallingApp()"
-            [disabled]="isInstallingApp()">
-        </p-button>
-        <p-button label="Dismiss" (onClick)="dismissInstallBanner()" severity="secondary" text>
-        </p-button>
-    </div>
-</div>
+<!-- Push Setup Card -->
+<p-card class="push-setup-card" styleClass="push-setup-card">
+    <ng-template pTemplate="header">
+        <div class="setup-card-header">
+            <i class="pi pi-bell"></i>
+            <div>
+                <h3>Push Notification Setup</h3>
+                <p>Complete these steps to receive push notifications on this device.</p>
+            </div>
+        </div>
+    </ng-template>
 
-<!-- Push Permission Banner -->
-<div *ngIf="showPermissionBanner()" class="permission-banner">
-    <p-message
-        [text]="'You have enabled push notifications, but Attendr does not have push notification permissions on this device yet.'"
-        severity="warn" [styleClass]="'banner-message'">
-    </p-message>
-    <div class="banner-actions">
-        <p-button label="Allow" icon="pi pi-check" (onClick)="requestPushPermission()"
-            [loading]="isRequestingPermission()" [disabled]="isRequestingPermission()">
-        </p-button>
-        <p-button label="Dismiss" (onClick)="dismissPermissionBanner()" severity="secondary" text>
+    <div class="setup-steps">
+        <!-- Step 1: Install (only when mobile + prompt available + not installed) -->
+        @if (showInstallStep()) {
+        <div class="setup-step" [class.step-complete]="installStepStatus() === 'complete'"
+            [class.step-blocked]="installStepStatus() === 'blocked'">
+            <div class="step-indicator">
+                @if (installStepStatus() === 'complete') {
+                <i class="pi pi-check-circle step-icon complete"></i>
+                } @else if (installStepStatus() === 'blocked') {
+                <i class="pi pi-times-circle step-icon blocked"></i>
+                } @else {
+                <i class="pi pi-circle step-icon incomplete"></i>
+                }
+            </div>
+            <div class="step-content">
+                <div class="step-title">Install as App</div>
+                <div class="step-description">Install Attendr as a PWA for reliable push notifications on mobile.</div>
+            </div>
+            <div class="step-action">
+                @if (installStepStatus() === 'incomplete') {
+                <p-button label="Install" icon="pi pi-download" size="small" (onClick)="installApp()"
+                    [loading]="isInstallingApp()" [disabled]="isInstallingApp()"></p-button>
+                }
+            </div>
+        </div>
+        }
+
+        <!-- Step 2: Permission -->
+        <div class="setup-step" [class.step-complete]="permissionStepStatus() === 'complete'"
+            [class.step-blocked]="permissionStepStatus() === 'blocked'">
+            <div class="step-indicator">
+                @if (permissionStepStatus() === 'complete') {
+                <i class="pi pi-check-circle step-icon complete"></i>
+                } @else if (permissionStepStatus() === 'blocked') {
+                <i class="pi pi-ban step-icon blocked"></i>
+                } @else {
+                <i class="pi pi-circle step-icon incomplete"></i>
+                }
+            </div>
+            <div class="step-content">
+                <div class="step-title">Grant Permission</div>
+                @if (permissionStepStatus() === 'blocked' && notificationPermission() === 'denied') {
+                <div class="step-description warning">
+                    Permission denied. To re-enable, open your browser settings and allow notifications for this site.
+                </div>
+                } @else if (permissionStepStatus() === 'blocked') {
+                <div class="step-description muted">Waiting for previous step&hellip;</div>
+                } @else if (permissionStepStatus() === 'complete') {
+                <div class="step-description">Push notifications are allowed in this browser.</div>
+                } @else {
+                <div class="step-description">Allow Attendr to send push notifications to this browser.</div>
+                }
+            </div>
+            <div class="step-action">
+                @if (permissionStepStatus() === 'incomplete') {
+                <p-button label="Allow" icon="pi pi-check" size="small" (onClick)="requestPushPermission()"
+                    [loading]="isRequestingPermission()" [disabled]="isRequestingPermission()"></p-button>
+                }
+            </div>
+        </div>
+
+        <!-- Step 3: Register device -->
+        <div class="setup-step" [class.step-complete]="registerStepStatus() === 'complete'"
+            [class.step-blocked]="registerStepStatus() === 'blocked'">
+            <div class="step-indicator">
+                @if (registerStepStatus() === 'complete') {
+                <i class="pi pi-check-circle step-icon complete"></i>
+                } @else if (registerStepStatus() === 'blocked') {
+                <i class="pi pi-ban step-icon blocked"></i>
+                } @else {
+                <i class="pi pi-circle step-icon incomplete"></i>
+                }
+            </div>
+            <div class="step-content">
+                <div class="step-title">Register This Device</div>
+                @if (registerStepStatus() === 'blocked') {
+                <div class="step-description muted">Waiting for permission&hellip;</div>
+                } @else if (registerStepStatus() === 'complete') {
+                <div class="step-description">This device is registered and ready to receive push notifications.</div>
+                } @else {
+                <div class="step-description">Tell the server about this browser so it can deliver notifications here.
+                </div>
+                }
+                @if (registrationError()) {
+                <div class="step-error">{{ registrationError() }}</div>
+                }
+            </div>
+            <div class="step-action">
+                @if (registerStepStatus() === 'incomplete') {
+                <p-button label="Register" icon="pi pi-mobile" size="small" (onClick)="registerDevice()"
+                    [loading]="isRegistering()" [disabled]="isRegistering()"></p-button>
+                }
+            </div>
+        </div>
+
+        <!-- Step 4: Send test -->
+        <div class="setup-step" [class.step-complete]="testStepStatus() === 'complete'"
+            [class.step-blocked]="testStepStatus() === 'blocked'">
+            <div class="step-indicator">
+                @if (testStepStatus() === 'complete') {
+                <i class="pi pi-check-circle step-icon complete"></i>
+                } @else if (testStepStatus() === 'blocked') {
+                <i class="pi pi-ban step-icon blocked"></i>
+                } @else {
+                <i class="pi pi-circle step-icon incomplete"></i>
+                }
+            </div>
+            <div class="step-content">
+                <div class="step-title">Send Test Notification</div>
+                @if (testStepStatus() === 'blocked') {
+                <div class="step-description muted">Waiting for device registration&hellip;</div>
+                } @else if (testSentCount() !== null) {
+                <div class="step-description">Test sent to {{ testSentCount() }} device(s). Check your notifications!
+                </div>
+                } @else {
+                <div class="step-description">Verify everything works by sending a test push notification now.</div>
+                }
+                @if (testSendError()) {
+                <div class="step-error">{{ testSendError() }}</div>
+                }
+            </div>
+            <div class="step-action">
+                @if (testStepStatus() !== 'blocked') {
+                <p-button label="Send Test" icon="pi pi-send" size="small" (onClick)="sendTestNotification()"
+                    [loading]="isSendingTest()" [disabled]="isSendingTest()"></p-button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Unsubscribe -->
+    @if (isSubscriptionRegistered()) {
+    <div class="setup-footer">
+        <p-button label="Unsubscribe This Device" icon="pi pi-times" severity="danger" [text]="true" size="small"
+            (onClick)="unsubscribeDevice()" [loading]="isUnsubscribing()" [disabled]="isUnsubscribing()">
         </p-button>
     </div>
-</div>
+    }
+</p-card>
 
 <p-card>
     <ng-template pTemplate="header">
@@ -36,8 +158,6 @@
                     <h2>Notification Preferences</h2>
                     <p>Manage how and when you receive notifications</p>
                 </div>
-                <p-button label="Send Test" icon="pi pi-send" [loading]="isSendingTest()" [disabled]="isLoading()"
-                    (onClick)="sendTestNotification()" severity="secondary" size="small"></p-button>
             </div>
         </div>
     </ng-template>
@@ -63,6 +183,13 @@
                     <h2>{{ notificationType.displayName }}</h2>
                 </div>
                 <p class="type-description">{{ notificationType.description }}</p>
+                <!-- Inline warning: push enabled but device not registered -->
+                @if (hasPushEnabledButNotRegistered() && notificationType.channelPreferences['Push']?.isEnabled) {
+                <p class="push-not-configured-warning">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    Push enabled but not configured on this device.
+                </p>
+                }
             </div>
 
             <div *ngFor="let channelKey of channelKeys; trackBy: trackByChannelKey" class="channel-toggle"
