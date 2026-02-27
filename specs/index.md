@@ -1,9 +1,10 @@
 # Specs Index
 
 ## Frontend
-- [Multi-language support (i18n)](frontend/multi-language-support.md)
+- [Multi-language support (i18n)](frontend/multi-language-support.md) ✅
 
 ## Conferences
+- [Conference ownership (creator, visibility override, edit access)](conferences/conference-ownership.md)
 - [Manual conference content management (speakers, rooms, presentations)](conferences/manual-conference-content-management.md)
 
 ## Notifications UX
