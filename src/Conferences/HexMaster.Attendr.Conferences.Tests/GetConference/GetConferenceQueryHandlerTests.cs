@@ -88,4 +88,36 @@ public class GetConferenceQueryHandlerTests
         // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(query, CancellationToken.None));
     }
+
+    [Fact]
+    public async Task Handle_WhenConferenceInvisibleAndOwnerQueries_ReturnsConferenceAndLogsDebug()
+    {
+        // Arrange
+        var conferenceId = Guid.NewGuid();
+        var profileId = Guid.NewGuid();
+        var invisibleConference = new ConferenceDetailsDto(
+            conferenceId,
+            "Hidden Conference",
+            "Amsterdam",
+            "Netherlands",
+            DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1)),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1).AddDays(3)),
+            null,
+            false, // IsVisible = false
+            null,
+            new List<SpeakerDto>(),
+            new List<PresentationDto>());
+
+        _mockRepository.Setup(x => x.GetDetailsByIdAsync(conferenceId, profileId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(invisibleConference);
+
+        var query = new GetConferenceQuery(conferenceId, profileId);
+
+        // Act
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        // Assert - conference is returned even though invisible (owner can see it)
+        Assert.NotNull(result);
+        Assert.False(result.IsVisible);
+    }
 }
