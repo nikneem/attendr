@@ -68,11 +68,26 @@ public static class ConferencesEndpoints
 
     private static async Task<IResult> GetConference(
         Guid id,
+        IProfilesIntegrationService profilesIntegration,
         IQueryHandler<GetConferenceQuery, ConferenceDetailsDto?> handler,
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var currentProfileId = TryResolveProfileIdFromClaims(user);
+        Guid? currentProfileId = null;
+        try
+        {
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+                if (Guid.TryParse(profile.ProfileId, out var profileId))
+                {
+                    currentProfileId = profileId;
+                }
+            }
+        }
+        catch (UnauthorizedException) { }
+        catch (ProfileNotFoundException) { }
+
         var query = new GetConferenceQuery(id, currentProfileId);
         var result = await handler.Handle(query, cancellationToken);
 
@@ -85,6 +100,7 @@ public static class ConferencesEndpoints
     }
 
     private static async Task<IResult> ListConferences(
+        IProfilesIntegrationService profilesIntegration,
         IQueryHandler<ListConferencesQuery, ListConferencesResult> handler,
         ClaimsPrincipal user,
         string? search = null,
@@ -93,7 +109,21 @@ public static class ConferencesEndpoints
         bool showHidden = false,
         CancellationToken cancellationToken = default)
     {
-        var currentProfileId = TryResolveProfileIdFromClaims(user);
+        Guid? currentProfileId = null;
+        try
+        {
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+                if (Guid.TryParse(profile.ProfileId, out var profileId))
+                {
+                    currentProfileId = profileId;
+                }
+            }
+        }
+        catch (UnauthorizedException) { }
+        catch (ProfileNotFoundException) { }
+
         var query = new ListConferencesQuery(search, pageSize, pageNumber, showHidden, currentProfileId);
         var result = await handler.Handle(query, cancellationToken);
         return Results.Ok(result);
@@ -303,29 +333,6 @@ public static class ConferencesEndpoints
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
-    }
-
-    /// <summary>
-    /// Attempts to resolve the profile ID from the ClaimsPrincipal without calling the profile service.
-    /// Returns null for unauthenticated users or when the claim is missing.
-    /// </summary>
-    private static Guid? TryResolveProfileIdFromClaims(ClaimsPrincipal user)
-    {
-        if (user.Identity?.IsAuthenticated != true)
-        {
-            return null;
-        }
-
-        // Try to get direct profile-id claim first (may be set as a custom claim)
-        var profileIdClaim = user.FindFirst("profile_id")?.Value
-            ?? user.FindFirst("profileId")?.Value;
-
-        if (profileIdClaim != null && Guid.TryParse(profileIdClaim, out var profileId))
-        {
-            return profileId;
-        }
-
-        return null;
     }
 
     /// <summary>
