@@ -23,8 +23,8 @@ public sealed record PresentationDataEntity(
     [property: JsonPropertyName("title")] string Title,
     [property: JsonPropertyName("abstract")] string Abstract,
     [property: JsonPropertyName("room")] string Room,
-    [property: JsonPropertyName("startDateTime")] DateTime StartDateTime,
-    [property: JsonPropertyName("endDateTime")] DateTime EndDateTime,
+    [property: JsonPropertyName("startDateTime")] DateTimeOffset StartDateTime,
+    [property: JsonPropertyName("endDateTime")] DateTimeOffset EndDateTime,
     [property: JsonPropertyName("speakers")] List<PresentationSpeakerEntity> Speakers
 );
 

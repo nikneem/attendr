@@ -34,8 +34,8 @@ public sealed record CheckInPresentationDataDto(
     string Title,
     string Abstract,
     string Room,
-    DateTime StartDateTime,
-    DateTime EndDateTime,
+    DateTimeOffset StartDateTime,
+    DateTimeOffset EndDateTime,
     List<CheckInPresentationSpeakerDto> Speakers);
 
 /// <summary>
