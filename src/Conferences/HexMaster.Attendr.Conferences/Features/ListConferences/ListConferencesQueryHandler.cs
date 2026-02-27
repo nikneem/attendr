@@ -32,6 +32,10 @@ public sealed class ListConferencesQueryHandler : IQueryHandler<ListConferencesQ
         activity?.SetTag("page_number", query.PageNumber);
         activity?.SetTag("page_size", query.PageSize ?? PaginationConstants.DefaultPageSize);
         activity?.SetTag("show_hidden", query.ShowHidden);
+        if (query.CurrentProfileId.HasValue)
+        {
+            activity?.SetTag("conference.current_profile_id", query.CurrentProfileId.Value);
+        }
 
         var pageSize = PaginationConstants.NormalizePageSize(query.PageSize);
 
@@ -40,6 +44,7 @@ public sealed class ListConferencesQueryHandler : IQueryHandler<ListConferencesQ
             query.PageNumber,
             pageSize,
             query.ShowHidden,
+            query.CurrentProfileId,
             cancellationToken);
 
         var items = conferences.Select(c => new ConferenceListItemDto(

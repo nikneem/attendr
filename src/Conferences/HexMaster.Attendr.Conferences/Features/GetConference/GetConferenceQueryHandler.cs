@@ -31,12 +31,16 @@ public sealed class GetConferenceQueryHandler : IQueryHandler<GetConferenceQuery
     {
         using var activity = ActivitySources.Conferences.StartActivity("GetConference", ActivityKind.Internal);
         activity?.SetTag("conference.id", query.ConferenceId);
+        if (query.CurrentProfileId.HasValue)
+        {
+            activity?.SetTag("conference.current_profile_id", query.CurrentProfileId.Value);
+        }
 
         var stopwatch = Stopwatch.StartNew();
 
         try
         {
-            var conferenceDetails = await _conferenceRepository.GetDetailsByIdAsync(query.ConferenceId, cancellationToken);
+            var conferenceDetails = await _conferenceRepository.GetDetailsByIdAsync(query.ConferenceId, query.CurrentProfileId, cancellationToken);
 
             if (conferenceDetails == null)
             {
@@ -52,6 +56,14 @@ public sealed class GetConferenceQueryHandler : IQueryHandler<GetConferenceQuery
             activity?.SetTag("conference.found", true);
             activity?.SetTag("conference.title", conferenceDetails.Title);
             activity?.SetTag("conference.has_sync_source", conferenceDetails.SynchronizationSource is not null);
+
+            // Debug log when an invisible conference is returned to its owner
+            if (!conferenceDetails.IsVisible && query.CurrentProfileId.HasValue)
+            {
+                _logger.LogDebug(
+                    "Conference {ConferenceId} is not visible but returned to owner (profile {ProfileId})",
+                    conferenceDetails.Id, query.CurrentProfileId.Value);
+            }
 
             activity?.SetStatus(ActivityStatusCode.Ok);
             _metrics.RecordConferenceQueried(found: true);

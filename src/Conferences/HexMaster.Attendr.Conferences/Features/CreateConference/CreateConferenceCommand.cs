@@ -13,6 +13,7 @@ namespace HexMaster.Attendr.Conferences.Features.CreateConference;
 /// <param name="StartDate">The start date of the conference.</param>
 /// <param name="EndDate">The end date of the conference.</param>
 /// <param name="SynchronizationSource">Optional synchronization source configuration.</param>
+/// <param name="CreatedByProfileId">The profile ID of the authenticated user creating the conference. Derived server-side.</param>
 public sealed record CreateConferenceCommand(
     string Title,
     string City,
@@ -20,4 +21,5 @@ public sealed record CreateConferenceCommand(
     string? ImageUrl,
     DateOnly StartDate,
     DateOnly EndDate,
-    SynchronizationSourceDto? SynchronizationSource) : IAttendrCommand;
+    SynchronizationSourceDto? SynchronizationSource,
+    Guid? CreatedByProfileId = null) : IAttendrCommand;

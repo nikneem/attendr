@@ -3,6 +3,7 @@ using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Conferences.Observability;
 using HexMaster.Attendr.Core.CommandHandlers;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Core.Observability;
 using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Services;
@@ -47,6 +48,15 @@ public sealed class UpdateConferenceCommandHandler : ICommandHandler<UpdateConfe
             {
                 _logger.LogWarning("Conference {ConferenceId} not found for update", command.Id);
                 throw new KeyNotFoundException($"Conference with ID {command.Id} not found");
+            }
+
+            // Enforce: owners (non-admins) cannot change IsVisible
+            if (command.IsVisible.HasValue && !command.IsAdmin)
+            {
+                // Only block if the caller is the owner or any authenticated non-admin user attempting to set visibility
+                throw new ForbiddenException(
+                    "Conference visibility is managed by the system. Owners cannot change it manually.",
+                    "https://attendr.dev/errors/forbidden-visibility-change");
             }
 
             conference.UpdateDetails(
