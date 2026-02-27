@@ -12,8 +12,8 @@ public sealed class ProfileCheckedInEvent : IntegrationEvent
     public Guid ConferenceId { get; init; }
     public Guid PresentationId { get; init; }
     public string Title { get; init; } = string.Empty;
-    public DateTime StartDateTime { get; init; }
-    public DateTime EndDateTime { get; init; }
+    public DateTimeOffset StartDateTime { get; init; }
+    public DateTimeOffset EndDateTime { get; init; }
     public string Room { get; init; } = string.Empty;
     public Guid ProfileId { get; init; }
     public bool IsCheckedIn { get; init; }
