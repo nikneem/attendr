@@ -1,0 +1,229 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="conference-edit-page">
+    @if (loading()) {
+        <div class="loading-container">
+            <p-progressSpinner />
+        </div>
+    } @else if (error()) {
+        <p-message severity="error" [text]="error()!" />
+    } @else if (accessDenied()) {
+        <p-message severity="error" text="Access denied. Only the conference creator or an admin can edit this conference." />
+        <div class="mt-4">
+            <p-button label="Back to Conferences" icon="pi pi-arrow-left" (onClick)="navigateBack()" />
+        </div>
+    } @else if (conference()) {
+        <div class="page-header">
+            <p-button icon="pi pi-arrow-left" [text]="true" (onClick)="navigateBack()" />
+            <h2>Edit Conference: {{ conference()!.title }}</h2>
+        </div>
+
+        <p-card class="conference-summary mb-4">
+            <div class="conference-info">
+                <span><strong>Location:</strong> {{ conference()!.city }}, {{ conference()!.country }}</span>
+                <span><strong>Dates:</strong> {{ conference()!.startDate | date }} – {{ conference()!.endDate | date }}</span>
+                <span>
+                    <strong>Visibility:</strong>
+                    <span [class]="conference()!.isVisible ? 'text-green-600' : 'text-red-600'">
+                        {{ conference()!.isVisible ? 'Visible' : 'Hidden' }}
+                    </span>
+                </span>
+            </div>
+        </p-card>
+
+        @if (manualChangeWarning()) {
+            <p-message severity="warn" text="Conference content has been manually changed." styleClass="mb-4 block" />
+        }
+
+        <p-tabs>
+            <p-tablist>
+                <p-tab value="speakers">Speakers</p-tab>
+                <p-tab value="rooms">Rooms</p-tab>
+                <p-tab value="presentations">Presentations</p-tab>
+            </p-tablist>
+
+            <p-tabpanels>
+                <!-- Speakers Tab -->
+                <p-tabpanel value="speakers">
+                    <div class="tab-actions mb-3">
+                        <p-button label="Add Speaker" icon="pi pi-plus" (onClick)="openCreateSpeakerDialog()" />
+                    </div>
+                    <p-table [value]="speakers()" [paginator]="speakers().length > 10" [rows]="10" styleClass="p-datatable-sm">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Picture</th>
+                                <th>Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-speaker>
+                            <tr>
+                                <td>{{ speaker.name }}</td>
+                                <td>{{ speaker.company ?? '–' }}</td>
+                                <td>
+                                    @if (speaker.profilePictureUrl) {
+                                        <a [href]="speaker.profilePictureUrl" target="_blank">View</a>
+                                    } @else {
+                                        –
+                                    }
+                                </td>
+                                <td>
+                                    <p-button icon="pi pi-pencil" [text]="true" size="small" (onClick)="openEditSpeakerDialog(speaker)" />
+                                    <p-button icon="pi pi-trash" [text]="true" size="small" severity="danger" (onClick)="confirmDeleteSpeaker(speaker)" />
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td colspan="4" class="text-center">No speakers yet.</td></tr>
+                        </ng-template>
+                    </p-table>
+                </p-tabpanel>
+
+                <!-- Rooms Tab -->
+                <p-tabpanel value="rooms">
+                    <div class="tab-actions mb-3">
+                        <p-button label="Add Room" icon="pi pi-plus" (onClick)="openCreateRoomDialog()" />
+                    </div>
+                    <p-table [value]="rooms()" [paginator]="rooms().length > 10" [rows]="10" styleClass="p-datatable-sm">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Name</th>
+                                <th>Capacity</th>
+                                <th>Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-room>
+                            <tr>
+                                <td>{{ room.name }}</td>
+                                <td>{{ room.capacity }}</td>
+                                <td>
+                                    <p-button icon="pi pi-pencil" [text]="true" size="small" (onClick)="openEditRoomDialog(room)" />
+                                    <p-button icon="pi pi-trash" [text]="true" size="small" severity="danger" (onClick)="confirmDeleteRoom(room)" />
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td colspan="3" class="text-center">No rooms yet.</td></tr>
+                        </ng-template>
+                    </p-table>
+                </p-tabpanel>
+
+                <!-- Presentations Tab -->
+                <p-tabpanel value="presentations">
+                    <div class="tab-actions mb-3">
+                        <p-button label="Add Presentation" icon="pi pi-plus" (onClick)="openCreatePresentationDialog()" />
+                    </div>
+                    <p-table [value]="presentations()" [paginator]="presentations().length > 10" [rows]="10" styleClass="p-datatable-sm">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Title</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Room</th>
+                                <th>Speakers</th>
+                                <th>Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-presentation>
+                            <tr>
+                                <td>{{ presentation.title }}</td>
+                                <td>{{ formatDateTime(presentation.startDateTime) }}</td>
+                                <td>{{ formatDateTime(presentation.endDateTime) }}</td>
+                                <td>{{ presentation.roomName }}</td>
+                                <td>{{ presentation.speakers.length }}</td>
+                                <td>
+                                    <p-button icon="pi pi-pencil" [text]="true" size="small" (onClick)="openEditPresentationDialog(presentation)" />
+                                    <p-button icon="pi pi-trash" [text]="true" size="small" severity="danger" (onClick)="confirmDeletePresentation(presentation)" />
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td colspan="6" class="text-center">No presentations yet.</td></tr>
+                        </ng-template>
+                    </p-table>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
+    }
+</div>
+
+<!-- Speaker Dialog -->
+<p-dialog [header]="speakerForm.id ? 'Edit Speaker' : 'Add Speaker'"
+    [(visible)]="speakerDialogVisible" [modal]="true" [style]="{width: '450px'}">
+    <div class="dialog-form">
+        <div class="field mb-3">
+            <label for="speakerName">Name *</label>
+            <input id="speakerName" pInputText class="w-full" [(ngModel)]="speakerForm.name" />
+        </div>
+        <div class="field mb-3">
+            <label for="speakerCompany">Company</label>
+            <input id="speakerCompany" pInputText class="w-full" [(ngModel)]="speakerForm.company" />
+        </div>
+        <div class="field mb-3">
+            <label for="speakerPicUrl">Profile Picture URL</label>
+            <input id="speakerPicUrl" pInputText class="w-full" [(ngModel)]="speakerForm.profilePictureUrl" />
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" [text]="true" (onClick)="speakerDialogVisible = false" />
+        <p-button label="Save" [loading]="speakerSaving" (onClick)="saveSpeaker()" />
+    </ng-template>
+</p-dialog>
+
+<!-- Room Dialog -->
+<p-dialog [header]="roomForm.id ? 'Edit Room' : 'Add Room'"
+    [(visible)]="roomDialogVisible" [modal]="true" [style]="{width: '400px'}">
+    <div class="dialog-form">
+        <div class="field mb-3">
+            <label for="roomName">Name *</label>
+            <input id="roomName" pInputText class="w-full" [(ngModel)]="roomForm.name" />
+        </div>
+        <div class="field mb-3">
+            <label for="roomCapacity">Capacity *</label>
+            <p-inputNumber id="roomCapacity" [(ngModel)]="roomForm.capacity" [min]="1" styleClass="w-full" />
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" [text]="true" (onClick)="roomDialogVisible = false" />
+        <p-button label="Save" [loading]="roomSaving" (onClick)="saveRoom()" />
+    </ng-template>
+</p-dialog>
+
+<!-- Presentation Dialog -->
+<p-dialog [header]="presentationForm.id ? 'Edit Presentation' : 'Add Presentation'"
+    [(visible)]="presentationDialogVisible" [modal]="true" [style]="{width: '600px'}">
+    <div class="dialog-form">
+        <div class="field mb-3">
+            <label for="presTitle">Title *</label>
+            <input id="presTitle" pInputText class="w-full" [(ngModel)]="presentationForm.title" />
+        </div>
+        <div class="field mb-3">
+            <label for="presAbstract">Abstract *</label>
+            <textarea id="presAbstract" pTextarea rows="4" class="w-full" [(ngModel)]="presentationForm.abstract"></textarea>
+        </div>
+        <div class="field mb-3">
+            <label for="presStart">Start Date/Time *</label>
+            <input id="presStart" type="datetime-local" class="w-full p-inputtext" [(ngModel)]="presentationForm.startDateTime" />
+        </div>
+        <div class="field mb-3">
+            <label for="presEnd">End Date/Time *</label>
+            <input id="presEnd" type="datetime-local" class="w-full p-inputtext" [(ngModel)]="presentationForm.endDateTime" />
+        </div>
+        <div class="field mb-3">
+            <label for="presRoom">Room *</label>
+            <p-select id="presRoom" [options]="roomOptions()" [(ngModel)]="presentationForm.roomId"
+                placeholder="Select room" styleClass="w-full" />
+        </div>
+        <div class="field mb-3">
+            <label for="presSpeakers">Speakers *</label>
+            <p-multiSelect id="presSpeakers" [options]="speakerOptions()" [(ngModel)]="presentationForm.speakerIds"
+                placeholder="Select speakers" styleClass="w-full" />
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" [text]="true" (onClick)="presentationDialogVisible = false" />
+        <p-button label="Save" [loading]="presentationSaving" (onClick)="savePresentation()" />
+    </ng-template>
+</p-dialog>

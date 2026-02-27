@@ -7,6 +7,9 @@ import { CreateConferenceRequest } from '../models/create-conference-request.mod
 import { ConferenceListItemDto } from '../models/conference-list-item-dto';
 import { ConferenceDetailsDto } from '../models/conference-details-dto';
 import { ConferenceMetricsDto } from '../models/conference-metrics-dto';
+import { ConferenceSpeakerDto, CreateConferenceSpeakerRequest, UpdateConferenceSpeakerRequest } from '../models/conference-speaker-dto';
+import { ConferenceRoomDto, CreateConferenceRoomRequest, UpdateConferenceRoomRequest } from '../models/conference-room-dto';
+import { ConferencePresentationDto, CreateConferencePresentationRequest, UpdateConferencePresentationRequest } from '../models/conference-presentation-dto';
 
 @Injectable({
     providedIn: 'root',
@@ -56,5 +59,47 @@ export class ConferencesService {
 
     getMetrics(): Observable<ConferenceMetricsDto> {
         return this.http.get<ConferenceMetricsDto>(`${this.apiUrl}/metrics`);
+    }
+
+    // Speakers
+    listSpeakers(conferenceId: string): Observable<ConferenceSpeakerDto[]> {
+        return this.http.get<ConferenceSpeakerDto[]>(`${this.apiUrl}/${conferenceId}/speakers`);
+    }
+    createSpeaker(conferenceId: string, request: CreateConferenceSpeakerRequest): Observable<ConferenceSpeakerDto> {
+        return this.http.post<ConferenceSpeakerDto>(`${this.apiUrl}/${conferenceId}/speakers`, request);
+    }
+    updateSpeaker(conferenceId: string, speakerId: string, request: UpdateConferenceSpeakerRequest): Observable<ConferenceSpeakerDto> {
+        return this.http.put<ConferenceSpeakerDto>(`${this.apiUrl}/${conferenceId}/speakers/${speakerId}`, request);
+    }
+    deleteSpeaker(conferenceId: string, speakerId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${conferenceId}/speakers/${speakerId}`);
+    }
+
+    // Rooms
+    listRooms(conferenceId: string): Observable<ConferenceRoomDto[]> {
+        return this.http.get<ConferenceRoomDto[]>(`${this.apiUrl}/${conferenceId}/rooms`);
+    }
+    createRoom(conferenceId: string, request: CreateConferenceRoomRequest): Observable<ConferenceRoomDto> {
+        return this.http.post<ConferenceRoomDto>(`${this.apiUrl}/${conferenceId}/rooms`, request);
+    }
+    updateRoom(conferenceId: string, roomId: string, request: UpdateConferenceRoomRequest): Observable<ConferenceRoomDto> {
+        return this.http.put<ConferenceRoomDto>(`${this.apiUrl}/${conferenceId}/rooms/${roomId}`, request);
+    }
+    deleteRoom(conferenceId: string, roomId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${conferenceId}/rooms/${roomId}`);
+    }
+
+    // Presentations
+    listPresentations(conferenceId: string): Observable<ConferencePresentationDto[]> {
+        return this.http.get<ConferencePresentationDto[]>(`${this.apiUrl}/${conferenceId}/presentations`);
+    }
+    createPresentation(conferenceId: string, request: CreateConferencePresentationRequest): Observable<ConferencePresentationDto> {
+        return this.http.post<ConferencePresentationDto>(`${this.apiUrl}/${conferenceId}/presentations`, request);
+    }
+    updatePresentation(conferenceId: string, presentationId: string, request: UpdateConferencePresentationRequest): Observable<ConferencePresentationDto> {
+        return this.http.put<ConferencePresentationDto>(`${this.apiUrl}/${conferenceId}/presentations/${presentationId}`, request);
+    }
+    deletePresentation(conferenceId: string, presentationId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${conferenceId}/presentations/${presentationId}`);
     }
 }
