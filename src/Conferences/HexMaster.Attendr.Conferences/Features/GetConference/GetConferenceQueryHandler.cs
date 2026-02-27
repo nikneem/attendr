@@ -40,7 +40,7 @@ public sealed class GetConferenceQueryHandler : IQueryHandler<GetConferenceQuery
 
         try
         {
-            var conferenceDetails = await _conferenceRepository.GetDetailsByIdAsync(query.ConferenceId, query.CurrentProfileId, cancellationToken);
+            var conferenceDetails = await _conferenceRepository.GetDetailsByIdAsync(query.ConferenceId, query.CurrentProfileId, query.IsAdmin, cancellationToken);
 
             if (conferenceDetails == null)
             {

@@ -29,9 +29,10 @@ public interface IConferenceRepository
     /// </summary>
     /// <param name="id">The conference ID.</param>
     /// <param name="currentProfileId">Optional profile ID of the requesting user for owner visibility override.</param>
+    /// <param name="isAdmin">Whether the requesting user has admin privileges; admins can always view unpublished conferences.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The conference details DTO if found and accessible; otherwise, null.</returns>
-    Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, Guid? currentProfileId = null, CancellationToken cancellationToken = default);
+    Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, Guid? currentProfileId = null, bool isAdmin = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing conference in the repository.

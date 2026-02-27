@@ -88,7 +88,7 @@ public static class ConferencesEndpoints
         catch (UnauthorizedException) { }
         catch (ProfileNotFoundException) { }
 
-        var query = new GetConferenceQuery(id, currentProfileId);
+        var query = new GetConferenceQuery(id, currentProfileId, IsAdminUser(user));
         var result = await handler.Handle(query, cancellationToken);
 
         if (result == null)

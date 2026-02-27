@@ -131,7 +131,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     }
 
     /// <inheritdoc />
-    public async Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, Guid? currentProfileId = null, CancellationToken cancellationToken = default)
+    public async Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, Guid? currentProfileId = null, bool isAdmin = false, CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
 
@@ -142,15 +142,16 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
             return null;
         }
 
-        // Apply owner visibility override:
-        // Return the conference only if it is visible OR the caller is the owner
+        // Apply visibility rules:
+        // - Visible conferences are always returned
+        // - Unpublished conferences are returned when the caller is an admin OR the owner
         if (!conferenceEntity.IsVisible)
         {
             var isOwner = currentProfileId.HasValue
                 && conferenceEntity.CreatedByProfileId.HasValue
                 && conferenceEntity.CreatedByProfileId.Value == currentProfileId.Value;
 
-            if (!isOwner)
+            if (!isAdmin && !isOwner)
             {
                 return null;
             }
