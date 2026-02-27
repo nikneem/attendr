@@ -131,15 +131,29 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     }
 
     /// <inheritdoc />
-    public async Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, Guid? currentProfileId = null, CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
 
-        // Load conference
+        // Load conference (no visibility filter here; we apply it below)
         var conferenceEntity = await LoadConferenceAsync(connection, id, cancellationToken).ConfigureAwait(false);
         if (conferenceEntity == null)
         {
             return null;
+        }
+
+        // Apply owner visibility override:
+        // Return the conference only if it is visible OR the caller is the owner
+        if (!conferenceEntity.IsVisible)
+        {
+            var isOwner = currentProfileId.HasValue
+                && conferenceEntity.CreatedByProfileId.HasValue
+                && conferenceEntity.CreatedByProfileId.Value == currentProfileId.Value;
+
+            if (!isOwner)
+            {
+                return null;
+            }
         }
 
         // Load related entities
@@ -305,6 +319,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         int pageNumber,
         int pageSize,
         bool showHidden = false,
+        Guid? currentProfileId = null,
         CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -318,10 +333,18 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
             ("@today", today)
         };
 
-        // Filter out hidden conferences unless showHidden is true
+        // Filter: visible OR owned by current user (when not showing all hidden)
         if (!showHidden)
         {
-            whereClause += " AND is_visible = true";
+            if (currentProfileId.HasValue && currentProfileId.Value != Guid.Empty)
+            {
+                whereClause += " AND (is_visible = true OR (created_by_profile_id = @currentProfileId AND created_by_profile_id IS NOT NULL))";
+                parameters.Add(("@currentProfileId", currentProfileId.Value));
+            }
+            else
+            {
+                whereClause += " AND is_visible = true";
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(searchQuery))
@@ -342,7 +365,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         // Get paginated results
         var sql = $@"
             SELECT id, title, city, country, start_date, end_date, image_url, is_visible,
-                   sync_source_type, sync_source_location_or_api_key
+                   sync_source_type, sync_source_location_or_api_key, created_by_profile_id
             FROM conferences
             {whereClause}
             ORDER BY start_date, title
@@ -373,7 +396,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
                     ImageUrl = reader.IsDBNull(6) ? null : reader.GetString(6),
                     IsVisible = reader.GetBoolean(7),
                     SyncSourceType = reader.IsDBNull(8) ? null : reader.GetInt32(8),
-                    SyncSourceLocationOrApiKey = reader.IsDBNull(9) ? null : reader.GetString(9)
+                    SyncSourceLocationOrApiKey = reader.IsDBNull(9) ? null : reader.GetString(9),
+                    CreatedByProfileId = reader.IsDBNull(10) ? null : reader.GetGuid(10)
                 });
             }
         }
@@ -431,8 +455,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     private static async Task InsertConferenceAsync(NpgsqlConnection connection, ConferenceEntity entity, CancellationToken cancellationToken)
     {
         var sql = @"
-            INSERT INTO conferences (id, title, city, country, start_date, end_date, image_url, is_visible, sync_source_type, sync_source_location_or_api_key)
-            VALUES (@id, @title, @city, @country, @start_date, @end_date, @image_url, @is_visible, @sync_source_type, @sync_source_location_or_api_key)";
+            INSERT INTO conferences (id, title, city, country, start_date, end_date, image_url, is_visible, sync_source_type, sync_source_location_or_api_key, created_by_profile_id)
+            VALUES (@id, @title, @city, @country, @start_date, @end_date, @image_url, @is_visible, @sync_source_type, @sync_source_location_or_api_key, @created_by_profile_id)";
 
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.AddWithValue("@id", entity.Id);
@@ -445,6 +469,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         command.Parameters.AddWithValue("@is_visible", entity.IsVisible);
         command.Parameters.AddWithValue("@sync_source_type", (object?)entity.SyncSourceType ?? DBNull.Value);
         command.Parameters.AddWithValue("@sync_source_location_or_api_key", (object?)entity.SyncSourceLocationOrApiKey ?? DBNull.Value);
+        command.Parameters.AddWithValue("@created_by_profile_id", (object?)entity.CreatedByProfileId ?? DBNull.Value);
 
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
@@ -523,7 +548,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
     {
         var sql = @"
             SELECT id, title, city, country, start_date, end_date, image_url, is_visible,
-                   sync_source_type, sync_source_location_or_api_key
+                   sync_source_type, sync_source_location_or_api_key, created_by_profile_id
             FROM conferences
             WHERE id = @id";
 
@@ -548,7 +573,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
             ImageUrl = reader.IsDBNull(6) ? null : reader.GetString(6),
             IsVisible = reader.GetBoolean(7),
             SyncSourceType = reader.IsDBNull(8) ? null : reader.GetInt32(8),
-            SyncSourceLocationOrApiKey = reader.IsDBNull(9) ? null : reader.GetString(9)
+            SyncSourceLocationOrApiKey = reader.IsDBNull(9) ? null : reader.GetString(9),
+            CreatedByProfileId = reader.IsDBNull(10) ? null : reader.GetGuid(10)
         };
     }
 

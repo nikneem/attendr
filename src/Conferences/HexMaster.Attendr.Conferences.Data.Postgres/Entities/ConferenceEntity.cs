@@ -13,6 +13,7 @@ public sealed class ConferenceEntity
     public DateOnly EndDate { get; set; }
     public string? ImageUrl { get; set; }
     public bool IsVisible { get; set; }
+    public Guid? CreatedByProfileId { get; set; }
 
     // Synchronization source
     public int? SyncSourceType { get; set; }

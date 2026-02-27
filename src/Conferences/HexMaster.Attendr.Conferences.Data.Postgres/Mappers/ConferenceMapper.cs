@@ -25,6 +25,7 @@ internal static class ConferenceMapper
             EndDate = conference.EndDate,
             ImageUrl = conference.ImageUrl,
             IsVisible = conference.IsVisible,
+            CreatedByProfileId = conference.CreatedByProfileId,
             SyncSourceType = conference.SynchronizationSource?.SourceType != null
                 ? (int)conference.SynchronizationSource.SourceType
                 : null,
@@ -68,7 +69,8 @@ internal static class ConferenceMapper
             conferenceEntity.EndDate,
             conferenceEntity.ImageUrl,
             conferenceEntity.IsVisible,
-            syncSource);
+            syncSource,
+            conferenceEntity.CreatedByProfileId);
 
         // Add rooms
         foreach (var roomEntity in rooms)
