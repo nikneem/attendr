@@ -16,8 +16,8 @@ public record PresentationToRateDto(
     string Title,
     string Abstract,
     string Room,
-    DateTime StartDateTime,
-    DateTime EndDateTime,
+    DateTimeOffset StartDateTime,
+    DateTimeOffset EndDateTime,
     IReadOnlyCollection<PresentationSpeakerDto> Speakers,
     IReadOnlyCollection<PresentationTopicDto> Topics
 );

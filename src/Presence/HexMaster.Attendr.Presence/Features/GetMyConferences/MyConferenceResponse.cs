@@ -8,6 +8,6 @@ public sealed record MyConferenceResponse(
     string ConferenceName,
     string Location,
     string? ImageUrl,
-    DateTime StartDate,
-    DateTime EndDate,
+    DateOnly StartDate,
+    DateOnly EndDate,
     bool IsAttending);
