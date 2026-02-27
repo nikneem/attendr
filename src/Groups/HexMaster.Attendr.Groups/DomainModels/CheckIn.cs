@@ -131,8 +131,8 @@ public sealed class PresentationData : IPresentationData
     public string Title { get; }
     public string Abstract { get; }
     public string Room { get; }
-    public DateTime StartDateTime { get; }
-    public DateTime EndDateTime { get; }
+    public DateTimeOffset StartDateTime { get; }
+    public DateTimeOffset EndDateTime { get; }
     public IReadOnlyCollection<PresentationSpeaker> Speakers { get; }
 
     IReadOnlyCollection<IPresentationSpeaker> IPresentationData.Speakers => Speakers;
@@ -142,8 +142,8 @@ public sealed class PresentationData : IPresentationData
         string title,
         string @abstract,
         string room,
-        DateTime startDateTime,
-        DateTime endDateTime,
+        DateTimeOffset startDateTime,
+        DateTimeOffset endDateTime,
         IEnumerable<PresentationSpeaker> speakers)
     {
         if (id == Guid.Empty)

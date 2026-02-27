@@ -38,18 +38,18 @@ public sealed class GetMyConferencesQueryHandler : IQueryHandler<GetMyConference
             _logger.LogInformation("Getting conferences for profile {ProfileId}", query.ProfileId);
 
             var allPresences = await _repository.GetByProfileIdAsync(query.ProfileId, cancellationToken);
-            var now = DateTime.UtcNow;
+            var now = DateOnly.FromDateTime(DateTimeOffset.UtcNow.DateTime);
 
             var currentAndFuture = allPresences
-                .Where(p => p.EndDate >= DateOnly.FromDateTime(now))
+                .Where(p => p.EndDate >= now)
                 .OrderBy(p => p.StartDate)
                 .Select(p => new MyConferenceResponse(
                     p.ConferenceId,
                     p.ConferenceName,
                     p.Location,
                     p.ImageUrl,
-                    p.StartDate.ToDateTime(TimeOnly.MinValue),
-                    p.EndDate.ToDateTime(TimeOnly.MaxValue),
+                    p.StartDate,
+                    p.EndDate,
                     p.IsAttending))
                 .ToList();
 

@@ -34,7 +34,7 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
                 reader.GetString(1),
                 reader.GetString(2),
                 reader.GetBoolean(3),
-                reader.GetDateTime(4));
+                reader.GetFieldValue<DateTimeOffset>(4));
         }
         await reader.CloseAsync();
 
@@ -209,7 +209,7 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
                 reader.GetString(1),
                 reader.GetString(2),
                 reader.GetBoolean(3),
-                reader.GetDateTime(4));
+                reader.GetFieldValue<DateTimeOffset>(4));
         }
 
         return null;
@@ -237,7 +237,7 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
                 reader.GetString(1),
                 reader.GetString(2),
                 reader.GetBoolean(3),
-                reader.GetDateTime(4)));
+                reader.GetFieldValue<DateTimeOffset>(4)));
         }
 
         return topics;
@@ -301,7 +301,7 @@ public sealed class PostgresTopicsRepository : ITopicsRepository
 
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.AddWithValue("@topic_id", topicId);
-        command.Parameters.AddWithValue("@now", DateTime.UtcNow);
+        command.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow);
 
         var results = new List<(Guid ConferenceId, Guid PresentationId)>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);

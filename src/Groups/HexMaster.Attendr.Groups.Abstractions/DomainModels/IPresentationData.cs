@@ -28,12 +28,12 @@ public interface IPresentationData
     /// <summary>
     /// Gets the start date/time of the presentation.
     /// </summary>
-    DateTime StartDateTime { get; }
+    DateTimeOffset StartDateTime { get; }
 
     /// <summary>
     /// Gets the end date/time of the presentation.
     /// </summary>
-    DateTime EndDateTime { get; }
+    DateTimeOffset EndDateTime { get; }
 
     /// <summary>
     /// Gets the collection of speakers for the presentation.

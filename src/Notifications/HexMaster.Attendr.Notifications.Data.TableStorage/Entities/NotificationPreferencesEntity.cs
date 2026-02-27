@@ -22,7 +22,7 @@ internal sealed class NotificationPreferencesEntity : ITableEntity
     // Stored as JSON: Dictionary<string, Dictionary<NotificationChannel, bool>>
     public string TypeChannelPreferencesJson { get; set; } = string.Empty;
 
-    public DateTime? DoNotDisturbUntil { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    public DateTimeOffset? DoNotDisturbUntil { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 }

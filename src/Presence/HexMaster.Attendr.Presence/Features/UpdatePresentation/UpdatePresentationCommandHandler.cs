@@ -101,8 +101,8 @@ public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePre
                         @event.Title,
                         @event.Abstract,
                         @event.RoomName,
-                        @event.StartDateTime.UtcDateTime,
-                        @event.EndDateTime.UtcDateTime,
+                        @event.StartDateTime,
+                        @event.EndDateTime,
                         speakers,
                         topics);
 
@@ -127,8 +127,8 @@ public sealed class UpdatePresentationCommandHandler : ICommandHandler<UpdatePre
                         @event.Title,
                         @event.Abstract,
                         @event.RoomName,
-                        @event.StartDateTime.UtcDateTime,
-                        @event.EndDateTime.UtcDateTime,
+                        @event.StartDateTime,
+                        @event.EndDateTime,
                         updatedSpeakers,
                         topics);
 

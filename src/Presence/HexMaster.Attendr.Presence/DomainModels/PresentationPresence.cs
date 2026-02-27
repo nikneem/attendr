@@ -8,8 +8,8 @@ public sealed class PresentationPresence
     public string Title { get; private set; }
     public string Abstract { get; private set; }
     public string Room { get; private set; }
-    public DateTime StartDateTime { get; private set; }
-    public DateTime EndDateTime { get; private set; }
+    public DateTimeOffset StartDateTime { get; private set; }
+    public DateTimeOffset EndDateTime { get; private set; }
     public bool IsRated { get; private set; }
     public bool IsFavorite { get; private set; }
     public bool IsCheckedIn { get; private set; }
@@ -31,8 +31,8 @@ public sealed class PresentationPresence
         string title,
         string @abstract,
         string room,
-        DateTime startDateTime,
-        DateTime endDateTime,
+        DateTimeOffset startDateTime,
+        DateTimeOffset endDateTime,
         IEnumerable<PresentationSpeaker>? speakers = null,
         IEnumerable<PresentationTopic>? topics = null,
         bool isRated = false,
@@ -110,8 +110,8 @@ public sealed class PresentationPresence
         string title,
         string @abstract,
         string room,
-        DateTime startDateTime,
-        DateTime endDateTime,
+        DateTimeOffset startDateTime,
+        DateTimeOffset endDateTime,
         IEnumerable<PresentationSpeaker> speakers,
         IEnumerable<PresentationTopic> topics)
     {

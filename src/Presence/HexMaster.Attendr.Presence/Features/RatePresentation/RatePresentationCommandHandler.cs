@@ -82,7 +82,7 @@ public sealed class RatePresentationCommandHandler(
                         IsManual = false,
                         TopicKey = topic.Key,
                         TopicName = topic.Name,
-                        OccurredAt = DateTime.UtcNow,
+                        OccurredAt = DateTimeOffset.UtcNow,
                         Weight = 10
                     };
                     await integrationEventPublisher.PublishAsync(topicInterestEvent, cancellationToken);

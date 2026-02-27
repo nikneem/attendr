@@ -65,7 +65,7 @@ public sealed class ProcessNotificationTriggerCommandHandler(
 
             // Check if in DND mode
             if (preferences?.DoNotDisturbUntil.HasValue == true && 
-                preferences.DoNotDisturbUntil.Value > DateTime.UtcNow)
+                preferences.DoNotDisturbUntil.Value > DateTimeOffset.UtcNow)
             {
                 _logger.LogInformation(
                     "Profile {ProfileId} is in Do Not Disturb mode until {Until}, skipping all notification channels",

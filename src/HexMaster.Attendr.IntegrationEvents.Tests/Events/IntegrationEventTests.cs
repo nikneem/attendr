@@ -35,18 +35,18 @@ public class IntegrationEventTests
     [Fact]
     public void IntegrationEvent_OccurredAt_IsSetToUtcNow()
     {
-        var before = DateTime.UtcNow.AddSeconds(-1);
+        var before = DateTimeOffset.UtcNow.AddSeconds(-1);
         var evt = new TestIntegrationEvent();
-        var after = DateTime.UtcNow.AddSeconds(1);
+        var after = DateTimeOffset.UtcNow.AddSeconds(1);
 
         Assert.InRange(evt.OccurredAt, before, after);
     }
 
     [Fact]
-    public void IntegrationEvent_OccurredAt_IsUtcKind()
+    public void IntegrationEvent_OccurredAt_IsUtcOffset()
     {
         var evt = new TestIntegrationEvent();
-        Assert.Equal(DateTimeKind.Utc, evt.OccurredAt.Kind);
+        Assert.Equal(TimeSpan.Zero, evt.OccurredAt.Offset);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class IntegrationEventTests
     [Fact]
     public void IntegrationEvent_OccurredAt_CanBeOverriddenViaInit()
     {
-        var expectedDate = new DateTime(2024, 6, 15, 12, 0, 0, DateTimeKind.Utc);
+        var expectedDate = new DateTimeOffset(2024, 6, 15, 12, 0, 0, TimeSpan.Zero);
         var evt = new TestIntegrationEvent { OccurredAt = expectedDate };
         Assert.Equal(expectedDate, evt.OccurredAt);
     }

@@ -66,27 +66,27 @@ public sealed class Notification : INotification
     /// <summary>
     /// When the notification was created.
     /// </summary>
-    public required DateTime CreatedAt { get; init; }
+    public required DateTimeOffset CreatedAt { get; init; }
 
     /// <summary>
     /// When the notification was last updated (for stacking).
     /// </summary>
-    public DateTime? LastOccurredAt { get; set; }
+    public DateTimeOffset? LastOccurredAt { get; set; }
 
     /// <summary>
     /// When the notification was marked as read (null if unread).
     /// </summary>
-    public DateTime? ReadAt { get; set; }
+    public DateTimeOffset? ReadAt { get; set; }
 
     /// <summary>
     /// When the notification was marked as deleted (null if not deleted).
     /// </summary>
-    public DateTime? DeletedAt { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 
     /// <summary>
     /// When the notification expires and should be cleaned up.
     /// </summary>
-    public DateTime? ExpiresAt { get; init; }
+    public DateTimeOffset? ExpiresAt { get; init; }
 
     /// <summary>
     /// Delivery status per channel.
@@ -118,7 +118,7 @@ public sealed class ChannelDeliveryInfo : IChannelDeliveryInfo
     /// <summary>
     /// When delivery was attempted.
     /// </summary>
-    public DateTime? DeliveredAt { get; set; }
+    public DateTimeOffset? DeliveredAt { get; set; }
 
     /// <summary>
     /// Error message if delivery failed.

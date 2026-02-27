@@ -22,15 +22,15 @@ public sealed class NotificationPreferences : INotificationPreferences
     /// <summary>
     /// Global "do not disturb" mode. When set, temporarily disables all notifications.
     /// </summary>
-    public DateTime? DoNotDisturbUntil { get; set; }
+    public DateTimeOffset? DoNotDisturbUntil { get; set; }
 
     /// <summary>
     /// When these preferences were created.
     /// </summary>
-    public required DateTime CreatedAt { get; init; }
+    public required DateTimeOffset CreatedAt { get; init; }
 
     /// <summary>
     /// When these preferences were last updated.
     /// </summary>
-    public DateTime? UpdatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 }

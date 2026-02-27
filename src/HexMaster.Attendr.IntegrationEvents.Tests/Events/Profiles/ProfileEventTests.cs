@@ -131,7 +131,7 @@ public class ProfileEventTests
         var conferenceId = Guid.NewGuid();
         var presentationId = Guid.NewGuid();
         var profileId = Guid.NewGuid();
-        var start = DateTime.UtcNow;
+        var start = DateTimeOffset.UtcNow;
         var end = start.AddHours(1);
 
         var evt = new ProfileCheckedInEvent

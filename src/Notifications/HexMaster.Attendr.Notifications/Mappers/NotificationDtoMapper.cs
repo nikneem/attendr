@@ -92,7 +92,7 @@ public static class NotificationDtoMapper
                 kvp => kvp.Value.ToDictionary(
                     c => Enum.Parse<NotificationChannel>(c.Key),
                     c => c.Value)),
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow
         };
     }
 }

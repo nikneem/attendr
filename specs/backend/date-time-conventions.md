@@ -83,8 +83,8 @@ This section lists known types/fields that currently carry date/time values, and
 - `src/Shared/HexMaster.Attendr.Core/DomainModels/DomainModel.cs`: `CreatedOn`/`ModifiedOn` (`DateTimeOffset`) ✅
 - `src/Shared/HexMaster.Attendr.Core/DomainModels/StatefulDomainModel.cs`: `CreatedOn`/`ModifiedOn` (`DateTimeOffset`) ✅
 - `src/Shared/HexMaster.Attendr.Core/DomainEvents/DomainEvent.cs`: `OccurredAt` (`DateTimeOffset`) ✅
-- `src/Shared/HexMaster.Attendr.IntegrationEvents/Events/IntegrationEvent.cs`: `OccurredAt` (`DateTime`) ⚠️
-- `src/Shared/HexMaster.Attendr.IntegrationEvents/Events/Profiles/ProfileCheckedInEvent.cs`: `StartDateTime`/`EndDateTime` (`DateTime`) ⚠️
+- `src/Shared/HexMaster.Attendr.IntegrationEvents/Events/IntegrationEvent.cs`: `OccurredAt` (`DateTimeOffset`) ✅
+- `src/Shared/HexMaster.Attendr.IntegrationEvents/Events/Profiles/ProfileCheckedInEvent.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
 - `src/Shared/HexMaster.Attendr.IntegrationEvents/Events/Conferences/PresentationUpdatedEvent.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
 - `src/Shared/HexMaster.Attendr.IntegrationEvents/Events/Conferences/PresentationScheduleChangeEvent.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
 
@@ -92,30 +92,30 @@ This section lists known types/fields that currently carry date/time values, and
 - `src/Conferences/HexMaster.Attendr.Conferences/DomainModels/Presentation.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
 - `src/Conferences/HexMaster.Attendr.Conferences.Abstractions/Dtos/PresentationDto.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
 - `src/Conferences/HexMaster.Attendr.Conferences.Data.Postgres/Entities/PresentationEntity.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
-- `src/Conferences/HexMaster.Attendr.Conferences/DomainModels/Topic.cs`: `createdOn` (`DateTime`) ⚠️ (timestamp semantics; should become `DateTimeOffset`)
+- `src/Conferences/HexMaster.Attendr.Conferences/DomainModels/Topic.cs`: `createdOn` (`DateTimeOffset`) ✅ (migrated; DB column changed to `timestamptz`)
 - `src/Conferences/HexMaster.Attendr.Conferences/Services/SessionizeSyncService.cs`: imports Sessionize times and converts to `DateTimeOffset` assuming UTC ✅
 
 ### Groups
-- `src/Groups/HexMaster.Attendr.Groups/DomainModels/CheckIn.cs`: `StartDateTime`/`EndDateTime` (`DateTime`) ⚠️
-- `src/Groups/HexMaster.Attendr.Groups.Abstractions/Dtos/CheckInDto.cs`: `StartDateTime`/`EndDateTime` (`DateTime`) ⚠️
-- `src/Groups/HexMaster.Attendr.Groups.Data.Postgress/Entities/CheckInEntity.cs`: `StartDateTime`/`EndDateTime` (`DateTime`) ⚠️
-- `src/Groups/HexMaster.Attendr.Groups.Abstractions/DomainModels/IPresentationData.cs`: `StartDateTime`/`EndDateTime` (`DateTime`) ⚠️
+- `src/Groups/HexMaster.Attendr.Groups/DomainModels/CheckIn.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
+- `src/Groups/HexMaster.Attendr.Groups.Abstractions/Dtos/CheckInDto.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
+- `src/Groups/HexMaster.Attendr.Groups.Data.Postgress/Entities/CheckInEntity.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
+- `src/Groups/HexMaster.Attendr.Groups.Abstractions/DomainModels/IPresentationData.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
 - Group invitation/join request timestamps: `DateTimeOffset` ✅
 
 ### Presence
-- `src/Presence/HexMaster.Attendr.Presence/DomainModels/PresentationPresence.cs`: `StartDateTime`/`EndDateTime` (`DateTime`) ⚠️; `CheckedInAt` (`DateTimeOffset?`) ✅
-- `src/Presence/HexMaster.Attendr.Presence.Data.Postgres/Entities/PresentationPresenceEntity.cs`: `StartDateTime`/`EndDateTime` (`DateTime`) ⚠️; `CheckedInAt` (`DateTimeOffset?`) ✅
-- `src/Presence/HexMaster.Attendr.Presence.Abstractions/Dtos/PresentationToRateDto.cs`: `StartDateTime`/`EndDateTime` (`DateTime`) ⚠️
-- Responses with `StartDate`/`EndDate` as `DateTime` ⚠️ (likely date-only and should become `DateOnly`)
+- `src/Presence/HexMaster.Attendr.Presence/DomainModels/PresentationPresence.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅; `CheckedInAt` (`DateTimeOffset?`) ✅
+- `src/Presence/HexMaster.Attendr.Presence.Data.Postgres/Entities/PresentationPresenceEntity.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅; `CheckedInAt` (`DateTimeOffset?`) ✅
+- `src/Presence/HexMaster.Attendr.Presence.Abstractions/Dtos/PresentationToRateDto.cs`: `StartDateTime`/`EndDateTime` (`DateTimeOffset`) ✅
+- Responses with `StartDate`/`EndDate`: now use `DateOnly` ✅
 
 ### Notifications
 - Table Storage entities:
-  - `src/Notifications/HexMaster.Attendr.Notifications.Data.TableStorage/Entities/NotificationEntity.cs`: `CreatedAt`, `ExpiresAt`, etc. (`DateTime`) ⚠️
-  - `src/Notifications/HexMaster.Attendr.Notifications.Data.TableStorage/Entities/PushSubscriptionEntity.cs`: `CreatedAt`, `UpdatedAt`, etc. (`DateTime`) ⚠️
-  - `src/Notifications/HexMaster.Attendr.Notifications.Data.TableStorage/Entities/NotificationPreferencesEntity.cs`: `CreatedAt`, `UpdatedAt`, `DoNotDisturbUntil` (`DateTime`) ⚠️
+  - `src/Notifications/HexMaster.Attendr.Notifications.Data.TableStorage/Entities/NotificationEntity.cs`: `CreatedAt`, `ExpiresAt`, etc. (`DateTimeOffset`) ✅
+  - `src/Notifications/HexMaster.Attendr.Notifications.Data.TableStorage/Entities/PushSubscriptionEntity.cs`: `CreatedAt`, `UpdatedAt`, etc. (`DateTimeOffset`) ✅
+  - `src/Notifications/HexMaster.Attendr.Notifications.Data.TableStorage/Entities/NotificationPreferencesEntity.cs`: `CreatedAt`, `UpdatedAt`, `DoNotDisturbUntil` (`DateTimeOffset`) ✅
 - Domain models and abstractions:
-  - `src/Notifications/HexMaster.Attendr.Notifications/DomainModels/*.cs`: several `DateTime` properties (`CreatedAt`, `DeliveredAt`, `ExpiresAt`, `DoNotDisturbUntil`, etc.) ⚠️
-  - `src/Notifications/HexMaster.Attendr.Notifications.Abstractions/**/*.cs`: several `DateTime` in public contracts ⚠️
+  - `src/Notifications/HexMaster.Attendr.Notifications/DomainModels/*.cs`: all timestamp/instant properties (`DateTimeOffset`) ✅
+  - `src/Notifications/HexMaster.Attendr.Notifications.Abstractions/**/*.cs`: all public contracts use `DateTimeOffset` ✅
 
 ### Profiles
 - `src/Profiles/HexMaster.Attendr.Profiles.Abstractions/Dtos/ProfileTopicOccasionDto.cs`: `Date` (`DateTimeOffset`) ✅
@@ -147,12 +147,14 @@ This section lists known types/fields that currently carry date/time values, and
 - The spec is linked from `specs/index.md`.
 
 ## Test plan
-- Spec-only change (no code changes).
+- All existing unit tests updated to use `DateTimeOffset.UtcNow` / `DateTimeOffset` types.
+- Build verified: 0 compilation errors after all migrations.
+- Tests ran after each step commit.
 
 ## Rollout
 - Adopt conventions for all new work immediately.
 - Create follow-up tasks/specs per service to migrate remaining `DateTime` usages.
 
 ## Open questions
-- Should we introduce versioned integration events/DTOs for `DateTime` → `DateTimeOffset` migrations?
-- For presence/conference schedule “date-only” responses, should contracts use `DateOnly` or `DateTimeOffset` (at UTC midnight) for compatibility with current clients?
+- ~~Should we introduce versioned integration events/DTOs for `DateTime` → `DateTimeOffset` migrations?~~ Resolved: treated as internal breaking changes, all services updated together.
+- ~~For presence/conference schedule "date-only" responses, should contracts use `DateOnly` or `DateTimeOffset` (at UTC midnight) for compatibility with current clients?~~ Resolved: `GetMyConferences` response uses `DateOnly` for `StartDate`/`EndDate`; presentations use `DateTimeOffset` for `StartDateTime`/`EndDateTime`.

@@ -154,7 +154,7 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
             throw new InvalidOperationException($"Notification with ID '{notificationId}' was not found.");
         }
 
-        notification.ReadAt = DateTime.UtcNow;
+        notification.ReadAt = DateTimeOffset.UtcNow;
         await UpdateAsync(notification, cancellationToken);
     }
 
@@ -166,14 +166,14 @@ public sealed class TableStorageNotificationRepository : INotificationRepository
             throw new InvalidOperationException($"Notification with ID '{notificationId}' was not found.");
         }
 
-        notification.DeletedAt = DateTime.UtcNow;
+        notification.DeletedAt = DateTimeOffset.UtcNow;
         await UpdateAsync(notification, cancellationToken);
     }
 
     public async Task DeleteExpiredAsync(CancellationToken cancellationToken = default)
     {
         var tableClient = await GetTableClientAsync(cancellationToken);
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
 
         // Query for expired notifications
         var filter = $"ExpiresAt lt datetime'{now:yyyy-MM-ddTHH:mm:ssZ}'";

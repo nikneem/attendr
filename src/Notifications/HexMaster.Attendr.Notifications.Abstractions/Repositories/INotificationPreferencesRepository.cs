@@ -33,6 +33,6 @@ public interface INotificationPreferencesRepository
     /// </summary>
     Task UpdateDoNotDisturbAsync(
         Guid profileId,
-        DateTime? doNotDisturbUntil,
+        DateTimeOffset? doNotDisturbUntil,
         CancellationToken cancellationToken = default);
 }

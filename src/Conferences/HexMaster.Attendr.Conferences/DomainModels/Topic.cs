@@ -30,7 +30,7 @@ public sealed class Topic : DomainModel<Guid>
         string key,
         string name,
         bool isVisible,
-        DateTime createdOn)
+        DateTimeOffset createdOn)
         : base(id)
     {
         if (string.IsNullOrWhiteSpace(key))
@@ -58,7 +58,7 @@ public sealed class Topic : DomainModel<Guid>
     public static Topic Create(string key, string name)
     {
         var id = Guid.NewGuid();
-        return new Topic(id, key, name, isVisible: false, DateTime.UtcNow);
+        return new Topic(id, key, name, isVisible: false, DateTimeOffset.UtcNow);
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public sealed class Topic : DomainModel<Guid>
     public static Topic CreateManually(string key, string name)
     {
         var id = Guid.NewGuid();
-        return new Topic(id, key, name, isVisible: true, DateTime.UtcNow);
+        return new Topic(id, key, name, isVisible: true, DateTimeOffset.UtcNow);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public sealed class Topic : DomainModel<Guid>
         string key,
         string name,
         bool isVisible,
-        DateTime createdOn)
+        DateTimeOffset createdOn)
     {
         return new Topic(id, key, name, isVisible, createdOn);
     }

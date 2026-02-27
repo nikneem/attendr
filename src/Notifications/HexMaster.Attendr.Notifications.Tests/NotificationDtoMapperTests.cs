@@ -13,7 +13,7 @@ public sealed class NotificationDtoMapperTests
     [Fact]
     public void ToDto_MapsNotificationFields()
     {
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var notification = new Notification
         {
             Id = Guid.NewGuid(),
@@ -81,8 +81,8 @@ public sealed class NotificationDtoMapperTests
                     [NotificationChannel.Push] = true
                 }
             },
-            DoNotDisturbUntil = DateTime.UtcNow.AddHours(1),
-            CreatedAt = DateTime.UtcNow
+            DoNotDisturbUntil = DateTimeOffset.UtcNow.AddHours(1),
+            CreatedAt = DateTimeOffset.UtcNow
         };
 
         var dto = NotificationDtoMapper.ToDto(prefs);

@@ -21,15 +21,15 @@ public interface INotificationPreferences
     /// <summary>
     /// Global "do not disturb" mode. When set, temporarily disables all notifications.
     /// </summary>
-    DateTime? DoNotDisturbUntil { get; set; }
+    DateTimeOffset? DoNotDisturbUntil { get; set; }
 
     /// <summary>
     /// When these preferences were created.
     /// </summary>
-    DateTime CreatedAt { get; }
+    DateTimeOffset CreatedAt { get; }
 
     /// <summary>
     /// When these preferences were last updated.
     /// </summary>
-    DateTime? UpdatedAt { get; set; }
+    DateTimeOffset? UpdatedAt { get; set; }
 }

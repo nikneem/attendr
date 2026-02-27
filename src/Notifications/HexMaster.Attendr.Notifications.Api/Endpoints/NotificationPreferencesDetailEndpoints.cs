@@ -116,7 +116,7 @@ public static class NotificationPreferencesDetailEndpoints
         {
             ProfileId = profileId,
             TypeChannelPreferences = typeChannelPrefs,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow
         };
 
         await preferencesRepository.UpsertAsync(preferences);

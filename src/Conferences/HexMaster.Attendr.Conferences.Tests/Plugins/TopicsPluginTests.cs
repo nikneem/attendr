@@ -30,9 +30,9 @@ public class TopicsPluginTests
         // Arrange
         var topics = new List<Topic>
         {
-            Topic.FromPersisted(Guid.NewGuid(), "azure", "Azure", true, DateTime.UtcNow),
-            Topic.FromPersisted(Guid.NewGuid(), "dotnet", ".NET", true, DateTime.UtcNow),
-            Topic.FromPersisted(Guid.NewGuid(), "kubernetes", "Kubernetes", true, DateTime.UtcNow)
+            Topic.FromPersisted(Guid.NewGuid(), "azure", "Azure", true, DateTimeOffset.UtcNow),
+            Topic.FromPersisted(Guid.NewGuid(), "dotnet", ".NET", true, DateTimeOffset.UtcNow),
+            Topic.FromPersisted(Guid.NewGuid(), "kubernetes", "Kubernetes", true, DateTimeOffset.UtcNow)
         };
 
         _mockTopicsRepository
@@ -100,9 +100,9 @@ public class TopicsPluginTests
         // Arrange
         var topics = new List<Topic>
         {
-            Topic.FromPersisted(Guid.NewGuid(), "zulu", "Zulu", true, DateTime.UtcNow),
-            Topic.FromPersisted(Guid.NewGuid(), "alpha", "Alpha", true, DateTime.UtcNow),
-            Topic.FromPersisted(Guid.NewGuid(), "bravo", "Bravo", true, DateTime.UtcNow)
+            Topic.FromPersisted(Guid.NewGuid(), "zulu", "Zulu", true, DateTimeOffset.UtcNow),
+            Topic.FromPersisted(Guid.NewGuid(), "alpha", "Alpha", true, DateTimeOffset.UtcNow),
+            Topic.FromPersisted(Guid.NewGuid(), "bravo", "Bravo", true, DateTimeOffset.UtcNow)
         };
 
         _mockTopicsRepository

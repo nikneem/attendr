@@ -61,7 +61,7 @@ public sealed class UpdateProfileTopicRecommendationsCommandHandler : ICommandHa
             // Get all presentations for the profile
             var presentations = await _repository.GetByProfileAsync(command.ProfileId, cancellationToken);
 
-            var now = DateTime.UtcNow;
+            var now = DateTimeOffset.UtcNow;
             var updatedCount = 0;
 
             foreach (var presentation in presentations)

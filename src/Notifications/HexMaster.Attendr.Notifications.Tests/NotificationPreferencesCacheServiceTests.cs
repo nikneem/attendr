@@ -17,7 +17,7 @@ public sealed class NotificationPreferencesCacheServiceTests
         {
             ProfileId = profileId,
             TypeChannelPreferences = new Dictionary<string, Dictionary<Abstractions.Enums.NotificationChannel, bool>>(),
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow
         };
 
         var repository = new Mock<INotificationPreferencesRepository>();
@@ -44,7 +44,7 @@ public sealed class NotificationPreferencesCacheServiceTests
         {
             ProfileId = profileId,
             TypeChannelPreferences = new Dictionary<string, Dictionary<Abstractions.Enums.NotificationChannel, bool>>(),
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow
         };
 
         var repository = new Mock<INotificationPreferencesRepository>();
