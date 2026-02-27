@@ -1,9 +1,11 @@
+using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Conferences.Services;
 using HexMaster.Attendr.Conferences.Tests.Factories;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sessionize.Api.Client.Abstractions;
+using Sessionize.Api.Client.DataTransferObjects;
 
 namespace HexMaster.Attendr.Conferences.Tests.Services;
 
@@ -33,7 +35,7 @@ public class SessionizeSyncServiceTests
     {
         _conferenceRepositoryMock
             .Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((HexMaster.Attendr.Conferences.DomainModels.Conference?)null);
+            .ReturnsAsync((Conference?)null);
 
         var service = CreateService();
         var result = await service.SynchronizeConferenceAsync(Guid.NewGuid(), CancellationToken.None);
@@ -57,5 +59,37 @@ public class SessionizeSyncServiceTests
         Assert.Equal(conference.Speakers.Count, result.SpeakersCount);
         Assert.Equal(conference.Rooms.Count, result.RoomsCount);
         Assert.Equal(conference.Presentations.Count, result.PresentationsCount);
+    }
+
+    [Fact]
+    public async Task SynchronizeConferenceAsync_WithSessionizeSyncAndEmptyData_SyncsSuccessfully()
+    {
+        // Conference with Sessionize sync source
+        var syncSource = SynchronizationSource.CreateWithUrl(SynchronizationSourceType.Sessionize, "my-sessionize-api-key");
+        var conference = ConferenceFactory.CreatePersistedConference(synchronizationSource: syncSource);
+
+        _conferenceRepositoryMock
+            .Setup(r => r.GetByIdAsync(conference.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conference);
+
+        _conferenceRepositoryMock
+            .Setup(r => r.UpdateAsync(It.IsAny<Conference>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        // Sessionize returns no speakers or schedule
+        _sessionizeApiClientMock
+            .Setup(c => c.GetSpeakersListAsync(It.IsAny<string?>(), It.IsAny<CancellationToken?>()))
+            .ReturnsAsync(new List<SpeakerDetailsResponse>());
+
+        _sessionizeApiClientMock
+            .Setup(c => c.GetScheduleGridAsync(It.IsAny<string?>(), It.IsAny<CancellationToken?>()))
+            .ReturnsAsync(new List<ScheduleGridResponse>());
+
+        var service = CreateService();
+        var result = await service.SynchronizeConferenceAsync(conference.Id, CancellationToken.None);
+
+        Assert.NotNull(result);
+        Assert.Equal(conference.Id, result.ConferenceId);
+        _conferenceRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Conference>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
