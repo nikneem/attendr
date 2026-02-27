@@ -130,21 +130,21 @@ export class ConferenceEditPageComponent implements OnInit {
     private loadSpeakers(id: string): void {
         this.conferencesService.listSpeakers(id).subscribe({
             next: (s) => this.speakers.set(s),
-            error: () => {},
+            error: () => this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Failed to load speakers' }),
         });
     }
 
     private loadRooms(id: string): void {
         this.conferencesService.listRooms(id).subscribe({
             next: (r) => this.rooms.set(r),
-            error: () => {},
+            error: () => this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Failed to load rooms' }),
         });
     }
 
     private loadPresentations(id: string): void {
         this.conferencesService.listPresentations(id).subscribe({
             next: (p) => this.presentations.set(p),
-            error: () => {},
+            error: () => this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Failed to load presentations' }),
         });
     }
 
