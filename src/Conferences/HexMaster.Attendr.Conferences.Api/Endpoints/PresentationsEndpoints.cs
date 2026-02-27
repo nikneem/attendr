@@ -221,7 +221,4 @@ public static class PresentationsEndpoints
         ClaimsPrincipal user,
         CancellationToken cancellationToken)
         => EndpointHelpers.ResolveProfileAsync(profilesIntegration, user, cancellationToken);
-
-    private static bool IsAdminUser(ClaimsPrincipal user)
-        => EndpointHelpers.IsAdminUser(user);
 }

@@ -1,4 +1,5 @@
 using HexMaster.Attendr.Conferences.Api.Authorization;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.Profiles.Integrations.Extensions;
 using HexMaster.Attendr.Profiles.Integrations.Services;
 using System.Security.Claims;
@@ -20,7 +21,8 @@ internal static class EndpointHelpers
             if (Guid.TryParse(profile.ProfileId, out var id))
                 profileId = id;
         }
-        catch { }
+        catch (UnauthorizedException) { }
+        catch (ProfileNotFoundException) { }
         return (profileId, isAdmin);
     }
 
