@@ -42,7 +42,7 @@ public class GetConferenceQueryHandlerTests
             new List<SpeakerDto>(),
             new List<PresentationDto>());
 
-        _mockRepository.Setup(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<Guid?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(conferenceDetails);
 
         var query = new GetConferenceQuery(conferenceId);
@@ -54,7 +54,7 @@ public class GetConferenceQueryHandlerTests
         Assert.NotNull(result);
         Assert.Equal(conferenceId, result.Id);
         Assert.Equal("Test Conference", result.Title);
-        _mockRepository.Verify(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockRepository.Verify(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<Guid?>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class GetConferenceQueryHandlerTests
     {
         // Arrange
         var conferenceId = Guid.NewGuid();
-        _mockRepository.Setup(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<Guid?>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConferenceDetailsDto?)null);
 
         var query = new GetConferenceQuery(conferenceId);
@@ -72,7 +72,7 @@ public class GetConferenceQueryHandlerTests
 
         // Assert
         Assert.Null(result);
-        _mockRepository.Verify(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<CancellationToken>()), Times.Once);
+        _mockRepository.Verify(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<Guid?>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class GetConferenceQueryHandlerTests
     {
         // Arrange
         var conferenceId = Guid.NewGuid();
-        _mockRepository.Setup(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetDetailsByIdAsync(conferenceId, It.IsAny<Guid?>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Database error"));
 
         var query = new GetConferenceQuery(conferenceId);

@@ -47,6 +47,7 @@ public sealed class ListConferencesQueryHandlerTests
             1,
             PaginationConstants.DefaultPageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -65,6 +66,7 @@ public sealed class ListConferencesQueryHandlerTests
             1,
             PaginationConstants.DefaultPageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -85,6 +87,7 @@ public sealed class ListConferencesQueryHandlerTests
             1,
             PaginationConstants.DefaultPageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -101,6 +104,7 @@ public sealed class ListConferencesQueryHandlerTests
             1,
             PaginationConstants.DefaultPageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -122,6 +126,7 @@ public sealed class ListConferencesQueryHandlerTests
             2,
             pageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -140,6 +145,7 @@ public sealed class ListConferencesQueryHandlerTests
             2,
             pageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -156,6 +162,7 @@ public sealed class ListConferencesQueryHandlerTests
             1,
             PaginationConstants.DefaultPageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -172,6 +179,7 @@ public sealed class ListConferencesQueryHandlerTests
             1,
             PaginationConstants.DefaultPageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -199,6 +207,7 @@ public sealed class ListConferencesQueryHandlerTests
             1,
             PaginationConstants.DefaultPageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()))
             .ReturnsAsync((conferences, totalCount));
 
@@ -224,11 +233,49 @@ public sealed class ListConferencesQueryHandlerTests
             1,
             PaginationConstants.DefaultPageSize,
             false,
+            null,
             It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Database error"));
 
         // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             _handler.Handle(query, CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task Handle_WithCurrentProfileId_ShouldPassProfileIdToRepository()
+    {
+        // Arrange
+        var profileId = Guid.NewGuid();
+        var conferences = new List<HexMaster.Attendr.Conferences.DomainModels.Conference>
+        {
+            ConferenceFactory.CreatePersistedConference(createdByProfileId: profileId)
+        };
+        var totalCount = 1;
+        var query = new ListConferencesQuery(CurrentProfileId: profileId);
+
+        _mockRepository.Setup(x => x.ListConferencesAsync(
+            null,
+            1,
+            PaginationConstants.DefaultPageSize,
+            false,
+            profileId,
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync((conferences, totalCount));
+
+        // Act
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result.Conferences);
+
+        _mockRepository.Verify(x => x.ListConferencesAsync(
+            null,
+            1,
+            PaginationConstants.DefaultPageSize,
+            false,
+            profileId,
+            It.IsAny<CancellationToken>()), Times.Once);
     }
 }
