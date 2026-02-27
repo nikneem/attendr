@@ -29,7 +29,7 @@ internal sealed class PushSubscriptionEntity : ITableEntity
     public string P256dh { get; set; } = string.Empty;
     public string Auth { get; set; } = string.Empty;
     public string UserAgent { get; set; } = string.Empty;
-    public DateTime? ExpirationTime { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    public DateTimeOffset? ExpirationTime { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 }

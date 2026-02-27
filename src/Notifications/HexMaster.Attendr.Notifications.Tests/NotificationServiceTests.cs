@@ -43,7 +43,7 @@ public sealed class NotificationServiceTests
             Message = "message",
             StackKey = "stack-key",
             Count = 1,
-            CreatedAt = DateTime.UtcNow.AddMinutes(-1),
+            CreatedAt = DateTimeOffset.UtcNow.AddMinutes(-1),
             ChannelDeliveries = BuildChannelDeliveries()
         };
 
@@ -91,8 +91,8 @@ public sealed class NotificationServiceTests
                     [NotificationChannel.Push] = true
                 }
             },
-            DoNotDisturbUntil = DateTime.UtcNow.AddMinutes(5),
-            CreatedAt = DateTime.UtcNow.AddDays(-1)
+            DoNotDisturbUntil = DateTimeOffset.UtcNow.AddMinutes(5),
+            CreatedAt = DateTimeOffset.UtcNow.AddDays(-1)
         };
 
         var notificationRepository = new Mock<INotificationRepository>();
@@ -122,7 +122,7 @@ public sealed class NotificationServiceTests
         Assert.Equal(profileId, added!.ProfileId);
         Assert.Equal(type.Severity, added.Severity);
         Assert.NotNull(added.ExpiresAt);
-        Assert.InRange(added.ExpiresAt!.Value, DateTime.UtcNow.AddDays(29.5), DateTime.UtcNow.AddDays(30.5));
+        Assert.InRange(added.ExpiresAt!.Value, DateTimeOffset.UtcNow.AddDays(29.5), DateTimeOffset.UtcNow.AddDays(30.5));
         Assert.Equal(3, added.ChannelDeliveries.Count);
         Assert.All(added.ChannelDeliveries.Values, c => Assert.Equal(DeliveryStatus.Skipped, c.Status));
         Assert.False(added.ChannelDeliveries[NotificationChannel.Email].Enabled);
@@ -199,7 +199,7 @@ public sealed class NotificationServiceTests
                 Severity = NotificationSeverity.Info,
                 Title = "Test 1",
                 Message = "Message 1",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTimeOffset.UtcNow,
                 ChannelDeliveries = BuildChannelDeliveries()
             },
             new Notification
@@ -210,7 +210,7 @@ public sealed class NotificationServiceTests
                 Severity = NotificationSeverity.Info,
                 Title = "Test 2",
                 Message = "Message 2",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTimeOffset.UtcNow,
                 ChannelDeliveries = BuildChannelDeliveries()
             }
         };
@@ -244,7 +244,7 @@ public sealed class NotificationServiceTests
             Severity = NotificationSeverity.Info,
             Title = "Test Notification",
             Message = "Test Message",
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTimeOffset.UtcNow,
             ChannelDeliveries = BuildChannelDeliveries()
         };
 
@@ -341,7 +341,7 @@ public sealed class NotificationServiceTests
                 Severity = NotificationSeverity.Info,
                 Title = "Test 1",
                 Message = "Message 1",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTimeOffset.UtcNow,
                 ChannelDeliveries = BuildChannelDeliveries()
             },
             new Notification
@@ -352,7 +352,7 @@ public sealed class NotificationServiceTests
                 Severity = NotificationSeverity.Info,
                 Title = "Test 2",
                 Message = "Message 2",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTimeOffset.UtcNow,
                 ChannelDeliveries = BuildChannelDeliveries()
             },
             new Notification
@@ -363,7 +363,7 @@ public sealed class NotificationServiceTests
                 Severity = NotificationSeverity.Info,
                 Title = "Test 3",
                 Message = "Message 3",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTimeOffset.UtcNow,
                 ChannelDeliveries = BuildChannelDeliveries()
             }
         };

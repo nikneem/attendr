@@ -61,8 +61,8 @@ public static class PushSubscriptionsEndpoints
             Auth = request.Auth,
             UserAgent = request.UserAgent ?? string.Empty,
             ExpirationTime = request.ExpirationTimeUtc,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
+            UpdatedAt = DateTimeOffset.UtcNow
         };
 
         await repository.UpsertAsync(subscription, httpContext.RequestAborted);
@@ -110,7 +110,7 @@ public static class PushSubscriptionsEndpoints
         string P256dh,
         string Auth,
         string? UserAgent,
-        DateTime? ExpirationTimeUtc);
+        DateTimeOffset? ExpirationTimeUtc);
 
     public record TestNotificationResponse(int SentCount, string Message);
 

@@ -34,11 +34,11 @@ internal sealed class NotificationEntity : ITableEntity
     public int Count { get; set; } = 1;
 
     // Timestamps
-    public DateTime CreatedAt { get; set; }
-    public DateTime? LastOccurredAt { get; set; }
-    public DateTime? ReadAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
-    public DateTime? ExpiresAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? LastOccurredAt { get; set; }
+    public DateTimeOffset? ReadAt { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
+    public DateTimeOffset? ExpiresAt { get; set; }
 
     // Channel delivery info stored as JSON strings
     public string ChannelDeliveriesJson { get; set; } = string.Empty;

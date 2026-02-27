@@ -65,27 +65,27 @@ public interface INotification
     /// <summary>
     /// When the notification was created.
     /// </summary>
-    DateTime CreatedAt { get; }
+    DateTimeOffset CreatedAt { get; }
 
     /// <summary>
     /// When the notification was last updated (for stacking).
     /// </summary>
-    DateTime? LastOccurredAt { get; set; }
+    DateTimeOffset? LastOccurredAt { get; set; }
 
     /// <summary>
     /// When the notification was marked as read (null if unread).
     /// </summary>
-    DateTime? ReadAt { get; set; }
+    DateTimeOffset? ReadAt { get; set; }
 
     /// <summary>
     /// When the notification was marked as deleted (null if not deleted).
     /// </summary>
-    DateTime? DeletedAt { get; set; }
+    DateTimeOffset? DeletedAt { get; set; }
 
     /// <summary>
     /// When the notification expires and should be cleaned up.
     /// </summary>
-    DateTime? ExpiresAt { get; }
+    DateTimeOffset? ExpiresAt { get; }
 
     /// <summary>
     /// Delivery status per channel.
@@ -111,7 +111,7 @@ public interface IChannelDeliveryInfo
     /// <summary>
     /// When delivery was attempted.
     /// </summary>
-    DateTime? DeliveredAt { get; set; }
+    DateTimeOffset? DeliveredAt { get; set; }
 
     /// <summary>
     /// Error message if delivery failed.

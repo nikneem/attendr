@@ -27,8 +27,8 @@ public sealed record ScheduledPresentationResponse(
     string Title,
     string Abstract,
     string Room,
-    DateTime StartDateTime,
-    DateTime EndDateTime,
+    DateTimeOffset StartDateTime,
+    DateTimeOffset EndDateTime,
     IReadOnlyCollection<ScheduledSpeakerResponse> Speakers,
     bool IsPreferred);
 

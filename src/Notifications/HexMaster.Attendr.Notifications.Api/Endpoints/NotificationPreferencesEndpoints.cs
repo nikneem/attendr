@@ -56,7 +56,7 @@ public static class NotificationPreferencesEndpoints
                 TypeChannelPreferences = allTypes.ToDictionary(
                     t => t.TypeKey,
                     t => t.DefaultChannelSettings),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeOffset.UtcNow
             };
 
             return TypedResults.Ok(NotificationDtoMapper.ToDto(defaultPrefs));
@@ -92,5 +92,5 @@ public static class NotificationPreferencesEndpoints
     }
 
     public record UpdatePreferencesRequest(Dictionary<string, Dictionary<string, bool>> TypeChannelPreferences);
-    public record SetDoNotDisturbRequest(DateTime? DoNotDisturbUntil);
+    public record SetDoNotDisturbRequest(DateTimeOffset? DoNotDisturbUntil);
 }

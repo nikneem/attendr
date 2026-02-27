@@ -13,12 +13,12 @@ public sealed class NotificationPreferencesDetailDto
     /// <summary>
     /// When the user's preferences were last updated.
     /// </summary>
-    public DateTime? UpdatedAt { get; init; }
+    public DateTimeOffset? UpdatedAt { get; init; }
 
     /// <summary>
     /// Do not disturb until this time (null if not active).
     /// </summary>
-    public DateTime? DoNotDisturbUntil { get; init; }
+    public DateTimeOffset? DoNotDisturbUntil { get; init; }
 
     /// <summary>
     /// Detailed preferences for each notification type.

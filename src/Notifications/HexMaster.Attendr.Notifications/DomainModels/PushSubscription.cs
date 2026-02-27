@@ -12,7 +12,7 @@ public sealed class PushSubscription : IPushSubscription
     public required string P256dh { get; init; }
     public required string Auth { get; init; }
     public required string UserAgent { get; init; }
-    public DateTime? ExpirationTime { get; init; }
-    public required DateTime CreatedAt { get; init; }
-    public DateTime? UpdatedAt { get; init; }
+    public DateTimeOffset? ExpirationTime { get; init; }
+    public required DateTimeOffset CreatedAt { get; init; }
+    public DateTimeOffset? UpdatedAt { get; init; }
 }

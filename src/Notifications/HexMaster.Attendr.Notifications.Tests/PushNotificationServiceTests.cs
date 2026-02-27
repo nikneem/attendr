@@ -90,7 +90,7 @@ public sealed class PushNotificationServiceTests
         P256dh = "BOr30YIOCwVDDOZPA7eGRIDcHruM3aMcMBXNIN1qNbfXDnpa9eKJeNEqXWiwxupCSvJzpuG1HsRvNcredi7hFgU",
         Auth = "y6x7lTi27Ck7uw1Z",
         UserAgent = "Chrome",
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = DateTimeOffset.UtcNow
     };
 
     private sealed class FakeHandler : HttpMessageHandler

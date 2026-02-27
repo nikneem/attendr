@@ -10,7 +10,7 @@ public interface IPushSubscription
     string P256dh { get; }
     string Auth { get; }
     string UserAgent { get; }
-    DateTime? ExpirationTime { get; }
-    DateTime CreatedAt { get; }
-    DateTime? UpdatedAt { get; }
+    DateTimeOffset? ExpirationTime { get; }
+    DateTimeOffset CreatedAt { get; }
+    DateTimeOffset? UpdatedAt { get; }
 }

@@ -50,7 +50,7 @@ public sealed class NotificationService : INotificationService
         var preferences = await _preferencesRepository.GetByProfileIdAsync(profileId, cancellationToken);
 
         // Check if user has DND enabled
-        if (preferences?.DoNotDisturbUntil.HasValue == true && preferences.DoNotDisturbUntil.Value > DateTime.UtcNow)
+        if (preferences?.DoNotDisturbUntil.HasValue == true && preferences.DoNotDisturbUntil.Value > DateTimeOffset.UtcNow)
         {
             _logger.LogInformation(
                 "Profile {ProfileId} has Do Not Disturb enabled until {Until}, notification will be created but marked as skipped",
@@ -73,7 +73,7 @@ public sealed class NotificationService : INotificationService
                     typeKey, profileId, existingNotification.Count + 1);
 
                 existingNotification.Count++;
-                existingNotification.LastOccurredAt = DateTime.UtcNow;
+                existingNotification.LastOccurredAt = DateTimeOffset.UtcNow;
                 // Note: Message is immutable (init-only), keeping the original message from first occurrence
 
                 await _notificationRepository.UpdateAsync(existingNotification, cancellationToken);
@@ -95,8 +95,8 @@ public sealed class NotificationService : INotificationService
             EntityRefs = entityRefs,
             StackKey = stackKey,
             Count = 1,
-            CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(30), // Default 30-day retention
+            CreatedAt = DateTimeOffset.UtcNow,
+            ExpiresAt = DateTimeOffset.UtcNow.AddDays(30), // Default 30-day retention
             ChannelDeliveries = channelSettings
         };
 
@@ -187,7 +187,7 @@ public sealed class NotificationService : INotificationService
 
             // If DND is active, mark as skipped
             var status = DeliveryStatus.Pending;
-            if (preferences?.DoNotDisturbUntil.HasValue == true && preferences.DoNotDisturbUntil.Value > DateTime.UtcNow)
+            if (preferences?.DoNotDisturbUntil.HasValue == true && preferences.DoNotDisturbUntil.Value > DateTimeOffset.UtcNow)
             {
                 status = DeliveryStatus.Skipped;
             }

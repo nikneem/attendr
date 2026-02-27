@@ -33,7 +33,7 @@ public sealed class EmailNotificationServiceTests
         Severity = NotificationSeverity.Info,
         Title = "title",
         Message = "message",
-        CreatedAt = DateTime.UtcNow,
+        CreatedAt = DateTimeOffset.UtcNow,
         ChannelDeliveries = new Dictionary<NotificationChannel, ChannelDeliveryInfo>()
     };
 }

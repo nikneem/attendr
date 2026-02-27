@@ -74,14 +74,14 @@ public sealed class TableStorageNotificationPreferencesRepository : INotificatio
                 {
                     [typeKey] = channelSettings
                 },
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeOffset.UtcNow
             };
         }
         else
         {
             // Update existing preferences
             preferences.TypeChannelPreferences[typeKey] = channelSettings;
-            preferences.UpdatedAt = DateTime.UtcNow;
+            preferences.UpdatedAt = DateTimeOffset.UtcNow;
         }
 
         await UpsertAsync(preferences, cancellationToken);
@@ -89,7 +89,7 @@ public sealed class TableStorageNotificationPreferencesRepository : INotificatio
 
     public async Task UpdateDoNotDisturbAsync(
         Guid profileId,
-        DateTime? doNotDisturbUntil,
+        DateTimeOffset? doNotDisturbUntil,
         CancellationToken cancellationToken = default)
     {
         var preferences = await GetByProfileIdAsync(profileId, cancellationToken);
@@ -102,13 +102,13 @@ public sealed class TableStorageNotificationPreferencesRepository : INotificatio
                 ProfileId = profileId,
                 TypeChannelPreferences = new Dictionary<string, Dictionary<NotificationChannel, bool>>(),
                 DoNotDisturbUntil = doNotDisturbUntil,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeOffset.UtcNow
             };
         }
         else
         {
             preferences.DoNotDisturbUntil = doNotDisturbUntil;
-            preferences.UpdatedAt = DateTime.UtcNow;
+            preferences.UpdatedAt = DateTimeOffset.UtcNow;
         }
 
         await UpsertAsync(preferences, cancellationToken);

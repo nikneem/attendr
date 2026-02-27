@@ -43,8 +43,8 @@ public sealed class ProcessNotificationTriggerCommandHandlerTests
             {
                 ProfileId = Guid.NewGuid(),
                 TypeChannelPreferences = new Dictionary<string, Dictionary<NotificationChannel, bool>>(),
-                DoNotDisturbUntil = DateTime.UtcNow.AddMinutes(10),
-                CreatedAt = DateTime.UtcNow
+                DoNotDisturbUntil = DateTimeOffset.UtcNow.AddMinutes(10),
+                CreatedAt = DateTimeOffset.UtcNow
             });
 
         var handler = BuildHandler(notificationService, typeService, preferencesCache);
@@ -68,7 +68,7 @@ public sealed class ProcessNotificationTriggerCommandHandlerTests
             Severity = NotificationSeverity.Info,
             Title = "title",
             Message = "message",
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTimeOffset.UtcNow,
             ChannelDeliveries = new Dictionary<NotificationChannel, ChannelDeliveryInfo>()
         };
 
@@ -94,7 +94,7 @@ public sealed class ProcessNotificationTriggerCommandHandlerTests
                         [NotificationChannel.Push] = true
                     }
                 },
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeOffset.UtcNow
             });
 
         var profileService = new Mock<IProfilesIntegrationService>();
