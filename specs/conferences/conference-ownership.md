@@ -64,10 +64,13 @@ When a conference is created, the `profileId` of the creating user is stored as 
 - The query handler receives the (optional) `currentProfileId` and applies the override.
 - Unauthenticated requests continue to receive only visible conferences.
 
-### Get single conference — owner visibility override
+### Get single conference — owner and admin visibility override
 
 - **Endpoint:** `GET /api/conferences/{conferenceId}`
-- Returns the conference if `IsVisible = true` OR `CreatedByProfileId = @currentProfileId`.
+- Returns the conference if any of the following is true:
+  - `IsVisible = true` (publicly published), **or**
+  - `CreatedByProfileId = @currentProfileId` (caller is the owner), **or**
+  - The caller holds the `admin:attendr` permission (admins can always view any conference regardless of visibility).
 - Returns `404 Not Found` to all other callers when `IsVisible = false`, to avoid information leakage.
 
 ### Block visibility changes by owner
