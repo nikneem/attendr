@@ -1,6 +1,21 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
 using HexMaster.Attendr.Conferences.Abstractions.Services;
 using HexMaster.Attendr.Conferences.Features.CreateConference;
+using HexMaster.Attendr.Conferences.Features.Speakers.ListSpeakers;
+using HexMaster.Attendr.Conferences.Features.Speakers.GetSpeaker;
+using HexMaster.Attendr.Conferences.Features.Speakers.CreateSpeaker;
+using HexMaster.Attendr.Conferences.Features.Speakers.UpdateSpeaker;
+using HexMaster.Attendr.Conferences.Features.Speakers.DeleteSpeaker;
+using HexMaster.Attendr.Conferences.Features.Rooms.ListRooms;
+using HexMaster.Attendr.Conferences.Features.Rooms.GetRoom;
+using HexMaster.Attendr.Conferences.Features.Rooms.CreateRoom;
+using HexMaster.Attendr.Conferences.Features.Rooms.UpdateRoom;
+using HexMaster.Attendr.Conferences.Features.Rooms.DeleteRoom;
+using HexMaster.Attendr.Conferences.Features.Presentations.ListPresentations;
+using HexMaster.Attendr.Conferences.Features.Presentations.GetPresentation;
+using HexMaster.Attendr.Conferences.Features.Presentations.CreatePresentation;
+using HexMaster.Attendr.Conferences.Features.Presentations.UpdatePresentation;
+using HexMaster.Attendr.Conferences.Features.Presentations.DeletePresentation;
 using HexMaster.Attendr.Conferences.Features.DeleteConference;
 using HexMaster.Attendr.Conferences.Features.FollowConference;
 using HexMaster.Attendr.Conferences.Features.GetConference;
@@ -57,6 +72,27 @@ public static class ServiceCollectionExtensions
         // Register topic query handlers
         services.AddScoped<IQueryHandler<GetTopicQuery, TopicDto?>, GetTopicQueryHandler>();
         services.AddScoped<IQueryHandler<ListTopicsQuery, ListTopicsResult>, ListTopicsQueryHandler>();
+
+        // Register speaker handlers
+        services.AddScoped<IQueryHandler<ListSpeakersQuery, IReadOnlyList<ConferenceSpeakerDto>>, ListSpeakersQueryHandler>();
+        services.AddScoped<IQueryHandler<GetSpeakerQuery, ConferenceSpeakerDto?>, GetSpeakerQueryHandler>();
+        services.AddScoped<ICommandHandler<CreateSpeakerCommand, ConferenceSpeakerDto>, CreateSpeakerCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateSpeakerCommand, ConferenceSpeakerDto>, UpdateSpeakerCommandHandler>();
+        services.AddScoped<ICommandHandler<DeleteSpeakerCommand, bool>, DeleteSpeakerCommandHandler>();
+
+        // Register room handlers
+        services.AddScoped<IQueryHandler<ListRoomsQuery, IReadOnlyList<ConferenceRoomDto>>, ListRoomsQueryHandler>();
+        services.AddScoped<IQueryHandler<GetRoomQuery, ConferenceRoomDto?>, GetRoomQueryHandler>();
+        services.AddScoped<ICommandHandler<CreateRoomCommand, ConferenceRoomDto>, CreateRoomCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateRoomCommand, ConferenceRoomDto>, UpdateRoomCommandHandler>();
+        services.AddScoped<ICommandHandler<DeleteRoomCommand, bool>, DeleteRoomCommandHandler>();
+
+        // Register presentation handlers
+        services.AddScoped<IQueryHandler<ListPresentationsQuery, IReadOnlyList<ConferencePresentationDto>>, ListPresentationsQueryHandler>();
+        services.AddScoped<IQueryHandler<GetPresentationQuery, ConferencePresentationDto?>, GetPresentationQueryHandler>();
+        services.AddScoped<ICommandHandler<CreatePresentationCommand, ConferencePresentationDto>, CreatePresentationCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdatePresentationCommand, ConferencePresentationDto>, UpdatePresentationCommandHandler>();
+        services.AddScoped<ICommandHandler<DeletePresentationCommand, bool>, DeletePresentationCommandHandler>();
 
         return services;
     }
