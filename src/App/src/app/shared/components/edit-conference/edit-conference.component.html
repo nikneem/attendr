@@ -38,11 +38,20 @@
             [showIcon]="true" />
     </div>
 
+    @if (isAdmin()) {
     <div class="form-field">
         <label for="isVisible">{{ 'EDIT_CONFERENCE.VISIBILITY_LABEL' | translate }}</label>
         <p-toggleSwitch [(ngModel)]="isVisible" inputId="isVisible" name="isVisible" [disabled]="isUpdating" />
         <small class="visibility-hint">{{ 'EDIT_CONFERENCE.VISIBILITY_HINT' | translate }}</small>
     </div>
+    } @else if (!conference().isVisible) {
+    <div class="form-field visibility-readonly">
+        <span class="unpublished-status">
+            <i class="pi pi-eye-slash"></i>
+            {{ 'EDIT_CONFERENCE.UNPUBLISHED_STATUS' | translate }}
+        </span>
+    </div>
+    }
 
     <div class="sync-source-section">
         <div class="checkbox-field">

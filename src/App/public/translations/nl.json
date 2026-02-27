@@ -218,7 +218,8 @@
     "ADD_FIRST_CONFERENCE": "Voeg Uw Eerste Conferentie Toe",
     "CREATE_DIALOG_HEADER": "Nieuwe Conferentie Aanmaken",
     "CONFERENCE_CREATED_HEADER": "Conferentie Aangemaakt",
-    "HIDDEN_TOOLTIP": "Verborgen Conferentie"
+    "HIDDEN_TOOLTIP": "Verborgen Conferentie",
+    "UNPUBLISHED_BADGE": "Niet gepubliceerd"
   },
   "CONFERENCE_DETAILS": {
     "LOADING": "Conferentiedetails laden...",
@@ -273,6 +274,7 @@
     "DATE_RANGE_PLACEHOLDER": "Selecteer datumbereik",
     "VISIBILITY_LABEL": "Conferentiezichtbaarheid",
     "VISIBILITY_HINT": "Schakel in om deze conferentie zichtbaar te maken voor alle gebruikers",
+    "UNPUBLISHED_STATUS": "Deze conferentie is nog niet gepubliceerd en is alleen zichtbaar voor jou",
     "SYNC_SOURCE_LABEL": "Synchronisatiebron inschakelen",
     "SOURCE_TYPE_LABEL": "Brontype",
     "SOURCE_TYPE_PLACEHOLDER": "Selecteer brontype",

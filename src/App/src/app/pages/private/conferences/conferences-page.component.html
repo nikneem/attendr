@@ -37,8 +37,9 @@
                         <h3 class="visual-title" [pTooltip]="conference.title" tooltipPosition="bottom">{{
                             conference.title }}</h3>
                         @if (!conference.isVisible) {
-                        <i class="pi pi-eye-slash hidden-icon" [pTooltip]="'CONFERENCES.HIDDEN_TOOLTIP' | translate"
-                            tooltipPosition="bottom"></i>
+                        <span class="unpublished-badge" [title]="'CONFERENCES.HIDDEN_TOOLTIP' | translate">
+                            {{ 'CONFERENCES.UNPUBLISHED_BADGE' | translate }}
+                        </span>
                         }
                     </div>
                 </div>

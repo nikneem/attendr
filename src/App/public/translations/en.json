@@ -218,7 +218,8 @@
     "ADD_FIRST_CONFERENCE": "Add Your First Conference",
     "CREATE_DIALOG_HEADER": "Create New Conference",
     "CONFERENCE_CREATED_HEADER": "Conference Created",
-    "HIDDEN_TOOLTIP": "Hidden Conference"
+    "HIDDEN_TOOLTIP": "Hidden Conference",
+    "UNPUBLISHED_BADGE": "Unpublished"
   },
   "CONFERENCE_DETAILS": {
     "LOADING": "Loading conference details...",
@@ -273,6 +274,7 @@
     "DATE_RANGE_PLACEHOLDER": "Select date range",
     "VISIBILITY_LABEL": "Conference Visibility",
     "VISIBILITY_HINT": "Toggle to make this conference visible to all users",
+    "UNPUBLISHED_STATUS": "This conference is not yet published and is only visible to you",
     "SYNC_SOURCE_LABEL": "Enable synchronization source",
     "SOURCE_TYPE_LABEL": "Source Type",
     "SOURCE_TYPE_PLACEHOLDER": "Select source type",
