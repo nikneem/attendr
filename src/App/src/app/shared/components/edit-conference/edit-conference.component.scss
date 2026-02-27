@@ -99,4 +99,19 @@
         color: var(--text-color-secondary);
         font-size: 0.875rem;
     }
+
+    .visibility-readonly {
+        .unpublished-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ef4444;
+            font-size: 0.875rem;
+            font-weight: 500;
+
+            i {
+                font-size: 1rem;
+            }
+        }
+    }
 }

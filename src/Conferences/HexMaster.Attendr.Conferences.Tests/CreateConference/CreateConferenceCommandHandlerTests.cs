@@ -182,4 +182,37 @@ public class CreateConferenceCommandHandlerTests
         Assert.Equal(command.StartDate, publishedEvent.StartDate);
         Assert.Equal(command.EndDate, publishedEvent.EndDate);
     }
+
+    [Fact]
+    public async Task Handle_WithCreatedByProfileId_ShouldStoreOwnerOnConference()
+    {
+        // Arrange
+        var ownerProfileId = Guid.NewGuid();
+        var startDate = DateOnly.FromDateTime(_faker.Date.Future());
+        var endDate = startDate.AddDays(3);
+        var command = new CreateConferenceCommand(
+            _faker.Company.CompanyName() + " Conference",
+            _faker.Address.City(),
+            _faker.Address.Country(),
+            null,
+            startDate,
+            endDate,
+            null,
+            ownerProfileId);
+
+        Conference? capturedConference = null;
+        _mockRepository.Setup(x => x.AddAsync(It.IsAny<Conference>(), It.IsAny<CancellationToken>()))
+            .Callback<Conference, CancellationToken>((conf, ct) => capturedConference = conf)
+            .Returns(Task.CompletedTask);
+
+        _mockEventPublisher.Setup(x => x.PublishAsync(It.IsAny<ConferenceCreatedEvent>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(capturedConference);
+        Assert.Equal(ownerProfileId, capturedConference!.CreatedByProfileId);
+    }
 }

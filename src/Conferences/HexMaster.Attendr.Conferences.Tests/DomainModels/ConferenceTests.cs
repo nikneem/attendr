@@ -302,4 +302,62 @@ public class ConferenceTests
             conference.UpdateDetails(null!, "City", "Country", startDate, endDate));
         Assert.Contains("title", exception.Message.ToLower());
     }
+
+    [Fact]
+    public void Create_WithValidOwnerProfileId_ShouldSetCreatedByProfileId()
+    {
+        // Arrange
+        var profileId = Guid.NewGuid();
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1));
+        var endDate = startDate.AddDays(3);
+
+        // Act
+        var conference = Conference.Create("Title", "City", "Country", startDate, endDate, createdByProfileId: profileId);
+
+        // Assert
+        Assert.Equal(profileId, conference.CreatedByProfileId);
+    }
+
+    [Fact]
+    public void Create_WithEmptyOwnerProfileId_ShouldThrowArgumentException()
+    {
+        // Arrange
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1));
+        var endDate = startDate.AddDays(3);
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() =>
+            Conference.Create("Title", "City", "Country", startDate, endDate, createdByProfileId: Guid.Empty));
+        Assert.Contains("CreatedByProfileId", exception.Message);
+    }
+
+    [Fact]
+    public void Create_WithNullOwnerProfileId_ShouldLeaveCreatedByProfileIdNull()
+    {
+        // Arrange
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1));
+        var endDate = startDate.AddDays(3);
+
+        // Act
+        var conference = Conference.Create("Title", "City", "Country", startDate, endDate);
+
+        // Assert
+        Assert.Null(conference.CreatedByProfileId);
+    }
+
+    [Fact]
+    public void FromPersisted_WithOwnerProfileId_ShouldSetCreatedByProfileId()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var profileId = Guid.NewGuid();
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1));
+        var endDate = startDate.AddDays(3);
+
+        // Act
+        var conference = Conference.FromPersisted(id, "Title", "City", "Country", startDate, endDate, createdByProfileId: profileId);
+
+        // Assert
+        Assert.Equal(profileId, conference.CreatedByProfileId);
+    }
 }

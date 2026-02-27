@@ -20,7 +20,8 @@ public static class ConferenceFactory
         DateOnly? startDate = null,
         DateOnly? endDate = null,
         string? imageUrl = null,
-        SynchronizationSource? synchronizationSource = null)
+        SynchronizationSource? synchronizationSource = null,
+        Guid? createdByProfileId = null)
     {
         var start = startDate ?? DateOnly.FromDateTime(Faker.Date.Future());
         var end = endDate ?? start.AddDays(Faker.Random.Int(1, 5));
@@ -32,7 +33,8 @@ public static class ConferenceFactory
             start,
             end,
             imageUrl ?? (Faker.Random.Bool() ? Faker.Internet.Url() : null),
-            synchronizationSource
+            synchronizationSource,
+            createdByProfileId
         );
     }
 
@@ -47,7 +49,8 @@ public static class ConferenceFactory
         DateOnly? startDate = null,
         DateOnly? endDate = null,
         string? imageUrl = null,
-        SynchronizationSource? synchronizationSource = null)
+        SynchronizationSource? synchronizationSource = null,
+        Guid? createdByProfileId = null)
     {
         var start = startDate ?? DateOnly.FromDateTime(Faker.Date.Future());
         var end = endDate ?? start.AddDays(Faker.Random.Int(1, 5));
@@ -61,7 +64,8 @@ public static class ConferenceFactory
             end,
             imageUrl ?? (Faker.Random.Bool() ? Faker.Internet.Url() : null),
             false,
-            synchronizationSource
+            synchronizationSource,
+            createdByProfileId
         );
     }
 

@@ -25,11 +25,14 @@ public interface IConferenceRepository
 
     /// <summary>
     /// Retrieves conference details by its ID as a DTO (for read operations).
+    /// Returns the conference if visible OR if owned by the requesting user.
     /// </summary>
     /// <param name="id">The conference ID.</param>
+    /// <param name="currentProfileId">Optional profile ID of the requesting user for owner visibility override.</param>
+    /// <param name="isAdmin">Whether the requesting user has admin privileges; admins can always view unpublished conferences.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The conference details DTO if found; otherwise, null.</returns>
-    Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    /// <returns>The conference details DTO if found and accessible; otherwise, null.</returns>
+    Task<ConferenceDetailsDto?> GetDetailsByIdAsync(Guid id, Guid? currentProfileId = null, bool isAdmin = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing conference in the repository.
@@ -68,11 +71,13 @@ public interface IConferenceRepository
     /// <summary>
     /// Lists conferences with optional search and pagination.
     /// Only returns conferences that have not ended (EndDate >= today).
+    /// Always includes conferences owned by currentProfileId regardless of visibility.
     /// </summary>
     /// <param name="searchQuery">Optional search query to filter by title, city, or country.</param>
     /// <param name="pageNumber">The page number (1-based).</param>
     /// <param name="pageSize">The number of items per page.</param>
     /// <param name="showHidden">Whether to include hidden conferences (IsVisible = false). Defaults to false.</param>
+    /// <param name="currentProfileId">Optional profile ID of the requesting user to apply owner visibility override.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A tuple containing the list of conferences and the total count.</returns>
     Task<(List<Conference> Conferences, int TotalCount)> ListConferencesAsync(
@@ -80,6 +85,7 @@ public interface IConferenceRepository
         int pageNumber,
         int pageSize,
         bool showHidden = false,
+        Guid? currentProfileId = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>

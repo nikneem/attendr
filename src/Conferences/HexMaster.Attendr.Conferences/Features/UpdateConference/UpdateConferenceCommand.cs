@@ -15,6 +15,8 @@ namespace HexMaster.Attendr.Conferences.Features.UpdateConference;
 /// <param name="EndDate">The updated end date of the conference.</param>
 /// <param name="IsVisible">Whether the conference should be visible to users.</param>
 /// <param name="SynchronizationSource">Optional synchronization source information.</param>
+/// <param name="RequestingProfileId">The profile ID of the user making the request. Used for ownership checks.</param>
+/// <param name="IsAdmin">Whether the requesting user has admin permissions.</param>
 public sealed record UpdateConferenceCommand(
     Guid Id,
     string Title,
@@ -24,4 +26,6 @@ public sealed record UpdateConferenceCommand(
     DateOnly StartDate,
     DateOnly EndDate,
     bool? IsVisible,
-    SynchronizationSourceDto? SynchronizationSource) : IAttendrCommand;
+    SynchronizationSourceDto? SynchronizationSource,
+    Guid? RequestingProfileId = null,
+    bool IsAdmin = false) : IAttendrCommand;

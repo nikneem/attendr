@@ -102,7 +102,7 @@
         </div>
     </div>
 
-    <p-dialog [header]="'CONFERENCES.EDIT_DIALOG_HEADER' | translate" [(visible)]="showEditDialog" [modal]="true"
+    <p-dialog [header]="'CONFERENCE_DETAILS.EDIT_CONFERENCE' | translate" [(visible)]="showEditDialog" [modal]="true"
         [style]="{ width: '90vw', 'max-width': '600px' }" [draggable]="false" [resizable]="false">
         <attn-edit-conference [conference]="conference" [isAdmin]="profileStore.isAdmin()"
             (conferenceUpdated)="onConferenceUpdated()" (conferenceDeleted)="confirmDeleteConference()" />

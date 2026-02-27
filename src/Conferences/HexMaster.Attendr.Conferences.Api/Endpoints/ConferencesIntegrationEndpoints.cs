@@ -38,8 +38,8 @@ public static class ConferencesIntegrationEndpoints
     {
         try
         {
-            var conference = await repository.GetDetailsByIdAsync(id, cancellationToken);
-            
+            var conference = await repository.GetDetailsByIdAsync(id, null, false, cancellationToken);
+
             if (conference is null)
             {
                 return Results.NotFound();
@@ -61,8 +61,8 @@ public static class ConferencesIntegrationEndpoints
     {
         try
         {
-            var conference = await repository.GetDetailsByIdAsync(conferenceId, cancellationToken);
-            
+            var conference = await repository.GetDetailsByIdAsync(conferenceId, null, false, cancellationToken);
+
             if (conference is null)
             {
                 return Results.NotFound();

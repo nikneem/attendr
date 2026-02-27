@@ -4,6 +4,7 @@ using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Conferences.Tests.Factories;
 using HexMaster.Attendr.Conferences.Tests.Helpers;
 using HexMaster.Attendr.Conferences.Features.UpdateConference;
+using HexMaster.Attendr.Core.Exceptions;
 using HexMaster.Attendr.IntegrationEvents.Events.Conferences;
 using HexMaster.Attendr.IntegrationEvents.Services;
 using Microsoft.Extensions.Logging;
@@ -208,5 +209,74 @@ public class UpdateConferenceCommandHandlerTests
         Assert.NotNull(publishedEvent);
         Assert.Equal(conference.Id, publishedEvent.ConferenceId);
         Assert.Equal(command.Title, publishedEvent.Title);
+    }
+
+    [Fact]
+    public async Task Handle_WhenIsVisibleSetAndNotAdmin_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var conference = ConferenceFactory.CreatePersistedConference();
+        var requestingProfileId = Guid.NewGuid();
+        var startDate = DateOnly.FromDateTime(_faker.Date.Future());
+        var endDate = startDate.AddDays(5);
+        var command = new UpdateConferenceCommand(
+            conference.Id,
+            "Updated Title",
+            "Updated City",
+            "Updated Country",
+            null,
+            startDate,
+            endDate,
+            IsVisible: true,   // Non-admin is attempting to set visibility
+            SynchronizationSource: null,
+            RequestingProfileId: requestingProfileId,
+            IsAdmin: false);
+
+        _mockRepository.Setup(x => x.GetByIdAsync(conference.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conference);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ForbiddenException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _mockRepository.Verify(x => x.UpdateAsync(It.IsAny<Conference>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_WhenIsVisibleSetAndIsAdmin_ShouldUpdateConference()
+    {
+        // Arrange
+        var conference = ConferenceFactory.CreatePersistedConference();
+        var requestingProfileId = Guid.NewGuid();
+        var startDate = DateOnly.FromDateTime(_faker.Date.Future());
+        var endDate = startDate.AddDays(5);
+        var command = new UpdateConferenceCommand(
+            conference.Id,
+            "Updated Title",
+            "Updated City",
+            "Updated Country",
+            null,
+            startDate,
+            endDate,
+            IsVisible: true,   // Admin is allowed to change visibility
+            SynchronizationSource: null,
+            RequestingProfileId: requestingProfileId,
+            IsAdmin: true);
+
+        _mockRepository.Setup(x => x.GetByIdAsync(conference.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(conference);
+
+        _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<Conference>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        _mockEventPublisher.Setup(x => x.PublishAsync(It.IsAny<ConferenceUpdatedEvent>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        _mockRepository.Verify(x => x.UpdateAsync(It.IsAny<Conference>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

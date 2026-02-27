@@ -46,6 +46,12 @@ public sealed class Conference : StatefulDomainModel<Guid>
     public bool IsVisible { get; private set; }
 
     /// <summary>
+    /// Gets the profile ID of the user who created this conference.
+    /// Set once at creation time and immutable. Null for conferences created before ownership tracking.
+    /// </summary>
+    public Guid? CreatedByProfileId { get; private set; }
+
+    /// <summary>
     /// Gets the synchronization source configuration for the conference.
     /// </summary>
     public SynchronizationSource? SynchronizationSource { get; private set; }
@@ -78,6 +84,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         DateOnly endDate,
         string? imageUrl,
         bool isVisible,
+        Guid? createdByProfileId = null,
         DomainModelState initialState = DomainModelState.Pristine)
         : base(id, initialState)
     {
@@ -113,6 +120,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         EndDate = endDate;
         ImageUrl = imageUrl;
         IsVisible = isVisible;
+        CreatedByProfileId = createdByProfileId;
     }
 
     /// <summary>
@@ -125,6 +133,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
     /// <param name="endDate">The end date of the conference.</param>
     /// <param name="imageUrl">Optional URL to an image representing the conference.</param>
     /// <param name="synchronizationSource">Optional synchronization source configuration.</param>
+    /// <param name="createdByProfileId">The profile ID of the user creating the conference. Must not be empty when provided.</param>
     /// <returns>A new instance of <see cref="Conference"/>.</returns>
     public static Conference Create(
         string title,
@@ -133,14 +142,20 @@ public sealed class Conference : StatefulDomainModel<Guid>
         DateOnly startDate,
         DateOnly endDate,
         string? imageUrl = null,
-        SynchronizationSource? synchronizationSource = null)
+        SynchronizationSource? synchronizationSource = null,
+        Guid? createdByProfileId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(title, nameof(title));
         ArgumentException.ThrowIfNullOrWhiteSpace(city, nameof(city));
         ArgumentException.ThrowIfNullOrWhiteSpace(country, nameof(country));
 
+        if (createdByProfileId.HasValue && createdByProfileId.Value == Guid.Empty)
+        {
+            throw new ArgumentException("CreatedByProfileId cannot be an empty GUID when provided.", nameof(createdByProfileId));
+        }
+
         var id = Guid.NewGuid();
-        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl, false, DomainModelState.Created);
+        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl, false, createdByProfileId, DomainModelState.Created);
         conference.SynchronizationSource = synchronizationSource;
         return conference;
     }
@@ -157,6 +172,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
     /// <param name="imageUrl">Optional URL to an image representing the conference.</param>
     /// <param name="isVisible">Whether the conference is visible to users.</param>
     /// <param name="synchronizationSource">Optional synchronization source configuration.</param>
+    /// <param name="createdByProfileId">The profile ID of the user who created this conference.</param>
     /// <returns>A new instance of <see cref="Conference"/>.</returns>
     public static Conference FromPersisted(
         Guid id,
@@ -167,9 +183,10 @@ public sealed class Conference : StatefulDomainModel<Guid>
         DateOnly endDate,
         string? imageUrl = null,
         bool isVisible = false,
-        SynchronizationSource? synchronizationSource = null)
+        SynchronizationSource? synchronizationSource = null,
+        Guid? createdByProfileId = null)
     {
-        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl, isVisible);
+        var conference = new Conference(id, title, city, country, startDate, endDate, imageUrl, isVisible, createdByProfileId);
         conference.SynchronizationSource = synchronizationSource;
         return conference;
     }

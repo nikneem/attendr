@@ -38,17 +38,26 @@
             [showIcon]="true" />
     </div>
 
+    @if (isAdmin()) {
     <div class="form-field">
         <label for="isVisible">{{ 'EDIT_CONFERENCE.VISIBILITY_LABEL' | translate }}</label>
         <p-toggleSwitch [(ngModel)]="isVisible" inputId="isVisible" name="isVisible" [disabled]="isUpdating" />
         <small class="visibility-hint">{{ 'EDIT_CONFERENCE.VISIBILITY_HINT' | translate }}</small>
     </div>
+    } @else if (!conference().isVisible) {
+    <div class="form-field visibility-readonly">
+        <span class="unpublished-status">
+            <i class="pi pi-eye-slash"></i>
+            {{ 'EDIT_CONFERENCE.UNPUBLISHED_STATUS' | translate }}
+        </span>
+    </div>
+    }
 
     <div class="sync-source-section">
         <div class="checkbox-field">
             <p-checkbox [(ngModel)]="hasSyncSource" [binary]="true" inputId="hasSyncSource" name="hasSyncSource"
                 [disabled]="isUpdating" />
-            <label for="hasSyncSource">{{ 'EDIT_CONFERENCE.ENABLE_SYNC_SOURCE' | translate }}</label>
+            <label for="hasSyncSource">{{ 'EDIT_CONFERENCE.SYNC_SOURCE_LABEL' | translate }}</label>
         </div>
 
         @if (hasSyncSource) {
@@ -74,7 +83,7 @@
         <p-button type="button" [label]="'EDIT_CONFERENCE.DELETE_BUTTON' | translate" icon="pi pi-trash" severity="danger" [outlined]="true"
             (click)="onDelete()" [disabled]="isUpdating" />
         }
-        <p-button type="submit" [label]="'EDIT_CONFERENCE.SUBMIT_BUTTON' | translate" icon="pi pi-check" [loading]="isUpdating"
+        <p-button type="submit" [label]="'EDIT_CONFERENCE.UPDATE_BUTTON' | translate" icon="pi pi-check" [loading]="isUpdating"
             [disabled]="isUpdating" />
     </div>
 </form>

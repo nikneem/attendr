@@ -145,8 +145,13 @@ export class EditConferenceComponent {
             imageUrl: this.imageUrl.trim() || undefined,
             startDate: this.formatDate(this.dateRange![0]),
             endDate: this.formatDate(this.dateRange![1]),
-            isVisible: this.isVisible,
         };
+
+        // Only admins are permitted to change visibility; omit the field for non-admins
+        // to avoid a 403 Forbidden from the backend.
+        if (this.isAdmin()) {
+            request.isVisible = this.isVisible;
+        }
 
         if (this.hasSyncSource) {
             request.synchronizationSource = {

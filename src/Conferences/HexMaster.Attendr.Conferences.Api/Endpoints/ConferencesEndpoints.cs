@@ -46,7 +46,7 @@ public static class ConferencesEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .RequireAuthorization(AuthorizationPolicies.Admin);
+            .RequireAuthorization();
 
         group.MapDelete("/{id:guid}", DeleteConference)
             .WithName("DeleteConference")
@@ -68,10 +68,27 @@ public static class ConferencesEndpoints
 
     private static async Task<IResult> GetConference(
         Guid id,
+        IProfilesIntegrationService profilesIntegration,
         IQueryHandler<GetConferenceQuery, ConferenceDetailsDto?> handler,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
-        var query = new GetConferenceQuery(id);
+        Guid? currentProfileId = null;
+        try
+        {
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+                if (Guid.TryParse(profile.ProfileId, out var profileId))
+                {
+                    currentProfileId = profileId;
+                }
+            }
+        }
+        catch (UnauthorizedException) { }
+        catch (ProfileNotFoundException) { }
+
+        var query = new GetConferenceQuery(id, currentProfileId, IsAdminUser(user));
         var result = await handler.Handle(query, cancellationToken);
 
         if (result == null)
@@ -83,21 +100,40 @@ public static class ConferencesEndpoints
     }
 
     private static async Task<IResult> ListConferences(
+        IProfilesIntegrationService profilesIntegration,
         IQueryHandler<ListConferencesQuery, ListConferencesResult> handler,
+        ClaimsPrincipal user,
         string? search = null,
         int? pageSize = null,
         int pageNumber = 1,
         bool showHidden = false,
         CancellationToken cancellationToken = default)
     {
-        var query = new ListConferencesQuery(search, pageSize, pageNumber, showHidden);
+        Guid? currentProfileId = null;
+        try
+        {
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+                if (Guid.TryParse(profile.ProfileId, out var profileId))
+                {
+                    currentProfileId = profileId;
+                }
+            }
+        }
+        catch (UnauthorizedException) { }
+        catch (ProfileNotFoundException) { }
+
+        var query = new ListConferencesQuery(search, pageSize, pageNumber, showHidden, currentProfileId);
         var result = await handler.Handle(query, cancellationToken);
         return Results.Ok(result);
     }
 
     private static async Task<IResult> CreateConference(
         CreateConferenceRequest request,
+        IProfilesIntegrationService profilesIntegration,
         ICommandHandler<CreateConferenceCommand, CreateConferenceResult> handler,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
         // Validate input
@@ -113,6 +149,25 @@ public static class ConferencesEndpoints
 
         try
         {
+            // Resolve the creating user's profile ID server-side
+            Guid? createdByProfileId = null;
+            try
+            {
+                var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+                if (Guid.TryParse(profile.ProfileId, out var profileId))
+                {
+                    createdByProfileId = profileId;
+                }
+            }
+            catch (UnauthorizedException)
+            {
+                // Profile resolution failed; proceed without owner assignment
+            }
+            catch (ProfileNotFoundException)
+            {
+                // Profile not found; proceed without owner assignment
+            }
+
             // Create command
             var command = new CreateConferenceCommand(
                 request.Title.Trim(),
@@ -121,7 +176,8 @@ public static class ConferencesEndpoints
                 request.ImageUrl?.Trim(),
                 request.StartDate,
                 request.EndDate,
-                request.SynchronizationSource);
+                request.SynchronizationSource,
+                createdByProfileId);
 
             // Execute command
             var result = await handler.Handle(command, cancellationToken);
@@ -141,7 +197,9 @@ public static class ConferencesEndpoints
     private static async Task<IResult> UpdateConference(
         Guid id,
         CreateConferenceRequest request,
+        IProfilesIntegrationService profilesIntegration,
         ICommandHandler<UpdateConferenceCommand, ConferenceDetailsDto> handler,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken)
     {
         // Validate input
@@ -157,6 +215,26 @@ public static class ConferencesEndpoints
 
         try
         {
+            // Resolve profile ID and admin status server-side
+            Guid? requestingProfileId = null;
+            var isAdmin = IsAdminUser(user);
+            try
+            {
+                var profile = await profilesIntegration.GetProfileFromUser(user, cancellationToken);
+                if (Guid.TryParse(profile.ProfileId, out var profileId))
+                {
+                    requestingProfileId = profileId;
+                }
+            }
+            catch (UnauthorizedException)
+            {
+                return Results.Unauthorized();
+            }
+            catch (ProfileNotFoundException ex)
+            {
+                return Results.NotFound(new { error = ex.Message });
+            }
+
             // Create command
             var command = new UpdateConferenceCommand(
                 id,
@@ -167,12 +245,22 @@ public static class ConferencesEndpoints
                 request.StartDate,
                 request.EndDate,
                 request.IsVisible,
-                request.SynchronizationSource);
+                request.SynchronizationSource,
+                requestingProfileId,
+                isAdmin);
 
             // Execute command
             var result = await handler.Handle(command, cancellationToken);
 
             return Results.Ok(result);
+        }
+        catch (ForbiddenException ex)
+        {
+            return Results.Problem(
+                detail: ex.Message,
+                title: "Visibility cannot be changed directly.",
+                statusCode: StatusCodes.Status403Forbidden,
+                type: ex.ErrorType);
         }
         catch (KeyNotFoundException)
         {
@@ -245,5 +333,20 @@ public static class ConferencesEndpoints
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
+    }
+
+    /// <summary>
+    /// Checks whether the authenticated user has the admin permission.
+    /// </summary>
+    private static bool IsAdminUser(ClaimsPrincipal user)
+    {
+        var permissionsClaim = user.FindFirst("permissions");
+        if (permissionsClaim == null)
+        {
+            return false;
+        }
+
+        var permissions = permissionsClaim.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return permissions.Contains(Permissions.AdminAttendr);
     }
 }

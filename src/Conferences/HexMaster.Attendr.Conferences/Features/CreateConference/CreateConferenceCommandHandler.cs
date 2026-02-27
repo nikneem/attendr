@@ -88,9 +88,14 @@ public sealed class CreateConferenceCommandHandler : ICommandHandler<CreateConfe
                 command.StartDate,
                 command.EndDate,
                 command.ImageUrl,
-                syncSource);
+                syncSource,
+                command.CreatedByProfileId);
 
             activity?.SetTag("conference.id", conference.Id);
+            if (conference.CreatedByProfileId.HasValue)
+            {
+                activity?.SetTag("conference.created_by_profile_id", conference.CreatedByProfileId.Value);
+            }
 
             // Persist the conference
             await _conferenceRepository.AddAsync(conference, cancellationToken);
