@@ -38,7 +38,7 @@ public static class ConferencesIntegrationEndpoints
     {
         try
         {
-            var conference = await repository.GetDetailsByIdAsync(id, cancellationToken);
+            var conference = await repository.GetDetailsByIdAsync(id, null, cancellationToken);
             
             if (conference is null)
             {
@@ -61,7 +61,7 @@ public static class ConferencesIntegrationEndpoints
     {
         try
         {
-            var conference = await repository.GetDetailsByIdAsync(conferenceId, cancellationToken);
+            var conference = await repository.GetDetailsByIdAsync(conferenceId, null, cancellationToken);
             
             if (conference is null)
             {
