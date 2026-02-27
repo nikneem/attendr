@@ -29,7 +29,7 @@
     <div class="form-field">
         <label for="dateRange">{{ 'CREATE_CONFERENCE.DATE_RANGE_LABEL' | translate }} <span class="required">*</span></label>
         <p-datepicker id="dateRange" [(ngModel)]="dateRange" selectionMode="range" [showIcon]="true"
-            [disabled]="isCreating" dateFormat="yy-mm-dd" placeholder="Select date range" styleClass="w-full"
+            [disabled]="isCreating" dateFormat="yy-mm-dd" [placeholder]="'CREATE_CONFERENCE.DATE_RANGE_PLACEHOLDER' | translate" styleClass="w-full"
             [readonlyInput]="true" appendTo="body">
         </p-datepicker>
         <small class="help-text">{{ 'CREATE_CONFERENCE.DATE_RANGE_HINT' | translate }}</small>
@@ -39,7 +39,7 @@
         <div class="form-field checkbox-field">
             <p-checkbox [(ngModel)]="hasSyncSource" [binary]="true" inputId="hasSyncSource" [disabled]="isCreating">
             </p-checkbox>
-            <label for="hasSyncSource">{{ 'CREATE_CONFERENCE.ADD_SYNC_SOURCE' | translate }}</label>
+            <label for="hasSyncSource">{{ 'CREATE_CONFERENCE.SYNC_SOURCE_LABEL' | translate }}</label>
         </div>
 
         @if (hasSyncSource) {
@@ -47,7 +47,7 @@
             <div class="form-field">
                 <label for="syncSourceType">{{ 'CREATE_CONFERENCE.SOURCE_TYPE_LABEL' | translate }} <span class="required">*</span></label>
                 <p-select id="syncSourceType" [(ngModel)]="syncSourceType" [options]="sourceTypeOptions"
-                    placeholder="Select source type" [disabled]="isCreating" styleClass="w-full">
+                    [placeholder]="'CREATE_CONFERENCE.SOURCE_TYPE_PLACEHOLDER' | translate" [disabled]="isCreating" styleClass="w-full">
                 </p-select>
             </div>
 
@@ -68,7 +68,7 @@
     }
 
     <div class="form-actions">
-        <button pButton [label]="'CREATE_CONFERENCE.SUBMIT_BUTTON' | translate" icon="pi pi-check" [loading]="isCreating"
+        <button pButton [label]="'CREATE_CONFERENCE.CREATE_BUTTON' | translate" icon="pi pi-check" [loading]="isCreating"
             [disabled]="!title.trim() || !dateRange || dateRange.length < 2 || isCreating" (click)="onSubmit()">
         </button>
     </div>

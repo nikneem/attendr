@@ -68,7 +68,7 @@
 </p-dialog>
 
 @if (createdConference) {
-<p-dialog header="Conference Created" [(visible)]="showReviewInfoDialog" [modal]="true" [style]="{ width: '600px' }"
+<p-dialog [header]="'CONFERENCE_REVIEW_INFO.TITLE' | translate" [(visible)]="showReviewInfoDialog" [modal]="true" [style]="{ width: '600px' }"
     [draggable]="false" [resizable]="false" [closable]="true" (onHide)="onReviewInfoDialogClosed()">
     <attn-conference-review-info-dialog [conferenceTitle]="createdConference.title"
         [conferenceId]="createdConference.id" (dialogClosed)="onReviewInfoDialogClosed()">
