@@ -16,10 +16,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.3" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.71.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.72.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="OpenTelemetry.Api" Version="1.15.0" />
-    <PackageReference Include="Sessionize.Api.Client" Version="2.0.1" />
+    <PackageReference Include="Sessionize.Api.Client" Version="2.1.1" />
   </ItemGroup>
 
 </Project>

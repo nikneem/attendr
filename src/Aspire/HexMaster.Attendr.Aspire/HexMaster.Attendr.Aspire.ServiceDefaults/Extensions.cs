@@ -115,7 +115,7 @@ public static class Extensions
         {
             options.AddDefaultPolicy(policy =>
             {
-                policy.WithOrigins("http://localhost:4200", "https://attendr.live")
+                policy.WithOrigins("http://localhost:4200", "https://attendr.live", "https://817f713k-4200.euw.devtunnels.ms")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials();
