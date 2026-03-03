@@ -19,24 +19,12 @@
             <h2>Edit Conference: {{ conference()!.title }}</h2>
         </div>
 
-        <p-card class="conference-summary mb-4">
-            <div class="conference-info">
-                <span><strong>Location:</strong> {{ conference()!.city }}, {{ conference()!.country }}</span>
-                <span><strong>Dates:</strong> {{ conference()!.startDate | date }} – {{ conference()!.endDate | date }}</span>
-                <span>
-                    <strong>Visibility:</strong>
-                    <span [class]="conference()!.isVisible ? 'text-green-600' : 'text-red-600'">
-                        {{ conference()!.isVisible ? 'Visible' : 'Hidden' }}
-                    </span>
-                </span>
-            </div>
-        </p-card>
 
         @if (manualChangeWarning()) {
             <p-message severity="warn" text="Conference content has been manually changed." styleClass="mb-4 block" />
         }
 
-        <p-tabs activeIndex="0">
+        <p-tabs value="conference">
             <p-tablist>
                 <p-tab value="conference">Conference</p-tab>
                 <p-tab value="speakers">Speakers</p-tab>
