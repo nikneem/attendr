@@ -97,6 +97,9 @@ app.UseAuthorization();
 // Map endpoints
 app.MapConferencesEndpoints();
 app.MapTopicsEndpoints();
+app.MapConferenceSpeakersEndpoints();
+app.MapConferenceRoomsEndpoints();
+app.MapConferencePresentationsEndpoints();
 app.MapConferencesIntegrationEndpoints();
 app.MapEventHandlersEndpoints();
 app.MapMetricsEndpoints();

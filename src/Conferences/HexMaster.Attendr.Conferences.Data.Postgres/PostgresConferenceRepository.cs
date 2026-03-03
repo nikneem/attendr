@@ -173,7 +173,8 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         ArgumentNullException.ThrowIfNull(conference);
 
         // If the conference hasn't been modified, skip the update
-        if (conference.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Pristine)
+        if (conference.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Pristine
+            && !conference.RoomsNeedSync && !conference.SpeakersNeedSync && !conference.PresentationsNeedSync)
         {
             return;
         }
@@ -195,7 +196,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
                 r.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created ||
                 r.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
 
-            if (modifiedRooms.Count > 0)
+            if (modifiedRooms.Count > 0 || conference.RoomsNeedSync)
             {
                 await DeleteRoomsAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
                 foreach (var room in conference.Rooms)
@@ -209,7 +210,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
                 s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created ||
                 s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
 
-            if (modifiedSpeakers.Count > 0)
+            if (modifiedSpeakers.Count > 0 || conference.SpeakersNeedSync)
             {
                 await DeleteSpeakersAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
                 foreach (var speaker in conference.Speakers)
@@ -223,7 +224,7 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
                 p.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created ||
                 p.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
 
-            if (modifiedPresentations.Count > 0)
+            if (modifiedPresentations.Count > 0 || conference.PresentationsNeedSync)
             {
                 await DeletePresentationsAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
                 foreach (var presentation in conference.Presentations)

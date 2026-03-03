@@ -8,6 +8,7 @@ import { ConferencesPageComponent } from './pages/private/conferences/conference
 import { ConferenceDetailsPageComponent } from './pages/private/conferences/conference-details-page.component';
 import { ConferencePersonalSchedulePageComponent } from './pages/private/conferences/conference-personal-schedule-page.component';
 import { RateSessionsPageComponent } from './pages/private/conferences/rate-sessions-page.component';
+import { ConferenceEditPageComponent } from './pages/private/conferences/conference-edit-page.component';
 import { GroupsListPageComponent } from './pages/private/groups/groups-list-page.component';
 import { GroupDetailsPageComponent } from './pages/private/groups/group-details-page.component';
 import { NotificationPreferencesPageComponent } from './pages/private/preferences/notification-preferences-page.component';
@@ -34,6 +35,7 @@ export const routes: Routes = [
             { path: 'conferences/:id', component: ConferenceDetailsPageComponent },
             { path: 'conferences/:id/schedule', component: ConferencePersonalSchedulePageComponent },
             { path: 'conferences/:id/rate', component: RateSessionsPageComponent },
+            { path: 'conferences/:id/edit', component: ConferenceEditPageComponent },
             { path: 'groups', component: GroupsListPageComponent },
             { path: 'groups/:id', component: GroupDetailsPageComponent },
             {

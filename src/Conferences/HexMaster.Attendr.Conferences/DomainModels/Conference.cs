@@ -56,6 +56,10 @@ public sealed class Conference : StatefulDomainModel<Guid>
     /// </summary>
     public SynchronizationSource? SynchronizationSource { get; private set; }
 
+    public bool RoomsNeedSync { get; private set; }
+    public bool SpeakersNeedSync { get; private set; }
+    public bool PresentationsNeedSync { get; private set; }
+
     private readonly List<Room> _rooms = new();
     private readonly List<Speaker> _speakers = new();
     private readonly List<Presentation> _presentations = new();
@@ -207,6 +211,39 @@ public sealed class Conference : StatefulDomainModel<Guid>
         }
 
         _rooms.Add(room);
+        RoomsNeedSync = true;
+    }
+
+    public void RemoveRoom(Guid roomId)
+    {
+        var room = _rooms.FirstOrDefault(r => r.Id == roomId)
+            ?? throw new InvalidOperationException($"Room with ID {roomId} does not exist in the conference.");
+        _rooms.Remove(room);
+        RoomsNeedSync = true;
+        SetState(DomainModelState.Touched);
+    }
+
+    public void RemoveSpeaker(Guid speakerId)
+    {
+        var speaker = _speakers.FirstOrDefault(s => s.Id == speakerId)
+            ?? throw new InvalidOperationException($"Speaker with ID {speakerId} does not exist in the conference.");
+        _speakers.Remove(speaker);
+        SpeakersNeedSync = true;
+        SetState(DomainModelState.Touched);
+    }
+
+    public void RemovePresentation(Guid presentationId)
+    {
+        var presentation = _presentations.FirstOrDefault(p => p.Id == presentationId)
+            ?? throw new InvalidOperationException($"Presentation with ID {presentationId} does not exist in the conference.");
+        _presentations.Remove(presentation);
+        PresentationsNeedSync = true;
+        SetState(DomainModelState.Touched);
+    }
+
+    public void MarkInvisibleDueToManualChanges()
+    {
+        UpdateVisibility(false);
     }
 
     /// <summary>
@@ -225,6 +262,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         }
 
         _speakers.Add(speaker);
+        SpeakersNeedSync = true;
         SetState(DomainModelState.Touched);
     }
 
@@ -268,6 +306,7 @@ public sealed class Conference : StatefulDomainModel<Guid>
         //}
 
         _presentations.Add(presentation);
+        PresentationsNeedSync = true;
     }
 
     /// <summary>
