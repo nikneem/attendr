@@ -204,17 +204,20 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
                 }
             }
 
-            // Update speakers: only delete and re-insert if any speaker was created or modified (not just touched)
-            var modifiedSpeakers = conference.Speakers.Where(s =>
-                s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created ||
-                s.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified).ToList();
-
-            if (modifiedSpeakers.Count > 0)
+            // Update speakers based on their individual state
+            foreach (var speaker in conference.Speakers)
             {
-                await DeleteSpeakersAsync(connection, conference.Id, cancellationToken).ConfigureAwait(false);
-                foreach (var speaker in conference.Speakers)
+                if (speaker.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Created)
                 {
                     await InsertSpeakerAsync(connection, conference.Id, speaker, cancellationToken).ConfigureAwait(false);
+                }
+                else if (speaker.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Modified)
+                {
+                    await UpdateSpeakerAsync(connection, speaker, cancellationToken).ConfigureAwait(false);
+                }
+                else if (speaker.State == HexMaster.Attendr.Core.DomainModels.DomainModelState.Deleted)
+                {
+                    await DeleteSpeakerByIdAsync(connection, speaker.Id, cancellationToken).ConfigureAwait(false);
                 }
             }
 
@@ -505,6 +508,34 @@ public sealed class PostgresConferenceRepository : IConferenceRepository
         command.Parameters.AddWithValue("@profile_picture_url", (object?)speaker.ProfilePictureUrl ?? DBNull.Value);
         command.Parameters.AddWithValue("@external_id", (object?)speaker.ExternalId ?? DBNull.Value);
 
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task UpdateSpeakerAsync(NpgsqlConnection connection, Speaker speaker, CancellationToken cancellationToken)
+    {
+        var sql = @"
+            UPDATE speakers
+            SET name = @name,
+                company = @company,
+                profile_picture_url = @profile_picture_url,
+                external_id = @external_id
+            WHERE id = @id";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", speaker.Id);
+        command.Parameters.AddWithValue("@name", speaker.Name);
+        command.Parameters.AddWithValue("@company", (object?)speaker.Company ?? DBNull.Value);
+        command.Parameters.AddWithValue("@profile_picture_url", (object?)speaker.ProfilePictureUrl ?? DBNull.Value);
+        command.Parameters.AddWithValue("@external_id", (object?)speaker.ExternalId ?? DBNull.Value);
+
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task DeleteSpeakerByIdAsync(NpgsqlConnection connection, Guid speakerId, CancellationToken cancellationToken)
+    {
+        var sql = "DELETE FROM speakers WHERE id = @id";
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", speakerId);
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 

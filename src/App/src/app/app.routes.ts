@@ -15,6 +15,7 @@ import { AccountPreferencesPageComponent } from './pages/private/preferences/acc
 import { FocusAreasPageComponent } from './pages/private/preferences/focus-areas-page.component';
 import { PreferencesLayoutComponent } from './pages/private/preferences/preferences-layout.component';
 import { TopicsListPageComponent } from './pages/private/admin/topics/topics-list-page.component';
+import { ConferenceEditPageComponent } from './pages/private/conferences/conference-edit-page.component';
 import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
 import { PrivatePageTemplateComponent } from './templates/private/private-page-template/private-page-template';
 
@@ -34,6 +35,7 @@ export const routes: Routes = [
             { path: 'conferences/:id', component: ConferenceDetailsPageComponent },
             { path: 'conferences/:id/schedule', component: ConferencePersonalSchedulePageComponent },
             { path: 'conferences/:id/rate', component: RateSessionsPageComponent },
+            { path: 'conferences/:id/edit', component: ConferenceEditPageComponent },
             { path: 'groups', component: GroupsListPageComponent },
             { path: 'groups/:id', component: GroupDetailsPageComponent },
             {

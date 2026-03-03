@@ -19,6 +19,8 @@
             @if (profileStore.isAdmin()) {
             <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" (click)="openEditDialog()"
                 [pTooltip]="'CONFERENCE_DETAILS.EDIT_TOOLTIP' | translate" class="edit-button" />
+            <p-button icon="pi pi-list-check" [rounded]="true" [text]="true" severity="secondary" (click)="navigateToEdit()"
+                pTooltip="Edit content (speakers, rooms, presentations)" class="edit-button" />
             }
 
             @if (attendanceStore.isAttending()) {

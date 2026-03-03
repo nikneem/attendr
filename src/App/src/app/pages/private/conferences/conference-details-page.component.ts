@@ -153,6 +153,12 @@ export class ConferenceDetailsPageComponent implements OnInit {
         }
     }
 
+    navigateToEdit(): void {
+        if (this.conference) {
+            this.router.navigate(['/app/conferences', this.conference.id, 'edit']);
+        }
+    }
+
     navigateToSchedule(): void {
         if (this.conference) {
             this.router.navigate(['/app/conferences', this.conference.id, 'schedule']);
