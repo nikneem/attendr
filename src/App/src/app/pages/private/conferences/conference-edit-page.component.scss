@@ -35,11 +35,149 @@
 }
 
 .dialog-form {
-    .field {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
         label {
-            display: block;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-size: 0.95rem;
         }
+
+        input,
+        textarea,
+        ::ng-deep {
+            p-inputNumber {
+                width: 100%;
+
+                .p-inputnumber {
+                    width: 100%;
+                }
+            }
+
+            p-select,
+            p-multiSelect {
+                width: 100%;
+
+                .p-select-label,
+                .p-multiselect {
+                    width: 100%;
+                }
+            }
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        textarea,
+        :deep(.p-inputtext),
+        :deep(.p-inputnumber-input),
+        :deep(.p-select),
+        :deep(.p-multiselect) {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--surface-border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+
+            &:focus,
+            &:focus-visible {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem rgba(66, 165, 245, 0.1);
+            }
+
+            &:disabled {
+                background-color: var(--surface-50);
+                color: var(--text-color-secondary);
+            }
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+    }
+}
+
+.conference-tab-content {
+    padding: 1.5rem 0;
+}
+
+.conference-form {
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        small {
+            font-size: 0.85rem;
+            color: var(--text-color-secondary);
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        textarea,
+        :deep(.p-inputtext),
+        :deep(.p-datepicker),
+        :deep(.p-datepicker-w) {
+            width: 100%;
+        }
+
+        &.visibility-readonly {
+            padding: 1rem;
+            background-color: var(--surface-50);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+
+            .unpublished-status {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--text-color-secondary);
+                font-weight: 500;
+            }
+        }
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+
+        @media (max-width: 640px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--surface-border);
+    }
+
+    .visibility-hint {
+        font-size: 0.85rem;
+        color: var(--text-color-secondary);
+        margin-top: 0.25rem;
     }
 }

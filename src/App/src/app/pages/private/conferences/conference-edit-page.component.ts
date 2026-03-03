@@ -16,6 +16,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { DatePickerModule } from 'primeng/datepicker';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConferencesService } from '@services/conferences.service';
 import { ProfileStore } from '@stores/profile.store';
@@ -45,6 +47,8 @@ import { TranslateModule } from '@ngx-translate/core';
         SelectModule,
         ConfirmDialogModule,
         ToastModule,
+        DatePickerModule,
+        ToggleSwitchModule,
         TranslateModule,
     ],
     providers: [ConfirmationService, MessageService],
@@ -92,6 +96,17 @@ export class ConferenceEditPageComponent implements OnInit {
     } = { title: '', abstract: '', startDateTime: '', endDateTime: '', roomId: '', speakerIds: [], id: null };
     presentationSaving = false;
 
+    // Conference Details
+    conferenceForm: {
+        title: string;
+        city: string;
+        country: string;
+        imageUrl: string;
+        dateRange: Date[] | null;
+        isVisible: boolean;
+    } = { title: '', city: '', country: '', imageUrl: '', dateRange: null, isVisible: false };
+    conferenceSaving = false;
+
     roomOptions = computed(() =>
         this.rooms().map(r => ({ label: `${r.name} (cap: ${r.capacity})`, value: r.id }))
     );
@@ -115,6 +130,7 @@ export class ConferenceEditPageComponent implements OnInit {
         this.conferencesService.getConference(id).subscribe({
             next: (conf) => {
                 this.conference.set(conf);
+                this.initializeConferenceForm(conf);
                 this.loadSpeakers(id);
                 this.loadRooms(id);
                 this.loadPresentations(id);
@@ -125,6 +141,17 @@ export class ConferenceEditPageComponent implements OnInit {
                 this.loading.set(false);
             },
         });
+    }
+
+    private initializeConferenceForm(conf: ConferenceDetailsDto): void {
+        this.conferenceForm = {
+            title: conf.title,
+            city: conf.city || '',
+            country: conf.country || '',
+            imageUrl: conf.imageUrl || '',
+            dateRange: [new Date(conf.startDate), new Date(conf.endDate)],
+            isVisible: conf.isVisible,
+        };
     }
 
     private loadSpeakers(id: string): void {
@@ -155,6 +182,52 @@ export class ConferenceEditPageComponent implements OnInit {
         } else {
             this.router.navigate(['/app/conferences']);
         }
+    }
+
+    // ── Conference Details ──
+
+    saveConference(): void {
+        const id = this.conferenceId();
+        if (!id) return;
+        if (!this.conferenceForm.title?.trim()) {
+            this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Title is required' });
+            return;
+        }
+        if (!this.conferenceForm.dateRange || this.conferenceForm.dateRange.length !== 2) {
+            this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Start and end dates are required' });
+            return;
+        }
+        this.conferenceSaving = true;
+        const request: any = {
+            title: this.conferenceForm.title.trim(),
+            city: this.conferenceForm.city.trim() || undefined,
+            country: this.conferenceForm.country.trim() || undefined,
+            imageUrl: this.conferenceForm.imageUrl.trim() || undefined,
+            startDate: this.formatDate(this.conferenceForm.dateRange[0]),
+            endDate: this.formatDate(this.conferenceForm.dateRange[1]),
+        };
+        // Only admins can change visibility
+        if (this.profileStore.isAdmin()) {
+            request.isVisible = this.conferenceForm.isVisible;
+        }
+        this.conferencesService.updateConference(id, request).subscribe({
+            next: (result) => {
+                this.conference.set(result);
+                this.conferenceSaving = false;
+                this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Conference updated' });
+            },
+            error: () => {
+                this.conferenceSaving = false;
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update conference' });
+            },
+        });
+    }
+
+    private formatDate(date: Date): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
     // ── Speakers ──

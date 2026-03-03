@@ -36,15 +36,68 @@
             <p-message severity="warn" text="Conference content has been manually changed." styleClass="mb-4 block" />
         }
 
-        <p-tabs>
+        <p-tabs activeIndex="0">
             <p-tablist>
+                <p-tab value="conference">Conference</p-tab>
                 <p-tab value="speakers">Speakers</p-tab>
                 <p-tab value="rooms">Rooms</p-tab>
                 <p-tab value="presentations">Presentations</p-tab>
             </p-tablist>
 
             <p-tabpanels>
-                <!-- Speakers Tab -->
+                <!-- Conference Tab -->
+                <p-tabpanel value="conference">
+                    <div class="conference-tab-content">
+                        <form (ngSubmit)="saveConference()" class="conference-form">
+                            <div class="form-field">
+                                <label for="conferenceTitle">Title *</label>
+                                <input id="conferenceTitle" pInputText [(ngModel)]="conferenceForm.title" name="conferenceTitle" [disabled]="conferenceSaving" required />
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="conferenceCity">City</label>
+                                    <input id="conferenceCity" pInputText [(ngModel)]="conferenceForm.city" name="conferenceCity" [disabled]="conferenceSaving" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="conferenceCountry">Country</label>
+                                    <input id="conferenceCountry" pInputText [(ngModel)]="conferenceForm.country" name="conferenceCountry" [disabled]="conferenceSaving" />
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="conferenceImageUrl">Image URL</label>
+                                <input id="conferenceImageUrl" pInputText [(ngModel)]="conferenceForm.imageUrl" name="conferenceImageUrl" [disabled]="conferenceSaving" />
+                            </div>
+
+                            <div class="form-field">
+                                <label for="conferenceDateRange">Date Range *</label>
+                                <p-datepicker [(ngModel)]="conferenceForm.dateRange" name="conferenceDateRange" selectionMode="range" [readonlyInput]="true"
+                                    dateFormat="M dd, yy" [disabled]="conferenceSaving" appendTo="body" [showIcon]="true" />
+                            </div>
+
+                            @if (profileStore.isAdmin()) {
+                            <div class="form-field">
+                                <label for="conferenceVisibility">Visibility</label>
+                                <p-toggleSwitch [(ngModel)]="conferenceForm.isVisible" inputId="conferenceVisibility" name="conferenceVisibility" [disabled]="conferenceSaving" />
+                                <small class="visibility-hint">Conference will be visible to all users when enabled</small>
+                            </div>
+                            } @else if (!conferenceForm.isVisible) {
+                            <div class="form-field visibility-readonly">
+                                <span class="unpublished-status">
+                                    <i class="pi pi-eye-slash"></i>
+                                    This conference is currently hidden from other users
+                                </span>
+                            </div>
+                            }
+
+                            <div class="form-actions">
+                                <p-button type="submit" label="Save Changes" icon="pi pi-check" [loading]="conferenceSaving" [disabled]="conferenceSaving" />
+                            </div>
+                        </form>
+                    </div>
+                </p-tabpanel>
                 <p-tabpanel value="speakers">
                     <div class="tab-actions mb-3">
                         <p-button label="Add Speaker" icon="pi pi-plus" (onClick)="openCreateSpeakerDialog()" />
@@ -151,19 +204,19 @@
 
 <!-- Speaker Dialog -->
 <p-dialog [header]="speakerForm.id ? 'Edit Speaker' : 'Add Speaker'"
-    [(visible)]="speakerDialogVisible" [modal]="true" [style]="{width: '450px'}">
+    [(visible)]="speakerDialogVisible" [modal]="true" [style]="{width: '500px'}">
     <div class="dialog-form">
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="speakerName">Name *</label>
-            <input id="speakerName" pInputText class="w-full" [(ngModel)]="speakerForm.name" />
+            <input id="speakerName" pInputText [(ngModel)]="speakerForm.name" />
         </div>
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="speakerCompany">Company</label>
-            <input id="speakerCompany" pInputText class="w-full" [(ngModel)]="speakerForm.company" />
+            <input id="speakerCompany" pInputText [(ngModel)]="speakerForm.company" />
         </div>
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="speakerPicUrl">Profile Picture URL</label>
-            <input id="speakerPicUrl" pInputText class="w-full" [(ngModel)]="speakerForm.profilePictureUrl" />
+            <input id="speakerPicUrl" pInputText [(ngModel)]="speakerForm.profilePictureUrl" />
         </div>
     </div>
     <ng-template pTemplate="footer">
@@ -174,15 +227,15 @@
 
 <!-- Room Dialog -->
 <p-dialog [header]="roomForm.id ? 'Edit Room' : 'Add Room'"
-    [(visible)]="roomDialogVisible" [modal]="true" [style]="{width: '400px'}">
+    [(visible)]="roomDialogVisible" [modal]="true" [style]="{width: '500px'}">
     <div class="dialog-form">
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="roomName">Name *</label>
-            <input id="roomName" pInputText class="w-full" [(ngModel)]="roomForm.name" />
+            <input id="roomName" pInputText [(ngModel)]="roomForm.name" />
         </div>
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="roomCapacity">Capacity *</label>
-            <p-inputNumber id="roomCapacity" [(ngModel)]="roomForm.capacity" [min]="1" styleClass="w-full" />
+            <p-inputNumber id="roomCapacity" [(ngModel)]="roomForm.capacity" [min]="1" />
         </div>
     </div>
     <ng-template pTemplate="footer">
@@ -195,31 +248,31 @@
 <p-dialog [header]="presentationForm.id ? 'Edit Presentation' : 'Add Presentation'"
     [(visible)]="presentationDialogVisible" [modal]="true" [style]="{width: '600px'}">
     <div class="dialog-form">
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="presTitle">Title *</label>
-            <input id="presTitle" pInputText class="w-full" [(ngModel)]="presentationForm.title" />
+            <input id="presTitle" pInputText [(ngModel)]="presentationForm.title" />
         </div>
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="presAbstract">Abstract *</label>
-            <textarea id="presAbstract" pTextarea rows="4" class="w-full" [(ngModel)]="presentationForm.abstract"></textarea>
+            <textarea id="presAbstract" pTextarea rows="4" [(ngModel)]="presentationForm.abstract"></textarea>
         </div>
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="presStart">Start Date/Time *</label>
-            <input id="presStart" type="datetime-local" class="w-full p-inputtext" [(ngModel)]="presentationForm.startDateTime" />
+            <input id="presStart" type="datetime-local" class="p-inputtext" [(ngModel)]="presentationForm.startDateTime" />
         </div>
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="presEnd">End Date/Time *</label>
-            <input id="presEnd" type="datetime-local" class="w-full p-inputtext" [(ngModel)]="presentationForm.endDateTime" />
+            <input id="presEnd" type="datetime-local" class="p-inputtext" [(ngModel)]="presentationForm.endDateTime" />
         </div>
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="presRoom">Room *</label>
             <p-select id="presRoom" [options]="roomOptions()" [(ngModel)]="presentationForm.roomId"
-                placeholder="Select room" styleClass="w-full" />
+                placeholder="Select room" appendTo="body" />
         </div>
-        <div class="field mb-3">
+        <div class="form-field">
             <label for="presSpeakers">Speakers *</label>
             <p-multiSelect id="presSpeakers" [options]="speakerOptions()" [(ngModel)]="presentationForm.speakerIds"
-                placeholder="Select speakers" styleClass="w-full" />
+                placeholder="Select speakers" appendTo="body" />
         </div>
     </div>
     <ng-template pTemplate="footer">
