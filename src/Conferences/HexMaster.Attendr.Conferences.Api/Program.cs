@@ -51,6 +51,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins(
+            "https://817f713k-4200.euw.devtunnels.ms",
             "http://localhost:4200",
             "https://localhost:4200",
             "https://attendr.live",
