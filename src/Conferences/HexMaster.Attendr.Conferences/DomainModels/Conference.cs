@@ -359,6 +359,54 @@ public sealed class Conference : StatefulDomainModel<Guid>
         }
     }
 
+    /// <summary>
+    /// Marks the conference as invisible due to manual content changes.
+    /// </summary>
+    public void MarkInvisibleDueToManualChanges()
+    {
+        if (IsVisible)
+        {
+            IsVisible = false;
+            UpdateModifiedOn();
+            SetState(DomainModelState.Modified);
+        }
+    }
+
+    /// <summary>
+    /// Removes a speaker from the conference by ID.
+    /// </summary>
+    public void RemoveSpeaker(Guid speakerId)
+    {
+        var speaker = _speakers.FirstOrDefault(s => s.Id == speakerId)
+            ?? throw new InvalidOperationException($"Speaker with ID {speakerId} does not exist in the conference.");
+        _speakers.Remove(speaker);
+        SetState(DomainModelState.Touched);
+    }
+
+    /// <summary>
+    /// Removes a room from the conference by ID.
+    /// </summary>
+    public void RemoveRoom(Guid roomId)
+    {
+        if (_presentations.Any(p => p.Room.Id == roomId))
+            throw new InvalidOperationException($"Room {roomId} is still used by presentations and cannot be removed.");
+        var room = _rooms.FirstOrDefault(r => r.Id == roomId)
+            ?? throw new InvalidOperationException($"Room with ID {roomId} does not exist in the conference.");
+        _rooms.Remove(room);
+        SetState(DomainModelState.Touched);
+    }
+
+    /// <summary>
+    /// Removes a presentation from the conference by ID.
+    /// </summary>
+    public void RemovePresentation(Guid presentationId)
+    {
+        var presentation = _presentations.FirstOrDefault(p => p.Id == presentationId)
+            ?? throw new InvalidOperationException($"Presentation with ID {presentationId} does not exist in the conference.");
+        _presentations.Remove(presentation);
+        SetState(DomainModelState.Touched);
+    }
+
     public void UpdateSpeaker(Speaker speaker)
     {
         if (speaker.State != DomainModelState.Pristine && speaker.State != DomainModelState.Touched)

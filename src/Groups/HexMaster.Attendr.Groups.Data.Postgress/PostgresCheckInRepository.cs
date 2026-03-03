@@ -49,7 +49,7 @@ public sealed class PostgresCheckInRepository : ICheckInRepository
         command.Parameters.AddWithValue("@conference_id", checkIn.ConferenceId);
         command.Parameters.AddWithValue("@presentation_id", checkIn.PresentationId);
         command.Parameters.AddWithValue("@data", dataJson);
-        command.Parameters.AddWithValue("@expiration", checkIn.Expiration);
+        command.Parameters.AddWithValue("@expiration", checkIn.Expiration.ToUniversalTime());
 
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
