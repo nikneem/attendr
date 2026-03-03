@@ -20,6 +20,18 @@
         </div>
 
 
+        <p-message
+            severity="info"
+            styleClass="mb-4 block"
+            text="Saving any changes to this conference will unpublish it and require a content reviewer to re-approve it before it becomes visible again." />
+
+        @if (conference()!.synchronizationSource) {
+            <p-message
+                severity="warn"
+                styleClass="mb-4 block"
+                text="This conference has an automatic import source configured. Any manually added or changed content may be overwritten the next time the import runs." />
+        }
+
         @if (manualChangeWarning()) {
             <p-message severity="warn" text="Conference content has been manually changed." styleClass="mb-4 block" />
         }
