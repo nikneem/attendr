@@ -301,6 +301,26 @@ public sealed class Presentation : StatefulDomainModel<Guid>
     }
 
     /// <summary>
+    /// Replaces all speakers with a new set.
+    /// </summary>
+    /// <param name="newSpeakers">The new set of speakers (must contain at least one).</param>
+    /// <exception cref="ArgumentNullException">Thrown when newSpeakers is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when newSpeakers is empty.</exception>
+    public void ReplaceSpeakers(IEnumerable<Speaker> newSpeakers)
+    {
+        ArgumentNullException.ThrowIfNull(newSpeakers);
+        var speakerList = newSpeakers.ToList();
+        if (speakerList.Count == 0)
+        {
+            throw new ArgumentException("A presentation must have at least one speaker.", nameof(newSpeakers));
+        }
+        _speakers.Clear();
+        _speakers.AddRange(speakerList);
+        SetState(DomainModelState.Modified);
+        UpdateModifiedOn();
+    }
+
+    /// <summary>
     /// Adds a topic to the presentation.
     /// </summary>
     /// <param name="topic">The topic to add.</param>

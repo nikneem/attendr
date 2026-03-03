@@ -297,4 +297,47 @@ public class PresentationMutationTests
         var p = CreatePresentation();
         Assert.Throws<ArgumentNullException>(() => p.UpdateTopics(null!));
     }
+
+    // ── ReplaceSpeakers ──────────────────────────────────────────────────────
+
+    [Fact]
+    public void ReplaceSpeakers_WithNewSpeakers_ShouldReplaceAll()
+    {
+        var extra = ConferenceFactory.CreateSpeaker("Extra", null);
+        var p = CreatePresentation(new[] { extra });
+        Assert.Equal(2, p.Speakers.Count);
+
+        var newSpeaker = ConferenceFactory.CreateSpeaker("New", null);
+        p.ReplaceSpeakers(new[] { newSpeaker });
+
+        Assert.Single(p.Speakers);
+        Assert.Equal(newSpeaker.Id, p.Speakers.First().Id);
+    }
+
+    [Fact]
+    public void ReplaceSpeakers_WithSingleSpeaker_ShouldWork()
+    {
+        var p = CreatePresentation();
+        Assert.Single(p.Speakers);
+
+        var newSpeaker = ConferenceFactory.CreateSpeaker("Replacement", null);
+        p.ReplaceSpeakers(new[] { newSpeaker });
+
+        Assert.Single(p.Speakers);
+        Assert.Equal("Replacement", p.Speakers.First().Name);
+    }
+
+    [Fact]
+    public void ReplaceSpeakers_WithEmptyList_ShouldThrowArgumentException()
+    {
+        var p = CreatePresentation();
+        Assert.Throws<ArgumentException>(() => p.ReplaceSpeakers(new List<Speaker>()));
+    }
+
+    [Fact]
+    public void ReplaceSpeakers_WithNull_ShouldThrowArgumentNullException()
+    {
+        var p = CreatePresentation();
+        Assert.Throws<ArgumentNullException>(() => p.ReplaceSpeakers(null!));
+    }
 }

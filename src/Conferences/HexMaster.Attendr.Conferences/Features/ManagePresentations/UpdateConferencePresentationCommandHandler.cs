@@ -30,17 +30,12 @@ public sealed class UpdateConferencePresentationCommandHandler : ICommandHandler
         presentation.UpdateDetails(command.Title, command.Abstract, command.StartDateTime, command.EndDateTime);
         presentation.ChangeRoom(room);
 
-        // Replace speakers: remove all existing, add new ones
-        foreach (var existingSpeaker in presentation.Speakers.ToList())
-        {
-            presentation.RemoveSpeaker(existingSpeaker.Id);
-        }
-        foreach (var speakerId in command.SpeakerIds)
-        {
-            var speaker = conference.Speakers.FirstOrDefault(s => s.Id == speakerId)
-                ?? throw new KeyNotFoundException($"Speaker {speakerId} not found in conference {command.ConferenceId}.");
-            presentation.AddSpeaker(speaker);
-        }
+        // Replace speakers using domain method that handles all invariants
+        var newSpeakers = command.SpeakerIds
+            .Select(speakerId => conference.Speakers.FirstOrDefault(s => s.Id == speakerId)
+                ?? throw new KeyNotFoundException($"Speaker {speakerId} not found in conference {command.ConferenceId}."))
+            .ToList();
+        presentation.ReplaceSpeakers(newSpeakers);
 
         conference.UpdatePresentation(presentation);
         conference.MarkInvisibleDueToManualChanges();
