@@ -250,6 +250,45 @@ export class ConferenceEditPageComponent implements OnInit {
         });
     }
 
+    confirmDeleteConference(): void {
+        const conf = this.conference();
+        if (!conf) return;
+
+        this.confirmationService.confirm({
+            message: `Are you sure you want to delete "${conf.title}"? This action cannot be undone.`,
+            header: 'Delete Conference',
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonStyleClass: 'p-button-danger',
+            accept: () => {
+                this.deleteConference();
+            },
+        });
+    }
+
+    private deleteConference(): void {
+        const id = this.conferenceId();
+        if (!id) return;
+
+        this.conferencesService.deleteConference(id).subscribe({
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Conference deleted successfully',
+                });
+                this.router.navigate(['/app/conferences']);
+            },
+            error: (err) => {
+                console.error('Error deleting conference:', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to delete conference',
+                });
+            },
+        });
+    }
+
     private formatDate(date: Date): string {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');

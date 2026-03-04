@@ -252,3 +252,19 @@
         }
     }
 }
+
+// Fix confirmation dialog z-index to appear above all form elements
+:host ::ng-deep {
+    .p-confirmdialog {
+        z-index: 11000 !important;
+    }
+    
+    .p-confirmdialog-mask {
+        z-index: 10999 !important;
+    }
+    
+    // Ensure datepicker appears below confirmation dialog
+    .p-datepicker-panel {
+        z-index: 1000 !important;
+    }
+}

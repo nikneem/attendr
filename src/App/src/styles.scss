@@ -125,7 +125,7 @@ button {
 .p-datepicker,
 .p-component-overlay,
 .p-datepicker-mask {
-    z-index: 9999 !important;
+    z-index: 1000 !important;
 }
 
 // Ensure connected overlays also have higher z-index
