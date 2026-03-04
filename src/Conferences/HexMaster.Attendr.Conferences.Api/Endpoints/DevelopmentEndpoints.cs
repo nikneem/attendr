@@ -1,5 +1,4 @@
 using HexMaster.Attendr.Conferences.Abstractions.Dtos;
-using HexMaster.Attendr.Conferences.DomainModels;
 using HexMaster.Attendr.Conferences.Features.CreateConference;
 using HexMaster.Attendr.Core.CommandHandlers;
 
@@ -26,22 +25,49 @@ public static class DevelopmentEndpoints
     }
 
     private static async Task<IResult> SeedDummyConference(
+        IConferenceRepository repository,
         ICommandHandler<CreateConferenceCommand, CreateConferenceResult> handler,
         CancellationToken cancellationToken)
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        // Check if there are any conferences in the database
+        var (existingConferences, totalCount) = await repository.ListConferencesAsync(
+            null,
+            1,
+            1,
+            showHidden: true,
+            currentProfileId: null,
+            cancellationToken);
 
-        var command = new CreateConferenceCommand(
-            Title: $"Dummy Conference {DateTime.Today:dd MMM yyyy}",
-            City: "Amsterdam",
-            Country: "Netherlands",
+        if (totalCount > 0)
+        {
+            return Results.Ok(new { message = "Conferences already exist in the database. Skipping seed operation.", count = totalCount });
+        }
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var tomorrow = today.AddDays(1);
+
+        var futureTechCommand = new CreateConferenceCommand(
+            Title: "Future Tech '26",
+            City: "Utrecht",
+            Country: "The Netherlands",
             ImageUrl: "https://futuretech.nl/wp-content/uploads/2025/11/Futuretech-2026-diap.png",
             StartDate: DateOnly.Parse("2026-03-10"),
             EndDate: DateOnly.Parse("2026-03-11"),
             SynchronizationSource: new SynchronizationSourceDto("Sessionize", "4vfzhv8l"),
             CreatedByProfileId: Guid.NewGuid());
 
-        var result = await handler.Handle(command, cancellationToken);
+        var dummyCommand = new CreateConferenceCommand(
+Title: $"Tech United Extreme '{DateTime.Now.Year}",
+City: "Den Haag",
+Country: "The Netherlands",
+ImageUrl: null,
+StartDate: today,
+EndDate: tomorrow,
+SynchronizationSource: null,
+CreatedByProfileId: Guid.NewGuid());
+
+        var result = await handler.Handle(futureTechCommand, cancellationToken);
+        result = await handler.Handle(dummyCommand, cancellationToken);
 
         return Results.Created($"/api/conferences/{result.Id}", result);
     }
