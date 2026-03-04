@@ -74,7 +74,8 @@ var conferencesApi = builder.AddProject<HexMaster_Attendr_Conferences_Api>(Aspir
             .WithReference(stateStore);
     })
     .WithReference(conferencesDatabase)
-    .WaitFor(conferencesDatabase);
+    .WaitFor(conferencesDatabase)
+    .WithCreateDummyConferenceCommand();
 
 // ## The Conferences service ##
 var presenceDatabase = postgres.AddDatabase(AspireConstants.Postgres.PresenceDatabase);
