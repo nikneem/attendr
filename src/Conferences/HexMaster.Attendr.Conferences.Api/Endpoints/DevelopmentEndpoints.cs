@@ -57,18 +57,31 @@ public static class DevelopmentEndpoints
             CreatedByProfileId: Guid.NewGuid());
 
         var dummyCommand = new CreateConferenceCommand(
-Title: $"Tech United Extreme '{DateTime.Now.Year}",
-City: "Den Haag",
-Country: "The Netherlands",
-ImageUrl: null,
-StartDate: today,
-EndDate: tomorrow,
-SynchronizationSource: null,
-CreatedByProfileId: Guid.NewGuid());
+            Title: $"Tech United Extreme '{DateTime.Now.Year}",
+            City: "Den Haag",
+            Country: "The Netherlands",
+            ImageUrl: null,
+            StartDate: today,
+            EndDate: tomorrow,
+            SynchronizationSource: null,
+            CreatedByProfileId: Guid.NewGuid());
+
+        var dnfCommand = new CreateConferenceCommand(
+            Title: $"DotnetFriday",
+            City: "Nieuwegein",
+            Country: "The Netherlands",
+            ImageUrl: "https://dotnetfriday.nl/images/logo.jpg",
+            StartDate: DateOnly.Parse("2026-04-10"),
+            EndDate: DateOnly.Parse("2026-04-10"),
+            SynchronizationSource: new SynchronizationSourceDto("Sessionize", "l1ueluvh"),
+            CreatedByProfileId: Guid.NewGuid());
+
+
+
 
         var result = await handler.Handle(futureTechCommand, cancellationToken);
         result = await handler.Handle(dummyCommand, cancellationToken);
-
+        result = await handler.Handle(dnfCommand, cancellationToken);
         return Results.Created($"/api/conferences/{result.Id}", result);
     }
 }
