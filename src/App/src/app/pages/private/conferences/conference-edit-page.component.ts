@@ -18,6 +18,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConferencesService } from '@services/conferences.service';
 import { ProfileStore } from '@stores/profile.store';
@@ -49,6 +50,7 @@ import { TranslateModule } from '@ngx-translate/core';
         ToastModule,
         DatePickerModule,
         ToggleSwitchModule,
+        CheckboxModule,
         TranslateModule,
     ],
     providers: [ConfirmationService, MessageService],
@@ -104,8 +106,13 @@ export class ConferenceEditPageComponent implements OnInit {
         imageUrl: string;
         dateRange: Date[] | null;
         isVisible: boolean;
-    } = { title: '', city: '', country: '', imageUrl: '', dateRange: null, isVisible: false };
+        hasSyncSource: boolean;
+        syncSourceType: string;
+        syncSourceUrl: string;
+    } = { title: '', city: '', country: '', imageUrl: '', dateRange: null, isVisible: false, hasSyncSource: false, syncSourceType: '', syncSourceUrl: '' };
     conferenceSaving = false;
+
+    sourceTypeOptions = [{ label: 'Sessionize', value: 'Sessionize' }];
 
     roomOptions = computed(() =>
         this.rooms().map(r => ({ label: `${r.name} (cap: ${r.capacity})`, value: r.id }))
@@ -151,6 +158,9 @@ export class ConferenceEditPageComponent implements OnInit {
             imageUrl: conf.imageUrl || '',
             dateRange: [new Date(conf.startDate), new Date(conf.endDate)],
             isVisible: conf.isVisible,
+            hasSyncSource: !!conf.synchronizationSource,
+            syncSourceType: conf.synchronizationSource?.sourceType || '',
+            syncSourceUrl: conf.synchronizationSource?.sourceUrl || '',
         };
     }
 
@@ -197,6 +207,16 @@ export class ConferenceEditPageComponent implements OnInit {
             this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Start and end dates are required' });
             return;
         }
+        if (this.conferenceForm.hasSyncSource) {
+            if (!this.conferenceForm.syncSourceType?.trim()) {
+                this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'Import source type is required when import is enabled' });
+                return;
+            }
+            if (!this.conferenceForm.syncSourceUrl?.trim()) {
+                this.messageService.add({ severity: 'warn', summary: 'Validation', detail: 'API Key is required when import is enabled' });
+                return;
+            }
+        }
         this.conferenceSaving = true;
         const request: any = {
             title: this.conferenceForm.title.trim(),
@@ -209,6 +229,13 @@ export class ConferenceEditPageComponent implements OnInit {
         // Only admins can change visibility
         if (this.profileStore.isAdmin()) {
             request.isVisible = this.conferenceForm.isVisible;
+        }
+        // Add synchronization source if configured
+        if (this.conferenceForm.hasSyncSource && this.conferenceForm.syncSourceType && this.conferenceForm.syncSourceUrl) {
+            request.synchronizationSource = {
+                sourceType: this.conferenceForm.syncSourceType.trim(),
+                sourceUrl: this.conferenceForm.syncSourceUrl.trim(),
+            };
         }
         this.conferencesService.updateConference(id, request).subscribe({
             next: (result) => {

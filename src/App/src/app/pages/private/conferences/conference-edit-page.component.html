@@ -48,54 +48,89 @@
                 <!-- Conference Tab -->
                 <p-tabpanel value="conference">
                     <div class="conference-tab-content">
-                        <form (ngSubmit)="saveConference()" class="conference-form">
-                            <div class="form-field">
-                                <label for="conferenceTitle">Title *</label>
-                                <input id="conferenceTitle" pInputText [(ngModel)]="conferenceForm.title" name="conferenceTitle" [disabled]="conferenceSaving" required />
-                            </div>
-
-                            <div class="form-row">
+                        <div class="conference-tab-layout">
+                            <form (ngSubmit)="saveConference()" class="conference-form">
                                 <div class="form-field">
-                                    <label for="conferenceCity">City</label>
-                                    <input id="conferenceCity" pInputText [(ngModel)]="conferenceForm.city" name="conferenceCity" [disabled]="conferenceSaving" />
+                                    <label for="conferenceTitle">Title *</label>
+                                    <input id="conferenceTitle" pInputText [(ngModel)]="conferenceForm.title" name="conferenceTitle" [disabled]="conferenceSaving" required />
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label for="conferenceCity">City</label>
+                                        <input id="conferenceCity" pInputText [(ngModel)]="conferenceForm.city" name="conferenceCity" [disabled]="conferenceSaving" />
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="conferenceCountry">Country</label>
+                                        <input id="conferenceCountry" pInputText [(ngModel)]="conferenceForm.country" name="conferenceCountry" [disabled]="conferenceSaving" />
+                                    </div>
                                 </div>
 
                                 <div class="form-field">
-                                    <label for="conferenceCountry">Country</label>
-                                    <input id="conferenceCountry" pInputText [(ngModel)]="conferenceForm.country" name="conferenceCountry" [disabled]="conferenceSaving" />
+                                    <label for="conferenceImageUrl">Image URL</label>
+                                    <input id="conferenceImageUrl" pInputText [(ngModel)]="conferenceForm.imageUrl" name="conferenceImageUrl" [disabled]="conferenceSaving" />
                                 </div>
-                            </div>
 
-                            <div class="form-field">
-                                <label for="conferenceImageUrl">Image URL</label>
-                                <input id="conferenceImageUrl" pInputText [(ngModel)]="conferenceForm.imageUrl" name="conferenceImageUrl" [disabled]="conferenceSaving" />
-                            </div>
+                                <div class="form-field">
+                                    <label for="conferenceDateRange">Date Range *</label>
+                                    <p-datepicker [(ngModel)]="conferenceForm.dateRange" name="conferenceDateRange" selectionMode="range" [readonlyInput]="true"
+                                        dateFormat="M dd, yy" [disabled]="conferenceSaving" appendTo="body" [showIcon]="true" />
+                                </div>
 
-                            <div class="form-field">
-                                <label for="conferenceDateRange">Date Range *</label>
-                                <p-datepicker [(ngModel)]="conferenceForm.dateRange" name="conferenceDateRange" selectionMode="range" [readonlyInput]="true"
-                                    dateFormat="M dd, yy" [disabled]="conferenceSaving" appendTo="body" [showIcon]="true" />
-                            </div>
+                                @if (profileStore.isAdmin()) {
+                                <div class="form-field">
+                                    <label for="conferenceVisibility">Visibility</label>
+                                    <p-toggleSwitch [(ngModel)]="conferenceForm.isVisible" inputId="conferenceVisibility" name="conferenceVisibility" [disabled]="conferenceSaving" />
+                                    <small class="visibility-hint">Conference will be visible to all users when enabled</small>
+                                </div>
+                                } @else if (!conferenceForm.isVisible) {
+                                <div class="form-field visibility-readonly">
+                                    <span class="unpublished-status">
+                                        <i class="pi pi-eye-slash"></i>
+                                        This conference is currently hidden from other users
+                                    </span>
+                                </div>
+                                }
 
-                            @if (profileStore.isAdmin()) {
-                            <div class="form-field">
-                                <label for="conferenceVisibility">Visibility</label>
-                                <p-toggleSwitch [(ngModel)]="conferenceForm.isVisible" inputId="conferenceVisibility" name="conferenceVisibility" [disabled]="conferenceSaving" />
-                                <small class="visibility-hint">Conference will be visible to all users when enabled</small>
-                            </div>
-                            } @else if (!conferenceForm.isVisible) {
-                            <div class="form-field visibility-readonly">
-                                <span class="unpublished-status">
-                                    <i class="pi pi-eye-slash"></i>
-                                    This conference is currently hidden from other users
-                                </span>
-                            </div>
-                            }
+                                <div class="sync-source-section">
+                                    <div class="checkbox-field">
+                                        <p-checkbox [(ngModel)]="conferenceForm.hasSyncSource" [binary]="true" inputId="hasSyncSource" name="hasSyncSource"
+                                            [disabled]="conferenceSaving" />
+                                        <label for="hasSyncSource">Enable automatic import</label>
+                                    </div>
 
-                            <div class="form-actions">
-                                <p-button type="submit" label="Save Changes" icon="pi pi-check" [loading]="conferenceSaving" [disabled]="conferenceSaving" />
+                                    @if (conferenceForm.hasSyncSource) {
+                                    <div class="sync-fields">
+                                        <div class="form-field">
+                                            <label for="syncSourceType">Import Source Type</label>
+                                            <p-select [(ngModel)]="conferenceForm.syncSourceType" [options]="sourceTypeOptions" optionLabel="label"
+                                                optionValue="value" placeholder="Select source type" name="syncSourceType" [disabled]="conferenceSaving"
+                                                [style]="{ width: '100%' }" />
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label for="syncSourceUrl">API Key</label>
+                                            <input pInputText id="syncSourceUrl" [(ngModel)]="conferenceForm.syncSourceUrl" name="syncSourceUrl" type="text"
+                                                placeholder="Enter API key" [disabled]="conferenceSaving" maxlength="256" />
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+
+                                <div class="form-actions">
+                                    <p-button type="submit" label="Save Changes" icon="pi pi-check" [loading]="conferenceSaving" [disabled]="conferenceSaving" />
+                                </div>
+                            </form>
+
+                            <div class="conference-logo-section">
+                                @if (conferenceForm.imageUrl) {
+                                    <img [src]="conferenceForm.imageUrl" [alt]="conferenceForm.title" class="conference-logo" />
+                                } @else {
+                                    <img src="/images/logo-192x192.png" alt="Attendr Logo" class="conference-logo attendr-logo" />
+                                }
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </p-tabpanel>
                 <p-tabpanel value="speakers">
