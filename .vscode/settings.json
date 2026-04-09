@@ -1,5 +1,8 @@
 {
   "chat.tools.terminal.autoApprove": {
-    "aspire": true
+    "aspire": true,
+    "ConvertFrom-Json": true,
+    "Paste-Object": true,
+    "Out-Null": true
   }
 }
