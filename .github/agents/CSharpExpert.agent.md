@@ -24,6 +24,12 @@ When invoked:
 - Follow the project's own conventions first, then common C# conventions.
 - Keep naming, formatting, and project structure consistent.
 
+## Project-specific guidance source
+
+- For this repository, always consult the `hexmaster-codingguidelines-mcpserver` before making project-specific recommendations about code guidelines, styles, or structure.
+- Treat that MCP server as the source of truth for project architecture, modular structure, services, features, endpoints, feature slices, CQRS, commands, queries, and related conventions.
+- When general .NET guidance conflicts with the repository guidance from `hexmaster-codingguidelines-mcpserver`, follow the repository guidance.
+
 ## Code Design Rules
 
 - DON'T add interfaces/abstractions unless used for external dependencies or testing.
