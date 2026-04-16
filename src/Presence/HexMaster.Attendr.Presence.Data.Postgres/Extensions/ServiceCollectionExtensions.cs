@@ -17,7 +17,12 @@ public static class ServiceCollectionExtensions
     {
         // Register repositories (expects NpgsqlDataSource to be registered via Aspire)
         services.AddSingleton<IConferencePresenceRepository, PostgresConferencePresenceRepository>();
-        services.AddSingleton<IPresentationPresenceRepository, PostgresPresentationPresenceRepository>();
+        services.AddSingleton<IPresentationPresenceRepository>(serviceProvider =>
+        {
+            _ = serviceProvider.GetRequiredService<IConferencePresenceRepository>();
+            var dataSource = serviceProvider.GetRequiredService<Npgsql.NpgsqlDataSource>();
+            return new PostgresPresentationPresenceRepository(dataSource);
+        });
 
         return services;
     }
