@@ -2,6 +2,9 @@
   "name": "attendr",
   "version": "0.0.0",
   "scripts": {
+    "prestart": "node scripts/generate-runtime-config.cjs",
+    "prebuild": "node scripts/generate-runtime-config.cjs",
+    "pretest": "node scripts/generate-runtime-config.cjs",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",

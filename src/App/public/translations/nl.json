@@ -101,6 +101,7 @@
   },
   "JOINED_GROUPS": {
     "TITLE": "Mijn Groepen",
+    "LOADING": "Groepen laden...",
     "CREATE_GROUP": "Groep Aanmaken",
     "JOIN_GROUP": "Groep Inschrijven",
     "GROUP_NAME_HEADER": "Groepsnaam",

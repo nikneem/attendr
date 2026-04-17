@@ -101,6 +101,7 @@
   },
   "JOINED_GROUPS": {
     "TITLE": "My Groups",
+    "LOADING": "Loading groups...",
     "CREATE_GROUP": "Create Group",
     "JOIN_GROUP": "Join Group",
     "GROUP_NAME_HEADER": "Group Name",

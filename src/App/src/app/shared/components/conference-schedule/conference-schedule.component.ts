@@ -1,8 +1,10 @@
-﻿import { Component, input, computed, signal, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
+﻿import { AfterViewInit, Component, computed, DestroyRef, ElementRef, inject, input, QueryList, signal, ViewChildren } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { startWith } from 'rxjs';
 import { PresentationDto } from '../../models/presentation-dto';
 import { SpeakerDto } from '../../models/speaker-dto';
 import { PresentationDetailsComponent } from '../presentation-details/presentation-details.component';
@@ -36,11 +38,14 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class ConferenceScheduleComponent implements AfterViewInit {
     private readonly attendanceStore = inject(ConferenceAttendanceStore);
+    private readonly destroyRef = inject(DestroyRef);
     private readonly presenceService = inject(PresenceService);
     private readonly pixelsPerHour = 300;
     private readonly millisecondsPerHour = 60 * 60 * 1000;
+    private readonly wheelBoundContainers = new WeakSet<HTMLDivElement>();
+    private readonly wheelListenerAbortController = new AbortController();
 
-    @ViewChild('scheduleContainer') scheduleContainer?: ElementRef<HTMLDivElement>;
+    @ViewChildren('scheduleContainer') scheduleContainers!: QueryList<ElementRef<HTMLDivElement>>;
     presentations = input.required<PresentationDto[]>();
     startDate = input.required<string>();
     endDate = input.required<string>();
@@ -51,17 +56,14 @@ export class ConferenceScheduleComponent implements AfterViewInit {
     selectedPresentation = signal<PresentationDto | null>(null);
     showDialog = signal<boolean>(false);
 
+    constructor() {
+        this.destroyRef.onDestroy(() => this.wheelListenerAbortController.abort());
+    }
+
     ngAfterViewInit(): void {
-        // Convert vertical scroll to horizontal scroll with 4x speed for high sensitivity
-        const container = this.scheduleContainer?.nativeElement;
-        if (container) {
-            container.addEventListener('wheel', (e: WheelEvent) => {
-                if (e.deltaY !== 0) {
-                    e.preventDefault();
-                    container.scrollLeft += e.deltaY * 4;
-                }
-            }, { passive: false });
-        }
+        this.scheduleContainers.changes
+            .pipe(startWith(this.scheduleContainers), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => this.attachHorizontalWheelScrolling());
     }
 
     scheduleDays = computed(() => {
@@ -180,6 +182,30 @@ export class ConferenceScheduleComponent implements AfterViewInit {
         const hours = Math.max(1, Math.round(durationMs / this.millisecondsPerHour));
         return hours * this.pixelsPerHour;
     }
+
+    private attachHorizontalWheelScrolling(): void {
+        this.scheduleContainers.forEach(({ nativeElement: container }) => {
+            if (this.wheelBoundContainers.has(container)) {
+                return;
+            }
+
+            container.addEventListener('wheel', this.onScheduleWheel, {
+                passive: false,
+                signal: this.wheelListenerAbortController.signal,
+            });
+            this.wheelBoundContainers.add(container);
+        });
+    }
+
+    private readonly onScheduleWheel = (event: WheelEvent): void => {
+        const container = event.currentTarget;
+        if (!(container instanceof HTMLDivElement) || event.deltaY === 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+            return;
+        }
+
+        event.preventDefault();
+        container.scrollLeft += event.deltaY * 2;
+    };
 
     private parseDateTime(value: string): Date {
         const hasTimeZone = /([zZ]|[+-]\d{2}:?\d{2})$/.test(value);
