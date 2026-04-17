@@ -1,10 +1,21 @@
 @use '../../../../styles/variables' as vars;
 
-.schedule-container {
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.schedule-scroll {
     width: 100%;
+    max-width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pinch-zoom;
+    scrollbar-gutter: stable both-edges;
+    padding-bottom: 0.5rem;
 
     // Styled scrollbar with secondary color
     &::-webkit-scrollbar {
@@ -39,26 +50,17 @@
 }
 
 .schedule-day {
-    min-width: 1000px;
+    --room-label-width: 150px;
 
-    @media (min-width: 1440px) {
-        min-width: 1200px;
-    }
-
-    // Enable horizontal scrolling with mouse wheel
-    &:hover {
-        cursor: grab;
-    }
-
-    &:active {
-        cursor: grabbing;
-    }
+    width: max(100%, calc(var(--timeline-width) + var(--room-label-width)));
+    min-width: max(100%, calc(var(--timeline-width) + var(--room-label-width)));
 }
 
 .timeline-container {
     display: flex;
     flex-direction: column;
     gap: 0;
+    min-width: 100%;
 }
 
 .timeline-header {
@@ -70,13 +72,15 @@
 }
 
 .timeline-time-labels {
-    padding-left: 150px;
+    padding-left: var(--room-label-width);
     height: 40px;
+    min-width: calc(var(--timeline-width) + var(--room-label-width));
 }
 
 .timeline-time-labels-inner {
     position: relative;
     height: 100%;
+    min-width: var(--timeline-width);
 }
 
 .time-label {
@@ -111,6 +115,7 @@
 .timeline-rooms {
     display: flex;
     flex-direction: column;
+    min-width: calc(var(--timeline-width) + var(--room-label-width));
 }
 
 .timeline-room {
@@ -125,7 +130,7 @@
 }
 
 .room-label {
-    width: 150px;
+    width: var(--room-label-width);
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -136,8 +141,9 @@
 }
 
 .room-timeline {
-    flex: 1;
+    flex: 0 0 var(--timeline-width);
     position: relative;
+    min-width: var(--timeline-width);
     padding: 8px 0;
 }
 

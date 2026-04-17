@@ -74,7 +74,8 @@ var conferencesApi = builder.AddProject<HexMaster_Attendr_Conferences_Api>(Aspir
             .WithReference(stateStore);
     })
     .WithReference(conferencesDatabase)
-    .WaitFor(conferencesDatabase);
+    .WaitFor(conferencesDatabase)
+    .WithAutoSeedOnReady();
 
 // ## The Conferences service ##
 var presenceDatabase = postgres.AddDatabase(AspireConstants.Postgres.PresenceDatabase);
@@ -149,8 +150,10 @@ if (Directory.Exists(frontEndSourceFolder))
         .WithRunScript("start")
         .WithHttpEndpoint(port: 4200, isProxied: false)
         .WithEnvironment("ASPIRE_GATEWAY_URL", gateway.GetEndpoint("http"));
-
 }
+
+
+
 
 
 builder.Build().Run();

@@ -1,5 +1,5 @@
 <p-toast />
-<p-confirmDialog />
+<p-confirmDialog appendTo="body" />
 
 <div class="conference-edit-page">
     @if (loading()) {
@@ -120,6 +120,7 @@
 
                                 <div class="form-actions">
                                     <p-button type="submit" label="Save Changes" icon="pi pi-check" [loading]="conferenceSaving" [disabled]="conferenceSaving" />
+                                    <p-button label="Delete Conference" icon="pi pi-trash" severity="danger" (onClick)="confirmDeleteConference()" [disabled]="conferenceSaving" />
                                 </div>
                             </form>
 

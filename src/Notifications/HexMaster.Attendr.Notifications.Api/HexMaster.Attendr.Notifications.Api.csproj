@@ -14,8 +14,8 @@
     <PackageReference Include="Lib.AspNetCore.WebPush" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
-    <PackageReference Include="Aspire.Azure.Data.Tables" Version="13.1.1" />
-    <PackageReference Include="Dapr.AspNetCore" Version="1.16.1" />
+    <PackageReference Include="Aspire.Azure.Data.Tables" Version="13.2.2" />
+    <PackageReference Include="Dapr.AspNetCore" Version="1.17.0" />
   </ItemGroup>
 
   <ItemGroup>

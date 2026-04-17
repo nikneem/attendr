@@ -420,4 +420,11 @@
             }
         }
     }
+
+    ::ng-deep .schedule-card {
+        .p-card-content {
+            padding-inline: 0;
+            padding-bottom: 0.5rem;
+        }
+    }
 }
